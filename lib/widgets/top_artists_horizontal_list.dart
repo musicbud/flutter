@@ -42,19 +42,11 @@ class _TopArtistsHorizontalListState extends State<TopArtistsHorizontalList> {
     });
 
     try {
-      final response = await _apiService.fetchTopArtists(page: currentPage);
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data'];
-        setState(() {
-          isLoading = false;
-          artists.addAll(data.map((json) => Artist.fromJson(json)).toList());
-        });
-      } else {
-        setState(() {
-          isLoading = false;
-          errorMessage = 'Failed to load top artists';
-        });
-      }
+      final newArtists = await _apiService.fetchTopArtists(page: currentPage);
+      setState(() {
+        isLoading = false;
+        artists.addAll(newArtists);
+      });
     } catch (e) {
       print('Error: $e');
       setState(() {
@@ -71,19 +63,12 @@ class _TopArtistsHorizontalListState extends State<TopArtistsHorizontalList> {
     });
 
     try {
-      final response = await _apiService.fetchTopArtists(page: currentPage + 1);
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data'];
-        setState(() {
-          artists.addAll(data.map((json) => Artist.fromJson(json)).toList());
-          currentPage++;
-          isLoadingMore = false;
-        });
-      } else {
-        setState(() {
-          isLoadingMore = false;
-        });
-      }
+      final newArtists = await _apiService.fetchTopArtists(page: currentPage + 1);
+      setState(() {
+        artists.addAll(newArtists);
+        currentPage++;
+        isLoadingMore = false;
+      });
     } catch (e) {
       print('Error loading more artists: $e');
       setState(() {

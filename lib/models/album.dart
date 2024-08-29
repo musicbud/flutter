@@ -1,18 +1,18 @@
-class Track {
+class Album {
   final String uid;
   final String name;
-  final String? artist;
+  final String artist;
   final String? imageUrl;
 
-  Track({
+  Album({
     required this.uid,
     required this.name,
-    this.artist,
+    required this.artist,
     this.imageUrl,
   });
 
-  factory Track.fromJson(Map<String, dynamic> json) {
-    return Track(
+  factory Album.fromJson(Map<String, dynamic> json) {
+    return Album(
       uid: json['uid'],
       name: json['name'],
       artist: json['artist'],

@@ -4,6 +4,8 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:musicbud_flutter/models/track.dart';
+import 'package:musicbud_flutter/models/artist.dart';
+import 'package:musicbud_flutter/models/album.dart';
 
 class ApiService {
   final Dio _dio = Dio();
@@ -92,8 +94,23 @@ class ApiService {
     );
   }
 
-  Future<Response> fetchTopArtists({int page = 1}) async {
-    return post('$_baseUrl/me/top/artists', data: {'page': page});
+  Future<List<Artist>> fetchTopArtists({required int page}) async {
+    try {
+      final response = await _dio.post(
+        '$_baseUrl/me/top/artists',
+        queryParameters: {'page': page},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> artistsJson = response.data['data'];
+        return artistsJson.map((json) => Artist.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load top artists: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching top artists: $e');
+      rethrow;
+    }
   }
 
   Future<Response> fetchTopTracks({int page = 1}) async {
@@ -162,5 +179,105 @@ class ApiService {
       print('Error fetching top genres: $e');
       rethrow;
     }
+  }
+
+  Future<List<Artist>> getLikedArtists({required int page}) async {
+    late List<Artist> artists;
+    try {
+      final response = await _dio.post(
+        '$_baseUrl/me/liked/artists',
+        queryParameters: {'page': page},
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        artists = data.map((json) => Artist.fromJson(json)).toList();
+      } else {
+        artists = [];
+      }
+    } catch (e) {
+      print('Error fetching liked artists: $e');
+      artists = [];
+    }
+    return artists;
+  }
+
+  Future<List<Track>> getLikedTracks({required int page}) async {
+    late List<Track> tracks;
+    try {
+      final response = await _dio.post(
+        '$_baseUrl/me/liked/tracks',
+        queryParameters: {'page': page},
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        tracks = data.map((json) => Track.fromJson(json)).toList();
+      } else {
+        tracks = [];
+      }
+    } catch (e) {
+      print('Error fetching liked tracks: $e');
+      tracks = [];
+    }
+    return tracks;
+  }
+
+  Future<List<String>> getLikedGenres({required int page}) async {
+    late List<String> genres;
+    try {
+      final response = await _dio.post(
+        '$_baseUrl/me/liked/genres',
+        queryParameters: {'page': page},
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        genres = data.map((json) => json['name'].toString()).toList();
+      } else {
+        genres = [];
+      }
+    } catch (e) {
+      print('Error fetching liked genres: $e');
+      genres = [];
+    }
+    return genres;
+  }
+
+  Future<List<Album>> getLikedAlbums({required int page}) async {
+    late List<Album> albums;
+    try {
+      final response = await _dio.post(
+        '$_baseUrl/me/liked/albums',
+        queryParameters: {'page': page},
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        albums = data.map((json) => Album.fromJson(json)).toList();
+      } else {
+        albums = [];
+      }
+    } catch (e) {
+      print('Error fetching liked albums: $e');
+      albums = [];
+    }
+    return albums;
+  }
+
+  Future<List<Track>> getPlayedTracks({required int page}) async {
+    late List<Track> tracks;
+    try {
+      final response = await _dio.post(
+        '$_baseUrl/me/played/tracks',
+        queryParameters: {'page': page},
+      );
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        tracks = data.map((json) => Track.fromJson(json)).toList();
+      } else {
+        tracks = [];
+      }
+    } catch (e) {
+      print('Error fetching played tracks: $e');
+      tracks = [];
+    }
+    return tracks;
   }
 }

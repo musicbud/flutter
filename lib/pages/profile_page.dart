@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/widgets/top_tracks_horizontal_list.dart' as tracks;
-import 'package:musicbud_flutter/widgets/top_genres_horizontal_list.dart' show TopGenresHorizontalList;
-import 'package:musicbud_flutter/widgets/top_artists_horizontal_list.dart';
-import 'package:musicbud_flutter/services/api_service.dart';
-import 'package:musicbud_flutter/models/track.dart'; // Import the Track model
+import '../models/track.dart';
+import '../models/artist.dart';
+import '../models/album.dart';
+import '../services/api_service.dart';
+import '../widgets/horizontal_list.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -25,37 +25,50 @@ class ProfilePageContent extends StatefulWidget {
 }
 
 class _ProfilePageContentState extends State<ProfilePageContent> {
-  List<Track> _initialTracks = [];
-  bool _isLoading = true;
   final ApiService _apiService = ApiService();
+  static const int _itemsPerPage = 20;
+
+  List<Track> _topTracks = [];
+  List<Artist> _topArtists = [];
+  List<String> _topGenres = [];
+  List<Artist> _likedArtists = [];
+  List<Track> _likedTracks = [];
+  List<String> _likedGenres = [];
+  List<Album> _likedAlbums = [];
+  List<Track> _playedTracks = [];
 
   @override
   void initState() {
     super.initState();
-    _loadInitialTracks();
+    _loadInitialData();
   }
 
-  Future<void> _loadInitialTracks() async {
+  Future<void> _loadInitialData() async {
     try {
-      final tracks = await _apiService.getTopTracks(page: 1);
-      setState(() {
-        _initialTracks = tracks;
-        _isLoading = false;
-      });
-    } catch (e) {
-      print('Error loading initial tracks: $e');
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
+      final futures = await Future.wait([
+        _apiService.getTopTracks(page: 1),
+        _apiService.fetchTopArtists(page: 1),
+        _apiService.getTopGenres(page: 1),
+        _apiService.getLikedArtists(page: 1),
+        _apiService.getLikedTracks(page: 1),
+        _apiService.getLikedGenres(page: 1),
+        _apiService.getLikedAlbums(page: 1),
+        _apiService.getPlayedTracks(page: 1),
+      ]);
 
-  Future<List<Track>> _loadMoreTracks(int page) async {
-    try {
-      return await _apiService.getTopTracks(page: page);
+      setState(() {
+        _topTracks = futures[0] as List<Track>;
+        _topArtists = futures[1] as List<Artist>;
+        _topGenres = futures[2] as List<String>;
+        _likedArtists = futures[3] as List<Artist>;
+        _likedTracks = futures[4] as List<Track>;
+        _likedGenres = futures[5] as List<String>;
+        _likedAlbums = futures[6] as List<Album>;
+        _playedTracks = futures[7] as List<Track>;
+      });
     } catch (e) {
-      print('Error loading more tracks: $e');
-      return [];
+      print('Error loading initial data: $e');
+      // TODO: Handle error state
     }
   }
 
@@ -65,43 +78,132 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // User info section
-          // ...
+          _buildHorizontalList<Track>(
+            title: 'Top Tracks',
+            items: _topTracks,
+            itemBuilder: _buildTrackItem,
+            loadMore: () => _loadMore(_apiService.getTopTracks, _topTracks),
+          ),
+          _buildHorizontalList<Artist>(
+            title: 'Top Artists',
+            items: _topArtists,
+            itemBuilder: _buildArtistItem,
+            loadMore: () => _loadMore(_apiService.fetchTopArtists, _topArtists),
+          ),
+          _buildHorizontalList<String>(
+            title: 'Top Genres',
+            items: _topGenres,
+            itemBuilder: _buildGenreItem,
+            loadMore: () => _loadMore(_apiService.getTopGenres, _topGenres),
+          ),
+          _buildHorizontalList<Artist>(
+            title: 'Liked Artists',
+            items: _likedArtists,
+            itemBuilder: _buildArtistItem,
+            loadMore: () => _loadMore(_apiService.getLikedArtists, _likedArtists),
+          ),
+          _buildHorizontalList<Track>(
+            title: 'Liked Tracks',
+            items: _likedTracks,
+            itemBuilder: _buildTrackItem,
+            loadMore: () => _loadMore(_apiService.getLikedTracks, _likedTracks),
+          ),
+          _buildHorizontalList<String>(
+            title: 'Liked Genres',
+            items: _likedGenres,
+            itemBuilder: _buildGenreItem,
+            loadMore: () => _loadMore(_apiService.getLikedGenres, _likedGenres),
+          ),
+          _buildHorizontalList<Album>(
+            title: 'Liked Albums',
+            items: _likedAlbums,
+            itemBuilder: _buildAlbumItem,
+            loadMore: () => _loadMore(_apiService.getLikedAlbums, _likedAlbums),
+          ),
+          _buildHorizontalList<Track>(
+            title: 'Played Tracks',
+            items: _playedTracks,
+            itemBuilder: _buildTrackItem,
+            loadMore: () => _loadMore(_apiService.getPlayedTracks, _playedTracks),
+          ),
+        ],
+      ),
+    );
+  }
 
-          // Top Tracks section
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text('Top Tracks', style: Theme.of(context).textTheme.headline6),
-          ),
-          SizedBox(
-            height: 200,
-            child: _isLoading
-                ? Center(child: CircularProgressIndicator())
-                : tracks.TopTracksHorizontalList(
-                    initialTracks: _initialTracks,
-                    loadMoreTracks: _loadMoreTracks,
-                  ),
-          ),
+  Widget _buildHorizontalList<T>({
+    required String title,
+    required List<T> items,
+    required Widget Function(T) itemBuilder,
+    required Future<void> Function() loadMore,
+  }) {
+    return HorizontalList<T>(
+      title: title,
+      items: items,
+      itemBuilder: itemBuilder,
+      loadMore: loadMore,
+    );
+  }
 
-          // Top Artists section
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text('Top Artists', style: Theme.of(context).textTheme.headline6),
-          ),
-          SizedBox(
-            height: 200,
-            child: TopArtistsHorizontalList(),
-          ),
+  Future<void> _loadMore<T>(Future<List<T>> Function({required int page}) fetchFunction, List<T> items) async {
+    try {
+      final newItems = await fetchFunction(page: (items.length ~/ _itemsPerPage) + 1);
+      setState(() {
+        items.addAll(newItems);
+      });
+    } catch (e) {
+      print('Error loading more items: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load more items. Please try again later.')),
+      );
+    }
+  }
 
-          // Top Genres section
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text('Top Genres', style: Theme.of(context).textTheme.headline6),
+  Widget _buildTrackItem(Track track) {
+    return _buildItemCard(
+      imageUrl: track.imageUrl,
+      title: track.name,
+      subtitle: track.artist ?? 'Unknown Artist',
+    );
+  }
+
+  Widget _buildArtistItem(Artist artist) {
+    return _buildItemCard(
+      imageUrl: artist.imageUrl,
+      title: artist.name,
+    );
+  }
+
+  Widget _buildGenreItem(String genre) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Chip(
+        label: Text(genre),
+      ),
+    );
+  }
+
+  Widget _buildAlbumItem(Album album) {
+    return _buildItemCard(
+      imageUrl: album.imageUrl,
+      title: album.name,
+      subtitle: album.artist,
+    );
+  }
+
+  Widget _buildItemCard({required String? imageUrl, required String title, String? subtitle}) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          Image.network(
+            imageUrl ?? 'https://example.com/default_image.png',
+            width: 100,
+            height: 100,
+            fit: BoxFit.cover,
           ),
-          SizedBox(
-            height: 50, // Match the height in TopGenresHorizontalList
-            child: TopGenresHorizontalList(),
-          ),
+          Text(title, overflow: TextOverflow.ellipsis),
+          if (subtitle != null) Text(subtitle, overflow: TextOverflow.ellipsis),
         ],
       ),
     );
