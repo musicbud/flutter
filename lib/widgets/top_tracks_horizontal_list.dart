@@ -47,31 +47,39 @@ class _TopTracksHorizontalListState extends State<TopTracksHorizontalList> {
     });
 
     try {
-      final newTracks = await widget.loadMoreTracks(_currentPage + 1);
-      setState(() {
-        _tracks.addAll(newTracks);
-        _currentPage++;
-        _isLoading = false;
-      });
+      final newItems = await widget.loadMoreTracks(_currentPage + 1);
+      if (newItems.isNotEmpty && !_itemsAreEqual(newItems.first, _tracks.last)) {
+        setState(() {
+          _tracks.addAll(newItems);
+          _currentPage++;
+        });
+      } else {
+        print('No new items to load');
+      }
     } catch (e) {
+      print('Error loading more items: $e');
+    } finally {
       setState(() {
         _isLoading = false;
       });
-      // Handle error (e.g., show a snackbar)
     }
+  }
+
+  bool _itemsAreEqual(dynamic item1, dynamic item2) {
+    return item1.uid == item2.uid;
   }
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 150.0, // Adjust height as needed
+      height: 150.0,
       child: ListView.builder(
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
-        itemCount: _tracks.length + 1, // +1 for the loading indicator
+        itemCount: _tracks.length + 1,
         itemBuilder: (context, index) {
           if (index == _tracks.length) {
-            return _isLoading ? _buildLoadingIndicator() : SizedBox.shrink();
+            return _buildLoadMoreButton();
           }
           final track = _tracks[index];
           return _buildTrackCard(track);
@@ -100,11 +108,15 @@ class _TopTracksHorizontalListState extends State<TopTracksHorizontalList> {
     );
   }
 
-  Widget _buildLoadingIndicator() {
-    return Container(
-      width: 50,
-      alignment: Alignment.center,
-      child: CircularProgressIndicator(),
+  Widget _buildLoadMoreButton() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Center(
+        child: ElevatedButton(
+          onPressed: _isLoading ? null : _loadMore,
+          child: _isLoading ? CircularProgressIndicator() : Text('Load More'),
+        ),
+      ),
     );
   }
 }

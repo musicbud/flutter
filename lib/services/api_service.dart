@@ -92,12 +92,16 @@ class ApiService {
     );
   }
 
-  Future<Response> fetchTopArtists() async {
-    return post('http://84.235.170.234/me/top/artists');
+  Future<Response> fetchTopArtists({int page = 1}) async {
+    return post('$_baseUrl/me/top/artists', data: {'page': page});
   }
 
-  Future<Response> fetchTopTracks() async {
-    return post('http://84.235.170.234/me/top/tracks');
+  Future<Response> fetchTopTracks({int page = 1}) async {
+    return post('$_baseUrl/me/top/tracks', data: {'page': page});
+  }
+
+  Future<Response> fetchTopGenres({int page = 1}) async {
+    return post('$_baseUrl/me/top/genres', data: {'page': page});
   }
 
   Future<List<Track>> getTopTracks({required int page}) async {
@@ -139,5 +143,24 @@ class ApiService {
   Future<void> setAuthToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('auth_token', token);
+  }
+
+  Future<List<String>> getTopGenres({required int page}) async {
+    try {
+      final response = await _dio.post(
+        '$_baseUrl/me/top/genres',
+        data: {'page': page},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> genresJson = response.data['data'];
+        return genresJson.map((genre) => genre['name'].toString()).toList();
+      } else {
+        throw Exception('Failed to load genres: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching top genres: $e');
+      rethrow;
+    }
   }
 }
