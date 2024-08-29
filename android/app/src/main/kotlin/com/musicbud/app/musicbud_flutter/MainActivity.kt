@@ -1,0 +1,6 @@
+package com.musicbud.app.musicbud_flutter
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}
