@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-class HorizontalList<T> extends StatefulWidget {
+class HorizontalList<T> extends StatelessWidget {
   final String title;
   final List<T> items;
-  final Widget Function(T item) itemBuilder;
+  final Widget Function(T) itemBuilder;
   final Future<void> Function() loadMore;
 
   const HorizontalList({
@@ -15,60 +15,34 @@ class HorizontalList<T> extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _HorizontalListState<T> createState() => _HorizontalListState<T>();
-}
-
-class _HorizontalListState<T> extends State<HorizontalList<T>> {
-  bool _isLoading = false;
-
-  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text(widget.title, style: Theme.of(context).textTheme.headline6),
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.headline6,
+          ),
         ),
         SizedBox(
           height: 200,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
-            itemCount: widget.items.length + 1,
+            itemCount: items.length + 1,
             itemBuilder: (context, index) {
-              if (index == widget.items.length) {
-                return _buildLoadMoreButton();
+              if (index == items.length) {
+                return IconButton(
+                  icon: Icon(Icons.more_horiz),
+                  onPressed: loadMore,
+                );
               }
-              return widget.itemBuilder(widget.items[index]);
+              return itemBuilder(items[index]);
             },
           ),
         ),
       ],
     );
-  }
-
-  Widget _buildLoadMoreButton() {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Center(
-        child: ElevatedButton(
-          onPressed: _isLoading ? null : _loadMore,
-          child: _isLoading ? CircularProgressIndicator() : Text('Load More'),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _loadMore() async {
-    if (_isLoading) return;
-    setState(() {
-      _isLoading = true;
-    });
-
-    await widget.loadMore();
-
-    setState(() {
-      _isLoading = false;
-    });
   }
 }

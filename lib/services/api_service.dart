@@ -1,31 +1,35 @@
 import 'package:dio/dio.dart';
-import 'package:cookie_jar/cookie_jar.dart';
-import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:musicbud_flutter/models/track.dart';
-import 'package:musicbud_flutter/models/artist.dart';
-import 'package:musicbud_flutter/models/album.dart';
+import '../models/track.dart';
+import '../models/artist.dart';
+import '../models/album.dart';
+import '../models/user_profile.dart';
 
 class ApiService {
-  final Dio _dio = Dio();
-  final CookieJar _cookieJar = CookieJar();
-  static const String _tokenKey = 'api_token';
-  static const String _sessionIdKey = 'session_id';
-  final String _baseUrl = 'http://84.235.170.234'; // Replace with your actual base URL
+  final Dio _dio;
+  final String _baseUrl;
+  String token;
 
-  ApiService() {
+  ApiService()
+      : _dio = Dio(),
+        _baseUrl = 'http://84.235.170.234',
+        token = '' {
+    _initializeInterceptors();
+  }
+
+  void _initializeInterceptors() {
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        final prefs = await SharedPreferences.getInstance();
-        final token = prefs.getString('auth_token');
+        final prefs = await SharedPreferences.getInstance(); // Corrected here
+        final storedToken = prefs.getString('auth_token');
         final sessionId = prefs.getString('session_id');
         
-        print('Stored token: $token');
+        print('Stored token: $storedToken');
         print('Stored session ID: $sessionId');
 
-        if (token != null) {
-          options.headers['Authorization'] = 'Bearer $token';
+        if (storedToken != null) {
+          options.headers['Authorization'] = 'Bearer $storedToken';
+          token = storedToken; // Update the token property
         }
         if (sessionId != null) {
           options.headers['Cookie'] = 'musicbud_sessionid=$sessionId';
@@ -42,242 +46,163 @@ class ApiService {
     ));
   }
 
-  Future<void> setToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_tokenKey, token);
+  Future<void> setAuthToken(String newToken) async {
+    token = newToken;
+    final prefs = await SharedPreferences.getInstance(); // Corrected here
+    await prefs.setString('auth_token', newToken);
   }
 
   Future<void> setSessionId(String sessionId) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_sessionIdKey, sessionId);
+    final prefs = await SharedPreferences.getInstance(); // Corrected here
+    await prefs.setString('session_id', sessionId);
   }
 
-  Future<String> getToken() async {
-    // Implement your logic to retrieve the token
-    return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI1MDQ1MzU0LCJpYXQiOjE3MjQ5NTg5NTQsImp0aSI6IjVhNWQ4ZWNlMTgwZjQ2NDlhYzYyZjJmYTg5NWQ4Y2VjIiwidXNlcl9pZCI6NDI4fQ.T485hEBUcu42EUHcUmWrl6Ff0Esf9r8tLLwdxtU1nEA';
-  }
-
-  Future<String> getSessionId() async {
-    // Implement your logic to retrieve the session ID
-    return 'your_session_id';
-  }
-
-  Future<Response> get(String url, {Map<String, dynamic>? queryParameters}) async {
-    final token = await getToken();
-    final sessionId = await getSessionId();
-    final headers = {
-      'Authorization': 'Bearer $token',
-    };
-    if (!kIsWeb) {
-      headers['Cookie'] = 'musicbud_sessionid=$sessionId';
+  Future<UserProfile> getUserProfile() async {
+    try {
+      final response = await _dio.post(
+        '$_baseUrl/me/profile',
+        data: {
+          'service': 'spotify',
+          'token': token,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        print('Raw API response: ${response.data}');
+        return UserProfile.fromJson(response.data);
+      } else {
+        throw Exception('Failed to load user profile');
+      }
+    } catch (e) {
+      print('Error fetching user profile: $e');
+      rethrow;
     }
-    return _dio.get(
-      url,
-      queryParameters: queryParameters,
-      options: Options(headers: headers),
-    );
   }
 
-  Future<Response> post(String url, {Map<String, dynamic>? data}) async {
-    final token = await getToken();
-    final sessionId = await getSessionId();
-    final headers = {
-      'Authorization': 'Bearer $token',
-    };
-    if (!kIsWeb) {
-      headers['Cookie'] = 'musicbud_sessionid=$sessionId';
+  Future<List<Track>> getTopTracks({required int page}) async {
+    try {
+      final response = await _dio.post('$_baseUrl/me/top/tracks', queryParameters: {'page': page});
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        return data.map((json) => Track.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load top tracks');
+      }
+    } catch (e) {
+      print('Error fetching top tracks: $e');
+      return [];
     }
-    return _dio.post(
-      url,
-      data: data,
-      options: Options(headers: headers),
-    );
   }
 
   Future<List<Artist>> fetchTopArtists({required int page}) async {
     try {
-      final response = await _dio.post(
-        '$_baseUrl/me/top/artists',
-        queryParameters: {'page': page},
-      );
-
+      final response = await _dio.post('$_baseUrl/me/top/artists', queryParameters: {'page': page});
       if (response.statusCode == 200) {
-        final List<dynamic> artistsJson = response.data['data'];
-        return artistsJson.map((json) => Artist.fromJson(json)).toList();
+        final List<dynamic> data = response.data['data'];
+        return data.map((json) => Artist.fromJson(json)).toList();
       } else {
-        throw Exception('Failed to load top artists: ${response.statusCode}');
+        throw Exception('Failed to load top artists');
       }
     } catch (e) {
       print('Error fetching top artists: $e');
-      rethrow;
+      return [];
     }
-  }
-
-  Future<Response> fetchTopTracks({int page = 1}) async {
-    return post('$_baseUrl/me/top/tracks', data: {'page': page});
-  }
-
-  Future<Response> fetchTopGenres({int page = 1}) async {
-    return post('$_baseUrl/me/top/genres', data: {'page': page});
-  }
-
-  Future<List<Track>> getTopTracks({required int page}) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token');
-    final sessionId = prefs.getString('session_id');
-
-    if (token == null || sessionId == null) {
-      throw Exception('Authentication token or session ID is missing. Please log in again.');
-    }
-
-    try {
-      print('Fetching top tracks for page: $page');
-      final response = await _dio.post(
-        '$_baseUrl/me/top/tracks',
-        data: {'page': page},
-        options: Options(
-          headers: {
-            'Authorization': 'Bearer $token',
-            'Cookie': 'musicbud_sessionid=$sessionId',
-          },
-        ),
-      );
-      print('Response status: ${response.statusCode}');
-      print('Response data: ${response.data}');
-
-      if (response.statusCode == 200) {
-        final List<dynamic> tracksJson = response.data['data'];
-        return tracksJson.map((json) => Track.fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to load tracks: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error fetching top tracks: $e');
-      rethrow;
-    }
-  }
-
-  Future<void> setAuthToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('auth_token', token);
   }
 
   Future<List<String>> getTopGenres({required int page}) async {
     try {
-      final response = await _dio.post(
-        '$_baseUrl/me/top/genres',
-        data: {'page': page},
-      );
-
+      final response = await _dio.post('$_baseUrl/me/top/genres', queryParameters: {'page': page});
       if (response.statusCode == 200) {
-        final List<dynamic> genresJson = response.data['data'];
-        return genresJson.map((genre) => genre['name'].toString()).toList();
+        final List<dynamic> data = response.data['data'];
+        return data.map((json) => json['name'].toString()).toList();
       } else {
-        throw Exception('Failed to load genres: ${response.statusCode}');
+        throw Exception('Failed to load top genres');
       }
     } catch (e) {
       print('Error fetching top genres: $e');
-      rethrow;
+      return [];
     }
   }
 
   Future<List<Artist>> getLikedArtists({required int page}) async {
-    late List<Artist> artists;
     try {
-      final response = await _dio.post(
-        '$_baseUrl/me/liked/artists',
-        queryParameters: {'page': page},
-      );
+      final response = await _dio.post('$_baseUrl/me/liked/artists', queryParameters: {'page': page});
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data'];
-        artists = data.map((json) => Artist.fromJson(json)).toList();
+        return data.map((json) => Artist.fromJson(json)).toList();
       } else {
-        artists = [];
+        throw Exception('Failed to load liked artists');
       }
     } catch (e) {
       print('Error fetching liked artists: $e');
-      artists = [];
+      return [];
     }
-    return artists;
   }
 
   Future<List<Track>> getLikedTracks({required int page}) async {
-    late List<Track> tracks;
     try {
-      final response = await _dio.post(
-        '$_baseUrl/me/liked/tracks',
-        queryParameters: {'page': page},
-      );
+      final response = await _dio.post('$_baseUrl/me/liked/tracks', queryParameters: {'page': page});
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data'];
-        tracks = data.map((json) => Track.fromJson(json)).toList();
+        return data.map((json) => Track.fromJson(json)).toList();
       } else {
-        tracks = [];
+        throw Exception('Failed to load liked tracks');
       }
     } catch (e) {
       print('Error fetching liked tracks: $e');
-      tracks = [];
+      return [];
     }
-    return tracks;
   }
 
   Future<List<String>> getLikedGenres({required int page}) async {
-    late List<String> genres;
     try {
-      final response = await _dio.post(
-        '$_baseUrl/me/liked/genres',
-        queryParameters: {'page': page},
-      );
+      final response = await _dio.post('$_baseUrl/me/liked/genres', queryParameters: {'page': page});
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data'];
-        genres = data.map((json) => json['name'].toString()).toList();
+        return data.map((json) => json['name'].toString()).toList();
       } else {
-        genres = [];
+        throw Exception('Failed to load liked genres');
       }
     } catch (e) {
       print('Error fetching liked genres: $e');
-      genres = [];
+      return [];
     }
-    return genres;
   }
 
   Future<List<Album>> getLikedAlbums({required int page}) async {
-    late List<Album> albums;
     try {
-      final response = await _dio.post(
-        '$_baseUrl/me/liked/albums',
-        queryParameters: {'page': page},
-      );
+      final response = await _dio.post('$_baseUrl/me/liked/albums', queryParameters: {'page': page});
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data'];
-        albums = data.map((json) => Album.fromJson(json)).toList();
+        return data.map((json) => Album.fromJson(json)).toList();
       } else {
-        albums = [];
+        throw Exception('Failed to load liked albums');
       }
     } catch (e) {
       print('Error fetching liked albums: $e');
-      albums = [];
+      return [];
     }
-    return albums;
   }
 
   Future<List<Track>> getPlayedTracks({required int page}) async {
-    late List<Track> tracks;
     try {
-      final response = await _dio.post(
-        '$_baseUrl/me/played/tracks',
-        queryParameters: {'page': page},
-      );
+      final response = await _dio.post('$_baseUrl/me/played/tracks', queryParameters: {'page': page});
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data'];
-        tracks = data.map((json) => Track.fromJson(json)).toList();
+        return data.map((json) => Track.fromJson(json)).toList();
       } else {
-        tracks = [];
+        throw Exception('Failed to load played tracks');
       }
     } catch (e) {
       print('Error fetching played tracks: $e');
-      tracks = [];
+      return [];
     }
-    return tracks;
   }
+
+  // Add other API methods here (getTopTracks, getLikedArtists, etc.)
 }

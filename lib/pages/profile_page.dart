@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/track.dart';
 import '../models/artist.dart';
 import '../models/album.dart';
+import '../models/user_profile.dart';
 import '../services/api_service.dart';
 import '../widgets/horizontal_list.dart';
 
@@ -28,6 +29,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
   final ApiService _apiService = ApiService();
   static const int _itemsPerPage = 20;
 
+  UserProfile? _userProfile;
   List<Track> _topTracks = [];
   List<Artist> _topArtists = [];
   List<String> _topGenres = [];
@@ -46,25 +48,21 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
   Future<void> _loadInitialData() async {
     try {
       final futures = await Future.wait([
+        _apiService.getUserProfile(),
         _apiService.getTopTracks(page: 1),
         _apiService.fetchTopArtists(page: 1),
         _apiService.getTopGenres(page: 1),
         _apiService.getLikedArtists(page: 1),
         _apiService.getLikedTracks(page: 1),
-        _apiService.getLikedGenres(page: 1),
-        _apiService.getLikedAlbums(page: 1),
-        _apiService.getPlayedTracks(page: 1),
       ]);
 
       setState(() {
-        _topTracks = futures[0] as List<Track>;
-        _topArtists = futures[1] as List<Artist>;
-        _topGenres = futures[2] as List<String>;
-        _likedArtists = futures[3] as List<Artist>;
-        _likedTracks = futures[4] as List<Track>;
-        _likedGenres = futures[5] as List<String>;
-        _likedAlbums = futures[6] as List<Album>;
-        _playedTracks = futures[7] as List<Track>;
+        _userProfile = futures[0] as UserProfile;
+        _topTracks = futures[1] as List<Track>;
+        _topArtists = futures[2] as List<Artist>;
+        _topGenres = futures[3] as List<String>;
+        _likedArtists = futures[4] as List<Artist>;
+        _likedTracks = futures[5] as List<Track>;
       });
     } catch (e) {
       print('Error loading initial data: $e');
@@ -76,8 +74,9 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _buildUserProfileSection(),
+          SizedBox(height: 20), // Add some space between profile and lists
           _buildHorizontalList<Track>(
             title: 'Top Tracks',
             items: _topTracks,
@@ -126,6 +125,43 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
             itemBuilder: _buildTrackItem,
             loadMore: () => _loadMore(_apiService.getPlayedTracks, _playedTracks),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserProfileSection() {
+    if (_userProfile == null) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (_userProfile!.photoUrl != null)
+            CircleAvatar(
+              radius: 50,
+              backgroundImage: NetworkImage(_userProfile!.photoUrl!),
+            )
+          else
+            CircleAvatar(
+              radius: 50,
+              child: Text(_userProfile!.username[0].toUpperCase()),
+            ),
+          SizedBox(height: 16),
+          Text(
+            _userProfile!.displayName ?? _userProfile!.username,
+            style: Theme.of(context).textTheme.headline5,
+          ),
+          SizedBox(height: 8),
+          if (_userProfile!.email != null)
+            Text('Email: ${_userProfile!.email}'),
+          if (_userProfile!.bio != null)
+            Text('Bio: ${_userProfile!.bio}'),
+          Text('Active: ${_userProfile!.isActive ? 'Yes' : 'No'}'),
+          Text('Authenticated: ${_userProfile!.isAuthenticated ? 'Yes' : 'No'}'),
         ],
       ),
     );

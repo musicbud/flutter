@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/pages/profile_page.dart'; // Make sure this import is correct
+import 'package:musicbud_flutter/services/api_service.dart';
 import 'pages/chats_page.dart';
 import 'pages/buds_page.dart';
 import 'pages/stories_page.dart';
 import 'pages/settings_page.dart';
-import 'services/api_service.dart';
+import 'pages/profile_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
