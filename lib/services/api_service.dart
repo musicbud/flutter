@@ -3,12 +3,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/track.dart';
 import '../models/artist.dart';
 import '../models/album.dart';
+import '../models/anime.dart';
+import '../models/manga.dart';
 import '../models/user_profile.dart';
+import '../models/genre.dart';
 
 class ApiService {
   final Dio _dio;
   final String _baseUrl;
   String token;
+  String _sessionId = '';
 
   ApiService()
       : _dio = Dio(),
@@ -20,7 +24,7 @@ class ApiService {
   void _initializeInterceptors() {
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        final prefs = await SharedPreferences.getInstance(); // Corrected here
+        final prefs = await SharedPreferences.getInstance();
         final storedToken = prefs.getString('auth_token');
         final sessionId = prefs.getString('session_id');
         
@@ -29,7 +33,7 @@ class ApiService {
 
         if (storedToken != null) {
           options.headers['Authorization'] = 'Bearer $storedToken';
-          token = storedToken; // Update the token property
+          token = storedToken;
         }
         if (sessionId != null) {
           options.headers['Cookie'] = 'musicbud_sessionid=$sessionId';
@@ -48,12 +52,13 @@ class ApiService {
 
   Future<void> setAuthToken(String newToken) async {
     token = newToken;
-    final prefs = await SharedPreferences.getInstance(); // Corrected here
+    final prefs = await SharedPreferences.getInstance();
     await prefs.setString('auth_token', newToken);
   }
 
   Future<void> setSessionId(String sessionId) async {
-    final prefs = await SharedPreferences.getInstance(); // Corrected here
+    _sessionId = sessionId;
+    final prefs = await SharedPreferences.getInstance();
     await prefs.setString('session_id', sessionId);
   }
 
@@ -99,7 +104,7 @@ class ApiService {
     }
   }
 
-  Future<List<Artist>> fetchTopArtists({required int page}) async {
+  Future<List<Artist>> getTopArtists({required int page}) async {
     try {
       final response = await _dio.post('$_baseUrl/me/top/artists', queryParameters: {'page': page});
       if (response.statusCode == 200) {
@@ -204,5 +209,53 @@ class ApiService {
     }
   }
 
-  // Add other API methods here (getTopTracks, getLikedArtists, etc.)
+  Future<List<Anime>> getTopAnime({required int page}) async {
+    try {
+      final response = await _dio.post(
+        '$_baseUrl/me/top/anime',
+        queryParameters: {'page': page},
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Cookie': 'musicbud_sessionid=$_sessionId',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        print('Raw API response for top anime: ${response.data}');
+        final List<dynamic> data = response.data['data'];
+        return data.map((json) => Anime.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load top anime');
+      }
+    } catch (e) {
+      print('Error fetching top anime: $e');
+      return [];
+    }
+  }
+
+  Future<List<Manga>> getTopManga({required int page}) async {
+    try {
+      final response = await _dio.post(
+        '$_baseUrl/me/top/manga',
+        queryParameters: {'page': page},
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+            'Cookie': 'musicbud_sessionid=$_sessionId',
+          },
+        ),
+      );
+      if (response.statusCode == 200) {
+        print('Raw API response for top manga: ${response.data}');
+        final List<dynamic> data = response.data['data'];
+        return data.map((json) => Manga.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load top manga');
+      }
+    } catch (e) {
+      print('Error fetching top manga: $e');
+      return [];
+    }
+  }
 }

@@ -1,22 +1,33 @@
+import 'artist.dart';
+
 class Album {
-  final String uid;
+  final String id;
   final String name;
-  final String artist;
+  final List<Artist> artists;
   final String? imageUrl;
+  final String? releaseDate;
+  final int? totalTracks;
+  final String? artist;
 
   Album({
-    required this.uid,
+    required this.id,
     required this.name,
-    required this.artist,
+    required this.artists,
     this.imageUrl,
+    this.releaseDate,
+    this.totalTracks,
+    this.artist,
   });
 
   factory Album.fromJson(Map<String, dynamic> json) {
     return Album(
-      uid: json['uid'],
+      id: json['id'],
       name: json['name'],
-      artist: json['artist'],
+      artists: (json['artists'] as List?)?.map((a) => Artist.fromJson(a)).toList() ?? [],
       imageUrl: json['image_url'],
+      releaseDate: json['release_date'],
+      totalTracks: json['total_tracks'],
+      artist: json['artist'],
     );
   }
 }
