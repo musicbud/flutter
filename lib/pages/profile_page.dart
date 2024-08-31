@@ -1,46 +1,118 @@
 import 'package:flutter/material.dart';
-import '../models/track.dart';
-import '../models/artist.dart';
-import '../models/album.dart';
-import '../models/anime.dart';
-import '../models/manga.dart';
-import '../models/user_profile.dart';
-import '../models/content_service.dart';
-import '../services/api_service.dart';
-import '../widgets/horizontal_list.dart';
+import 'package:musicbud_flutter/models/track.dart';
+import 'package:musicbud_flutter/models/artist.dart';
+import 'package:musicbud_flutter/models/album.dart';
+import 'package:musicbud_flutter/models/anime.dart';
+import 'package:musicbud_flutter/models/manga.dart';
+import 'package:musicbud_flutter/models/user_profile.dart';
+import 'package:musicbud_flutter/models/content_service.dart';
+import 'package:musicbud_flutter/services/api_service.dart';
+import 'package:musicbud_flutter/widgets/horizontal_list.dart';
+import 'package:musicbud_flutter/models/common_track.dart';
+import 'package:musicbud_flutter/models/common_artist.dart';
+import 'package:musicbud_flutter/models/common_genre.dart';
+import 'package:musicbud_flutter/models/common_album.dart';
+import 'package:musicbud_flutter/widgets/list_item.dart';
+import 'package:dio/dio.dart';
+import 'package:musicbud_flutter/pages/buds_page.dart';
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+class ProfilePage extends StatefulWidget {
+  final ApiService apiService;
+
+  const ProfilePage({Key? key, required this.apiService}) : super(key: key);
+
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Profile'),
+        title: Text(_getTitle()),
       ),
-      body: ProfilePageContent(),
+      body: _getBody(),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.group),
+            label: 'Buds',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: 'Chat',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blue,
+        onTap: _onItemTapped,
+      ),
     );
+  }
+
+  String _getTitle() {
+    switch (_selectedIndex) {
+      case 0:
+        return 'Profile';
+      case 1:
+        return 'Buds';
+      case 2:
+        return 'Chat';
+      default:
+        return 'MusicBud';
+    }
+  }
+
+  Widget _getBody() {
+    switch (_selectedIndex) {
+      case 0:
+        return ProfilePageContent(apiService: widget.apiService);
+      case 1:
+        return BudsPage(apiService: widget.apiService);
+      case 2:
+        return Center(child: Text('Chat Page')); // Replace with actual Chat page content
+      default:
+        return ProfilePageContent(apiService: widget.apiService);
+    }
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 }
 
 class ProfilePageContent extends StatefulWidget {
+  final ApiService apiService;
+
+  const ProfilePageContent({Key? key, required this.apiService}) : super(key: key);
+
   @override
   _ProfilePageContentState createState() => _ProfilePageContentState();
 }
 
 class _ProfilePageContentState extends State<ProfilePageContent> {
-  final ApiService _apiService = ApiService();
-  static const int _itemsPerPage = 20;
+  late ApiService _apiService;
+  bool _isLoading = true;
+  String? _error;
 
   UserProfile? _userProfile;
   ContentService _selectedService = ContentService.music;
 
   // Music-related lists
-  List<Track> _topTracks = [];
-  List<Artist> _topArtists = [];
-  List<String> _topGenres = [];
-  List<Album> _likedAlbums = [];
-  List<Track> _playedTracks = [];
+  List<CommonTrack> _topTracks = [];
+  List<CommonArtist> _topArtists = [];
+  List<CommonGenre> _topGenres = [];
+  List<CommonAlbum> _likedAlbums = [];
+  List<CommonTrack> _playedTracks = [];
 
   // Anime-related lists
   List<Anime> _topAnime = [];
@@ -49,72 +121,158 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
   @override
   void initState() {
     super.initState();
-    _loadInitialData();
+    _apiService = widget.apiService;
+    _initializeApiAndLoadData();
   }
 
-  Future<void> _loadInitialData() async {
-    await _loadDataForService(_selectedService);
-  }
+  Future<void> _initializeApiAndLoadData() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
 
-  Future<void> _loadDataForService(ContentService service) async {
     try {
-      final userProfileFuture = _apiService.getUserProfile();
-
-      setState(() {
-        _topTracks = [];
-        _topArtists = [];
-        _topGenres = [];
-        _likedAlbums = [];
-        _playedTracks = [];
-        _topAnime = [];
-        _topManga = [];
-      });
-
-      switch (service) {
-        case ContentService.music:
-          final futures = await Future.wait<dynamic>([
-            userProfileFuture,
-            _apiService.getTopTracks(page: 1),
-            _apiService.getTopArtists(page: 1),
-            _apiService.getTopGenres(page: 1),
-            _apiService.getLikedAlbums(page: 1),
-            _apiService.getPlayedTracks(page: 1),
-          ]);
-
-          setState(() {
-            _userProfile = futures[0] as UserProfile;
-            _topTracks = futures[1] as List<Track>;
-            _topArtists = futures[2] as List<Artist>;
-            _topGenres = futures[3] as List<String>;
-            _likedAlbums = futures[4] as List<Album>;
-            _playedTracks = futures[5] as List<Track>;
-          });
-          break;
-
-        case ContentService.anime:
-          final futures = await Future.wait<dynamic>([
-            userProfileFuture,
-            _apiService.getTopAnime(page: 1),
-            _apiService.getTopManga(page: 1),
-          ]);
-
-          setState(() {
-            _userProfile = futures[0] as UserProfile;
-            _topAnime = futures[1] as List<Anime>;
-            _topManga = futures[2] as List<Manga>;
-          });
-          break;
-      }
+      await _loadUserProfile();
+      await _loadTopTracks();
+      await _loadTopArtists();
+      await _loadTopGenres();
+      await _loadLikedAlbums();
+      await _loadPlayedTracks();
+      await _loadTopAnime();
+      await _loadTopManga();
     } catch (e) {
-      print('Error loading data for ${service.name}: $e');
-      // TODO: Handle error state
+      print('Error loading data: $e');
+      setState(() {
+        _error = e.toString();
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _loadUserProfile() async {
+    try {
+      final profile = await _apiService.getUserProfile();
+      setState(() {
+        _userProfile = profile;
+      });
+    } catch (e) {
+      print('Error loading user profile: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> _loadTopTracks() async {
+    try {
+      final tracks = await _apiService.getTopTracks();
+      setState(() {
+        _topTracks = tracks;
+      });
+    } catch (e) {
+      print('Error loading top tracks: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> _loadTopArtists() async {
+    try {
+      final artists = await _apiService.getTopArtists();
+      setState(() {
+        _topArtists = artists;
+      });
+    } catch (e) {
+      print('Error loading top artists: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> _loadTopGenres() async {
+    try {
+      final genres = await _apiService.getTopGenres();
+      setState(() {
+        _topGenres = genres;
+      });
+    } catch (e) {
+      print('Error loading top genres: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> _loadLikedAlbums() async {
+    try {
+      final albums = await _apiService.getLikedAlbums();
+      setState(() {
+        _likedAlbums = albums;
+      });
+    } catch (e) {
+      print('Error loading liked albums: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> _loadPlayedTracks() async {
+    try {
+      final tracks = await _apiService.getPlayedTracks();
+      setState(() {
+        _playedTracks = tracks;
+      });
+    } catch (e) {
+      print('Error loading played tracks: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> _loadTopAnime() async {
+    try {
+      final anime = await _apiService.getTopAnime();
+      setState(() {
+        _topAnime = anime;
+      });
+    } catch (e) {
+      print('Error loading top anime: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> _loadTopManga() async {
+    try {
+      final manga = await _apiService.getTopManga();
+      setState(() {
+        _topManga = manga;
+      });
+    } catch (e) {
+      print('Error loading top manga: $e');
+      rethrow;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(_error!),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _initializeApiAndLoadData,
+              child: Text('Retry'),
+            ),
+          ],
+        ),
+      );
+    }
+
     return SingleChildScrollView(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildUserProfileSection(),
           SizedBox(height: 20),
@@ -214,7 +372,6 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
             setState(() {
               _selectedService = newValue;
             });
-            _loadDataForService(newValue);
           }
         },
         items: ContentService.values.map<DropdownMenuItem<ContentService>>((ContentService value) {
@@ -228,118 +385,256 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
   }
 
   List<Widget> _buildContentLists() {
-    switch (_selectedService) {
-      case ContentService.music:
-        return [
-          _buildHorizontalList<Track>(
+    if (_selectedService == ContentService.music) {
+      return [
+        if (_topTracks.isNotEmpty)
+          HorizontalList<CommonTrack>(
             title: 'Top Tracks',
             items: _topTracks,
-            itemBuilder: _buildTrackItem,
-            loadMore: () => _loadMore(_apiService.getTopTracks, _topTracks),
+            itemBuilder: (track) => _buildTrackItem(track),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('No top tracks available'),
           ),
-          _buildHorizontalList<Artist>(
+        if (_topArtists.isNotEmpty)
+          HorizontalList<CommonArtist>(
             title: 'Top Artists',
             items: _topArtists,
-            itemBuilder: _buildArtistItem,
-            loadMore: () => _loadMore(_apiService.getTopArtists, _topArtists),
+            itemBuilder: (artist) => _buildArtistItem(artist),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('No top artists available'),
           ),
-          _buildHorizontalList<String>(
+        if (_topGenres.isNotEmpty)
+          HorizontalList<CommonGenre>(
             title: 'Top Genres',
             items: _topGenres,
-            itemBuilder: _buildGenreItem,
-            loadMore: () => _loadMore(_apiService.getTopGenres, _topGenres),
+            itemBuilder: (genre) => _buildGenreItem(genre),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('No top genres available'),
           ),
-          _buildHorizontalList<Album>(
+        if (_likedAlbums.isNotEmpty)
+          HorizontalList<CommonAlbum>(
             title: 'Liked Albums',
             items: _likedAlbums,
-            itemBuilder: _buildAlbumItem,
-            loadMore: () => _loadMore(_apiService.getLikedAlbums, _likedAlbums),
+            itemBuilder: (album) => _buildAlbumItem(album),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('No liked albums available'),
           ),
-          _buildHorizontalList<Track>(
+        if (_playedTracks.isNotEmpty)
+          HorizontalList<CommonTrack>(
             title: 'Recently Played',
             items: _playedTracks,
-            itemBuilder: _buildTrackItem,
-            loadMore: () => _loadMore(_apiService.getPlayedTracks, _playedTracks),
+            itemBuilder: (track) => _buildTrackItem(track),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('No recently played tracks available'),
           ),
-        ];
-      case ContentService.anime:
-        return [
-          _buildHorizontalList<Anime>(
+      ];
+    } else if (_selectedService == ContentService.anime) {
+      return [
+        if (_topAnime.isNotEmpty)
+          HorizontalList<Anime>(
             title: 'Top Anime',
             items: _topAnime,
-            itemBuilder: _buildAnimeItem,
-            loadMore: () => _loadMore(_apiService.getTopAnime, _topAnime),
+            itemBuilder: (anime) => _buildAnimeItem(anime),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('No top anime available'),
           ),
-          _buildHorizontalList<Manga>(
+        if (_topManga.isNotEmpty)
+          HorizontalList<Manga>(
             title: 'Top Manga',
             items: _topManga,
-            itemBuilder: _buildMangaItem,
-            loadMore: () => _loadMore(_apiService.getTopManga, _topManga),
+            itemBuilder: (manga) => _buildMangaItem(manga),
+          )
+        else
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text('No top manga available'),
           ),
-        ];
+      ];
+    } else {
+      return [];
     }
   }
 
-  Widget _buildHorizontalList<T>({
-    required String title,
-    required List<T> items,
-    required Widget Function(T) itemBuilder,
-    required Future<void> Function() loadMore,
-  }) {
-    return HorizontalList<T>(
-      title: title,
-      items: items,
-      itemBuilder: itemBuilder,
-      loadMore: loadMore,
-    );
-  }
-
-  Future<void> _loadMore<T>(
-    Future<List<T>> Function({required int page}) fetchFunction,
-    List<T> items
-  ) async {
-    try {
-      final newItems = await fetchFunction(page: (items.length ~/ _itemsPerPage) + 1);
-      setState(() {
-        items.addAll(newItems);
-      });
-    } catch (e) {
-      print('Error loading more items: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load more items. Please try again later.')),
-      );
-    }
-  }
-
-  Widget _buildTrackItem(Track track) {
-    return _buildItemCard(
-      imageUrl: track.imageUrl ?? 'default_image_url',
-      title: track.name,
-      subtitle: track.artistName ?? 'Unknown Artist',
-    );
-  }
-
-  Widget _buildArtistItem(Artist artist) {
-    return _buildItemCard(
-      imageUrl: artist.imageUrl,
-      title: artist.name,
-    );
-  }
-
-  Widget _buildGenreItem(String genre) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Chip(
-        label: Text(genre),
+  Widget _buildTrackItem(CommonTrack track) {
+    return Container(
+      width: 150,
+      child: Card(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (track.image != null)
+              Image.network(
+                track.image!,
+                height: 100,
+                width: 150,
+                fit: BoxFit.cover,
+              )
+            else
+              Container(
+                height: 100,
+                width: 150,
+                color: Colors.grey,
+                child: Icon(Icons.music_note, size: 50),
+              ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    track.name ?? 'Unknown Track',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    track.artist ?? 'Unknown Artist',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildAlbumItem(Album album) {
-    return _buildItemCard(
-      imageUrl: album.imageUrl,
-      title: album.name,
-      subtitle: album.artist ?? 'Unknown Artist',
+  Widget _buildArtistItem(CommonArtist artist) {
+    return Container(
+      width: 150,
+      child: Card(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (artist.imageUrl != null)
+              Image.network(
+                artist.imageUrl!,
+                height: 100,
+                width: 150,
+                fit: BoxFit.cover,
+              )
+            else
+              Container(
+                height: 100,
+                width: 150,
+                color: Colors.grey,
+                child: Icon(Icons.person, size: 50),
+              ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    artist.name ?? 'Unknown Artist',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Similarity: ${artist.similarityScore?.toStringAsFixed(2) ?? 'N/A'}',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGenreItem(CommonGenre genre) {
+    return Container(
+      width: 150,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.music_note, size: 40),
+              SizedBox(height: 8),
+              Text(
+                genre.name ?? 'Unknown Genre',
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAlbumItem(CommonAlbum album) {
+    return Container(
+      width: 150,
+      child: Card(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (album.imageUrl != null)
+              Image.network(
+                album.imageUrl!,
+                height: 100,
+                width: 150,
+                fit: BoxFit.cover,
+              )
+            else
+              Container(
+                height: 100,
+                width: 150,
+                color: Colors.grey,
+                child: Icon(Icons.album, size: 50),
+              ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    album.name ?? 'Unknown Album',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    album.artist ?? 'Unknown Artist',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
