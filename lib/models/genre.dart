@@ -18,3 +18,25 @@ class Genre {
     );
   }
 }
+
+class CommonTrack {
+  final String? id;
+  final String? name;
+  // ... other fields ...
+
+  CommonTrack({
+    this.id,
+    this.name,
+    // ... other fields ...
+  });
+
+  factory CommonTrack.fromJson(Map<String, dynamic> json) {
+    return CommonTrack(
+      id: json['id'] as String?,
+      name: json['name'] as String?,
+      // ... other fields ...
+    );
+  }
+}
+
+// Similar updates for CommonGenre, CommonArtist, etc.

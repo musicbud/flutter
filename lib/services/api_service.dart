@@ -9,13 +9,14 @@ import 'package:musicbud_flutter/models/manga.dart';
 import 'package:musicbud_flutter/models/bud_match.dart';
 import 'package:musicbud_flutter/models/common_item.dart';
 import 'package:musicbud_flutter/models/categorized_common_items.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
 
   late Dio _dio;
-  String? _token;
+  String? _accessToken;
   String? _sessionId;
   final String _baseUrl = 'http://84.235.170.234';
 
@@ -30,23 +31,57 @@ class ApiService {
       },
     ));
     _dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
+    _dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) {
+        if (_accessToken != null) {
+          options.headers['Authorization'] = 'Bearer $_accessToken';
+        }
+        return handler.next(options);
+      },
+    ));
   }
 
-  void setAuthToken(String token) {
-    _token = token;
-    _updateHeaders();
-    print('Auth token set: $_token'); // Debug print
+  Future<void> setAuthToken(String token) async {
+    _accessToken = token;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('accessToken', token);
+    print('Auth token set: $_accessToken'); // Debug print
   }
 
-  void setSessionId(String sessionId) {
+  Future<void> setRefreshToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('refreshToken', token);
+  }
+
+  Future<String?> getAuthToken() async {
+    if (_accessToken == null) {
+      final prefs = await SharedPreferences.getInstance();
+      _accessToken = prefs.getString('accessToken');
+    }
+    return _accessToken;
+  }
+
+  Future<String?> getRefreshToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('refreshToken');
+  }
+
+  Future<void> setSessionId(String sessionId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('sessionId', sessionId);
     _sessionId = sessionId;
     _updateHeaders();
     print('Session ID set: $_sessionId'); // Debug print
   }
 
+  Future<String?> getSessionId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('sessionId');
+  }
+
   void _updateHeaders() {
-    if (_token != null) {
-      _dio.options.headers['Authorization'] = 'Bearer $_token';
+    if (_accessToken != null) {
+      _dio.options.headers['Authorization'] = 'Bearer $_accessToken';
     }
     if (_sessionId != null) {
       _dio.options.headers['Cookie'] = 'musicbud_sessionid=$_sessionId';
@@ -80,10 +115,10 @@ class ApiService {
   Future<List<T>> _fetchCommonItems<T>(String endpoint, T Function(Map<String, dynamic>) fromJson, String budId, {int page = 1}) async {
     try {
       print('Fetching common items from $endpoint'); // Debug print
-      print('Current token: $_token'); // Debug print
+      print('Current token: $_accessToken'); // Debug print
       print('Current headers: ${_dio.options.headers}'); // Debug print
 
-      if (_token == null) {
+      if (_accessToken == null) {
         throw Exception('Authentication token is not set');
       }
 
@@ -124,8 +159,21 @@ class ApiService {
 
   // Profile page methods
   Future<UserProfile> getUserProfile() async {
-    final response = await _dio.post('/me/profile', data: {'service': 'spotify'});
-    return UserProfile.fromJson(response.data);
+    try {
+      final response = await _dio.post(
+        '/me/profile',
+        data: {'service': 'spotify'},
+      );
+
+      if (response.statusCode == 200) {
+        return UserProfile.fromJson(response.data);
+      } else {
+        throw Exception('Failed to load user profile');
+      }
+    } catch (e) {
+      print('Error fetching user profile: $e');
+      rethrow;
+    }
   }
 
   Future<List<CommonTrack>> getTopTracks({int page = 1}) async {
@@ -222,21 +270,18 @@ class ApiService {
     return _fetchCommonItems('/bud/common/played/tracks', CommonTrack.fromJson, budId);
   }
 
-  Future<List<Bud>> getBuds(String endpoint) async {
+  Future<List<BudMatch>> getBuds(String endpoint, {int page = 1}) async {
     try {
-      final response = await _dio.post(endpoint, data: {'page': 1});
-      print('Response status code: ${response.statusCode}');
-      print('Response data: ${response.data}');
-
+      final response = await _dio.post(endpoint, data: {'page': page});
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data'];
-        return data.map((json) => Bud.fromJson(json)).toList();
+        return data.map((json) => BudMatch.fromJson(json)).toList();
       } else {
-        throw Exception('Failed to load buds: ${response.statusCode}');
+        throw Exception('Failed to load buds from $endpoint: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error fetching buds: $e');
-      return []; // Return an empty list instead of rethrowing the error
+      print('Error fetching buds from $endpoint: $e');
+      rethrow;
     }
   }
 
@@ -255,7 +300,7 @@ class ApiService {
     }
   }
 
-  Future<List<Bud>> getTopBuds() async {
+  Future<List<BudMatch>> getTopBuds() async {
     try {
       final response = await _dio.post('/bud/top/artists', data: {'page': 1});
       print('Response status code: ${response.statusCode}');
@@ -263,7 +308,7 @@ class ApiService {
 
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data'];
-        return data.map((json) => Bud.fromJson(json)).toList();
+        return data.map((json) => BudMatch.fromJson(json)).toList();
       } else {
         throw Exception('Failed to load top buds: ${response.statusCode}');
       }
@@ -351,6 +396,136 @@ class ApiService {
         return '/bud/common/played/tracks';
       default:
         throw Exception('Unknown category: $category');
+    }
+  }
+
+  Future<String> login(String username, String password) async {
+    try {
+      final response = await _dio.post(
+        '/login',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          followRedirects: false,
+          validateStatus: (status) {
+            return status! < 500;
+          },
+        ),
+        data: {
+          'username': username,
+          'password': password,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data['data'];
+        final accessToken = data['access_token'];
+        final refreshToken = data['refresh_token'];
+
+        if (accessToken != null && refreshToken != null) {
+          await setAuthToken(accessToken);
+          await setRefreshToken(refreshToken);
+          print('Access token set: $accessToken');
+          print('Refresh token set: $refreshToken');
+          return accessToken;
+        }
+      }
+      
+      print('Login failed: ${response.statusCode}');
+      return '';
+    } catch (e) {
+      print('Login error: $e');
+      return '';
+    }
+  }
+
+  Future<bool> isAuthenticated() async {
+    try {
+      final response = await _dio.get('/auth/check');
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Error checking authentication: $e');
+      return false;
+    }
+  }
+
+  Future<void> logout() async {
+    try {
+      await _dio.post('/auth/logout');
+      _accessToken = null;
+      _sessionId = null;
+      _updateHeaders();
+    } catch (e) {
+      print('Error during logout: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> refreshToken() async {
+    try {
+      final response = await _dio.post('/auth/refresh');
+      if (response.statusCode == 200) {
+        final newToken = response.data['token'];
+        setAuthToken(newToken);
+      } else {
+        throw Exception('Failed to refresh token: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error refreshing token: $e');
+      rethrow;
+    }
+  }
+
+  Future<UserProfile> updateUserProfile(Map<String, dynamic> updatedData) async {
+    try {
+      final response = await _dio.put(
+        '/me/profile',
+        data: updatedData,
+      );
+
+      if (response.statusCode == 200) {
+        return UserProfile.fromJson(response.data);
+      } else {
+        throw Exception('Failed to update user profile: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error updating user profile: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<T>> fetchItems<T>(String endpoint, {int page = 1}) async {
+    try {
+      final response = await _dio.post(
+        endpoint,
+        data: {'page': page},
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'];
+        return data.map((item) {
+          try {
+            if (T == CommonTrack) {
+              return CommonTrack.fromJson(item) as T;
+            } else if (T == CommonArtist) {
+              return CommonArtist.fromJson(item) as T;
+            } else if (T == CommonGenre) {
+              return CommonGenre.fromJson(item) as T;
+            } else {
+              throw Exception('Unsupported type: $T');
+            }
+          } catch (e) {
+            print('Error parsing item: $e');
+            return null;
+          }
+        }).whereType<T>().toList();
+      } else {
+        throw Exception('Failed to load items');
+      }
+    } catch (e) {
+      print('Error fetching items: $e');
+      return [];
     }
   }
 }

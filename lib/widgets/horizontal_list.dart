@@ -29,7 +29,7 @@ class HorizontalList<T> extends StatelessWidget {
           ),
         ),
         SizedBox(
-          height: 200,
+          height: 200, // Set a fixed height for the ListView
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: items.length,

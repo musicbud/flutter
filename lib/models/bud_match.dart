@@ -1,14 +1,18 @@
+import 'dart:convert';
 import 'bud.dart';
 
 class BudMatch {
   final Bud bud;
   final double similarityScore;
 
-  BudMatch({required this.bud, required this.similarityScore});
+  BudMatch({
+    required this.bud,
+    required this.similarityScore,
+  });
 
   factory BudMatch.fromJson(Map<String, dynamic> json) {
     return BudMatch(
-      bud: Bud.fromJson(json['bud']),
+      bud: Bud.fromJson(json['bud'] as Map<String, dynamic>),
       similarityScore: (json['similarity_score'] as num).toDouble(),
     );
   }
@@ -22,8 +26,11 @@ class Bud {
   final String? bio;
   final String? displayName;
   final bool isActive;
-  final bool isAuthenticated;
-  final double similarityScore;
+  final bool? isAuthenticated;
+  final String? accessToken;
+  final String? refreshToken;
+  final String? accessTokenExpiresAt;
+  final String? refreshTokenExpiresAt;
 
   Bud({
     required this.uid,
@@ -33,28 +40,27 @@ class Bud {
     this.bio,
     this.displayName,
     required this.isActive,
-    required this.isAuthenticated,
-    required this.similarityScore,
+    this.isAuthenticated,
+    this.accessToken,
+    this.refreshToken,
+    this.accessTokenExpiresAt,
+    this.refreshTokenExpiresAt,
   });
 
   factory Bud.fromJson(Map<String, dynamic> json) {
-    final budData = json['bud'] as Map<String, dynamic>;
     return Bud(
-      uid: budData['uid'] as String,
-      username: budData['username'] as String,
-      email: budData['email'] as String?,
-      photoUrl: budData['photo_url'] as String?,
-      bio: budData['bio'] as String?,
-      displayName: budData['display_name'] as String?,
-      isActive: budData['is_active'] as bool,
-      isAuthenticated: budData['is_authenticated'] as bool,
-      similarityScore: (json['similarity_score'] as num).toDouble(),
+      uid: json['uid'] as String,
+      username: json['username'] as String,
+      email: json['email'] as String?,
+      photoUrl: json['photo_url'] as String?,
+      bio: json['bio'] as String?,
+      displayName: json['display_name'] as String?,
+      isActive: json['is_active'] as bool? ?? false,
+      isAuthenticated: json['is_authenticated'] as bool?,
+      accessToken: json['access_token'] as String?,
+      refreshToken: json['refresh_token'] as String?,
+      accessTokenExpiresAt: json['access_token_expires_at']?.toString(),
+      refreshTokenExpiresAt: json['refresh_token_expires_at']?.toString(),
     );
-  }
-
-  // Helper method to parse expiration times if needed
-  double? parseExpirationTime(String? timeString) {
-    if (timeString == null) return null;
-    return double.tryParse(timeString);
   }
 }

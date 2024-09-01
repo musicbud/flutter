@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:musicbud_flutter/services/api_service.dart';
 import '../models/track.dart';
 import '../widgets/top_tracks_horizontal_list.dart';
 import '../widgets/top_artists_horizontal_list.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  final ApiService apiService;
+
+  const HomePage({Key? key, required this.apiService}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // Example list of tracks
     final List<Track> tracks = [
       Track(
-        uid: '1',
+        id: '1',
         name: 'Track 1',
         artist: 'Artist 1',
         spotifyId: 'spotifyId1',
@@ -19,7 +22,7 @@ class HomePage extends StatelessWidget {
         imageUrl: 'https://example.com/image1.png',
       ),
       Track(
-        uid: '2',
+        id: '2',
         name: 'Track 2',
         artist: 'Artist 2',
         spotifyId: 'spotifyId2',
@@ -48,7 +51,8 @@ class HomePage extends StatelessWidget {
                 initialTracks: tracks,
                 loadMoreTracks: (page) async {
                   // Fetch more tracks from your API
-                  // Return a List<Track>
+                  // Return an empty list for now, but make sure it's not null
+                  return <Track>[];
                 },
               ),
             ),

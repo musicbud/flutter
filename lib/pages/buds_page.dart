@@ -13,7 +13,7 @@ class BudsPage extends StatefulWidget {
 }
 
 class _BudsPageState extends State<BudsPage> {
-  Map<String, List<Bud>> _budCategories = {};
+  Map<String, List<BudMatch>> _budCategories = {};
   bool _isLoading = true;
   String? _error;
 
@@ -79,13 +79,13 @@ class _BudsPageState extends State<BudsPage> {
       itemCount: _budCategories.length,
       itemBuilder: (context, index) {
         final category = _budCategories.keys.elementAt(index);
-        final buds = _budCategories[category]!;
-        return _buildCategorySection(category, buds);
+        final budMatches = _budCategories[category]!;
+        return _buildCategorySection(category, budMatches);
       },
     );
   }
 
-  Widget _buildCategorySection(String category, List<Bud> buds) {
+  Widget _buildCategorySection(String category, List<BudMatch> budMatches) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -99,16 +99,17 @@ class _BudsPageState extends State<BudsPage> {
         ListView.builder(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
-          itemCount: buds.length,
+          itemCount: budMatches.length,
           itemBuilder: (context, index) {
-            final bud = buds[index];
+            final budMatch = budMatches[index];
+            final bud = budMatch.bud;
             return ListTile(
               leading: CircleAvatar(
                 backgroundImage: bud.photoUrl != null ? NetworkImage(bud.photoUrl!) : null,
                 child: bud.photoUrl == null ? Text(bud.username[0].toUpperCase()) : null,
               ),
               title: Text(bud.displayName ?? bud.username),
-              subtitle: Text('Similarity: ${bud.similarityScore.toStringAsFixed(2)}'),
+              subtitle: Text('Similarity: ${budMatch.similarityScore.toStringAsFixed(2)}'),
               onTap: () {
                 Navigator.push(
                   context,
@@ -128,3 +129,4 @@ class _BudsPageState extends State<BudsPage> {
     );
   }
 }
+

@@ -6,28 +6,39 @@ class AuthService {
 
   Future<bool> login(String username, String password) async {
     try {
-      // Make your login API call here
-      final response = await Dio().post(
-        'http://84.235.170.234/login',
-        data: {'username': username, 'password': password},
+      final response = await _apiService.dio.post(
+        '/login',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          followRedirects: false,
+          validateStatus: (status) {
+            return status! < 500;
+          },
+        ),
+        data: {
+          'username': username,
+          'password': password,
+        },
       );
 
       if (response.statusCode == 200) {
-        final token = response.data['token'];
-        final sessionId = response.headers['set-cookie']?.first.split(';').first.split('=').last;
+        final data = response.data['data'];
+        final accessToken = data['access_token'];
+        final refreshToken = data['refresh_token'];
 
-        // Store the token and session ID
-        await _apiService.setAuthToken(token);
-        await _apiService.setSessionId(sessionId);
-
-        print('Token set: $token');
-        print('Session ID set: $sessionId');
-
-        return true;
-      } else {
-        print('Login failed: ${response.statusCode}');
-        return false;
+        if (accessToken != null && refreshToken != null) {
+          await _apiService.setAuthToken(accessToken);
+          await _apiService.setRefreshToken(refreshToken);
+          print('Access token set: $accessToken');
+          print('Refresh token set: $refreshToken');
+          return true;
+        }
       }
+      
+      print('Login failed: ${response.statusCode}');
+      return false;
     } catch (e) {
       print('Login error: $e');
       return false;

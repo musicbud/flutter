@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/models/track.dart';
-import 'package:musicbud_flutter/models/artist.dart';
-import 'package:musicbud_flutter/models/album.dart';
-import 'package:musicbud_flutter/models/anime.dart';
-import 'package:musicbud_flutter/models/manga.dart';
+import 'package:musicbud_flutter/services/api_service.dart';
+import 'package:musicbud_flutter/pages/login_page.dart';
+import 'package:musicbud_flutter/pages/buds_page.dart';
 import 'package:musicbud_flutter/models/user_profile.dart';
 import 'package:musicbud_flutter/models/content_service.dart';
-import 'package:musicbud_flutter/services/api_service.dart';
-import 'package:musicbud_flutter/widgets/horizontal_list.dart';
 import 'package:musicbud_flutter/models/common_track.dart';
 import 'package:musicbud_flutter/models/common_artist.dart';
 import 'package:musicbud_flutter/models/common_genre.dart';
 import 'package:musicbud_flutter/models/common_album.dart';
-import 'package:musicbud_flutter/widgets/list_item.dart';
-import 'package:dio/dio.dart';
-import 'package:musicbud_flutter/pages/buds_page.dart';
+import 'package:musicbud_flutter/models/anime.dart';
+import 'package:musicbud_flutter/models/manga.dart';
+import 'package:musicbud_flutter/widgets/horizontal_list.dart';
+import 'package:musicbud_flutter/models/bud_match.dart';
+import 'package:musicbud_flutter/pages/common_items_page.dart';
 
 class ProfilePage extends StatefulWidget {
   final ApiService apiService;
@@ -27,34 +25,26 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   int _selectedIndex = 0;
+  bool _isAuthenticated = false;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(_getTitle()),
-      ),
-      body: _getBody(),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.group),
-            label: 'Buds',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
-            label: 'Chat',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
-        onTap: _onItemTapped,
-      ),
-    );
+  void initState() {
+    super.initState();
+    _checkAuthentication();
+  }
+
+  Future<void> _checkAuthentication() async {
+    try {
+      await widget.apiService.getUserProfile();
+      setState(() {
+        _isAuthenticated = true;
+      });
+    } catch (e) {
+      print('Authentication failed: $e');
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => LoginPage(apiService: widget.apiService)),
+      );
+    }
   }
 
   String _getTitle() {
@@ -87,6 +77,39 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_isAuthenticated) {
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_getTitle()),
+      ),
+      body: _getBody(),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Profile',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.group),
+            label: 'Buds',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat),
+            label: 'Chat',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.blue,
+        onTap: _onItemTapped,
+      ),
+    );
   }
 }
 
@@ -154,9 +177,9 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
 
   Future<void> _loadUserProfile() async {
     try {
-      final profile = await _apiService.getUserProfile();
+      final userProfile = await _apiService.getUserProfile();
       setState(() {
-        _userProfile = profile;
+        _userProfile = userProfile;
       });
     } catch (e) {
       print('Error loading user profile: $e');
@@ -166,7 +189,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
 
   Future<void> _loadTopTracks() async {
     try {
-      final tracks = await _apiService.getTopTracks();
+      final tracks = await _apiService.fetchItems<CommonTrack>('/me/top/tracks');
       setState(() {
         _topTracks = tracks;
       });
@@ -178,7 +201,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
 
   Future<void> _loadTopArtists() async {
     try {
-      final artists = await _apiService.getTopArtists();
+      final artists = await _apiService.fetchItems<CommonArtist>('/me/top/artists');
       setState(() {
         _topArtists = artists;
       });
@@ -190,7 +213,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
 
   Future<void> _loadTopGenres() async {
     try {
-      final genres = await _apiService.getTopGenres();
+      final genres = await _apiService.fetchItems<CommonGenre>('/me/top/genres');
       setState(() {
         _topGenres = genres;
       });
@@ -480,20 +503,12 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (track.image != null)
-              Image.network(
-                track.image!,
-                height: 100,
-                width: 150,
-                fit: BoxFit.cover,
-              )
-            else
-              Container(
-                height: 100,
-                width: 150,
-                color: Colors.grey,
-                child: Icon(Icons.music_note, size: 50),
-              ),
+            Container(
+              height: 100,
+              width: 150,
+              color: Colors.grey,
+              child: Icon(Icons.music_note, size: 50),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -507,7 +522,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    track.artist ?? 'Unknown Artist',
+                    'Similarity: ${track.similarityScore?.toStringAsFixed(2) ?? 'N/A'}',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -527,20 +542,12 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (artist.imageUrl != null)
-              Image.network(
-                artist.imageUrl!,
-                height: 100,
-                width: 150,
-                fit: BoxFit.cover,
-              )
-            else
-              Container(
-                height: 100,
-                width: 150,
-                color: Colors.grey,
-                child: Icon(Icons.person, size: 50),
-              ),
+            Container(
+              height: 100,
+              width: 150,
+              color: Colors.grey,
+              child: Icon(Icons.person, size: 50),
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -582,6 +589,13 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
                 genre.name ?? 'Unknown Genre',
                 textAlign: TextAlign.center,
                 maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: 4),
+              Text(
+                'Similarity: ${genre.similarityScore?.toStringAsFixed(2) ?? 'N/A'}',
+                textAlign: TextAlign.center,
+                maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ],
@@ -647,10 +661,22 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
   }
 
   Widget _buildMangaItem(Manga manga) {
-    return _buildItemCard(
-      imageUrl: manga.imageUrl,
-      title: manga.title,
-      subtitle: manga.author,
+    return Container(
+      width: 150, // Set a fixed width for each item
+      child: Card(
+        child: Column(
+          children: [
+            Image.network(
+              manga.imageUrl ?? 'https://example.com/default_image.png',
+              width: 100,
+              height: 100,
+              fit: BoxFit.cover,
+            ),
+            Text(manga.title, overflow: TextOverflow.ellipsis),
+            if (manga.author != null) Text(manga.author!, overflow: TextOverflow.ellipsis),
+          ],
+        ),
+      ),
     );
   }
 
@@ -672,3 +698,4 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
     );
   }
 }
+
