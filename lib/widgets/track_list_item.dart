@@ -9,10 +9,14 @@ class TrackListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(track.name ?? 'Unknown Track'),
+      title: Text(track.name),
       subtitle: Text(track.artists?.map((artist) => artist.name).join(', ') ?? 'Unknown Artist'),
-      leading: track.albumImageUrl != null
-          ? Image.network(track.albumImageUrl!, width: 50, height: 50)
+      leading: track.images.isNotEmpty
+          ? Image.network(
+              track.images.isNotEmpty ? track.images.first.url : 'default_image_url',
+              width: 50,
+              height: 50,
+            )
           : Icon(Icons.music_note),
     );
   }

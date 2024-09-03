@@ -10,14 +10,15 @@ class ArtistListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(artist.name ?? 'Unknown Artist'),
-      leading: artist.imageUrl != null
-          ? Image.network(
-              artist.imageUrl!,
-              width: 50,
-              height: 50,
-              errorBuilder: (context, error, stackTrace) => Icon(Icons.person),
+      leading: artist.images.isNotEmpty
+          ? CircleAvatar(
+              backgroundImage: NetworkImage(
+                artist.images.isNotEmpty ? artist.images.first.url : 'default_image_url',
+              ),
             )
-          : Icon(Icons.person),
+          : CircleAvatar(
+              child: Text(artist.name[0]),
+            ),
     );
   }
 }

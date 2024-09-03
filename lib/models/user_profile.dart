@@ -2,7 +2,8 @@ class UserProfile {
   final String uid;
   final String username;
   final String email;
-  final String? photoUrl;
+  String? photoUrl;  // Changed to non-final
+
   final String? bio;
   final String? displayName;
   final bool isActive;

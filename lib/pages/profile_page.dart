@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:musicbud_flutter/services/api_service.dart';
-import 'package:musicbud_flutter/pages/login_page.dart';
 import 'package:musicbud_flutter/pages/buds_page.dart';
 import 'package:musicbud_flutter/models/user_profile.dart';
 import 'package:musicbud_flutter/models/content_service.dart';
@@ -13,6 +12,8 @@ import 'package:musicbud_flutter/models/manga.dart';
 import 'package:musicbud_flutter/widgets/horizontal_list.dart';
 import 'package:musicbud_flutter/models/bud_match.dart';
 import 'package:musicbud_flutter/pages/common_items_page.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:musicbud_flutter/pages/login_page.dart'; // Add this import
 
 class ProfilePage extends StatefulWidget {
   final ApiService apiService;
@@ -189,13 +190,16 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
 
   Future<void> _loadTopTracks() async {
     try {
-      final tracks = await _apiService.fetchItems<CommonTrack>('/me/top/tracks');
+      final items = await _apiService.fetchItems<CommonTrack>('/me/top/tracks');
       setState(() {
-        _topTracks = tracks;
+        _topTracks = items;
       });
     } catch (e) {
       print('Error loading top tracks: $e');
-      rethrow;
+      // Show a user-friendly error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Unable to load top tracks. Please try again later.')),
+      );
     }
   }
 
@@ -271,6 +275,29 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
     }
   }
 
+  Future<void> _pickAndUploadImage() async {
+    final ImagePicker _picker = ImagePicker();
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      try {
+        // Implement the API call to upload the image
+        final String? newPhotoUrl = await _apiService.uploadProfilePhoto(image.path);
+        
+        if (newPhotoUrl != null) {
+          setState(() {
+            _userProfile?.photoUrl = newPhotoUrl;
+          });
+        }
+      } catch (e) {
+        print('Error uploading image: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to upload image. Please try again.')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -318,20 +345,18 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (_userProfile!.photoUrl != null)
-              CircleAvatar(
+            GestureDetector(
+              onTap: _pickAndUploadImage,
+              child: CircleAvatar(
                 radius: 60,
-                backgroundImage: NetworkImage(_userProfile!.photoUrl!),
-              )
-            else
-              CircleAvatar(
-                radius: 60,
-                backgroundColor: Theme.of(context).primaryColor,
-                child: Text(
-                  _userProfile!.username[0].toUpperCase(),
-                  style: TextStyle(fontSize: 40, color: Colors.white),
-                ),
+                backgroundImage: _userProfile?.photoUrl != null
+                  ? NetworkImage(_userProfile!.photoUrl!)
+                  : null,
+                child: _userProfile?.photoUrl == null
+                  ? Icon(Icons.add_a_photo, size: 40)
+                  : null,
               ),
+            ),
             SizedBox(height: 20),
             Text(
               _userProfile!.displayName ?? _userProfile!.username,

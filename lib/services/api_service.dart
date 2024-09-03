@@ -10,6 +10,7 @@ import 'package:musicbud_flutter/models/bud_match.dart';
 import 'package:musicbud_flutter/models/common_item.dart';
 import 'package:musicbud_flutter/models/categorized_common_items.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:developer' as developer;
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
@@ -32,9 +33,10 @@ class ApiService {
     ));
     _dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
     _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) {
-        if (_accessToken != null) {
-          options.headers['Authorization'] = 'Bearer $_accessToken';
+      onRequest: (options, handler) async {
+        final token = await getAuthToken();
+        if (token != null) {
+          options.headers['Authorization'] = 'Bearer $token';
         }
         return handler.next(options);
       },
@@ -91,24 +93,38 @@ class ApiService {
 
   Future<List<T>> _fetchItems<T>(String endpoint, T Function(Map<String, dynamic>) fromJson, {int page = 1}) async {
     try {
-      print('Fetching items from $endpoint');
-      print('Headers: ${_dio.options.headers}');
-      print('Request data: {page: $page}');
-      final response = await _dio.post(
+      final response = await _retryWithRefresh(() => _dio.post(
         endpoint,
         data: {'page': page},
-      );
-      print('Response status code: ${response.statusCode}');
-      print('Response data: ${response.data}');
-      if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data'];
-        return data.map((json) => fromJson(json)).toList();
-      } else {
-        throw Exception('Failed to load items from $endpoint: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error fetching items from $endpoint: $e');
-      rethrow;
+      ));
+
+      return _parseItems<T>(response.data, fromJson);
+    } catch (e, stackTrace) {
+      developer.log('Error fetching items from $endpoint: $e\n$stackTrace');
+      return [];
+    }
+  }
+
+  List<T> _parseItems<T>(Map<String, dynamic> responseData, T Function(Map<String, dynamic>) fromJson) {
+    if (responseData.containsKey('data') && responseData['data'] is List) {
+      final List<dynamic> data = responseData['data'];
+      return data.map((item) {
+        if (item is Map<String, dynamic>) {
+          try {
+            return fromJson(item);
+          } catch (e, stackTrace) {
+            developer.log('Error parsing item: $e\n$stackTrace');
+            developer.log('Problematic item: $item');
+            return null;
+          }
+        } else {
+          developer.log('Item is not a Map<String, dynamic>: $item');
+          return null;
+        }
+      }).whereType<T>().toList();
+    } else {
+      developer.log('Response data does not contain a "data" list: $responseData');
+      return [];
     }
   }
 
@@ -160,15 +176,15 @@ class ApiService {
   // Profile page methods
   Future<UserProfile> getUserProfile() async {
     try {
-      final response = await _dio.post(
+      final response = await _retryWithRefresh(() => _dio.post(
         '/me/profile',
         data: {'service': 'spotify'},
-      );
+      ));
 
       if (response.statusCode == 200) {
         return UserProfile.fromJson(response.data);
       } else {
-        throw Exception('Failed to load user profile');
+        throw Exception('Failed to load user profile: ${response.statusCode}');
       }
     } catch (e) {
       print('Error fetching user profile: $e');
@@ -177,11 +193,16 @@ class ApiService {
   }
 
   Future<List<CommonTrack>> getTopTracks({int page = 1}) async {
-    return _fetchItems('/bud/top/tracks', CommonTrack.fromJson, page: page);
+    return _fetchItems('/me/top/tracks', (json) => CommonTrack.fromJson(json), page: page);
   }
 
   Future<List<CommonArtist>> getTopArtists({int page = 1}) async {
-    return _fetchItems('/bud/top/artists', CommonArtist.fromJson, page: page);
+    final response = await _retryWithRefresh(() => _dio.post(
+      '/me/top/artists',
+      data: {'page': page},
+    ));
+
+    return _parseItems<CommonArtist>(response.data, CommonArtist.fromJson);
   }
 
   Future<List<CommonGenre>> getTopGenres({int page = 1}) {
@@ -399,44 +420,46 @@ class ApiService {
     }
   }
 
-  Future<String> login(String username, String password) async {
+  Future<String?> login(String username, String password) async {
     try {
       final response = await _dio.post(
         '/login',
-        options: Options(
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          followRedirects: false,
-          validateStatus: (status) {
-            return status! < 500;
-          },
-        ),
-        data: {
+        data: FormData.fromMap({
           'username': username,
           'password': password,
-        },
+        }),
+        options: Options(
+          contentType: Headers.formUrlEncodedContentType,
+          headers: {
+            'Accept': 'application/json',
+          },
+        ),
       );
 
-      if (response.statusCode == 200) {
-        final data = response.data['data'];
-        final accessToken = data['access_token'];
-        final refreshToken = data['refresh_token'];
+      print('Login response: ${response.data}');
 
-        if (accessToken != null && refreshToken != null) {
-          await setAuthToken(accessToken);
-          await setRefreshToken(refreshToken);
-          print('Access token set: $accessToken');
-          print('Refresh token set: $refreshToken');
-          return accessToken;
+      if (response.statusCode == 200) {
+        final responseData = response.data as Map<String, dynamic>;
+        final data = responseData['data'] as Map<String, dynamic>?;
+        
+        if (data != null) {
+          final accessToken = data['access_token'] as String?;
+          final refreshToken = data['refresh_token'] as String?;
+          
+          if (accessToken != null && refreshToken != null) {
+            await setAuthToken(accessToken);
+            await setRefreshToken(refreshToken);
+            return accessToken;
+          }
         }
       }
       
-      print('Login failed: ${response.statusCode}');
-      return '';
+      // If we reach here, something went wrong
+      final errorMessage = response.data['error'] ?? 'Unknown error occurred';
+      throw Exception(errorMessage);
     } catch (e) {
       print('Login error: $e');
-      return '';
+      rethrow;
     }
   }
 
@@ -462,17 +485,41 @@ class ApiService {
     }
   }
 
-  Future<void> refreshToken() async {
+  Future<bool> refreshToken() async {
     try {
-      final response = await _dio.post('/auth/refresh');
+      final refreshToken = await getRefreshToken();
+      if (refreshToken == null) {
+        return false;
+      }
+
+      final response = await _dio.post(
+        '/auth/refresh',
+        data: {'refresh_token': refreshToken},
+      );
+
       if (response.statusCode == 200) {
-        final newToken = response.data['token'];
-        setAuthToken(newToken);
+        final newAccessToken = response.data['access_token'];
+        await setAuthToken(newAccessToken);
+        return true;
       } else {
-        throw Exception('Failed to refresh token: ${response.statusCode}');
+        return false;
       }
     } catch (e) {
       print('Error refreshing token: $e');
+      return false;
+    }
+  }
+
+  Future<Response<dynamic>> _retryWithRefresh(Future<Response<dynamic>> Function() requestFunction) async {
+    try {
+      return await requestFunction();
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 401) {
+        final refreshed = await refreshToken();
+        if (refreshed) {
+          return await requestFunction();
+        }
+      }
       rethrow;
     }
   }
@@ -503,29 +550,45 @@ class ApiService {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data['data'];
-        return data.map((item) {
-          try {
-            if (T == CommonTrack) {
-              return CommonTrack.fromJson(item) as T;
-            } else if (T == CommonArtist) {
-              return CommonArtist.fromJson(item) as T;
-            } else if (T == CommonGenre) {
-              return CommonGenre.fromJson(item) as T;
-            } else {
-              throw Exception('Unsupported type: $T');
-            }
-          } catch (e) {
-            print('Error parsing item: $e');
-            return null;
-          }
-        }).whereType<T>().toList();
+        final responseData = response.data;
+        if (responseData['successful'] == true) {
+          final List<dynamic> data = responseData['data'] ?? [];
+          return data.map((item) => item as T).toList();
+        } else {
+          throw Exception(responseData['message'] ?? 'Unknown error occurred');
+        }
       } else {
         throw Exception('Failed to load items');
       }
     } catch (e) {
-      print('Error fetching items: $e');
-      return [];
+      if (e is DioError && e.response?.statusCode == 500) {
+        print('Server error occurred for endpoint $endpoint: ${e.response?.data}');
+        // Return an empty list of the correct type
+        return <T>[];
+      }
+      rethrow;
+    }
+  }
+
+  Future<String?> uploadProfilePhoto(String imagePath) async {
+    try {
+      final formData = FormData.fromMap({
+        'photo': await MultipartFile.fromFile(imagePath),
+      });
+
+      final response = await _dio.post(
+        '/me/upload-photo',
+        data: formData,
+      );
+
+      if (response.statusCode == 200) {
+        return response.data['photo_url'];
+      } else {
+        throw Exception('Failed to upload photo');
+      }
+    } catch (e) {
+      print('Error uploading photo: $e');
+      return null;
     }
   }
 }
