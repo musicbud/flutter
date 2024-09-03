@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:musicbud_flutter/services/api_service.dart';
 import 'package:musicbud_flutter/models/bud_match.dart';
 import 'package:musicbud_flutter/pages/common_items_page.dart';
+import 'package:musicbud_flutter/models/common_track.dart';
+import 'package:musicbud_flutter/widgets/track_list_item.dart';
 
 class BudsPage extends StatefulWidget {
   final ApiService apiService;
@@ -16,10 +18,12 @@ class _BudsPageState extends State<BudsPage> {
   Map<String, List<BudMatch>> _budCategories = {};
   bool _isLoading = true;
   String? _error;
+  late ApiService _apiService;
 
   @override
   void initState() {
     super.initState();
+    _apiService = ApiService();
     _loadBuds();
   }
 
@@ -111,21 +115,26 @@ class _BudsPageState extends State<BudsPage> {
               title: Text(bud.displayName ?? bud.username),
               subtitle: Text('Similarity: ${budMatch.similarityScore.toStringAsFixed(2)}'),
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => CommonItemsPage(
-                      budId: bud.uid,
-                      apiService: widget.apiService,
-                    ),
-                  ),
-                );
+                _navigateToCommonItemsPage(bud.uid);
               },
             );
           },
         ),
         Divider(),
       ],
+    );
+  }
+
+  void _navigateToCommonItemsPage(String budId) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CommonItemsPage<CommonTrack>(
+          title: 'Top Tracks',
+          fetchItems: (page) => _apiService.getTopTracks(page: page),
+          buildListItem: (track) => TrackListItem(track: track),
+        ),
+      ),
     );
   }
 }

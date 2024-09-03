@@ -11,6 +11,9 @@ import 'package:musicbud_flutter/models/common_item.dart';
 import 'package:musicbud_flutter/models/categorized_common_items.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as developer;
+import 'package:musicbud_flutter/models/common_anime.dart';
+import 'package:musicbud_flutter/models/common_manga.dart';
+import 'package:flutter/foundation.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
@@ -193,85 +196,111 @@ class ApiService {
   }
 
   Future<List<CommonTrack>> getTopTracks({int page = 1}) async {
-    return _fetchItems('/me/top/tracks', (json) => CommonTrack.fromJson(json), page: page);
+    return _handleRequest(() async {
+      final response = await _dio.post(
+        '/me/top/tracks',
+        data: {'page': page},
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        final List<dynamic> trackList = responseData['data'];
+        return trackList.map((track) => CommonTrack.fromJson(track)).toList();
+      } else {
+        throw Exception('Failed to load top tracks: ${response.statusCode}');
+      }
+    });
   }
 
   Future<List<CommonArtist>> getTopArtists({int page = 1}) async {
-    try {
+    return _handleRequest(() async {
       final response = await _dio.post(
         '/me/top/artists',
         data: {'page': page},
       );
-
-      print('Response from /me/top/artists: ${response.data}');
-
       if (response.statusCode == 200) {
-        final List<dynamic> artistsData = response.data['data'] ?? [];
-        return artistsData.map((artistJson) {
-          try {
-            // Check if artistJson is already a CommonArtist
-            if (artistJson is CommonArtist) {
-              return artistJson;
-            }
-            return CommonArtist.fromJson(Map<String, dynamic>.from(artistJson));
-          } catch (e, stackTrace) {
-            print('Error parsing artist: $e\n$stackTrace');
-            print('Problematic artist data: $artistJson');
-            return null;
-          }
-        }).whereType<CommonArtist>().toList();
+        final Map<String, dynamic> responseData = response.data;
+        final List<dynamic> artistList = responseData['data'];
+        return artistList.map((artist) => CommonArtist.fromJson(artist)).toList();
       } else {
         throw Exception('Failed to load top artists: ${response.statusCode}');
       }
-    } catch (e, stackTrace) {
-      print('Error fetching top artists: $e\n$stackTrace');
-      rethrow;
-    }
+    });
   }
 
   Future<List<CommonGenre>> getTopGenres({int page = 1}) async {
-    try {
+    return _handleRequest(() async {
       final response = await _dio.post(
         '/me/top/genres',
         data: {'page': page},
       );
-
-      print('Response from /me/top/genres: ${response.data}');
-
       if (response.statusCode == 200) {
-        final List<dynamic> genresData = response.data['data'] ?? [];
-        return genresData.map((genreJson) {
-          try {
-            return CommonGenre.fromJson(Map<String, dynamic>.from(genreJson));
-          } catch (e, stackTrace) {
-            print('Error parsing genre: $e\n$stackTrace');
-            print('Problematic genre data: $genreJson');
-            return null;
-          }
-        }).whereType<CommonGenre>().toList();
+        final Map<String, dynamic> responseData = response.data;
+        final List<dynamic> genreList = responseData['data'];
+        return genreList.map((genre) => CommonGenre.fromJson(genre)).toList();
       } else {
         throw Exception('Failed to load top genres: ${response.statusCode}');
       }
-    } catch (e, stackTrace) {
-      print('Error fetching top genres: $e\n$stackTrace');
-      rethrow;
-    }
+    });
   }
 
   Future<List<CommonAlbum>> getLikedAlbums({int page = 1}) {
-    return _fetchItems('/bud/liked/albums', CommonAlbum.fromJson, page: page);
+    return _fetchItems('/liked/albums', CommonAlbum.fromJson, page: page);
   }
 
-  Future<List<CommonTrack>> getPlayedTracks({int page = 1}) {
-    return _fetchItems('/bud/played/tracks', CommonTrack.fromJson, page: page);
+  Future<List<CommonTrack>> getPlayedTracks({int page = 1}) async {
+    return _handleRequest(() async {
+      final response = await _dio.post(
+        '/me/played/tracks',
+        data: {'page': page},
+      );
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = response.data;
+        print('Played tracks response: $responseData'); // Add this line
+        final List<dynamic> trackList = responseData['data'];
+        print('Played tracks list length: ${trackList.length}'); // Add this line
+        return trackList.map((track) => CommonTrack.fromJson(track)).toList();
+      } else {
+        throw Exception('Failed to load played tracks: ${response.statusCode}');
+      }
+    });
   }
 
-  Future<List<Anime>> getTopAnime({int page = 1}) {
-    return _fetchItems('/bud/top/anime', Anime.fromJson, page: page);
+  Future<List<CommonAnime>> getTopAnime({int page = 1}) async {
+    try {
+      final response = await _dio.get('/anime/top', queryParameters: {'page': page});
+      if (response.statusCode == 200) {
+        final List<dynamic> animeList = response.data['data'];
+        return animeList.map((anime) => CommonAnime.fromJson(anime)).toList();
+      } else {
+        print('Failed to load top anime: ${response.statusCode}');
+        return [];
+      }
+    } on DioError catch (e) {
+      print('DioError fetching top anime: $e');
+      return [];
+    } catch (e) {
+      print('Error fetching top anime: $e');
+      return [];
+    }
   }
 
-  Future<List<Manga>> getTopManga({int page = 1}) {
-    return _fetchItems('/bud/top/manga', Manga.fromJson, page: page);
+  Future<List<CommonManga>> getTopManga({int page = 1}) async {
+    try {
+      final response = await _dio.get('/manga/top', queryParameters: {'page': page});
+      if (response.statusCode == 200) {
+        final List<dynamic> mangaList = response.data['data'];
+        return mangaList.map((manga) => CommonManga.fromJson(manga)).toList();
+      } else {
+        print('Failed to load top manga: ${response.statusCode}');
+        return [];
+      }
+    } on DioError catch (e) {
+      print('DioError fetching top manga: $e');
+      return [];
+    } catch (e) {
+      print('Error fetching top manga: $e');
+      return [];
+    }
   }
 
   // Buds page methods
@@ -638,6 +667,19 @@ class ApiService {
     } catch (e) {
       print('Error uploading photo: $e');
       return null;
+    }
+  }
+
+  Future<T> _handleRequest<T>(Future<T> Function() requestFunction) async {
+    try {
+      return await requestFunction();
+    } on DioError catch (e) {
+      print('DioError: ${e.message}');
+      print('Response: ${e.response?.data}');
+      throw Exception('Failed to complete request: ${e.message}');
+    } catch (e) {
+      print('Error: $e');
+      throw Exception('An unexpected error occurred');
     }
   }
 }

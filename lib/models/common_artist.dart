@@ -4,57 +4,45 @@ import 'dart:developer' as developer;
 class CommonArtist {
   final String uid;
   final String name;
-  final String spotifyId;
-  final String spotifyUrl;
-  final String href;
-  final int popularity;
-  final String type;
-  final String uri;
-  final int followers;
-  final List<ArtworkImage> images;
-  final List<String> genres;
-  final double? similarityScore;
+  final List<CommonImage> images;
 
   CommonArtist({
     required this.uid,
     required this.name,
-    required this.spotifyId,
-    required this.spotifyUrl,
-    required this.href,
-    required this.popularity,
-    required this.type,
-    required this.uri,
-    required this.followers,
     required this.images,
-    required this.genres,
-    this.similarityScore,
   });
 
   factory CommonArtist.fromJson(Map<String, dynamic> json) {
     return CommonArtist(
-      uid: json['uid']?.toString() ?? '',
-      name: json['name']?.toString() ?? '',
-      spotifyId: json['spotify_id']?.toString() ?? '',
-      spotifyUrl: json['spotify_url']?.toString() ?? '',
-      href: json['href']?.toString() ?? '',
-      popularity: int.tryParse(json['popularity']?.toString() ?? '0') ?? 0,
-      type: json['type']?.toString() ?? '',
-      uri: json['uri']?.toString() ?? '',
-      followers: int.tryParse(json['followers']?.toString() ?? '0') ?? 0,
+      uid: json['uid'] ?? '',
+      name: json['name'] ?? '',
       images: (json['images'] as List<dynamic>?)
-              ?.map((image) => ArtworkImage.fromJson(image))
-              .toList() ??
-          [],
-      genres: (json['genres'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
-      similarityScore: json['similarity_score'] != null
-          ? double.tryParse(json['similarity_score'].toString())
-          : null,
+          ?.map((imageJson) => CommonImage.fromJson(imageJson))
+          .toList() ?? [],
     );
   }
+}
 
-  @override
-  String toString() {
-    return 'CommonArtist(uid: $uid, name: $name, spotifyId: $spotifyId)';
+class CommonImage {
+  final String uid;
+  final String url;
+  final int height;
+  final int width;
+
+  CommonImage({
+    required this.uid,
+    required this.url,
+    required this.height,
+    required this.width,
+  });
+
+  factory CommonImage.fromJson(Map<String, dynamic> json) {
+    return CommonImage(
+      uid: json['uid'] ?? '',
+      url: json['url'] ?? '',
+      height: json['height'] ?? 0,
+      width: json['width'] ?? 0,
+    );
   }
 }
 
@@ -88,24 +76,18 @@ class ArtworkImage {
   final int width;
 
   ArtworkImage({
-    this.uid = '',
-    this.url = '',
-    this.height = 0,
-    this.width = 0,
+    required this.uid,
+    required this.url,
+    required this.height,
+    required this.width,
   });
 
-  factory ArtworkImage.fromJson(dynamic json) {
-    if (json is! Map<String, dynamic>) {
-      print('Invalid Image JSON type: ${json.runtimeType}');
-      print('Image JSON content: $json');
-      return ArtworkImage(); // Now this will work with default values
-    }
-
+  factory ArtworkImage.fromJson(Map<String, dynamic> json) {
     return ArtworkImage(
-      uid: json['uid']?.toString() ?? '',
-      url: json['url']?.toString() ?? '',
-      height: int.tryParse(json['height']?.toString() ?? '0') ?? 0,
-      width: int.tryParse(json['width']?.toString() ?? '0') ?? 0,
+      uid: json['uid'] ?? '',
+      url: json['url'] ?? '',
+      height: json['height'] ?? 0,
+      width: json['width'] ?? 0,
     );
   }
 }

@@ -1,29 +1,40 @@
 import 'package:musicbud_flutter/models/common_artist.dart';
 
 class CommonAlbum {
-  final String? name;
-  final List<CommonArtist>? artists;
-  final String? imageUrl;
+  final String uid;
+  final String name;
+  final String artist;
+  final String spotifyId;
+  final String spotifyUrl;
+  final List<ArtworkImage> images;
   final double? similarityScore;
-  final String? artist; // Add this line
 
   CommonAlbum({
-    this.name,
-    this.artists,
-    this.imageUrl,
+    required this.uid,
+    required this.name,
+    required this.artist,
+    required this.spotifyId,
+    required this.spotifyUrl,
+    required this.images,
     this.similarityScore,
-    this.artist, // Add this line
   });
+
+  String get imageUrl => images.isNotEmpty ? images.first.url : '';
 
   factory CommonAlbum.fromJson(Map<String, dynamic> json) {
     return CommonAlbum(
-      name: json['name'] as String?,
-      artists: (json['artists'] as List<dynamic>?)
-          ?.map((artistJson) => CommonArtist.fromJson(artistJson as Map<String, dynamic>))
-          .toList(),
-      imageUrl: json['image_url'] as String?,
-      similarityScore: json['similarity_score'] as double?,
-      artist: json['artist'] as String?, // Add this line
+      uid: json['uid'] ?? '',
+      name: json['name'] ?? '',
+      artist: json['artist'] ?? '',
+      spotifyId: json['spotify_id'] ?? '',
+      spotifyUrl: json['spotify_url'] ?? '',
+      images: (json['images'] as List<dynamic>?)
+              ?.map((image) => ArtworkImage.fromJson(image))
+              .toList() ??
+          [],
+      similarityScore: json['similarity_score'] != null
+          ? double.tryParse(json['similarity_score'].toString())
+          : null,
     );
   }
 }

@@ -1,15 +1,24 @@
+import 'package:musicbud_flutter/models/common_manga.dart';
+
 class Manga {
+  final String uid;
   final String title;
+  final String? status;
   final String? imageUrl;
-  final String? author;
 
-  Manga({required this.title, this.imageUrl, this.author});
+  Manga({
+    required this.uid,
+    required this.title,
+    this.status,
+    this.imageUrl,
+  });
 
-  factory Manga.fromJson(Map<String, dynamic> json) {
-    return Manga(
-      title: json['title'],
-      imageUrl: json['image_url'],
-      author: json['author'],
+  CommonManga toCommonManga() {
+    return CommonManga(
+      uid: this.uid,
+      title: this.title,
+      status: this.status ?? 'Unknown',
+      imageUrl: this.imageUrl ?? '',
     );
   }
 }
