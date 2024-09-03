@@ -205,19 +205,53 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
 
   Future<void> _loadTopArtists() async {
     try {
-      final artists = await _apiService.fetchItems<CommonArtist>('/me/top/artists');
+      final List<dynamic> topArtistsData = await _apiService.getTopArtists();
+      
+      final List<CommonArtist> topArtists = topArtistsData.map((artistData) {
+        try {
+          return CommonArtist(
+            uid: artistData['uid']?.toString() ?? '',
+            name: artistData['name']?.toString() ?? '',
+            spotifyId: artistData['spotify_id']?.toString() ?? '',
+            spotifyUrl: artistData['spotify_url']?.toString() ?? '',
+            href: artistData['href']?.toString() ?? '',
+            popularity: int.tryParse(artistData['popularity']?.toString() ?? '0') ?? 0,
+            type: artistData['type']?.toString() ?? '',
+            uri: artistData['uri']?.toString() ?? '',
+            followers: int.tryParse(artistData['followers']?.toString() ?? '0') ?? 0,
+            images: (artistData['images'] as List<dynamic>?)
+                    ?.map((image) => ArtworkImage(
+                      uid: image['uid']?.toString() ?? '',
+                      url: image['url']?.toString() ?? '',
+                      height: int.tryParse(image['height']?.toString() ?? '0') ?? 0,
+                      width: int.tryParse(image['width']?.toString() ?? '0') ?? 0,
+                    ))
+                    .toList() ??
+                [],
+            genres: (artistData['genres'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+            similarityScore: artistData['similarity_score'] != null
+                ? double.tryParse(artistData['similarity_score'].toString())
+                : null,
+          );
+        } catch (e, stackTrace) {
+          print('Error parsing artist: $e\n$stackTrace');
+          print('Problematic artist data: $artistData');
+          return null;
+        }
+      }).whereType<CommonArtist>().toList();
+
       setState(() {
-        _topArtists = artists;
+        _topArtists = topArtists;
       });
     } catch (e) {
       print('Error loading top artists: $e');
-      rethrow;
+      // Handle the error (e.g., show an error message to the user)
     }
   }
 
   Future<void> _loadTopGenres() async {
     try {
-      final genres = await _apiService.fetchItems<CommonGenre>('/me/top/genres');
+      final genres = await _apiService.getTopGenres();
       setState(() {
         _topGenres = genres;
       });

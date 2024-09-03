@@ -31,31 +31,25 @@ class CommonArtist {
   });
 
   factory CommonArtist.fromJson(Map<String, dynamic> json) {
-    try {
-      return CommonArtist(
-        uid: json['uid']?.toString() ?? '',
-        name: json['name']?.toString() ?? '',
-        spotifyId: json['spotify_id']?.toString() ?? '',
-        spotifyUrl: json['spotify_url']?.toString() ?? '',
-        href: json['href']?.toString() ?? '',
-        popularity: int.tryParse(json['popularity']?.toString() ?? '0') ?? 0,
-        type: json['type']?.toString() ?? '',
-        uri: json['uri']?.toString() ?? '',
-        followers: int.tryParse(json['followers']?.toString() ?? '0') ?? 0,
-        images: (json['images'] as List<dynamic>?)
-                ?.map((image) => ArtworkImage.fromJson(image as Map<String, dynamic>))
-                .toList() ??
-            [],
-        genres: (json['genres'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
-        similarityScore: json['similarity_score'] != null
-            ? double.tryParse(json['similarity_score'].toString())
-            : null,
-      );
-    } catch (e, stackTrace) {
-      developer.log('Error parsing CommonArtist: $e\n$stackTrace');
-      developer.log('Problematic JSON: $json');
-      rethrow;
-    }
+    return CommonArtist(
+      uid: json['uid']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      spotifyId: json['spotify_id']?.toString() ?? '',
+      spotifyUrl: json['spotify_url']?.toString() ?? '',
+      href: json['href']?.toString() ?? '',
+      popularity: int.tryParse(json['popularity']?.toString() ?? '0') ?? 0,
+      type: json['type']?.toString() ?? '',
+      uri: json['uri']?.toString() ?? '',
+      followers: int.tryParse(json['followers']?.toString() ?? '0') ?? 0,
+      images: (json['images'] as List<dynamic>?)
+              ?.map((image) => ArtworkImage.fromJson(image))
+              .toList() ??
+          [],
+      genres: (json['genres'] as List<dynamic>?)?.map((e) => e.toString()).toList() ?? [],
+      similarityScore: json['similarity_score'] != null
+          ? double.tryParse(json['similarity_score'].toString())
+          : null,
+    );
   }
 
   @override
@@ -94,13 +88,19 @@ class ArtworkImage {
   final int width;
 
   ArtworkImage({
-    required this.uid,
-    required this.url,
-    required this.height,
-    required this.width,
+    this.uid = '',
+    this.url = '',
+    this.height = 0,
+    this.width = 0,
   });
 
-  factory ArtworkImage.fromJson(Map<String, dynamic> json) {
+  factory ArtworkImage.fromJson(dynamic json) {
+    if (json is! Map<String, dynamic>) {
+      print('Invalid Image JSON type: ${json.runtimeType}');
+      print('Image JSON content: $json');
+      return ArtworkImage(); // Now this will work with default values
+    }
+
     return ArtworkImage(
       uid: json['uid']?.toString() ?? '',
       url: json['url']?.toString() ?? '',

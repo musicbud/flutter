@@ -197,16 +197,65 @@ class ApiService {
   }
 
   Future<List<CommonArtist>> getTopArtists({int page = 1}) async {
-    final response = await _retryWithRefresh(() => _dio.post(
-      '/me/top/artists',
-      data: {'page': page},
-    ));
+    try {
+      final response = await _dio.post(
+        '/me/top/artists',
+        data: {'page': page},
+      );
 
-    return _parseItems<CommonArtist>(response.data, CommonArtist.fromJson);
+      print('Response from /me/top/artists: ${response.data}');
+
+      if (response.statusCode == 200) {
+        final List<dynamic> artistsData = response.data['data'] ?? [];
+        return artistsData.map((artistJson) {
+          try {
+            // Check if artistJson is already a CommonArtist
+            if (artistJson is CommonArtist) {
+              return artistJson;
+            }
+            return CommonArtist.fromJson(Map<String, dynamic>.from(artistJson));
+          } catch (e, stackTrace) {
+            print('Error parsing artist: $e\n$stackTrace');
+            print('Problematic artist data: $artistJson');
+            return null;
+          }
+        }).whereType<CommonArtist>().toList();
+      } else {
+        throw Exception('Failed to load top artists: ${response.statusCode}');
+      }
+    } catch (e, stackTrace) {
+      print('Error fetching top artists: $e\n$stackTrace');
+      rethrow;
+    }
   }
 
-  Future<List<CommonGenre>> getTopGenres({int page = 1}) {
-    return _fetchItems('/bud/top/genres', CommonGenre.fromJson, page: page);
+  Future<List<CommonGenre>> getTopGenres({int page = 1}) async {
+    try {
+      final response = await _dio.post(
+        '/me/top/genres',
+        data: {'page': page},
+      );
+
+      print('Response from /me/top/genres: ${response.data}');
+
+      if (response.statusCode == 200) {
+        final List<dynamic> genresData = response.data['data'] ?? [];
+        return genresData.map((genreJson) {
+          try {
+            return CommonGenre.fromJson(Map<String, dynamic>.from(genreJson));
+          } catch (e, stackTrace) {
+            print('Error parsing genre: $e\n$stackTrace');
+            print('Problematic genre data: $genreJson');
+            return null;
+          }
+        }).whereType<CommonGenre>().toList();
+      } else {
+        throw Exception('Failed to load top genres: ${response.statusCode}');
+      }
+    } catch (e, stackTrace) {
+      print('Error fetching top genres: $e\n$stackTrace');
+      rethrow;
+    }
   }
 
   Future<List<CommonAlbum>> getLikedAlbums({int page = 1}) {
