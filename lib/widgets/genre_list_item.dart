@@ -9,33 +9,47 @@ class GenreListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Image.network(
-                genre.defaultImageUrl,
-                width: 100,
-                height: 100,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => Icon(Icons.music_note, size: 100),
-              ),
-              SizedBox(height: 8),
-              Expanded(
-                child: Text(
-                  genre.name,
-                  style: Theme.of(context).textTheme.subtitle1,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: 120,
+        height: 180,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 3,
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: _buildPlaceholder(),
                 ),
               ),
-            ],
-          ),
+            ),
+            SizedBox(height: 4),
+            Flexible(
+              flex: 1,
+              child: Text(
+                genre.name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodyText2?.copyWith(fontSize: 12),
+              ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      color: Colors.grey[300],
+      child: Icon(
+        Icons.music_note,
+        color: Colors.grey[600],
+        size: 40,
       ),
     );
   }

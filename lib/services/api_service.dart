@@ -682,5 +682,19 @@ class ApiService {
       throw Exception('An unexpected error occurred');
     }
   }
+
+  Future<List<CommonTrack>> getCommonTracks(String budId) async {
+    return _fetchCommonItems('/bud/common/top/tracks', CommonTrack.fromJson, budId);
+  }
+
+  Future<List<CommonArtist>> getCommonArtists(String budId) async {
+    return _fetchCommonItems('/bud/common/top/artists', CommonArtist.fromJson, budId);
+  }
+
+  Future<List<CommonGenre>> getCommonGenres(String budId) async {
+    return _fetchCommonItems('/bud/common/top/genres', CommonGenre.fromJson, budId);
+  }
+
+  
 }
 

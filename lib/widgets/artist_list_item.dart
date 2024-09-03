@@ -9,35 +9,59 @@ class ArtistListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              artist.images.isNotEmpty
-                  ? Image.network(
-                      artist.images.first.url,
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Icon(Icons.person, size: 100),
-                    )
-                  : Icon(Icons.person, size: 100),
-              SizedBox(height: 8),
-              Expanded(
-                child: Text(
-                  artist.name,
-                  style: Theme.of(context).textTheme.subtitle1,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: 120,
+        height: 180,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 3,
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: _buildImage(),
                 ),
               ),
-            ],
-          ),
+            ),
+            SizedBox(height: 4),
+            Flexible(
+              flex: 1,
+              child: Text(
+                artist.name,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodyText2?.copyWith(fontSize: 12),
+              ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildImage() {
+    final imageUrl = artist.images.isNotEmpty ? artist.images[0].url : null;
+    if (imageUrl == null || imageUrl.isEmpty) {
+      return _buildPlaceholder();
+    }
+    return Image.network(
+      imageUrl,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => _buildPlaceholder(),
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      color: Colors.grey[300],
+      child: Icon(
+        Icons.person,
+        color: Colors.grey[600],
+        size: 40,
       ),
     );
   }

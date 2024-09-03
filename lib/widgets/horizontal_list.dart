@@ -21,21 +21,30 @@ class HorizontalList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(title, style: Theme.of(context).textTheme.headline6),
-            TextButton(onPressed: onSeeAll, child: Text('See All')),
-          ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              TextButton(
+                onPressed: onSeeAll,
+                child: Text('See All'),
+              ),
+            ],
+          ),
         ),
         SizedBox(
-          height: 150,
+          height: 180,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: items.length,
             itemBuilder: (context, index) {
-              return SizedBox(
-                width: 200, // Set a fixed width for each item
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4.0),
                 child: items[index],
               );
             },

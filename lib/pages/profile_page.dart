@@ -430,7 +430,10 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
       return [
         HorizontalList(
           title: 'Top Tracks',
-          items: _topTracks.map((track) => _buildTrackItem(track)).toList(),
+          items: _topTracks.map((track) => SizedBox(
+            width: 150, // Set a fixed width for each item
+            child: _buildTrackItem(track),
+          )).toList(),
           onSeeAll: () {
             Navigator.push(
               context,
@@ -446,7 +449,10 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
         ),
         HorizontalList(
           title: 'Top Artists',
-          items: _topArtists.map((artist) => _buildArtistItem(artist)).toList(),
+          items: _topArtists.map((artist) => SizedBox(
+            width: 150, // Set a fixed width for each item
+            child: _buildArtistItem(artist),
+          )).toList(),
           onSeeAll: () {
             Navigator.push(
               context,
@@ -462,7 +468,10 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
         ),
         HorizontalList(
           title: 'Recently Played',
-          items: _playedTracks.map((track) => _buildTrackItem(track)).toList(),
+          items: _playedTracks.map((track) => SizedBox(
+            width: 150, // Set a fixed width for each item
+            child: _buildTrackItem(track),
+          )).toList(),
           onSeeAll: () {
             Navigator.push(
               context,
@@ -480,7 +489,10 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
         if (_topGenres.isNotEmpty)
           HorizontalList(
             title: 'Top Genres',
-            items: _topGenres.map((genre) => GenreListItem(genre: genre)).toList(),
+            items: _topGenres.map((genre) => SizedBox(
+              width: 150, // Set a fixed width for each item
+              child: _buildGenreItem(genre),
+            )).toList(),
             onSeeAll: () {
               // Navigate to see all genres
             },
@@ -490,7 +502,10 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
       return [
         // HorizontalList(
         //   title: 'Top Anime',
-        //   items: _topAnime.map((anime) => _buildAnimeItem(anime)).toList(),
+        //   items: _topAnime.map((anime) => SizedBox(
+        //     width: 150, // Set a fixed width for each item
+        //     child: _buildAnimeItem(anime),
+        //   )).toList(),
         //   onSeeAll: () {
         //     Navigator.push(
         //       context,
@@ -506,7 +521,10 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
         // ),
         // HorizontalList(
         //   title: 'Top Manga',
-        //   items: _topManga.map((manga) => _buildMangaItem(manga)).toList(),
+        //   items: _topManga.map((manga) => SizedBox(
+        //     width: 150, // Set a fixed width for each item
+        //     child: _buildMangaItem(manga),
+        //   )).toList(),
         //   onSeeAll: () {
         //     Navigator.push(
         //       context,

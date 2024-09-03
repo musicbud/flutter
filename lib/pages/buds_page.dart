@@ -4,6 +4,7 @@ import 'package:musicbud_flutter/models/bud_match.dart';
 import 'package:musicbud_flutter/pages/common_items_page.dart';
 import 'package:musicbud_flutter/models/common_track.dart';
 import 'package:musicbud_flutter/widgets/track_list_item.dart';
+import 'package:musicbud_flutter/pages/bud_common_items_page.dart';
 
 class BudsPage extends StatefulWidget {
   final ApiService apiService;
@@ -115,7 +116,7 @@ class _BudsPageState extends State<BudsPage> {
               title: Text(bud.displayName ?? bud.username),
               subtitle: Text('Similarity: ${budMatch.similarityScore.toStringAsFixed(2)}'),
               onTap: () {
-                _navigateToCommonItemsPage(bud.uid);
+                _navigateToCommonItemsPage(bud.uid, bud.displayName ?? bud.username);
               },
             );
           },
@@ -125,15 +126,11 @@ class _BudsPageState extends State<BudsPage> {
     );
   }
 
-  void _navigateToCommonItemsPage(String budId) {
+  void _navigateToCommonItemsPage(String budId, String budName) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CommonItemsPage<CommonTrack>(
-          title: 'Top Tracks',
-          fetchItems: (page) => _apiService.getTopTracks(page: page),
-          buildListItem: (track) => TrackListItem(track: track),
-        ),
+        builder: (context) => BudCommonItemsPage(budId: budId, budName: budName),
       ),
     );
   }
