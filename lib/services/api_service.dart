@@ -14,26 +14,27 @@ import 'dart:developer' as developer;
 import 'package:musicbud_flutter/models/common_anime.dart';
 import 'package:musicbud_flutter/models/common_manga.dart';
 import 'package:flutter/foundation.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
 
-  late Dio _dio;
+  final Dio _dio;
   String? _accessToken;
   String? _sessionId;
   final String _baseUrl = 'http://84.235.170.234';
 
-  ApiService._internal() {
-    _dio = Dio(BaseOptions(
-      baseUrl: _baseUrl,
-      connectTimeout: 5000,
-      receiveTimeout: 3000,
-      validateStatus: (status) => status! < 500,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-    ));
+  ApiService._internal() : _dio = Dio() {
+    _dio.options.baseUrl = _baseUrl;
+    _dio.options.connectTimeout = Duration(seconds: 5);
+    _dio.options.receiveTimeout = Duration(seconds: 3);
+    _dio.options.headers = {
+      'Content-Type': 'application/json',
+    };
+    _dio.options.extra['withCredentials'] = true;
+
     _dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
@@ -133,22 +134,10 @@ class ApiService {
 
   Future<List<T>> _fetchCommonItems<T>(String endpoint, T Function(Map<String, dynamic>) fromJson, String budId, {int page = 1}) async {
     try {
-      print('Fetching common items from $endpoint'); // Debug print
-      print('Current token: $_accessToken'); // Debug print
-      print('Current headers: ${_dio.options.headers}'); // Debug print
-
-      if (_accessToken == null) {
-        throw Exception('Authentication token is not set');
-      }
-
       final response = await _dio.post(
         endpoint,
-        queryParameters: {'page': page},
-        data: {'bud_id': budId},
+        data: {'bud_id': budId, 'page': page},
       );
-
-      print('Response status code: ${response.statusCode}');
-      print('Response data: ${response.data}');
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = response.data;
@@ -179,24 +168,24 @@ class ApiService {
   // Profile page methods
   Future<UserProfile> getUserProfile() async {
     try {
-      final response = await _retryWithRefresh(() => _dio.post(
-        '/me/profile',
-        data: {'service': 'spotify'},
-      ));
-
+      final response = await _dio.post('/me/profile', data: {'service': 'spotify'});
       if (response.statusCode == 200) {
-        return UserProfile.fromJson(response.data);
+        final userData = response.data as Map<String, dynamic>;
+        final userProfile = UserProfile.fromJson(userData);
+        print('User profile: $userProfile'); // This will print all fields
+        return userProfile;
       } else {
         throw Exception('Failed to load user profile: ${response.statusCode}');
       }
-    } catch (e) {
-      print('Error fetching user profile: $e');
+    } on DioError catch (e) {
+      print('Error fetching user profile: ${e.message}');
+      print('Response data: ${e.response?.data}');
       rethrow;
     }
   }
 
   Future<List<CommonTrack>> getTopTracks({int page = 1}) async {
-    return _handleRequest(() async {
+    try {
       final response = await _dio.post(
         '/me/top/tracks',
         data: {'page': page},
@@ -208,11 +197,14 @@ class ApiService {
       } else {
         throw Exception('Failed to load top tracks: ${response.statusCode}');
       }
-    });
+    } catch (e) {
+      print('Error loading top tracks: $e');
+      return []; // Return an empty list instead of throwing an exception
+    }
   }
 
   Future<List<CommonArtist>> getTopArtists({int page = 1}) async {
-    return _handleRequest(() async {
+    try {
       final response = await _dio.post(
         '/me/top/artists',
         data: {'page': page},
@@ -224,11 +216,14 @@ class ApiService {
       } else {
         throw Exception('Failed to load top artists: ${response.statusCode}');
       }
-    });
+    } catch (e) {
+      print('Error loading top artists: $e');
+      return []; // Return an empty list instead of throwing an exception
+    }
   }
 
-  Future<List<CommonGenre>> getTopGenres({int page = 1}) async {
-    return _handleRequest(() async {
+  Future<List<String>> getTopGenres({int page = 1}) async {
+    try {
       final response = await _dio.post(
         '/me/top/genres',
         data: {'page': page},
@@ -236,11 +231,14 @@ class ApiService {
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = response.data;
         final List<dynamic> genreList = responseData['data'];
-        return genreList.map((genre) => CommonGenre.fromJson(genre)).toList();
+        return genreList.cast<String>();
       } else {
         throw Exception('Failed to load top genres: ${response.statusCode}');
       }
-    });
+    } catch (e) {
+      print('Error loading top genres: $e');
+      return []; // Return an empty list instead of throwing an exception
+    }
   }
 
   Future<List<CommonAlbum>> getLikedAlbums({int page = 1}) {
@@ -363,10 +361,6 @@ class ApiService {
 
   Future<List<CommonAlbum>> getCommonLikedAlbums(String budId) {
     return _fetchCommonItems('/bud/common/liked/albums', CommonAlbum.fromJson, budId);
-  }
-
-  Future<List<CommonTrack>> getCommonPlayedTracks(String budId) {
-    return _fetchCommonItems('/bud/common/played/tracks', CommonTrack.fromJson, budId);
   }
 
   Future<List<BudMatch>> getBuds(String endpoint, {int page = 1}) async {
@@ -498,45 +492,41 @@ class ApiService {
     }
   }
 
-  Future<String?> login(String username, String password) async {
+
+  Future<Map<String, dynamic>> register(String username, String password) async {
+    final url = Uri.parse('$_baseUrl/register');
+
     try {
-      final response = await _dio.post(
-        '/login',
-        data: FormData.fromMap({
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode({
           'username': username,
           'password': password,
         }),
-        options: Options(
-          contentType: Headers.formUrlEncodedContentType,
-          headers: {
-            'Accept': 'application/json',
-          },
-        ),
       );
 
-      print('Login response: ${response.data}');
+      print('Registration response status code: ${response.statusCode}');
+      print('Registration response headers: ${response.headers}');
+      print('Registration response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        final responseData = response.data as Map<String, dynamic>;
-        final data = responseData['data'] as Map<String, dynamic>?;
-        
-        if (data != null) {
-          final accessToken = data['access_token'] as String?;
-          final refreshToken = data['refresh_token'] as String?;
-          
-          if (accessToken != null && refreshToken != null) {
-            await setAuthToken(accessToken);
-            await setRefreshToken(refreshToken);
-            return accessToken;
-          }
+        try {
+          final responseData = json.decode(response.body);
+          _accessToken = responseData['access'];
+          _updateHeaders();
+          return responseData;
+        } catch (e) {
+          print('Error decoding JSON: $e');
+          throw Exception('Invalid response format');
         }
+      } else {
+        throw Exception('Registration failed: ${response.statusCode} ${response.reasonPhrase}');
       }
-      
-      // If we reach here, something went wrong
-      final errorMessage = response.data['error'] ?? 'Unknown error occurred';
-      throw Exception(errorMessage);
     } catch (e) {
-      print('Login error: $e');
+      print('Registration error: $e');
       rethrow;
     }
   }
@@ -576,8 +566,8 @@ class ApiService {
       );
 
       if (response.statusCode == 200) {
-        final newAccessToken = response.data['access_token'];
-        await setAuthToken(newAccessToken);
+        _accessToken = response.data['access_token'];
+        _updateHeaders();
         return true;
       } else {
         return false;
@@ -695,6 +685,49 @@ class ApiService {
     return _fetchCommonItems('/bud/common/top/genres', CommonGenre.fromJson, budId);
   }
 
-  
-}
+  Future<List<CommonTrack>> getCommonPlayedTracks(String budId) async {
+    return _fetchCommonItems('/bud/common/played/tracks', CommonTrack.fromJson, budId);
+  }
 
+  Future<bool> login(String username, String password) async {
+    try {
+      print('Attempting login to $_baseUrl/login/');
+      final response = await _dio.post(
+        '/login/',  // Note the trailing slash
+        data: {
+          'username': username,
+          'password': password,
+        },
+      );
+
+      print('Response status: ${response.statusCode}');
+      print('Response data: ${response.data}');
+
+      if (response.statusCode == 200) {
+        final responseData = response.data;
+        if (responseData['success'] == true) {
+          print('Login successful: ${responseData['message']}');
+          // Here you might want to handle any token or session data
+          // that your server sends back, if applicable
+          return true;
+        } else {
+          print('Login failed: ${responseData['message']}');
+          return false;
+        }
+      } else {
+        print('Login failed: ${response.statusCode} ${response.statusMessage}');
+        return false;
+      }
+    } on DioError catch (e) {
+      print('Dio error: ${e.type} - ${e.message}');
+      if (e.response != null) {
+        print('Response status: ${e.response?.statusCode}');
+        print('Response data: ${e.response?.data}');
+      }
+      return false;
+    } catch (e) {
+      print('Unexpected error during login: $e');
+      return false;
+    }
+  }
+}

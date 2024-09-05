@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:musicbud_flutter/pages/launcher_page.dart';
 import 'package:musicbud_flutter/pages/login_page.dart';
-import 'package:musicbud_flutter/pages/profile_page.dart';
-import 'package:musicbud_flutter/services/api_service.dart';
+import 'package:musicbud_flutter/pages/signup_page.dart';
+import 'package:musicbud_flutter/pages/home_page.dart';
 
 void main() {
-  runApp(MyApp());
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    print('Uncaught error: ${details.exception}');
+    print('Stack trace: ${details.stack}');
+  };
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final ApiService apiService = ApiService();
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +24,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: LoginPage(apiService: apiService),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const LauncherPage(title: 'MusicBud'),
+        '/login': (context) => const LoginPage(),
+        '/signup': (context) => const SignUpPage(),
+        '/home': (context) => const HomePage(),
+      },
     );
   }
 }

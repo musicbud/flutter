@@ -1,27 +1,27 @@
 import 'package:flutter/material.dart';
 
-class LauncherPage extends StatefulWidget {
-  const LauncherPage({super.key, required this.title});
+class LauncherPage extends StatelessWidget {
   final String title;
 
-  @override
-  State<LauncherPage> createState() => _LauncherPageState();
-}
+  const LauncherPage({Key? key, required this.title}) : super(key: key);
 
-class _LauncherPageState extends State<LauncherPage> {
   @override
   Widget build(BuildContext context) {
+    print('Building LauncherPage');
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Text(title),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text('Welcome to MusicBud', style: TextStyle(fontSize: 24)),
+            const SizedBox(height: 20),
             OutlinedButton(
               onPressed: () {
+                print('Signup button pressed');
                 Navigator.pushNamed(context, '/signup');
               },
               style: OutlinedButton.styleFrom(
@@ -32,6 +32,7 @@ class _LauncherPageState extends State<LauncherPage> {
             const SizedBox(height: 10),
             OutlinedButton(
               onPressed: () {
+                print('Login button pressed');
                 Navigator.pushNamed(context, '/login');
               },
               style: OutlinedButton.styleFrom(

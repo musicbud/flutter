@@ -13,7 +13,7 @@ import 'package:musicbud_flutter/widgets/horizontal_list.dart';
 import 'package:musicbud_flutter/models/bud_match.dart';
 import 'package:musicbud_flutter/pages/common_items_page.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:musicbud_flutter/pages/login_page.dart'; // Add this import
+import 'package:musicbud_flutter/pages/login_page.dart';
 import 'package:musicbud_flutter/widgets/track_list_item.dart';
 import 'package:musicbud_flutter/widgets/artist_list_item.dart';
 import 'package:musicbud_flutter/widgets/genre_list_item.dart';
@@ -33,11 +33,13 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   int _selectedIndex = 0;
   bool _isAuthenticated = false;
+  UserProfile? _userProfile;
 
   @override
   void initState() {
     super.initState();
     _checkAuthentication();
+    _loadUserProfile();
   }
 
   Future<void> _checkAuthentication() async {
@@ -49,7 +51,21 @@ class _ProfilePageState extends State<ProfilePage> {
     } catch (e) {
       print('Authentication failed: $e');
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => LoginPage(apiService: widget.apiService)),
+        MaterialPageRoute(builder: (context) => LoginPage()),
+      );
+    }
+  }
+
+  Future<void> _loadUserProfile() async {
+    try {
+      final userProfile = await widget.apiService.getUserProfile();
+      setState(() {
+        _userProfile = userProfile;
+      });
+    } catch (e) {
+      print('Error loading user profile: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load user profile. Please try again.')),
       );
     }
   }
@@ -223,7 +239,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
     try {
       final genres = await _apiService.getTopGenres();
       setState(() {
-        _topGenres = genres;
+        _topGenres = genres.map((genre) => CommonGenre(name: genre)).toList();
       });
     } catch (e) {
       print('Error loading top genres: $e');
@@ -277,12 +293,11 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
 
     if (image != null) {
       try {
-        // Implement the API call to upload the image
         final String? newPhotoUrl = await _apiService.uploadProfilePhoto(image.path);
         
-        if (newPhotoUrl != null) {
+        if (newPhotoUrl != null && _userProfile != null) {
           setState(() {
-            _userProfile?.photoUrl = newPhotoUrl;
+            _userProfile = _userProfile!.copyWith(photoUrl: newPhotoUrl);
           });
         }
       } catch (e) {
@@ -336,69 +351,56 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             GestureDetector(
               onTap: _pickAndUploadImage,
               child: CircleAvatar(
-                radius: 60,
+                radius: 50,
                 backgroundImage: _userProfile?.photoUrl != null
                   ? NetworkImage(_userProfile!.photoUrl!)
                   : null,
                 child: _userProfile?.photoUrl == null
-                  ? Icon(Icons.add_a_photo, size: 40)
+                  ? Icon(Icons.person, size: 50)
                   : null,
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 16),
             Text(
               _userProfile!.displayName ?? _userProfile!.username,
-              style: Theme.of(context).textTheme.headline5,
-              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 10),
-            if (_userProfile!.email != null)
-              Text(
-                _userProfile!.email!,
-                style: Theme.of(context).textTheme.subtitle1,
-                textAlign: TextAlign.center,
-              ),
-            SizedBox(height: 10),
+            SizedBox(height: 8),
+            Text(_userProfile!.email),
+            SizedBox(height: 16),
             if (_userProfile!.bio != null)
               Text(
                 _userProfile!.bio!,
-                style: Theme.of(context).textTheme.bodyText2,
                 textAlign: TextAlign.center,
               ),
-            SizedBox(height: 20),
+            SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildInfoChip(
-                  Icons.check_circle,
-                  _userProfile!.isActive ? 'Active' : 'Inactive',
-                  _userProfile!.isActive ? Colors.green : Colors.red,
+                Icon(
+                  Icons.circle,
+                  size: 12,
+                  color: _userProfile!.isActive ? Colors.green : Colors.red,
                 ),
-                SizedBox(width: 10),
-                _buildInfoChip(
-                  Icons.verified_user,
-                  _userProfile!.isAuthenticated ? 'Authenticated' : 'Not Authenticated',
-                  _userProfile!.isAuthenticated ? Colors.blue : Colors.orange,
+                SizedBox(width: 8),
+                Text(
+                  _userProfile!.isActive ? 'Active' : 'Inactive',
+                  style: TextStyle(color: _userProfile!.isActive ? Colors.green : Colors.red),
                 ),
               ],
+            ),
+            SizedBox(height: 8),
+            Text(
+              _userProfile!.isAuthenticated ? 'Authenticated' : 'Not Authenticated',
+              style: TextStyle(color: _userProfile!.isAuthenticated ? Colors.blue : Colors.orange),
             ),
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildInfoChip(IconData icon, String label, Color color) {
-    return Chip(
-      avatar: Icon(icon, color: color, size: 18),
-      label: Text(label),
-      backgroundColor: color.withOpacity(0.1),
-      labelStyle: TextStyle(color: color),
     );
   }
 

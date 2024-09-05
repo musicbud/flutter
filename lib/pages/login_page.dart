@@ -1,56 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../services/api_service.dart';
-import 'profile_page.dart';
-import 'package:musicbud_flutter/pages/home_page.dart'; // Add this import
-import 'package:musicbud_flutter/pages/profile_page.dart'; // Add this import
+import 'package:musicbud_flutter/services/api_service.dart';
+import 'package:dio/dio.dart';
 
 class LoginPage extends StatefulWidget {
-  final ApiService apiService;
-
-  const LoginPage({Key? key, required this.apiService}) : super(key: key);
+  const LoginPage({Key? key}) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  bool _isLoading = false; // Add this line to show a loading indicator
+  final ApiService _apiService = ApiService();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
 
   Future<void> _login() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      final username = _usernameController.text.trim();
-      final password = _passwordController.text.trim();
-
-      try {
-        final token = await widget.apiService.login(username, password);
-        if (token != null) {
-          // Login successful, navigate to the ProfilePage
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => ProfilePage(apiService: widget.apiService)),
-          );
-        }
-      } catch (e) {
-        print('Login error: $e');
-        String errorMessage = 'An error occurred. Please try again later.';
-        if (e is Exception && e.toString().contains('Invalid username or password')) {
-          errorMessage = 'Invalid username or password. Please try again.';
-        }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage)),
-        );
-      } finally {
-        setState(() {
-          _isLoading = false;
-        });
+    try {
+      final response = await _apiService.login(
+        _usernameController.text,
+        _passwordController.text,
+      );
+      // Handle successful login
+    } on DioError catch (e) {
+      String errorMessage;
+      if (e.type == DioErrorType.connectionError) {
+        errorMessage = 'Connection error. Please check your internet connection and try again.';
+      } else if (e.response?.statusCode == 403) {
+        errorMessage = 'Access forbidden. CORS issue detected.';
+      } else {
+        errorMessage = 'An error occurred: ${e.message}';
       }
+      print('Login error: $errorMessage');
+      // Display errorMessage to the user
+    } catch (e) {
+      print('Login error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An unexpected error occurred. Please try again.')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -58,40 +49,29 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Login')),
-      body: _isLoading
-        ? Center(child: CircularProgressIndicator())
-        : Form(
-            key: _formKey,
-            child: Column(
-              children: <Widget>[
-                TextFormField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(labelText: 'Username'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your username';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
-                    }
-                    return null;
-                  },
-                ),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _login,
-                  child: _isLoading ? CircularProgressIndicator() : Text('Login'),
-                ),
-              ],
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              controller: _usernameController,
+              decoration: InputDecoration(labelText: 'Username'),
             ),
-          ),
+            SizedBox(height: 16),
+            TextField(
+              controller: _passwordController,
+              decoration: InputDecoration(labelText: 'Password'),
+              obscureText: true,
+            ),
+            SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _isLoading ? null : _login,
+              child: _isLoading ? CircularProgressIndicator() : Text('Login'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
