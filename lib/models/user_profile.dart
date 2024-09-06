@@ -1,11 +1,11 @@
 class UserProfile {
   final String username;
   final String email;
-  String? photoUrl;
-  String? displayName;
-  String? bio;
-  bool isActive;
-  bool isAuthenticated;
+  final String? photoUrl;
+  final String? displayName;
+  final String? bio;
+  final bool isActive;
+  final bool isAuthenticated;
 
   UserProfile({
     required this.username,
@@ -13,8 +13,8 @@ class UserProfile {
     this.photoUrl,
     this.displayName,
     this.bio,
-    this.isActive = false,
-    this.isAuthenticated = false,
+    required this.isActive,
+    required this.isAuthenticated,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
@@ -29,7 +29,22 @@ class UserProfile {
     );
   }
 
+  // You can add a toJson method if needed
+  Map<String, dynamic> toJson() {
+    return {
+      'username': username,
+      'email': email,
+      'photo_url': photoUrl,
+      'display_name': displayName,
+      'bio': bio,
+      'is_active': isActive,
+      'is_authenticated': isAuthenticated,
+    };
+  }
+
   UserProfile copyWith({
+    String? username,
+    String? email,
     String? photoUrl,
     String? displayName,
     String? bio,
@@ -37,18 +52,13 @@ class UserProfile {
     bool? isAuthenticated,
   }) {
     return UserProfile(
-      username: this.username,
-      email: this.email,
+      username: username ?? this.username,
+      email: email ?? this.email,
       photoUrl: photoUrl ?? this.photoUrl,
       displayName: displayName ?? this.displayName,
       bio: bio ?? this.bio,
       isActive: isActive ?? this.isActive,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
     );
-  }
-
-  @override
-  String toString() {
-    return 'UserProfile(username: $username, email: $email, photoUrl: $photoUrl, displayName: $displayName, bio: $bio, isActive: $isActive, isAuthenticated: $isAuthenticated)';
   }
 }

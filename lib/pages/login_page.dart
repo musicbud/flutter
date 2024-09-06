@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:musicbud_flutter/services/api_service.dart';
 import 'package:dio/dio.dart';
+import 'package:musicbud_flutter/pages/home_page.dart'; // Update this import
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -15,38 +16,15 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
 
-  Future<void> _login() async {
-    try {
-      final response = await _apiService.login(
-        _usernameController.text,
-        _passwordController.text,
-      );
-      // Handle successful login
-    } on DioError catch (e) {
-      String errorMessage;
-      if (e.type == DioErrorType.connectionError) {
-        errorMessage = 'Connection error. Please check your internet connection and try again.';
-      } else if (e.response?.statusCode == 403) {
-        errorMessage = 'Access forbidden. CORS issue detected.';
-      } else {
-        errorMessage = 'An error occurred: ${e.message}';
-      }
-      print('Login error: $errorMessage');
-      // Display errorMessage to the user
-    } catch (e) {
-      print('Login error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An unexpected error occurred. Please try again.')),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  @override
+  void initState() {
+    super.initState();
+    print('LoginPage initState called');
   }
 
   @override
   Widget build(BuildContext context) {
+    print('LoginPage build called');
     return Scaffold(
       appBar: AppBar(title: Text('Login')),
       body: Padding(
@@ -66,12 +44,78 @@ class _LoginPageState extends State<LoginPage> {
             ),
             SizedBox(height: 24),
             ElevatedButton(
-              onPressed: _isLoading ? null : _login,
-              child: _isLoading ? CircularProgressIndicator() : Text('Login'),
+              onPressed: _isLoading ? null : _handleLogin,
+              child: _isLoading 
+                ? SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : Text('Login'),
             ),
           ],
         ),
       ),
     );
+  }
+
+  Future<void> _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final success = await ApiService().login(_usernameController.text, _passwordController.text);
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (success) {
+      print('Login successful, navigating to profile page');
+      Navigator.of(context).pushReplacementNamed('/profile');
+    } else {
+      print('Login failed');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Login failed. Please try again.')),
+      );
+    }
+  }
+
+  Future<void> _handleLogin() async {
+    print('Attempting login');
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final success = await _apiService.login(
+        _usernameController.text,
+        _passwordController.text,
+      );
+
+      print('Login success: $success');
+
+      if (success) {
+        print('Navigating to home page');
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed. Please try again.')),
+        );
+      }
+    } catch (e) {
+      print('Login error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('An error occurred. Please try again.')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 }

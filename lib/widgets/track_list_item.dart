@@ -1,8 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/models/common_track.dart';
+import 'package:flutter/material.dart'; // Add this import
+import 'package:flutter/src/widgets/image.dart' as flutter_image;
+import 'package:musicbud_flutter/models/common_track.dart' as common_track;
 
 class TrackListItem extends StatelessWidget {
-  final CommonTrack track;
+  final common_track.CommonTrack track;
   final VoidCallback? onTap;
 
   const TrackListItem({Key? key, required this.track, this.onTap}) : super(key: key);
@@ -31,10 +32,10 @@ class TrackListItem extends StatelessWidget {
             Flexible(
               flex: 1,
               child: Text(
-                track.name,
+                track.name ?? 'Unknown Track',
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodyText2?.copyWith(fontSize: 12),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 12),
               ),
             ),
             Flexible(
@@ -43,7 +44,7 @@ class TrackListItem extends StatelessWidget {
                 _getArtistName(),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.caption?.copyWith(fontSize: 10),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 10),
               ),
             ),
           ],
@@ -53,11 +54,11 @@ class TrackListItem extends StatelessWidget {
   }
 
   Widget _buildImage() {
-    final imageUrl = track.images.isNotEmpty ? track.images[0].url : null;
+    final imageUrl = track.images.isNotEmpty ? track.images.first.url : null;
     if (imageUrl == null || imageUrl.isEmpty) {
       return _buildPlaceholder();
     }
-    return Image.network(
+    return flutter_image.Image.network(
       imageUrl,
       fit: BoxFit.cover,
       errorBuilder: (context, error, stackTrace) {

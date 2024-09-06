@@ -3,64 +3,90 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 
 class CommonTrack {
-  final String uid;
-  final String name;
-  final String spotifyId;
-  final String uri;
-  final String spotifyUrl;
-  final int durationMs;
-  final int popularity;
-  final String previewUrl;
-  final List<CommonImage> images;
+  final String? uid;
+  final String? name;
+  final String? spotifyId;
+  final String? uri;
+  final String? spotifyUrl;
+  final String? href;
+  final int? durationMs;
+  final int? popularity;
+  final String? previewUrl;
+  final int? trackNumber;
+  final int? discNumber;
+  final bool explicit;
+  final String? type;
+  final bool isLocal;
+  final String? isrc;
+  final int? elementIdProperty;
+  final List<Image> images;
 
   CommonTrack({
-    required this.uid,
-    required this.name,
-    required this.spotifyId,
-    required this.uri,
-    required this.spotifyUrl,
-    required this.durationMs,
-    required this.popularity,
-    required this.previewUrl,
-    required this.images,
+    this.uid,
+    this.name,
+    this.spotifyId,
+    this.uri,
+    this.spotifyUrl,
+    this.href,
+    this.durationMs,
+    this.popularity,
+    this.previewUrl,
+    this.trackNumber,
+    this.discNumber,
+    this.explicit = false,
+    this.type,
+    this.isLocal = false,
+    this.isrc,
+    this.elementIdProperty,
+    this.images = const [],
   });
 
   factory CommonTrack.fromJson(Map<String, dynamic> json) {
     return CommonTrack(
-      uid: json['uid'] ?? '',
-      name: json['name'] ?? '',
-      spotifyId: json['spotify_id'] ?? '',
-      uri: json['uri'] ?? '',
-      spotifyUrl: json['spotify_url'] ?? '',
-      durationMs: json['duration_ms'] ?? 0,
-      popularity: json['popularity'] ?? 0,
-      previewUrl: json['preview_url'] ?? '',
+      uid: json['uid'] as String?,
+      name: json['name'] as String?,
+      spotifyId: json['spotify_id'] as String?,
+      uri: json['uri'] as String?,
+      spotifyUrl: json['spotify_url'] as String?,
+      href: json['href'] as String?,
+      durationMs: json['duration_ms'] as int?,
+      popularity: json['popularity'] as int?,
+      previewUrl: json['preview_url'] as String?,
+      trackNumber: json['track_number'] as int?,
+      discNumber: json['disc_number'] as int?,
+      explicit: json['explicit'] as bool? ?? false,
+      type: json['type'] as String?,
+      isLocal: json['is_local'] as bool? ?? false,
+      isrc: json['isrc'] as String?,
+      elementIdProperty: json['element_id_property'] != null
+          ? int.tryParse(json['element_id_property'].toString())
+          : null,
       images: (json['images'] as List<dynamic>?)
-          ?.map((imageJson) => CommonImage.fromJson(imageJson))
+          ?.map((e) => Image.fromJson(e as Map<String, dynamic>))
           .toList() ?? [],
     );
   }
 }
 
-class CommonImage {
+class Image {
   final String uid;
   final String url;
   final int height;
   final int width;
 
-  CommonImage({
+  Image({
     required this.uid,
     required this.url,
     required this.height,
     required this.width,
   });
 
-  factory CommonImage.fromJson(Map<String, dynamic> json) {
-    return CommonImage(
-      uid: json['uid'] ?? '',
-      url: json['url'] ?? '',
-      height: json['height'] ?? 0,
-      width: json['width'] ?? 0,
+  factory Image.fromJson(Map<String, dynamic> json) {
+    return Image(
+      uid: json['uid'],
+      url: json['url'],
+      height: json['height'],
+      width: json['width'],
     );
   }
 }

@@ -20,11 +20,13 @@ import 'package:musicbud_flutter/widgets/genre_list_item.dart';
 import 'package:musicbud_flutter/widgets/album_list_item.dart';
 import 'package:musicbud_flutter/widgets/anime_list_item.dart';
 import 'package:musicbud_flutter/widgets/manga_list_item.dart';
+import 'package:flutter/src/widgets/image.dart' as flutter_image;
+import 'package:musicbud_flutter/models/common_track.dart' as common_track;
+import 'package:musicbud_flutter/widgets/bud_match_list_item.dart';
+import 'package:musicbud_flutter/pages/buds_category_page.dart';
 
 class ProfilePage extends StatefulWidget {
-  final ApiService apiService;
-
-  const ProfilePage({Key? key, required this.apiService}) : super(key: key);
+  const ProfilePage({Key? key}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -44,7 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _checkAuthentication() async {
     try {
-      await widget.apiService.getUserProfile();
+      await ApiService().getUserProfile();
       setState(() {
         _isAuthenticated = true;
       });
@@ -58,7 +60,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadUserProfile() async {
     try {
-      final userProfile = await widget.apiService.getUserProfile();
+      final userProfile = await ApiService().getUserProfile();
       setState(() {
         _userProfile = userProfile;
       });
@@ -86,13 +88,13 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _getBody() {
     switch (_selectedIndex) {
       case 0:
-        return ProfilePageContent(apiService: widget.apiService);
+        return ProfilePageContent();
       case 1:
-        return BudsPage(apiService: widget.apiService);
+        return BudsPage();
       case 2:
         return Center(child: Text('Chat Page')); // Replace with actual Chat page content
       default:
-        return ProfilePageContent(apiService: widget.apiService);
+        return ProfilePageContent();
     }
   }
 
@@ -111,6 +113,19 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_getTitle()),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.people),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BudsCategoryPage(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: _getBody(),
       bottomNavigationBar: BottomNavigationBar(
@@ -137,9 +152,7 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 class ProfilePageContent extends StatefulWidget {
-  final ApiService apiService;
-
-  const ProfilePageContent({Key? key, required this.apiService}) : super(key: key);
+  const ProfilePageContent({Key? key}) : super(key: key);
 
   @override
   _ProfilePageContentState createState() => _ProfilePageContentState();
@@ -166,7 +179,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
   @override
   void initState() {
     super.initState();
-    _apiService = widget.apiService;
+    _apiService = ApiService();
     _initializeApiAndLoadData();
   }
 
@@ -287,10 +300,9 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
   //   }
   // }
 
-  Future<void> _pickAndUploadImage() async {
-    final ImagePicker _picker = ImagePicker();
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       try {
         final String? newPhotoUrl = await _apiService.uploadProfilePhoto(image.path);
@@ -338,13 +350,14 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
         _buildServiceDropdown(),
         SizedBox(height: 20),
         ..._buildContentLists(),
+        _buildCommonItemsSection(context),
       ],
     );
   }
 
   Widget _buildUserProfileSection() {
     if (_userProfile == null) {
-      return Center(child: CircularProgressIndicator());
+      return Center(child: Text('User profile not available'));
     }
 
     return Center(
@@ -353,7 +366,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
         child: Column(
           children: [
             GestureDetector(
-              onTap: _pickAndUploadImage,
+              onTap: _pickImage,
               child: CircleAvatar(
                 radius: 50,
                 backgroundImage: _userProfile?.photoUrl != null
@@ -443,7 +456,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
                 builder: (context) => CommonItemsPage<CommonTrack>(
                   title: 'Top Tracks',
                   fetchItems: (page) => _apiService.getTopTracks(page: page),
-                  buildListItem: (track) => TrackListItem(track: track),
+                  itemBuilder: (context, track) => TrackListItem(track: track),
                 ),
               ),
             );
@@ -462,7 +475,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
                 builder: (context) => CommonItemsPage<CommonArtist>(
                   title: 'Top Artists',
                   fetchItems: (page) => _apiService.getTopArtists(page: page),
-                  buildListItem: (artist) => ArtistListItem(artist: artist),
+                  itemBuilder: (context, artist) => ArtistListItem(artist: artist),
                 ),
               ),
             );
@@ -481,7 +494,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
                 builder: (context) => CommonItemsPage<CommonTrack>(
                   title: 'Recently Played',
                   fetchItems: (page) => _apiService.getPlayedTracks(page: page),
-                  buildListItem: (track) => TrackListItem(track: track),
+                  itemBuilder: (context, track) => TrackListItem(track: track),
                 ),
               ),
             );
@@ -515,7 +528,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
         //         builder: (context) => CommonItemsPage<CommonAnime>(
         //           title: 'Top Anime',
         //           fetchItems: (page) => _apiService.getTopAnime(page: page),
-        //           buildListItem: (anime) => AnimeListItem(anime: anime),
+        //           itemBuilder: (context, anime) => AnimeListItem(anime: anime),
         //         ),
         //       ),
         //     );
@@ -534,7 +547,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
         //         builder: (context) => CommonItemsPage<CommonManga>(
         //           title: 'Top Manga',
         //           fetchItems: (page) => _apiService.getTopManga(page: page),
-        //           buildListItem: (manga) => MangaListItem(manga: manga),
+        //           itemBuilder: (context, manga) => MangaListItem(manga: manga),
         //         ),
         //       ),
         //     );
@@ -605,7 +618,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          Image.network(
+          flutter_image.Image.network(
             imageUrl ?? 'https://example.com/default_image.png',
             width: 100,
             height: 100,
@@ -614,6 +627,56 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
           Text(title, overflow: TextOverflow.ellipsis),
           if (subtitle != null) Text(subtitle, overflow: TextOverflow.ellipsis),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCommonItemsSection(BuildContext context) {
+    return Column(
+      children: [
+        _buildSectionTitle('Played Tracks Buds'),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CommonItemsPage<BudMatch>(
+                  title: 'Played Tracks Buds',
+                  fetchItems: (page) => ApiService().getPlayedTracksBuds(page: page),
+                  itemBuilder: (context, budMatch) => BudMatchListItem(budMatch: budMatch),
+                ),
+              ),
+            );
+          },
+          child: Text('View All'),
+        ),
+
+        _buildSectionTitle('Liked Genres Buds'),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CommonItemsPage<BudMatch>(
+                  title: 'Liked Genres Buds',
+                  fetchItems: (page) => ApiService().getLikedGenresBuds(page: page),
+                  itemBuilder: (context, budMatch) => BudMatchListItem(budMatch: budMatch),
+                ),
+              ),
+            );
+          },
+          child: Text('View All'),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
     );
   }

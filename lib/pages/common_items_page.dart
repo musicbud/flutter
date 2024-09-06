@@ -12,13 +12,13 @@ import 'package:musicbud_flutter/widgets/album_list_item.dart';
 class CommonItemsPage<T> extends StatefulWidget {
   final String title;
   final Future<List<T>> Function(int page) fetchItems;
-  final Widget Function(T item) buildListItem;
+  final Widget Function(BuildContext, T) itemBuilder;
 
   const CommonItemsPage({
     Key? key,
     required this.title,
     required this.fetchItems,
-    required this.buildListItem,
+    required this.itemBuilder,
   }) : super(key: key);
 
   @override
@@ -27,8 +27,10 @@ class CommonItemsPage<T> extends StatefulWidget {
 
 class _CommonItemsPageState<T> extends State<CommonItemsPage<T>> {
   List<T> _items = [];
-  int _currentPage = 1;
   bool _isLoading = false;
+  String? _error;
+  int _currentPage = 1;
+  bool _hasMoreItems = true;
 
   @override
   void initState() {
@@ -37,18 +39,30 @@ class _CommonItemsPageState<T> extends State<CommonItemsPage<T>> {
   }
 
   Future<void> _loadItems() async {
-    if (_isLoading) return;
-    setState(() => _isLoading = true);
+    if (_isLoading || !_hasMoreItems) return;
+
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
     try {
       final newItems = await widget.fetchItems(_currentPage);
-      setState(() {
-        _items.addAll(newItems);
-        _currentPage++;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _items.addAll(newItems);
+          _isLoading = false;
+          _currentPage++;
+          _hasMoreItems = newItems.isNotEmpty;
+        });
+      }
     } catch (e) {
-      print('Error loading items: $e');
-      setState(() => _isLoading = false);
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -56,19 +70,32 @@ class _CommonItemsPageState<T> extends State<CommonItemsPage<T>> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
-      body: ListView.builder(
-        itemCount: _items.length + 1,
-        itemBuilder: (context, index) {
-          if (index < _items.length) {
-            return widget.buildListItem(_items[index]);
-          } else if (_isLoading) {
-            return Center(child: CircularProgressIndicator());
-          } else {
-            _loadItems();
-            return SizedBox.shrink();
-          }
-        },
-      ),
+      body: _buildBody(),
     );
+  }
+
+  Widget _buildBody() {
+    if (_items.isEmpty && _isLoading) {
+      return Center(child: CircularProgressIndicator());
+    } else if (_error != null && _items.isEmpty) {
+      return Center(child: Text('Error: $_error'));
+    } else if (_items.isEmpty) {
+      return Center(child: Text('No items found'));
+    } else {
+      return ListView.builder(
+        itemCount: _items.length + (_hasMoreItems ? 1 : 0),
+        itemBuilder: (context, index) {
+          if (index == _items.length) {
+            if (_isLoading) {
+              return Center(child: CircularProgressIndicator());
+            } else {
+              _loadItems(); // Load more items when reaching the end
+              return SizedBox.shrink();
+            }
+          }
+          return widget.itemBuilder(context, _items[index]);
+        },
+      );
+    }
   }
 }

@@ -16,292 +16,222 @@ import 'package:musicbud_flutter/models/common_manga.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:dio/src/form_data.dart' as dio_form;
+import 'package:dio/src/multipart_file.dart' as dio_multipart;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
 
   final Dio _dio;
-  String? _accessToken;
-  String? _sessionId;
-  final String _baseUrl = 'http://84.235.170.234';
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+  String? _authToken;
 
   ApiService._internal() : _dio = Dio() {
-    _dio.options.baseUrl = _baseUrl;
+    _dio.options.baseUrl = 'http://84.235.170.234';
     _dio.options.connectTimeout = Duration(seconds: 5);
     _dio.options.receiveTimeout = Duration(seconds: 3);
     _dio.options.headers = {
       'Content-Type': 'application/json',
     };
-    _dio.options.extra['withCredentials'] = true;
-
-    _dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
-        final token = await getAuthToken();
-        if (token != null) {
-          options.headers['Authorization'] = 'Bearer $token';
+        _authToken = await _secureStorage.read(key: 'access_token');
+        print('Retrieved auth token for request: $_authToken');
+        if (_authToken != null) {
+          options.headers['Authorization'] = 'Bearer $_authToken';
         }
+        print('Request headers: ${options.headers}');
         return handler.next(options);
+      },
+    ));
+    _dio.interceptors.add(InterceptorsWrapper(
+      onError: (DioError e, handler) {
+        print('Request failed: ${e.requestOptions.path}');
+        print('Response status: ${e.response?.statusCode}');
+        print('Response data: ${e.response?.data}');
+        return handler.next(e);
       },
     ));
   }
 
-  Future<void> setAuthToken(String token) async {
-    _accessToken = token;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('accessToken', token);
-    print('Auth token set: $_accessToken'); // Debug print
-  }
-
-  Future<void> setRefreshToken(String token) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('refreshToken', token);
-  }
-
-  Future<String?> getAuthToken() async {
-    if (_accessToken == null) {
-      final prefs = await SharedPreferences.getInstance();
-      _accessToken = prefs.getString('accessToken');
-    }
-    return _accessToken;
-  }
-
-  Future<String?> getRefreshToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('refreshToken');
-  }
-
-  Future<void> setSessionId(String sessionId) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('sessionId', sessionId);
-    _sessionId = sessionId;
-    _updateHeaders();
-    print('Session ID set: $_sessionId'); // Debug print
-  }
-
-  Future<String?> getSessionId() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('sessionId');
-  }
-
-  void _updateHeaders() {
-    if (_accessToken != null) {
-      _dio.options.headers['Authorization'] = 'Bearer $_accessToken';
-    }
-    if (_sessionId != null) {
-      _dio.options.headers['Cookie'] = 'musicbud_sessionid=$_sessionId';
-    }
-    print('Updated headers: ${_dio.options.headers}'); // Debug print
-  }
-
-  Future<List<T>> _fetchItems<T>(String endpoint, T Function(Map<String, dynamic>) fromJson, {int page = 1}) async {
+  Future<bool> login(String username, String password) async {
     try {
-      final response = await _retryWithRefresh(() => _dio.post(
-        endpoint,
-        data: {'page': page},
-      ));
-
-      return _parseItems<T>(response.data, fromJson);
-    } catch (e, stackTrace) {
-      developer.log('Error fetching items from $endpoint: $e\n$stackTrace');
-      return [];
-    }
-  }
-
-  List<T> _parseItems<T>(Map<String, dynamic> responseData, T Function(Map<String, dynamic>) fromJson) {
-    if (responseData.containsKey('data') && responseData['data'] is List) {
-      final List<dynamic> data = responseData['data'];
-      return data.map((item) {
-        if (item is Map<String, dynamic>) {
-          try {
-            return fromJson(item);
-          } catch (e, stackTrace) {
-            developer.log('Error parsing item: $e\n$stackTrace');
-            developer.log('Problematic item: $item');
-            return null;
-          }
+      final response = await _dio.post('/login/', data: {
+        'username': username,
+        'password': password,
+      });
+      
+      print('Login response: ${response.data}');
+      
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        _authToken = response.data['access_token'];
+        final refreshToken = response.data['refresh_token'];
+        
+        if (_authToken != null && refreshToken != null) {
+          print('Storing auth token: $_authToken');
+          await _secureStorage.write(key: 'access_token', value: _authToken);
+          await _secureStorage.write(key: 'refresh_token', value: refreshToken);
+          await setLoggedIn(true);
+          return true;
         } else {
-          developer.log('Item is not a Map<String, dynamic>: $item');
-          return null;
+          print('No auth tokens in response');
+          return false;
         }
-      }).whereType<T>().toList();
-    } else {
-      developer.log('Response data does not contain a "data" list: $responseData');
-      return [];
-    }
-  }
-
-  Future<List<T>> _fetchCommonItems<T>(String endpoint, T Function(Map<String, dynamic>) fromJson, String budId, {int page = 1}) async {
-    try {
-      final response = await _dio.post(
-        endpoint,
-        data: {'bud_id': budId, 'page': page},
-      );
-
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = response.data;
-        if (responseData.containsKey('data') && responseData['data'] is List) {
-          final List<dynamic> data = responseData['data'];
-          return data.map((json) {
-            try {
-              return fromJson(json);
-            } catch (e) {
-              print('Error parsing item: $e');
-              return null;
-            }
-          }).whereType<T>().toList();
-        } else {
-          return [];
-        }
-      } else if (response.statusCode == 404 && response.data['error'] == 'No common items found.') {
-        return [];
-      } else {
-        throw Exception('Failed to load common items from $endpoint: ${response.statusCode}');
       }
+      return false;
     } catch (e) {
-      print('Error fetching common items from $endpoint: $e');
-      return [];
+      print('Login error: $e');
+      return false;
     }
   }
 
-  // Profile page methods
+  Future<void> setLoggedIn(bool value) async {
+    await _secureStorage.write(key: 'isLoggedIn', value: value.toString());
+    print('isLoggedIn set to: $value');
+  }
+
+  Future<bool> isLoggedIn() async {
+    final value = await _secureStorage.read(key: 'isLoggedIn');
+    final isLoggedIn = value == 'true';
+    print('isLoggedIn checked: $isLoggedIn');
+    return isLoggedIn;
+  }
+
+  Future<void> logout() async {
+    try {
+      await _dio.post('/auth/logout');
+      _authToken = null;
+      await setLoggedIn(false);
+    } catch (e) {
+      print('Error during logout: $e');
+      rethrow;
+    }
+  }
+
   Future<UserProfile> getUserProfile() async {
     try {
       final response = await _dio.post('/me/profile', data: {'service': 'spotify'});
       if (response.statusCode == 200) {
-        final userData = response.data as Map<String, dynamic>;
-        final userProfile = UserProfile.fromJson(userData);
-        print('User profile: $userProfile'); // This will print all fields
-        return userProfile;
+        print('User profile response: ${response.data}');
+        // For now, create a dummy profile since the actual data is not available
+        return UserProfile(
+          username: 'dummy_user',
+          email: 'dummy@example.com',
+          isActive: true,
+          isAuthenticated: true,
+        );
       } else {
         throw Exception('Failed to load user profile: ${response.statusCode}');
       }
-    } on DioError catch (e) {
-      print('Error fetching user profile: ${e.message}');
-      print('Response data: ${e.response?.data}');
+    } catch (e) {
+      print('Error fetching user profile: $e');
       rethrow;
     }
   }
 
   Future<List<CommonTrack>> getTopTracks({int page = 1}) async {
-    try {
-      final response = await _dio.post(
-        '/me/top/tracks',
-        data: {'page': page},
-      );
+    return _retryWithRefresh(() async {
+      print('Fetching top tracks...');
+      final response = await _dio.post('/me/top/tracks', data: {'page': page});
+      print('Top tracks response status: ${response.statusCode}');
+      print('Top tracks response data: ${response.data}');
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = response.data;
-        final List<dynamic> trackList = responseData['data'];
+        final List<dynamic> trackList = response.data['data'];
         return trackList.map((track) => CommonTrack.fromJson(track)).toList();
       } else {
         throw Exception('Failed to load top tracks: ${response.statusCode}');
       }
-    } catch (e) {
-      print('Error loading top tracks: $e');
-      return []; // Return an empty list instead of throwing an exception
-    }
+    });
   }
 
   Future<List<CommonArtist>> getTopArtists({int page = 1}) async {
-    try {
-      final response = await _dio.post(
-        '/me/top/artists',
-        data: {'page': page},
-      );
+    return _retryWithRefresh(() async {
+      print('Fetching top artists...');
+      final response = await _dio.post('/me/top/artists', data: {'page': page});
+      print('Top artists response: ${response.data}');
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = response.data;
-        final List<dynamic> artistList = responseData['data'];
+        final List<dynamic> artistList = response.data['data'];
         return artistList.map((artist) => CommonArtist.fromJson(artist)).toList();
       } else {
         throw Exception('Failed to load top artists: ${response.statusCode}');
       }
-    } catch (e) {
-      print('Error loading top artists: $e');
-      return []; // Return an empty list instead of throwing an exception
-    }
+    });
   }
 
   Future<List<String>> getTopGenres({int page = 1}) async {
-    try {
-      final response = await _dio.post(
-        '/me/top/genres',
-        data: {'page': page},
-      );
+    return _retryWithRefresh(() async {
+      print('Fetching top genres...');
+      final response = await _dio.post('/me/top/genres', data: {'page': page});
+      print('Top genres response status: ${response.statusCode}');
+      print('Top genres response data: ${response.data}');
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = response.data;
-        final List<dynamic> genreList = responseData['data'];
-        return genreList.cast<String>();
+        final List<dynamic> genreList = response.data['data'];
+        return genreList.map((genre) => genre['name'] as String).toList();
       } else {
         throw Exception('Failed to load top genres: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error loading top genres: $e');
-      return []; // Return an empty list instead of throwing an exception
-    }
-  }
-
-  Future<List<CommonAlbum>> getLikedAlbums({int page = 1}) {
-    return _fetchItems('/liked/albums', CommonAlbum.fromJson, page: page);
-  }
-
-  Future<List<CommonTrack>> getPlayedTracks({int page = 1}) async {
-    return _handleRequest(() async {
-      final response = await _dio.post(
-        '/me/played/tracks',
-        data: {'page': page},
-      );
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = response.data;
-        print('Played tracks response: $responseData'); // Add this line
-        final List<dynamic> trackList = responseData['data'];
-        print('Played tracks list length: ${trackList.length}'); // Add this line
-        return trackList.map((track) => CommonTrack.fromJson(track)).toList();
-      } else {
-        throw Exception('Failed to load played tracks: ${response.statusCode}');
       }
     });
   }
 
-  Future<List<CommonAnime>> getTopAnime({int page = 1}) async {
+  Future<List<CommonAlbum>> getLikedAlbums({int page = 1}) async {
+    return _fetchItems('/liked/albums', CommonAlbum.fromJson, page: page);
+  }
+
+  Future<List<CommonTrack>> getPlayedTracks({int page = 1}) async {
     try {
-      final response = await _dio.get('/anime/top', queryParameters: {'page': page});
+      final response = await _dio.post('/me/played/tracks', data: {'page': page});
       if (response.statusCode == 200) {
-        final List<dynamic> animeList = response.data['data'];
-        return animeList.map((anime) => CommonAnime.fromJson(anime)).toList();
+        final List<dynamic> data = response.data['data'];
+        return data.map((json) => CommonTrack.fromJson(json)).toList();
       } else {
-        print('Failed to load top anime: ${response.statusCode}');
-        return [];
+        throw Exception('Failed to load played tracks: ${response.statusCode}');
       }
-    } on DioError catch (e) {
-      print('DioError fetching top anime: $e');
-      return [];
     } catch (e) {
-      print('Error fetching top anime: $e');
-      return [];
+      print('Error fetching played tracks: $e');
+      rethrow;
     }
   }
 
-  Future<List<CommonManga>> getTopManga({int page = 1}) async {
-    try {
-      final response = await _dio.get('/manga/top', queryParameters: {'page': page});
-      if (response.statusCode == 200) {
-        final List<dynamic> mangaList = response.data['data'];
-        return mangaList.map((manga) => CommonManga.fromJson(manga)).toList();
-      } else {
-        print('Failed to load top manga: ${response.statusCode}');
-        return [];
-      }
-    } on DioError catch (e) {
-      print('DioError fetching top manga: $e');
-      return [];
-    } catch (e) {
-      print('Error fetching top manga: $e');
-      return [];
-    }
-  }
+  // Future<List<CommonAnime>> getTopAnime({int page = 1}) async {
+  //   try {
+  //     final response = await _dio.post('/anime/top', queryParameters: {'page': page});
+  //     if (response.statusCode == 200) {
+  //       final List<dynamic> animeList = response.data['data'];
+  //       return animeList.map((anime) => CommonAnime.fromJson(anime)).toList();
+  //     } else {
+  //       print('Failed to load top anime: ${response.statusCode}');
+  //       return [];
+  //     }
+  //   } on DioError catch (e) {
+  //     print('DioError fetching top anime: $e');
+  //     return [];
+  //   } catch (e) {
+  //     print('Error fetching top anime: $e');
+  //     return [];
+  //   }
+  // }
 
-  // Buds page methods
+  // Future<List<CommonManga>> getTopManga({int page = 1}) async {
+  //   try {
+  //     final response = await _dio.post('/manga/top', queryParameters: {'page': page});
+  //     if (response.statusCode == 200) {
+  //       final List<dynamic> mangaList = response.data['data'];
+  //       return mangaList.map((manga) => CommonManga.fromJson(manga)).toList();
+  //     } else {
+  //       print('Failed to load top manga: ${response.statusCode}');
+  //       return [];
+  //     }
+  //   } on DioError catch (e) {
+  //     print('DioError fetching top manga: $e');
+  //     return [];
+  //   } catch (e) {
+  //     print('Error fetching top manga: $e');
+  //     return [];
+  //   }
+  // }
+
   Future<List<BudMatch>> getTopArtistsBuds({int page = 1}) async {
     return _fetchBuds('/bud/top/artists', page: page);
   }
@@ -334,7 +264,6 @@ class ApiService {
     return _fetchBuds('/bud/played/tracks', page: page);
   }
 
-  // Common items page methods
   Future<List<CommonArtist>> getCommonTopArtists(String budId) {
     return _fetchCommonItems('/bud/common/top/artists', CommonArtist.fromJson, budId);
   }
@@ -363,33 +292,61 @@ class ApiService {
     return _fetchCommonItems('/bud/common/liked/albums', CommonAlbum.fromJson, budId);
   }
 
-  Future<List<BudMatch>> getBuds(String endpoint, {int page = 1}) async {
+  Future<List<BudMatch>> getBuds(String category) async {
     try {
-      final response = await _dio.post(endpoint, data: {'page': page});
+      final response = await _dio.post('/bud/$category');
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data'];
         return data.map((json) => BudMatch.fromJson(json)).toList();
       } else {
-        throw Exception('Failed to load buds from $endpoint: ${response.statusCode}');
+        print('Error fetching buds: ${response.statusCode}');
+        return [];
       }
     } catch (e) {
-      print('Error fetching buds from $endpoint: $e');
-      rethrow;
+      print('Error fetching buds from $category: $e');
+      return [];
+    }
+  }
+
+  Future<List<String>> getAvailableBudCategories() async {
+    try {
+      final response = await _dio.post('/bud/categories');
+      if (response.statusCode == 200) {
+        List<String> categories = List<String>.from(response.data['categories']);
+        return categories;
+      } else {
+        print('Error fetching bud categories: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching bud categories: $e');
+      // Return a default list of categories if the API call fails
+      return [
+        'liked/artists',
+        'liked/tracks',
+        'liked/genres',
+        'top/artists',
+        'top/tracks',
+        'top/genres',
+        'liked/aio',
+        'played/tracks'
+      ];
     }
   }
 
   Future<List<BudMatch>> _fetchBuds(String endpoint, {int page = 1}) async {
     try {
-      final response = await _dio.post(endpoint, data: {'page': page});
+      final response = await _dio.post('$endpoint?page=$page');
       if (response.statusCode == 200) {
         final List<dynamic> data = response.data['data'];
         return data.map((json) => BudMatch.fromJson(json)).toList();
       } else {
-        throw Exception('Failed to load buds from $endpoint: ${response.statusCode}');
+        print('Error fetching buds from $endpoint: ${response.statusCode}');
+        return [];
       }
     } catch (e) {
-      print('Error fetching items from $endpoint: $e');
-      rethrow;
+      print('Error fetching buds from $endpoint: $e');
+      return [];
     }
   }
 
@@ -492,9 +449,8 @@ class ApiService {
     }
   }
 
-
   Future<Map<String, dynamic>> register(String username, String password) async {
-    final url = Uri.parse('$_baseUrl/register');
+    final url = Uri.parse('${_dio.options.baseUrl}/register');
 
     try {
       final response = await http.post(
@@ -515,8 +471,7 @@ class ApiService {
       if (response.statusCode == 200) {
         try {
           final responseData = json.decode(response.body);
-          _accessToken = responseData['access'];
-          _updateHeaders();
+          _authToken = responseData['access'];
           return responseData;
         } catch (e) {
           print('Error decoding JSON: $e');
@@ -533,7 +488,7 @@ class ApiService {
 
   Future<bool> isAuthenticated() async {
     try {
-      final response = await _dio.get('/auth/check');
+      final response = await _dio.post('/auth/check');
       return response.statusCode == 200;
     } catch (e) {
       print('Error checking authentication: $e');
@@ -541,35 +496,29 @@ class ApiService {
     }
   }
 
-  Future<void> logout() async {
-    try {
-      await _dio.post('/auth/logout');
-      _accessToken = null;
-      _sessionId = null;
-      _updateHeaders();
-    } catch (e) {
-      print('Error during logout: $e');
-      rethrow;
-    }
-  }
-
   Future<bool> refreshToken() async {
     try {
-      final refreshToken = await getRefreshToken();
+      final refreshToken = await _secureStorage.read(key: 'refresh_token');
       if (refreshToken == null) {
+        print('No refresh token found');
         return false;
       }
 
+      print('Attempting to refresh token with: $refreshToken');
       final response = await _dio.post(
-        '/auth/refresh',
-        data: {'refresh_token': refreshToken},
+        '/token/refresh',
+        data: {'refresh': refreshToken},
       );
 
+      print('Refresh token response: ${response.data}');
+
       if (response.statusCode == 200) {
-        _accessToken = response.data['access_token'];
-        _updateHeaders();
+        _authToken = response.data['access'];
+        await _secureStorage.write(key: 'access_token', value: _authToken);
+        print('Token refreshed successfully. New token: $_authToken');
         return true;
       } else {
+        print('Token refresh failed with status: ${response.statusCode}');
         return false;
       }
     } catch (e) {
@@ -578,14 +527,45 @@ class ApiService {
     }
   }
 
-  Future<Response<dynamic>> _retryWithRefresh(Future<Response<dynamic>> Function() requestFunction) async {
+  bool isTokenExpired() {
+    if (_authToken == null) return true;
+    
+    try {
+      final parts = _authToken!.split('.');
+      if (parts.length != 3) return true;
+      
+      final payload = json.decode(utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))));
+      final exp = payload['exp'];
+      if (exp == null) return true;
+      
+      return DateTime.fromMillisecondsSinceEpoch(exp * 1000).isBefore(DateTime.now());
+    } catch (e) {
+      print('Error checking token expiration: $e');
+      return true;
+    }
+  }
+
+  Future<T> _retryWithRefresh<T>(Future<T> Function() requestFunction) async {
+    if (isTokenExpired()) {
+      print('Token is expired, attempting to refresh');
+      final refreshed = await refreshToken();
+      if (!refreshed) {
+        throw Exception('Authentication failed');
+      }
+    }
+
     try {
       return await requestFunction();
     } on DioError catch (e) {
       if (e.response?.statusCode == 401) {
+        print('Received 401, attempting to refresh token');
         final refreshed = await refreshToken();
         if (refreshed) {
+          print('Token refreshed, retrying request');
           return await requestFunction();
+        } else {
+          print('Token refresh failed');
+          throw Exception('Authentication failed');
         }
       }
       rethrow;
@@ -640,8 +620,8 @@ class ApiService {
 
   Future<String?> uploadProfilePhoto(String imagePath) async {
     try {
-      final formData = FormData.fromMap({
-        'photo': await MultipartFile.fromFile(imagePath),
+      final formData = dio_form.FormData.fromMap({
+        'photo': await dio_multipart.MultipartFile.fromFile(imagePath),
       });
 
       final response = await _dio.post(
@@ -685,49 +665,82 @@ class ApiService {
     return _fetchCommonItems('/bud/common/top/genres', CommonGenre.fromJson, budId);
   }
 
-  Future<List<CommonTrack>> getCommonPlayedTracks(String budId) async {
-    return _fetchCommonItems('/bud/common/played/tracks', CommonTrack.fromJson, budId);
+  Future<List<CommonTrack>> getCommonPlayedTracks(String budId, {int page = 1}) async {
+    return _fetchCommonItems('/bud/common/played/tracks', CommonTrack.fromJson, budId, page: page);
   }
 
-  Future<bool> login(String username, String password) async {
+  Future<List<T>> _fetchItems<T>(String endpoint, T Function(Map<String, dynamic>) fromJson, {int page = 1}) async {
     try {
-      print('Attempting login to $_baseUrl/login/');
+      final response = await _retryWithRefresh(() => _dio.post(
+        endpoint,
+        data: {'page': page},
+      ));
+
+      return _parseItems<T>(response.data, fromJson);
+    } catch (e, stackTrace) {
+      developer.log('Error fetching items from $endpoint: $e\n$stackTrace');
+      return [];
+    }
+  }
+
+  List<T> _parseItems<T>(Map<String, dynamic> responseData, T Function(Map<String, dynamic>) fromJson) {
+    if (responseData.containsKey('data') && responseData['data'] is List) {
+      final List<dynamic> data = responseData['data'];
+      return data.map((item) {
+        if (item is Map<String, dynamic>) {
+          try {
+            return fromJson(item);
+          } catch (e, stackTrace) {
+            developer.log('Error parsing item: $e\n$stackTrace');
+            developer.log('Problematic item: $item');
+            return null;
+          }
+        } else {
+          developer.log('Item is not a Map<String, dynamic>: $item');
+          return null;
+        }
+      }).whereType<T>().toList();
+    } else {
+      developer.log('Response data does not contain a "data" list: $responseData');
+      return [];
+    }
+  }
+
+  Future<List<T>> _fetchCommonItems<T>(
+    String endpoint,
+    T Function(Map<String, dynamic>) fromJson,
+    String budId,
+    {int page = 1}
+  ) async {
+    try {
       final response = await _dio.post(
-        '/login/',  // Note the trailing slash
-        data: {
-          'username': username,
-          'password': password,
-        },
+        endpoint,
+        data: {'bud_id': budId, 'page': page},
       );
 
-      print('Response status: ${response.statusCode}');
-      print('Response data: ${response.data}');
-
       if (response.statusCode == 200) {
-        final responseData = response.data;
-        if (responseData['success'] == true) {
-          print('Login successful: ${responseData['message']}');
-          // Here you might want to handle any token or session data
-          // that your server sends back, if applicable
-          return true;
+        final Map<String, dynamic> responseData = response.data;
+        if (responseData.containsKey('data') && responseData['data'] is List) {
+          final List<dynamic> data = responseData['data'];
+          return data.map((json) {
+            try {
+              return fromJson(json);
+            } catch (e) {
+              print('Error parsing item: $e');
+              return null;
+            }
+          }).whereType<T>().toList();
         } else {
-          print('Login failed: ${responseData['message']}');
-          return false;
+          return [];
         }
+      } else if (response.statusCode == 404 && response.data['error'] == 'No common items found.') {
+        return [];
       } else {
-        print('Login failed: ${response.statusCode} ${response.statusMessage}');
-        return false;
+        throw Exception('Failed to load common items from $endpoint: ${response.statusCode}');
       }
-    } on DioError catch (e) {
-      print('Dio error: ${e.type} - ${e.message}');
-      if (e.response != null) {
-        print('Response status: ${e.response?.statusCode}');
-        print('Response data: ${e.response?.data}');
-      }
-      return false;
     } catch (e) {
-      print('Unexpected error during login: $e');
-      return false;
+      print('Error fetching common items from $endpoint: $e');
+      return [];
     }
   }
 }
