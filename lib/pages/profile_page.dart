@@ -24,9 +24,17 @@ import 'package:flutter/src/widgets/image.dart' as flutter_image;
 import 'package:musicbud_flutter/models/common_track.dart' as common_track;
 import 'package:musicbud_flutter/widgets/bud_match_list_item.dart';
 import 'package:musicbud_flutter/pages/buds_category_page.dart';
+import 'package:musicbud_flutter/pages/chat_home_page.dart';
+import 'package:musicbud_flutter/services/chat_service.dart';
+import 'package:flutter/material.dart';
+import 'package:musicbud_flutter/pages/channel_chat_page.dart';                         
+
+
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  final ApiService apiService;
+
+  const ProfilePage({Key? key, required this.apiService}) : super(key: key);
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -36,6 +44,7 @@ class _ProfilePageState extends State<ProfilePage> {
   int _selectedIndex = 0;
   bool _isAuthenticated = false;
   UserProfile? _userProfile;
+  List<CommonArtist> _commonTopArtists = [];
 
   @override
   void initState() {
@@ -46,21 +55,28 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _checkAuthentication() async {
     try {
-      await ApiService().getUserProfile();
+      await widget.apiService.getUserProfile();
       setState(() {
         _isAuthenticated = true;
       });
     } catch (e) {
       print('Authentication failed: $e');
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => LoginPage()),
+        MaterialPageRoute(builder: (context) => LoginPage(
+          chatService: ChatService(widget.apiService.dio.options.baseUrl),
+          apiService: widget.apiService,
+          onLoginSuccess: () {
+            // Define what happens on successful login
+            Navigator.pushReplacementNamed(context, '/home');
+          },
+        )),
       );
     }
   }
 
   Future<void> _loadUserProfile() async {
     try {
-      final userProfile = await ApiService().getUserProfile();
+      final userProfile = await widget.apiService.getUserProfile();
       setState(() {
         _userProfile = userProfile;
       });
@@ -69,6 +85,18 @@ class _ProfilePageState extends State<ProfilePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to load user profile. Please try again.')),
       );
+    }
+  }
+
+  Future<void> _loadCommonTopArtists(String budId) async {
+    try {
+      final commonTopArtists = await widget.apiService.getCommonTopArtists(budId);
+      setState(() {
+        _commonTopArtists = commonTopArtists;
+      });
+    } catch (e) {
+      print('Error loading common top artists: $e');
+      // Handle the error (e.g., show an error message to the user)
     }
   }
 
@@ -88,13 +116,13 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _getBody() {
     switch (_selectedIndex) {
       case 0:
-        return ProfilePageContent();
+        return ProfilePageContent(apiService: widget.apiService);
       case 1:
         return BudsPage();
       case 2:
-        return Center(child: Text('Chat Page')); // Replace with actual Chat page content
+        return ChatHomePage(chatService: ChatService(widget.apiService.dio.options.baseUrl));
       default:
-        return ProfilePageContent();
+        return ProfilePageContent(apiService: widget.apiService);
     }
   }
 
@@ -152,7 +180,9 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 class ProfilePageContent extends StatefulWidget {
-  const ProfilePageContent({Key? key}) : super(key: key);
+  final ApiService apiService;
+
+  const ProfilePageContent({Key? key, required this.apiService}) : super(key: key);
 
   @override
   _ProfilePageContentState createState() => _ProfilePageContentState();
@@ -475,7 +505,14 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
                 builder: (context) => CommonItemsPage<CommonArtist>(
                   title: 'Top Artists',
                   fetchItems: (page) => _apiService.getTopArtists(page: page),
-                  itemBuilder: (context, artist) => ArtistListItem(artist: artist),
+                  itemBuilder: (context, artist) => ArtistListItem(
+                    artist: artist,
+                    onTap: () {
+                      // Handle artist tap
+                      print('Tapped on artist: ${artist.name}');
+                      // You can navigate to a detail page or perform any other action
+                    },
+                  ),
                 ),
               ),
             );
@@ -573,6 +610,8 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
       artist: artist,
       onTap: () {
         // Handle artist tap
+        print('Tapped on artist: ${artist.name}');
+        // You can navigate to a detail page or perform any other action
       },
     );
   }

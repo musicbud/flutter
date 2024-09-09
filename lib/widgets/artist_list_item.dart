@@ -5,7 +5,11 @@ class ArtistListItem extends StatelessWidget {
   final CommonArtist artist;
   final VoidCallback? onTap;
 
-  const ArtistListItem({Key? key, required this.artist, this.onTap}) : super(key: key);
+  const ArtistListItem({
+    Key? key,
+    required this.artist,
+    this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +35,7 @@ class ArtistListItem extends StatelessWidget {
             Flexible(
               flex: 1,
               child: Text(
-                artist.name,
+                artist.name ?? 'Unknown Artist',
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 12),
@@ -44,7 +48,7 @@ class ArtistListItem extends StatelessWidget {
   }
 
   Widget _buildImage() {
-    final imageUrl = artist.images.isNotEmpty ? artist.images[0].url : null;
+    final imageUrl = artist.imageUrls?.isNotEmpty == true ? artist.imageUrls!.first : null;
     if (imageUrl == null || imageUrl.isEmpty) {
       return _buildPlaceholder();
     }

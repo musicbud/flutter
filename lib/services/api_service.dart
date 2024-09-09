@@ -19,72 +19,95 @@ import 'package:http/http.dart' as http;
 import 'package:dio/src/form_data.dart' as dio_form;
 import 'package:dio/src/multipart_file.dart' as dio_multipart;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:io'; // Import this for File operations
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
+  late Dio _dio;
+  final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+
   factory ApiService() => _instance;
 
-  final Dio _dio;
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
-  String? _authToken;
+  ApiService._internal();
 
-  ApiService._internal() : _dio = Dio() {
-    _dio.options.baseUrl = 'http://84.235.170.234';
-    _dio.options.connectTimeout = Duration(seconds: 5);
-    _dio.options.receiveTimeout = Duration(seconds: 3);
-    _dio.options.headers = {
-      'Content-Type': 'application/json',
-    };
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        _authToken = await _secureStorage.read(key: 'access_token');
-        print('Retrieved auth token for request: $_authToken');
-        if (_authToken != null) {
-          options.headers['Authorization'] = 'Bearer $_authToken';
-        }
-        print('Request headers: ${options.headers}');
-        return handler.next(options);
+  void init(String baseUrl) {
+    _dio = Dio(BaseOptions(
+      baseUrl: baseUrl,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
       },
     ));
-    _dio.interceptors.add(InterceptorsWrapper(
-      onError: (DioError e, handler) {
-        print('Request failed: ${e.requestOptions.path}');
-        print('Response status: ${e.response?.statusCode}');
-        print('Response data: ${e.response?.data}');
-        return handler.next(e);
-      },
-    ));
+
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          // Get the access token from secure storage
+          final accessToken = await _secureStorage.read(key: 'access_token');
+          if (accessToken != null) {
+            options.headers['Authorization'] = 'Bearer $accessToken';
+          }
+          return handler.next(options);
+        },
+        onError: (DioError e, handler) async {
+          if (e.response?.statusCode == 401) {
+            // Token might be expired, try to refresh it
+            if (await refreshToken()) {
+              // Retry the original request
+              return handler.resolve(await _retry(e.requestOptions));
+            }
+          }
+          return handler.next(e);
+        },
+      ),
+    );
   }
 
-  Future<bool> login(String username, String password) async {
+  Dio get dio => _dio;
+
+  Future<bool> refreshToken() async {
     try {
-      final response = await _dio.post('/login/', data: {
-        'username': username,
-        'password': password,
-      });
-      
-      print('Login response: ${response.data}');
-      
-      if (response.statusCode == 200 && response.data['success'] == true) {
-        _authToken = response.data['access_token'];
-        final refreshToken = response.data['refresh_token'];
-        
-        if (_authToken != null && refreshToken != null) {
-          print('Storing auth token: $_authToken');
-          await _secureStorage.write(key: 'access_token', value: _authToken);
-          await _secureStorage.write(key: 'refresh_token', value: refreshToken);
-          await setLoggedIn(true);
-          return true;
-        } else {
-          print('No auth tokens in response');
-          return false;
-        }
+      final refreshToken = await _secureStorage.read(key: 'refresh_token');
+      if (refreshToken == null) {
+        return false;
       }
-      return false;
+
+      final response = await _dio.post(
+        '/auth/token/refresh/',
+        data: {'refresh': refreshToken},
+      );
+
+      if (response.statusCode == 200) {
+        final newAccessToken = response.data['access'];
+        await _secureStorage.write(key: 'access_token', value: newAccessToken);
+        return true;
+      }
     } catch (e) {
-      print('Login error: $e');
-      return false;
+      print('Error refreshing token: $e');
     }
+    return false;
+  }
+
+  Future<Response<dynamic>> _retry(RequestOptions requestOptions) async {
+    final options = Options(
+      method: requestOptions.method,
+      headers: requestOptions.headers,
+    );
+    return _dio.request<dynamic>(
+      requestOptions.path,
+      data: requestOptions.data,
+      queryParameters: requestOptions.queryParameters,
+      options: options,
+    );
+  }
+
+  Future<String?> getAccessToken() async {
+    return await _secureStorage.read(key: 'access_token');
+  }
+
+  void setAuthToken(String accessToken, String refreshToken) {
+    _secureStorage.write(key: 'access_token', value: accessToken);
+    _secureStorage.write(key: 'refresh_token', value: refreshToken);
   }
 
   Future<void> setLoggedIn(bool value) async {
@@ -102,7 +125,6 @@ class ApiService {
   Future<void> logout() async {
     try {
       await _dio.post('/auth/logout');
-      _authToken = null;
       await setLoggedIn(false);
     } catch (e) {
       print('Error during logout: $e');
@@ -112,16 +134,35 @@ class ApiService {
 
   Future<UserProfile> getUserProfile() async {
     try {
-      final response = await _dio.post('/me/profile', data: {'service': 'spotify'});
+      final response = await _dio.post('/me/profile');
       if (response.statusCode == 200) {
-        print('User profile response: ${response.data}');
-        // For now, create a dummy profile since the actual data is not available
-        return UserProfile(
-          username: 'dummy_user',
-          email: 'dummy@example.com',
-          isActive: true,
-          isAuthenticated: true,
-        );
+        return UserProfile.fromJson(response.data);
+      } else {
+        throw Exception('Failed to load user profile');
+      }
+    } catch (e) {
+      print('Error getting user profile: $e');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> getUserProfileWithCsrf() async {
+    try {
+      final csrfToken = await _getCsrfToken();
+      final cookies = await _getCookies();
+
+      final response = await _dio.post(
+        '/me/profile',
+        options: Options(
+          headers: {
+            'X-CSRFToken': csrfToken ?? '',
+            'Cookie': cookies ?? '',
+          },
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
       } else {
         throw Exception('Failed to load user profile: ${response.statusCode}');
       }
@@ -131,8 +172,12 @@ class ApiService {
     }
   }
 
+  Future<String?> _getCsrfToken() async {
+    return await _secureStorage.read(key: 'csrf_token');
+  }
+
   Future<List<CommonTrack>> getTopTracks({int page = 1}) async {
-    return _retryWithRefresh(() async {
+    try {
       print('Fetching top tracks...');
       final response = await _dio.post('/me/top/tracks', data: {'page': page});
       print('Top tracks response status: ${response.statusCode}');
@@ -143,11 +188,14 @@ class ApiService {
       } else {
         throw Exception('Failed to load top tracks: ${response.statusCode}');
       }
-    });
+    } catch (e) {
+      print('Error fetching top tracks: $e');
+      rethrow;
+    }
   }
 
   Future<List<CommonArtist>> getTopArtists({int page = 1}) async {
-    return _retryWithRefresh(() async {
+    try {
       print('Fetching top artists...');
       final response = await _dio.post('/me/top/artists', data: {'page': page});
       print('Top artists response: ${response.data}');
@@ -157,11 +205,14 @@ class ApiService {
       } else {
         throw Exception('Failed to load top artists: ${response.statusCode}');
       }
-    });
+    } catch (e) {
+      print('Error fetching top artists: $e');
+      rethrow;
+    }
   }
 
   Future<List<String>> getTopGenres({int page = 1}) async {
-    return _retryWithRefresh(() async {
+    try {
       print('Fetching top genres...');
       final response = await _dio.post('/me/top/genres', data: {'page': page});
       print('Top genres response status: ${response.statusCode}');
@@ -172,7 +223,10 @@ class ApiService {
       } else {
         throw Exception('Failed to load top genres: ${response.statusCode}');
       }
-    });
+    } catch (e) {
+      print('Error fetching top genres: $e');
+      rethrow;
+    }
   }
 
   Future<List<CommonAlbum>> getLikedAlbums({int page = 1}) async {
@@ -193,44 +247,6 @@ class ApiService {
       rethrow;
     }
   }
-
-  // Future<List<CommonAnime>> getTopAnime({int page = 1}) async {
-  //   try {
-  //     final response = await _dio.post('/anime/top', queryParameters: {'page': page});
-  //     if (response.statusCode == 200) {
-  //       final List<dynamic> animeList = response.data['data'];
-  //       return animeList.map((anime) => CommonAnime.fromJson(anime)).toList();
-  //     } else {
-  //       print('Failed to load top anime: ${response.statusCode}');
-  //       return [];
-  //     }
-  //   } on DioError catch (e) {
-  //     print('DioError fetching top anime: $e');
-  //     return [];
-  //   } catch (e) {
-  //     print('Error fetching top anime: $e');
-  //     return [];
-  //   }
-  // }
-
-  // Future<List<CommonManga>> getTopManga({int page = 1}) async {
-  //   try {
-  //     final response = await _dio.post('/manga/top', queryParameters: {'page': page});
-  //     if (response.statusCode == 200) {
-  //       final List<dynamic> mangaList = response.data['data'];
-  //       return mangaList.map((manga) => CommonManga.fromJson(manga)).toList();
-  //     } else {
-  //       print('Failed to load top manga: ${response.statusCode}');
-  //       return [];
-  //     }
-  //   } on DioError catch (e) {
-  //     print('DioError fetching top manga: $e');
-  //     return [];
-  //   } catch (e) {
-  //     print('Error fetching top manga: $e');
-  //     return [];
-  //   }
-  // }
 
   Future<List<BudMatch>> getTopArtistsBuds({int page = 1}) async {
     return _fetchBuds('/bud/top/artists', page: page);
@@ -264,7 +280,7 @@ class ApiService {
     return _fetchBuds('/bud/played/tracks', page: page);
   }
 
-  Future<List<CommonArtist>> getCommonTopArtists(String budId) {
+  Future<List<CommonArtist>> getCommonTopArtists(String budId) async {
     return _fetchCommonItems('/bud/common/top/artists', CommonArtist.fromJson, budId);
   }
 
@@ -320,7 +336,6 @@ class ApiService {
       }
     } catch (e) {
       print('Error fetching bud categories: $e');
-      // Return a default list of categories if the API call fails
       return [
         'liked/artists',
         'liked/tracks',
@@ -471,7 +486,6 @@ class ApiService {
       if (response.statusCode == 200) {
         try {
           final responseData = json.decode(response.body);
-          _authToken = responseData['access'];
           return responseData;
         } catch (e) {
           print('Error decoding JSON: $e');
@@ -496,45 +510,13 @@ class ApiService {
     }
   }
 
-  Future<bool> refreshToken() async {
-    try {
-      final refreshToken = await _secureStorage.read(key: 'refresh_token');
-      if (refreshToken == null) {
-        print('No refresh token found');
-        return false;
-      }
-
-      print('Attempting to refresh token with: $refreshToken');
-      final response = await _dio.post(
-        '/token/refresh',
-        data: {'refresh': refreshToken},
-      );
-
-      print('Refresh token response: ${response.data}');
-
-      if (response.statusCode == 200) {
-        _authToken = response.data['access'];
-        await _secureStorage.write(key: 'access_token', value: _authToken);
-        print('Token refreshed successfully. New token: $_authToken');
-        return true;
-      } else {
-        print('Token refresh failed with status: ${response.statusCode}');
-        return false;
-      }
-    } catch (e) {
-      print('Error refreshing token: $e');
-      return false;
-    }
-  }
-
   bool isTokenExpired() {
-    if (_authToken == null) return true;
-    
     try {
-      final parts = _authToken!.split('.');
-      if (parts.length != 3) return true;
+      final parts = _dio.options.headers['Authorization']?.split(' ');
+      if (parts?.length != 2) return true;
       
-      final payload = json.decode(utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))));
+      final token = parts?[1];
+      final payload = json.decode(utf8.decode(base64Url.decode(base64Url.normalize(token!.split('.')[1]))));
       final exp = payload['exp'];
       if (exp == null) return true;
       
@@ -542,33 +524,6 @@ class ApiService {
     } catch (e) {
       print('Error checking token expiration: $e');
       return true;
-    }
-  }
-
-  Future<T> _retryWithRefresh<T>(Future<T> Function() requestFunction) async {
-    if (isTokenExpired()) {
-      print('Token is expired, attempting to refresh');
-      final refreshed = await refreshToken();
-      if (!refreshed) {
-        throw Exception('Authentication failed');
-      }
-    }
-
-    try {
-      return await requestFunction();
-    } on DioError catch (e) {
-      if (e.response?.statusCode == 401) {
-        print('Received 401, attempting to refresh token');
-        final refreshed = await refreshToken();
-        if (refreshed) {
-          print('Token refreshed, retrying request');
-          return await requestFunction();
-        } else {
-          print('Token refresh failed');
-          throw Exception('Authentication failed');
-        }
-      }
-      rethrow;
     }
   }
 
@@ -611,7 +566,6 @@ class ApiService {
     } catch (e) {
       if (e is DioError && e.response?.statusCode == 500) {
         print('Server error occurred for endpoint $endpoint: ${e.response?.data}');
-        // Return an empty list of the correct type
         return <T>[];
       }
       rethrow;
@@ -653,28 +607,28 @@ class ApiService {
     }
   }
 
-  Future<List<CommonTrack>> getCommonTracks(String budId) async {
-    return _fetchCommonItems('/bud/common/top/tracks', CommonTrack.fromJson, budId);
+  Future<List<CommonTrack>> getCommonTracks(String budUid) async {
+    return _fetchCommonItems('/bud/common/top/tracks', CommonTrack.fromJson, budUid);
   }
 
-  Future<List<CommonArtist>> getCommonArtists(String budId) async {
-    return _fetchCommonItems('/bud/common/top/artists', CommonArtist.fromJson, budId);
+  Future<List<CommonArtist>> getCommonArtists(String budUid) async {
+    return _fetchCommonItems('/bud/common/top/artists', CommonArtist.fromJson, budUid);
   }
 
-  Future<List<CommonGenre>> getCommonGenres(String budId) async {
-    return _fetchCommonItems('/bud/common/top/genres', CommonGenre.fromJson, budId);
+  Future<List<CommonGenre>> getCommonGenres(String budUid) async {
+    return _fetchCommonItems('/bud/common/top/genres', CommonGenre.fromJson, budUid);
   }
 
-  Future<List<CommonTrack>> getCommonPlayedTracks(String budId, {int page = 1}) async {
-    return _fetchCommonItems('/bud/common/played/tracks', CommonTrack.fromJson, budId, page: page);
+  Future<List<CommonTrack>> getCommonPlayedTracks(String budUid, {int page = 1}) async {
+    return _fetchCommonItems('/bud/common/played/tracks', CommonTrack.fromJson, budUid, page: page);
   }
 
   Future<List<T>> _fetchItems<T>(String endpoint, T Function(Map<String, dynamic>) fromJson, {int page = 1}) async {
     try {
-      final response = await _retryWithRefresh(() => _dio.post(
+      final response = await _dio.post(
         endpoint,
         data: {'page': page},
-      ));
+      );
 
       return _parseItems<T>(response.data, fromJson);
     } catch (e, stackTrace) {
@@ -719,28 +673,103 @@ class ApiService {
       );
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = response.data;
-        if (responseData.containsKey('data') && responseData['data'] is List) {
-          final List<dynamic> data = responseData['data'];
-          return data.map((json) {
-            try {
-              return fromJson(json);
-            } catch (e) {
-              print('Error parsing item: $e');
-              return null;
-            }
-          }).whereType<T>().toList();
-        } else {
-          return [];
-        }
-      } else if (response.statusCode == 404 && response.data['error'] == 'No common items found.') {
-        return [];
+        final List<dynamic> data = response.data['data'];
+        return data.map((item) => fromJson(item)).toList();
       } else {
-        throw Exception('Failed to load common items from $endpoint: ${response.statusCode}');
+        throw Exception('Failed to load common items: ${response.statusCode}');
       }
-    } catch (e) {
-      print('Error fetching common items from $endpoint: $e');
+    } catch (e, stackTrace) {
+      developer.log('Error fetching items from $endpoint: $e\n$stackTrace');
       return [];
     }
+  }
+
+  Future<void> testApiConnection() async {
+    try {
+      final response = await _dio.post('/');
+      print('API connection test response: ${response.statusCode}');
+      print('API connection test data: ${response.data}');
+    } catch (e) {
+      print('API connection test error: $e');
+    }
+  }
+
+  Future<void> createChannel(String channelName) async {
+    try {
+      print('Creating channel: $channelName');
+      final response = await _dio.post('/create_channel/', data: {'name': channelName});
+      print('Create channel response status: ${response.statusCode}');
+      print('Create channel response data: ${response.data}');
+      if (response.statusCode != 201 && response.statusCode != 200) {
+        throw Exception('Failed to create channel: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error creating channel: $e');
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> login(String username, String password) async {
+    try {
+      final response = await _dio.post(
+        '/chat/login/',
+        data: {
+          'username': username,
+          'password': password,
+        },
+        options: Options(
+          validateStatus: (status) => status! < 500,
+        ),
+      );
+
+      print('Login response status code: ${response.statusCode}');
+      print('Login response data: ${response.data}');
+
+      if (response.statusCode == 200) {
+        try {
+          final responseData = response.data as Map<String, dynamic>;
+          final tokens = responseData['tokens'] as Map<String, dynamic>?;
+          if (tokens != null) {
+            final accessToken = tokens['access'] as String?;
+            final refreshToken = tokens['refresh'] as String?;
+            if (accessToken != null && refreshToken != null) {
+              setAuthToken(accessToken, refreshToken);
+            }
+          }
+          return {
+            'success': true,
+            'user': responseData['user'] ?? {},
+            'message': 'Login successful'
+          };
+        } catch (e) {
+          print('Error parsing response: $e');
+          return {
+            'success': false,
+            'message': 'Error parsing server response'
+          };
+        }
+      } else {
+        return {
+          'success': false,
+          'message': response.data is Map ? response.data['detail'] ?? 'Login failed' : 'Login failed'
+        };
+      }
+    } on DioError catch (e) {
+      print('DioError during login: $e');
+      return {
+        'success': false,
+        'message': 'Network error occurred'
+      };
+    } catch (e) {
+      print('Unexpected error during login: $e');
+      return {
+        'success': false,
+        'message': 'An unexpected error occurred'
+      };
+    }
+  }
+
+  Future<String?> _getCookies() async {
+    return await _secureStorage.read(key: 'cookies');
   }
 }

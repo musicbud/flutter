@@ -1,28 +1,36 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/pages/home_page.dart';
+import 'package:musicbud_flutter/services/chat_service.dart';
+import 'package:musicbud_flutter/services/api_service.dart';
 import 'package:musicbud_flutter/pages/login_page.dart';
-import 'package:musicbud_flutter/pages/profile_page.dart';
+import 'package:musicbud_flutter/pages/home_page.dart';
 
 void main() {
-  runApp(const MyApp());
+  final String baseUrl = 'http://127.0.0.1:8000';
+  final apiService = ApiService();
+  apiService.init(baseUrl);
+  runApp(MyApp(baseUrl: baseUrl, apiService: apiService));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final String baseUrl;
+  late final ChatService chatService;
+  final ApiService apiService;
+
+  MyApp({required this.baseUrl, required this.apiService}) {
+    chatService = ChatService(baseUrl);
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'MusicBud',
+      title: 'Your App Name',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       initialRoute: '/',
       routes: {
-        '/': (context) => const HomePage(),
-        '/login': (context) => const LoginPage(),
-        '/home': (context) => const HomePage(),
-        '/profile': (context) => const ProfilePage(),
+        '/': (context) => LoginPage(chatService: chatService, apiService: apiService),
+        '/home': (context) => HomePage(chatService: chatService, apiService: apiService),
       },
     );
   }

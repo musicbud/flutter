@@ -4,50 +4,35 @@ import 'package:flutter/src/widgets/image.dart' as flutter_image;
 import 'package:musicbud_flutter/models/common_track.dart' as common_track;
 
 class CommonArtist {
-  final String uid;
-  final String name;
-  final String spotifyId;
-  final String spotifyUrl;
-  final String href;
-  final int popularity;
-  final String type;
-  final String uri;
-  final int followers;
-  final List<common_track.Image> images;
-  final List<String> genres;
-  final int? elementIdProperty;
+  final String? id;
+  final String? name;
+  final List<String>? imageUrls;
+  final int? popularity;
+  final String? uri;
+  final int? followers;
+  final List<String>? genres;
 
   CommonArtist({
-    required this.uid,
-    required this.name,
-    required this.spotifyId,
-    required this.spotifyUrl,
-    required this.href,
-    required this.popularity,
-    required this.type,
-    required this.uri,
-    required this.followers,
-    required this.images,
-    required this.genres,
-    this.elementIdProperty,
+    this.id,
+    this.name,
+    this.imageUrls,
+    this.popularity,
+    this.uri,
+    this.followers,
+    this.genres,
   });
 
   factory CommonArtist.fromJson(Map<String, dynamic> json) {
     return CommonArtist(
-      uid: json['uid'],
+      id: json['spotify_id'],
       name: json['name'],
-      spotifyId: json['spotify_id'],
-      spotifyUrl: json['spotify_url'],
-      href: json['href'],
+      imageUrls: (json['images'] as List<dynamic>?)
+          ?.map((image) => image['url'] as String)
+          .toList(),
       popularity: json['popularity'],
-      type: json['type'],
       uri: json['uri'],
       followers: json['followers'],
-      images: (json['images'] as List).map((image) => common_track.Image.fromJson(image)).toList(),
-      genres: (json['genres'] as List).map((genre) => genre as String).toList(),
-      elementIdProperty: json['element_id_property'] != null
-          ? int.tryParse(json['element_id_property'].toString())
-          : null,
+      genres: (json['genres'] as List<dynamic>?)?.cast<String>(),
     );
   }
 }

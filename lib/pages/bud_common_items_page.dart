@@ -49,7 +49,7 @@ class _BudCommonItemsPageState extends State<BudCommonItemsPage> {
 
       print('Top Artists: ${topArtists.length}');
       if (topArtists.isNotEmpty) {
-        print('First artist image URL: ${topArtists[0].images.isNotEmpty ? topArtists[0].images[0].url : "No image"}');
+        print('First artist image URL: ${topArtists[0].imageUrls?.isNotEmpty == true ? topArtists[0].imageUrls!.first : "No image"}');
       }
 
       setState(() {

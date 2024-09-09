@@ -13,12 +13,12 @@ class BudMatchListItem extends StatelessWidget {
       title: Text(budMatch.bud.username),
       subtitle: Text('Similarity: ${budMatch.similarityScore.toStringAsFixed(2)}'),
       onTap: () {
-        if (budMatch.bud.id.isNotEmpty) {
+        if (budMatch.bud.uid.isNotEmpty) {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => BudCommonItemsPage(
-                budId: budMatch.bud.id,
+                budId: budMatch.bud.uid,
                 budName: budMatch.bud.username,
               ),
             ),

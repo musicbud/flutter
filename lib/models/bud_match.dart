@@ -8,27 +8,25 @@ class BudMatch {
   BudMatch({required this.bud, required this.similarityScore});
 
   factory BudMatch.fromJson(Map<String, dynamic> json) {
-    print('BudMatch JSON: $json');
     return BudMatch(
       bud: Bud.fromJson(json['bud'] ?? {}),
-      similarityScore: (json['similarity_score'] as num?)?.toDouble() ?? 0.0,
+      similarityScore: (json['similarity_score'] ?? 0).toDouble(),
     );
   }
 }
 
 class Bud {
-  final String id;
+  final String uid;  // Changed from 'id' to 'uid'
   final String username;
   final String? email;
 
-  Bud({required this.id, required this.username, this.email});
+  Bud({required this.uid, required this.username, this.email});  // Changed 'id' to 'uid'
 
   factory Bud.fromJson(Map<String, dynamic> json) {
     print('Bud JSON: $json');
-    final username = json['username']?.toString() ?? 'Unknown User';
     return Bud(
-      id: username, // Use username as id
-      username: username,
+      uid: json['uid']?.toString() ?? '',  // Changed from 'username' to 'uid'
+      username: json['username']?.toString() ?? 'Unknown User',
       email: json['email']?.toString(),
     );
   }
