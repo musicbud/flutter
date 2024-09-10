@@ -156,12 +156,12 @@ class ChatService {
     return await _dio.get('/chat/channel/$channelId/statistics/');
   }
 
-  Future<Response> getChannelMessages(String channelId) async {
+  Future<Response> getChannelMessages(int channelId) async {
     return await _dio.get('/chat/get_channel_messages/$channelId/');
   }
 
-  Future<Response> getUserMessages(String userUsername, String otherUsername) async {
-    return await _dio.get('/chat/get_user_messages/$userUsername/$otherUsername/');
+  Future<Response> getUserMessages(String currentUsername, String otherUsername) async {
+    return await _dio.get('/chat/get_user_messages/$currentUsername/$otherUsername/');
   }
 
   Future<Response> addChannelMember(String channelId, String username) async {
@@ -232,11 +232,23 @@ class ChatService {
     return await _dio.get('/chat/get_messages/$roomName/');
   }
 
-  Future<Response> sendUserMessage(Map<String, dynamic> data) async {
-    return await _dio.post('/chat/send_user_message/', data: data);
+  Future<Response> sendUserMessage(String recipientUsername, String content) async {
+    return await _dio.post('/chat/send_user_message/', data: {
+      'recipient_username': recipientUsername,
+      'content': content,
+    });
   }
 
   Future<Response> performChannelAction(String channelId, String action, String userId) async {
     return await _dio.post('/chat/channel/$channelId/$action/$userId/');
+  }
+
+  Future<Response> sendMessage(int channelId, String content, String recipientType, int recipientId) async {
+    return await _dio.post('/chat/send_message/', data: {
+      'channel_id': channelId,
+      'content': content,
+      'recipient_type': recipientType,
+      'recipient_id': recipientId,
+    });
   }
 }

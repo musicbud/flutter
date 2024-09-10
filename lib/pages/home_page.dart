@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:musicbud_flutter/services/chat_service.dart';
 import 'package:musicbud_flutter/services/api_service.dart';
 import 'package:musicbud_flutter/pages/profile_page.dart'; // Import the ProfilePage
+import 'package:musicbud_flutter/pages/chat_home_page.dart'; // Import the ChatHomePage
 
 class HomePage extends StatelessWidget {
   final ChatService chatService;
@@ -30,6 +31,17 @@ class HomePage extends StatelessWidget {
                 );
               },
               child: Text('Go to Profile'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChatHomePage(chatService: chatService),
+                  ),
+                );
+              },
+              child: Text('Go to Chat'),
             ),
           ],
         ),

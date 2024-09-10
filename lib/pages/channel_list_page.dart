@@ -25,11 +25,10 @@ class _ChannelListPageState extends State<ChannelListPage> {
   Future<void> _fetchChannelList() async {
     try {
       final channelListResponse = await widget.chatService.getChannelList();
-      final List<dynamic> fetchedChannels = channelListResponse.data as List<dynamic>; // Ensure this is a List
-
+      final Map<String, dynamic> responseData = channelListResponse.data;
+      
       setState(() {
-        channels.clear();
-        channels.addAll(fetchedChannels); // Update the contents of the list
+        channels = responseData['channels'] as List<dynamic>;
         isLoading = false;
       });
     } catch (e) {
@@ -68,17 +67,29 @@ class _ChannelListPageState extends State<ChannelListPage> {
       appBar: AppBar(title: Text('Channel List')),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: channels.length,
-              itemBuilder: (context, index) {
-                // Log the channel being displayed
-                print('Displaying channel: ${channels[index]}'); // Log the channel data
-                return ListTile(
-                  title: Text(channels[index]['name']),
-                  subtitle: Text('ID: ${channels[index]['id']}'),
-                );
-              },
-            ),
+          : channels.isEmpty
+              ? Center(child: Text('No channels available'))
+              : ListView.builder(
+                  itemCount: channels.length,
+                  itemBuilder: (context, index) {
+                    final channel = channels[index];
+                    return ListTile(
+                      title: Text(channel['name'] ?? 'Unnamed Channel'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ChannelChatPage(
+                              channelId: channel['id'],
+                              channelName: channel['name'],
+                              chatService: widget.chatService,
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
     );
   }
 }

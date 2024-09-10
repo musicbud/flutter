@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:musicbud_flutter/services/chat_service.dart';
+import 'package:musicbud_flutter/pages/channel_list_page.dart';
+import 'package:musicbud_flutter/pages/user_list_page.dart';
 
 class ChatHomePage extends StatelessWidget {
   final ChatService chatService;
@@ -13,7 +15,34 @@ class ChatHomePage extends StatelessWidget {
         title: Text('Chat Home'),
       ),
       body: Center(
-        child: Text('This is the Chat Home Page'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChannelListPage(chatService: chatService),
+                  ),
+                );
+              },
+              child: Text('Go to Channel List'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UserListPage(chatService: chatService),
+                  ),
+                );
+              },
+              child: Text('Go to User List'),
+            ),
+          ],
+        ),
       ),
     );
   }

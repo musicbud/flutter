@@ -60,7 +60,7 @@ class _UserListPageState extends State<UserListPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => UserChatPage(
-                          userUsername: 'current_user', // Replace with the actual current user's username
+                          currentUsername: 'your_current_username_here', // Replace with actual current username
                           otherUsername: user['username'],
                           chatService: widget.chatService,
                         ),
