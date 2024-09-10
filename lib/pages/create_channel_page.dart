@@ -11,26 +11,24 @@ class CreateChannelPage extends StatefulWidget {
 }
 
 class _CreateChannelPageState extends State<CreateChannelPage> {
-  final TextEditingController _channelNameController = TextEditingController();
-  bool isLoading = false;
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  bool _isPrivate = false;
 
   Future<void> _createChannel() async {
-    if (_channelNameController.text.isNotEmpty) {
-      setState(() {
-        isLoading = true;
-      });
+    if (_formKey.currentState!.validate()) {
       try {
         final response = await widget.chatService.createChannel({
-          'name': _channelNameController.text,
+          'name': _nameController.text,
+          'description': _descriptionController.text,
+          'is_private': _isPrivate,
         });
-        if (response.data['status'] == 'success') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Channel created successfully')),
-          );
-          Navigator.pop(context); // Navigate back to the channel list or desired page
+        if (response['status'] == 'success') {
+          Navigator.pop(context, true);
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error creating channel: ${response.data['message']}')),
+            SnackBar(content: Text('Error creating channel: ${response['message']}')),
           );
         }
       } catch (e) {
@@ -38,10 +36,6 @@ class _CreateChannelPageState extends State<CreateChannelPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('An error occurred. Please try again.')),
         );
-      } finally {
-        setState(() {
-          isLoading = false;
-        });
       }
     }
   }
@@ -49,24 +43,45 @@ class _CreateChannelPageState extends State<CreateChannelPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Create a New Channel')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _channelNameController,
-              decoration: InputDecoration(
-                labelText: 'Channel Name',
-                border: OutlineInputBorder(),
+      appBar: AppBar(
+        title: Text('Create Channel'),
+      ),
+      body: Form(
+        key: _formKey,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                controller: _nameController,
+                decoration: InputDecoration(labelText: 'Channel Name'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a channel name';
+                  }
+                  return null;
+                },
               ),
-            ),
-            SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: isLoading ? null : _createChannel,
-              child: isLoading ? CircularProgressIndicator() : Text('Create Channel'),
-            ),
-          ],
+              TextFormField(
+                controller: _descriptionController,
+                decoration: InputDecoration(labelText: 'Description'),
+              ),
+              SwitchListTile(
+                title: Text('Private Channel'),
+                value: _isPrivate,
+                onChanged: (bool value) {
+                  setState(() {
+                    _isPrivate = value;
+                  });
+                },
+              ),
+              ElevatedButton(
+                onPressed: _createChannel,
+                child: Text('Create Channel'),
+              ),
+            ],
+          ),
         ),
       ),
     );

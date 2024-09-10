@@ -28,6 +28,7 @@ import 'package:musicbud_flutter/pages/chat_home_page.dart';
 import 'package:musicbud_flutter/services/chat_service.dart';
 import 'package:flutter/material.dart';
 import 'package:musicbud_flutter/pages/channel_chat_page.dart';                         
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -120,7 +121,23 @@ class _ProfilePageState extends State<ProfilePage> {
       case 1:
         return BudsPage();
       case 2:
-        return ChatHomePage(chatService: ChatService(widget.apiService.dio.options.baseUrl));
+        return FutureBuilder<String?>(
+          future: getUsername(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasData && snapshot.data != null) {
+                return ChatHomePage(
+                  chatService: ChatService(widget.apiService.dio.options.baseUrl),
+                  currentUsername: snapshot.data!,
+                );
+              } else {
+                return Center(child: Text('Please log in to access chat.'));
+              }
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          },
+        );
       default:
         return ProfilePageContent(apiService: widget.apiService);
     }
@@ -130,6 +147,11 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       _selectedIndex = index;
     });
+  }
+
+  Future<String?> getUsername() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('username');
   }
 
   @override
@@ -174,6 +196,27 @@ class _ProfilePageState extends State<ProfilePage> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
         onTap: _onItemTapped,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          String? username = await getUsername();
+          if (username != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => ChatHomePage(
+                  chatService: ChatService(widget.apiService.dio.options.baseUrl),
+                  currentUsername: username,
+                ),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Please log in first')),
+            );
+          }
+        },
+        child: Icon(Icons.chat),
       ),
     );
   }
@@ -720,6 +763,5 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
     );
   }
 }
-
 
 

@@ -77,7 +77,6 @@ class _ChannelDetailsPageState extends State<ChannelDetailsPage> {
   }
 
   void _enterChatRoom() {
-    // Navigate to the chat room page
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -86,14 +85,20 @@ class _ChannelDetailsPageState extends State<ChannelDetailsPage> {
     );
   }
 
-  void _openDashboard() {
-    // Navigate to the channel dashboard page
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ChannelDashboardPage(channelId: widget.channelId, dio: widget.dio),
-      ),
-    );
+  Future<void> _openDashboard() async {
+    bool isAdmin = await chatService.isUserAdmin(widget.channelId);
+    if (isAdmin) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChannelDashboardPage(channelId: widget.channelId, dio: widget.dio),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('You do not have permission to access the dashboard.')),
+      );
+    }
   }
 
   @override

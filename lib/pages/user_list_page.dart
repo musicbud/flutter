@@ -1,18 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:musicbud_flutter/services/chat_service.dart';
-import 'package:musicbud_flutter/pages/user_chat_page.dart';
+import 'package:musicbud_flutter/pages/user_chat_page.dart'; // Import the UserChatPage
 
 class UserListPage extends StatefulWidget {
   final ChatService chatService;
+  final String currentUsername;
 
-  const UserListPage({Key? key, required this.chatService}) : super(key: key);
+  const UserListPage({
+    Key? key,
+    required this.chatService,
+    required this.currentUsername,
+  }) : super(key: key);
 
   @override
   _UserListPageState createState() => _UserListPageState();
 }
 
 class _UserListPageState extends State<UserListPage> {
-  List<dynamic> _users = [];
+  List<Map<String, dynamic>> _users = [];
   bool _isLoading = true;
 
   @override
@@ -23,53 +28,54 @@ class _UserListPageState extends State<UserListPage> {
 
   Future<void> _fetchUsers() async {
     try {
-      final response = await widget.chatService.getUsers();
-      if (response.statusCode == 200) {
-        setState(() {
-          _users = response.data['users'];
-          _isLoading = false;
-        });
-      } else {
-        setState(() {
-          _isLoading = false;
-        });
-        print('Failed to load users: ${response.statusCode}');
-      }
+      final Map<String, dynamic> response = await widget.chatService.getUsers();
+      setState(() {
+        _users = List<Map<String, dynamic>>.from(response['users'] as List);
+        _isLoading = false;
+      });
     } catch (e) {
+      print('Error fetching users: $e');
       setState(() {
         _isLoading = false;
       });
-      print('Error fetching users: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load users. Please try again.')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Users')),
+      appBar: AppBar(
+        title: Text('User List'),
+      ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: _users.length,
-              itemBuilder: (context, index) {
-                final user = _users[index];
-                return ListTile(
-                  title: Text(user['username']),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UserChatPage(
-                          currentUsername: 'your_current_username_here', // Replace with actual current username
-                          otherUsername: user['username'],
-                          chatService: widget.chatService,
-                        ),
-                      ),
+          : _users.isEmpty
+              ? Center(child: Text('No users available'))
+              : ListView.builder(
+                  itemCount: _users.length,
+                  itemBuilder: (context, index) {
+                    final user = _users[index];
+                    return ListTile(
+                      title: Text(user['username'] ?? 'Unknown User'),
+                      subtitle: Text('ID: ${user['id']}'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UserChatPage(
+                              chatService: widget.chatService,
+                              currentUsername: widget.currentUsername, // Make sure this is set
+                              otherUsername: user['username'], // The username of the selected user
+                            ),
+                          ),
+                        );
+                      },
                     );
                   },
-                );
-              },
-            ),
+                ),
     );
   }
 }

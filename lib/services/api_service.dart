@@ -20,6 +20,7 @@ import 'package:dio/src/form_data.dart' as dio_form;
 import 'package:dio/src/multipart_file.dart' as dio_multipart;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:io'; // Import this for File operations
+import 'package:musicbud_flutter/services/logging_interceptor.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
@@ -38,6 +39,9 @@ class ApiService {
         'Accept': 'application/json',
       },
     ));
+
+    // Add the logging interceptor
+    _dio.interceptors.add(LoggingInterceptor());
 
     _dio.interceptors.add(
       InterceptorsWrapper(

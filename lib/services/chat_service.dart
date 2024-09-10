@@ -1,254 +1,362 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:musicbud_flutter/services/logging_interceptor.dart';
 
 class ChatService {
   final Dio _dio;
   final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+  String? currentUsername;
 
-  ChatService(String baseUrl)
-      : _dio = Dio(BaseOptions(
-          baseUrl: baseUrl,
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          connectTimeout: Duration(seconds: 5),
-          receiveTimeout: Duration(seconds: 3),
-        )) {
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        // Append access token to every request
-        final String? accessToken = await _secureStorage.read(key: 'access_token');
-        if (accessToken != null) {
-          options.headers['Authorization'] = 'Bearer $accessToken';
-        }
-        print('Request URL: ${options.baseUrl}${options.path}');
-        print('Request Method: ${options.method}');
-        print('Request Headers: ${options.headers}');
-        print('Request Data: ${options.data}');
-        return handler.next(options);
-      },
-      onResponse: (response, handler) {
-        print('Response Status Code: ${response.statusCode}');
-        print('Response Data: ${response.data}');
-        return handler.next(response);
-      },
-      onError: (DioError e, handler) async {
-        print('Error: ${e.error}');
-        print('Error Type: ${e.type}');
-        print('Error Message: ${e.message}');
-        if (e.response != null) {
-          print('Error Response Status: ${e.response?.statusCode}');
-          print('Error Response Data: ${e.response?.data}');
-        }
-        // If the error is 401 Unauthorized, try to refresh the token
-        if (e.response?.statusCode == 401) {
-          if (await _refreshToken()) {
-            // Retry the original request
-            return handler.resolve(await _retry(e.requestOptions));
+  ChatService(String baseUrl) : _dio = Dio(BaseOptions(baseUrl: baseUrl)) {
+    _dio.interceptors.add(LoggingInterceptor());
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          options.extra['withCredentials'] = true;
+          final token = await _secureStorage.read(key: 'access_token');
+          if (token != null) {
+            options.headers['Authorization'] = 'Bearer $token';
           }
-        }
-        return handler.next(e);
-      },
-    ));
+          return handler.next(options);
+        },
+      ),
+    );
   }
 
   Future<Response> login(String username, String password) async {
     try {
-      print('Attempting login for user: $username');
       final response = await _dio.post('/chat/login/', data: {'username': username, 'password': password});
-      print('Login response received');
       
-      // Store tokens in secure storage
-      if (response.data['tokens'] != null) {
-        await _secureStorage.write(key: 'access_token', value: response.data['tokens']['access']);
-        await _secureStorage.write(key: 'refresh_token', value: response.data['tokens']['refresh']);
+      if (response.statusCode == 200) {
+        currentUsername = username;
+        if (response.data['tokens'] != null) {
+          await _secureStorage.write(key: 'access_token', value: response.data['tokens']['access']);
+          await _secureStorage.write(key: 'refresh_token', value: response.data['tokens']['refresh']);
+        }
       }
       
       return response;
     } catch (e) {
-      print('Exception caught in login method:');
-      if (e is DioError) {
-        print('DioError details:');
-        print('  Type: ${e.type}');
-        print('  Message: ${e.message}');
-        if (e.response != null) {
-          print('  Response status: ${e.response?.statusCode}');
-          print('  Response data: ${e.response?.data}');
-        }
-        print('  Request details:');
-        print('    URL: ${e.requestOptions.baseUrl}${e.requestOptions.path}');
-        print('    Method: ${e.requestOptions.method}');
-        print('    Headers: ${e.requestOptions.headers}');
-        print('    Data: ${e.requestOptions.data}');
-      } else {
-        print('Non-DioError exception: $e');
-      }
+      print('Exception caught in login method: $e');
       rethrow;
     }
   }
 
-  Future<bool> _refreshToken() async {
+  Future<Map<String, dynamic>> getChannelUsers(int channelId) async {
+    final response = await _dio.get('/chat/get_channel_users/$channelId/');
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>> removeAdmin(int channelId, int userId) async {
+    final response = await _dio.post('/chat/channel/$channelId/remove_admin/$userId/');
+    return response.data;
+  }
+
+  Future<Map<String, dynamic>> addChannelMember(int channelId, String username) async {
+    final response = await _dio.post('/chat/add_channel_member/$channelId/', data: {'username': username});
+    return response.data;
+  }
+
+  Future<bool> isUserAdmin(int channelId) async {
     try {
-      final refreshToken = await _secureStorage.read(key: 'refresh_token');
-      if (refreshToken == null) {
-        return false;
+      final response = await _dio.get('/chat/channel/$channelId/is_admin/');
+      return response.data['is_admin'] ?? false;
+    } catch (e) {
+      print('Error checking admin status: $e');
+      if (e is DioException && e.response?.statusCode == 404) {
+        print('Endpoint not found. Make sure the server-side route is correctly implemented.');
       }
-      final response = await _dio.post('/chat/refresh-token/', data: {'refresh': refreshToken});
-      if (response.statusCode == 200 && response.data['access'] != null) {
-        await _secureStorage.write(key: 'access_token', value: response.data['access']);
-        return true;
+      return false;
+    }
+  }
+
+  Future<Map<String, bool>> checkChannelRoles(int channelId) async {
+    try {
+      final response = await _dio.get('/chat/channel/$channelId/check_roles/');
+      return {
+        'is_admin': response.data['is_admin'] ?? false,
+        'is_moderator': response.data['is_moderator'] ?? false,
+        'is_member': response.data['is_member'] ?? false,
+      };
+    } catch (e) {
+      print('Error checking channel roles: $e');
+      return {'is_admin': false, 'is_moderator': false, 'is_member': false};
+    }
+  }
+
+  Future<Map<String, dynamic>> getChannelDashboardData(int channelId) async {
+    try {
+      final response = await _dio.get('/chat/channel/$channelId/dashboard_data/');
+      return response.data;
+    } catch (e) {
+      print('Error getting channel dashboard data: $e');
+      return {'status': 'error', 'message': 'Unable to get channel dashboard data'};
+    }
+  }
+
+  Future<bool> isChannelAdmin(int channelId) async {
+    try {
+      final response = await _dio.get('/chat/channel/$channelId/is_admin/');
+      return response.data['is_admin'] ?? false;
+    } catch (e) {
+      print('Error checking if user is channel admin: $e');
+      return false;
+    }
+  }
+
+  Future<bool> isChannelMember(int channelId) async {
+    try {
+      final response = await _dio.get('/chat/channel/$channelId/is_member/');
+      return response.data['is_member'] ?? false;
+    } catch (e) {
+      print('Error checking if user is channel member: $e');
+      return false;
+    }
+  }
+
+  Future<bool> isChannelModerator(int channelId) async {
+    try {
+      final response = await _dio.get('/chat/channel/$channelId/is_moderator/');
+      return response.data['is_moderator'] ?? false;
+    } catch (e) {
+      print('Error checking if user is channel moderator: $e');
+      return false;
+    }
+  }
+
+  Future<Map<String, dynamic>> removeChannelMember(int channelId, int userId) async {
+    try {
+      final response = await _dio.post('/chat/channel/$channelId/remove_member/$userId/');
+      return response.data;
+    } catch (e) {
+      print('Error removing channel member: $e');
+      return {'status': 'error', 'message': 'Unable to remove channel member'};
+    }
+  }
+
+  Future<Map<String, dynamic>> makeAdmin(int channelId, int userId) async {
+    try {
+      final response = await _dio.post('/chat/channel/$channelId/make_admin/$userId/');
+      return response.data;
+    } catch (e) {
+      print('Error making user admin: $e');
+      return {'status': 'error', 'message': 'Unable to make user admin'};
+    }
+  }
+
+  Future<Map<String, dynamic>> addModerator(int channelId, int userId) async {
+    try {
+      final response = await _dio.post('/chat/channel/$channelId/add_moderator/$userId/');
+      return response.data;
+    } catch (e) {
+      print('Error adding moderator: $e');
+      return {'status': 'error', 'message': 'Unable to add moderator'};
+    }
+  }
+
+  Future<Map<String, dynamic>> removeModerator(int channelId, int userId) async {
+    try {
+      final response = await _dio.post('/chat/channel/$channelId/remove_moderator/$userId/');
+      return response.data;
+    } catch (e) {
+      print('Error removing moderator: $e');
+      return {'status': 'error', 'message': 'Unable to remove moderator'};
+    }
+  }
+
+  Future<Map<String, dynamic>> acceptUser(int channelId, int userId) async {
+    try {
+      final response = await _dio.post('/chat/channel/$channelId/accept_user/$userId/');
+      return response.data;
+    } catch (e) {
+      print('Error accepting user: $e');
+      return {'status': 'error', 'message': 'Unable to accept user'};
+    }
+  }
+
+  Future<Map<String, dynamic>> kickUser(int channelId, int userId) async {
+    try {
+      final response = await _dio.post('/chat/channel/$channelId/kick/$userId/');
+      return response.data;
+    } catch (e) {
+      print('Error kicking user: $e');
+      return {'status': 'error', 'message': 'Unable to kick user'};
+    }
+  }
+
+  Future<Map<String, dynamic>> blockUser(int channelId, int userId) async {
+    try {
+      final response = await _dio.post('/chat/channel/$channelId/block/$userId/');
+      return response.data;
+    } catch (e) {
+      print('Error blocking user: $e');
+      return {'status': 'error', 'message': 'Unable to block user'};
+    }
+  }
+
+  Future<Map<String, dynamic>> unblockUser(int channelId, int userId) async {
+    try {
+      final response = await _dio.post('/chat/channel/$channelId/unblock/$userId/');
+      return response.data;
+    } catch (e) {
+      print('Error unblocking user: $e');
+      return {'status': 'error', 'message': 'Unable to unblock user'};
+    }
+  }
+
+  Future<Map<String, dynamic>> deleteMessage(int channelId, int messageId) async {
+    try {
+      final response = await _dio.delete('/chat/channel/$channelId/delete_message/$messageId/');
+      return response.data;
+    } catch (e) {
+      print('Error deleting message: $e');
+      return {'status': 'error', 'message': 'Unable to delete message'};
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getChannelInvitations(int channelId) async {
+    try {
+      final response = await _dio.get('/chat/get_channel_invitations/$channelId/');
+      return List<Map<String, dynamic>>.from(response.data);
+    } catch (e) {
+      print('Error getting channel invitations: $e');
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getChannelBlockedUsers(int channelId) async {
+    try {
+      final response = await _dio.get('/chat/get_channel_blocked_users/$channelId/');
+      return List<Map<String, dynamic>>.from(response.data);
+    } catch (e) {
+      print('Error getting channel blocked users: $e');
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getUserInvitations(int userId) async {
+    try {
+      final response = await _dio.get('/chat/get_user_invitations/$userId/');
+      return List<Map<String, dynamic>>.from(response.data);
+    } catch (e) {
+      print('Error getting user invitations: $e');
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getChannelList() async {
+    try {
+      final response = await _dio.get('/chat/channels/');
+      if (response.statusCode == 200) {
+        final data = response.data as Map<String, dynamic>;
+        return (data['channels'] as List).cast<Map<String, dynamic>>();
+      } else {
+        throw Exception('Failed to fetch channels');
       }
     } catch (e) {
-      print('Error refreshing token: $e');
+      print('Error getting channel list: $e');
+      return []; // Return an empty list instead of throwing an exception
     }
-    return false;
   }
 
-  Future<Response<dynamic>> _retry(RequestOptions requestOptions) async {
-    final options = Options(
-      method: requestOptions.method,
-      headers: requestOptions.headers,
-    );
-    return _dio.request<dynamic>(requestOptions.path,
-        data: requestOptions.data,
-        queryParameters: requestOptions.queryParameters,
-        options: options);
+  Future<Map<String, dynamic>> joinChannel(String channelId) async {
+    try {
+      final response = await _dio.post('/chat/join_channel/$channelId/');
+      return response.data;
+    } catch (e) {
+      print('Error joining channel: $e');
+      return {'status': 'error', 'message': 'Unable to join channel'};
+    }
   }
 
-  Future<Response> getChannelList() async {
-    return await _dio.get('/chat/get_channels/');
+  Future<Map<String, dynamic>> getUsers() async {
+    try {
+      final response = await _dio.get('/chat/users/');
+      if (response.statusCode == 200) {
+        return response.data as Map<String, dynamic>;
+      } else {
+        throw Exception('Failed to fetch users');
+      }
+    } catch (e) {
+      print('Error getting users: $e');
+      throw Exception('Unable to get users');
+    }
   }
 
-  Future<Response> joinChannel(String channelId) async {
-    return await _dio.post('/chat/channels/$channelId/join');
+  Future<Map<String, dynamic>> createChannel(Map<String, dynamic> channelData) async {
+    try {
+      final response = await _dio.post('/chat/create_channel/', data: channelData);
+      return response.data;
+    } catch (e) {
+      print('Error creating channel: $e');
+      return {'status': 'error', 'message': 'Unable to create channel'};
+    }
   }
 
-  Future<Response> sendMessageData(Map<String, dynamic> messageData) async {
-    return await _dio.post('/chat/send_message/', data: messageData);
+  Future<Map<String, dynamic>> getUserMessages(String currentUsername, String otherUsername) async {
+    try {
+      final response = await _dio.get('/chat/get_user_messages/$currentUsername/$otherUsername/');
+      return response.data;
+    } catch (e) {
+      print('Error getting user messages: $e');
+      return {'status': 'error', 'message': 'Unable to get user messages'};
+    }
   }
 
-  Future<Response> performAction(String action, String channelId, String userId) async {
-    return await _dio.post('/chat/channel/$channelId/$action/$userId/');
+  Future<Map<String, dynamic>> sendUserMessage(String senderUsername, String recipientUsername, String content) async {
+    try {
+      final response = await _dio.post('/chat/send_user_message/', data: {
+        'sender_username': senderUsername,
+        'recipient_username': recipientUsername,
+        'content': content,
+      });
+      return response.data;
+    } catch (e) {
+      print('Error sending user message: $e');
+      return {'status': 'error', 'message': 'Unable to send user message'};
+    }
   }
 
-  Future<Response> createChannel(Map<String, dynamic> channelData) async {
-    return await _dio.post('/chat/channels', data: channelData);
+  Future<Map<String, dynamic>> getChannelMessages(int channelId) async {
+    try {
+      final response = await _dio.get('/chat/get_messages/$channelId/');
+      return response.data;
+    } catch (e) {
+      print('Error getting channel messages: $e');
+      return {'status': 'error', 'message': 'Unable to get channel messages'};
+    }
   }
 
-  Future<Response> refreshToken(String refreshToken) async {
-    return await _dio.post('/chat/refresh-token/', data: {'refresh_token': refreshToken});
+  Future<Map<String, dynamic>> sendMessage(Map<String, dynamic> messageData) async {
+    try {
+      final response = await _dio.post('/chat/send_message/', data: messageData);
+      return response.data;
+    } catch (e) {
+      print('Error sending message: $e');
+      return {'status': 'error', 'message': 'Unable to send message'};
+    }
   }
 
-  Future<Response> register(Map<String, dynamic> data) async {
-    return await _dio.post('/chat/register/', data: data);
+  Future<Map<String, dynamic>> sendChannelMessage(int channelId, String senderUsername, String content) async {
+    try {
+      final response = await _dio.post('/chat/send_message/', data: {
+        'recipient_type': 'channel',
+        'recipient_id': channelId,
+        'sender_username': senderUsername,
+        'content': content,
+      });
+      return response.data;
+    } catch (e) {
+      print('Error sending channel message: $e');
+      return {'status': 'error', 'message': 'Unable to send channel message'};
+    }
   }
 
-  Future<Response> getChannelDetails(String channelId) async {
-    return await _dio.get('/chat/channel/$channelId/');
-  }
-
-  Future<Response> requestJoinChannel(String channelId) async {
-    return await _dio.post('/chat/channel/$channelId/request_join/');
-  }
-
-  Future<Response> getChannelStatistics(String channelId) async {
-    return await _dio.get('/chat/channel/$channelId/statistics/');
-  }
-
-  Future<Response> getChannelMessages(int channelId) async {
-    return await _dio.get('/chat/get_channel_messages/$channelId/');
-  }
-
-  Future<Response> getUserMessages(String currentUsername, String otherUsername) async {
-    return await _dio.get('/chat/get_user_messages/$currentUsername/$otherUsername/');
-  }
-
-  Future<Response> addChannelMember(String channelId, String username) async {
-    return await _dio.post('/chat/add_channel_member/$channelId/', data: {'username': username});
-  }
-
-  Future<Response> getUsers() async {
-    return await _dio.get('/chat/get_users/');
-  }
-
-  Future<Response> getUserChannels(String userId) async {
-    return await _dio.get('/chat/get_user_channels/$userId/');
-  }
-
-  Future<Response> getChannelUsers(String channelId) async {
-    return await _dio.get('/chat/get_channel_users/$channelId/');
-  }
-
-  Future<Response> getChannelInvitations(String channelId) async {
-    return await _dio.get('/chat/get_channel_invitations/$channelId/');
-  }
-
-  Future<Response> getUserInvitations(String userId) async {
-    return await _dio.get('/chat/get_user_invitations/$userId/');
-  }
-
-  Future<Response> getChannelBlockedUsers(String channelId) async {
-    return await _dio.get('/chat/get_channel_blocked_users/$channelId/');
-  }
-
-  Future<Response> makeAdmin(String channelId, String userId) async {
-    return await _dio.post('/chat/channel/$channelId/make_admin/$userId/');
-  }
-
-  Future<Response> removeAdmin(String channelId, String userId) async {
-    return await _dio.post('/chat/channel/$channelId/remove_admin/$userId/');
-  }
-
-  Future<Response> addModerator(String channelId, String userId) async {
-    return await _dio.post('/chat/channel/$channelId/add_moderator/$userId/');
-  }
-
-  Future<Response> removeModerator(String channelId, String userId) async {
-    return await _dio.post('/chat/channel/$channelId/remove_moderator/$userId/');
-  }
-
-  Future<Response> blockUser(String channelId, String userId) async {
-    return await _dio.post('/chat/channel/$channelId/block/$userId/');
-  }
-
-  Future<Response> unblockUser(String channelId, String userId) async {
-    return await _dio.post('/chat/channel/$channelId/unblock/$userId/');
-  }
-
-  Future<Response> acceptUser(String channelId, String userId) async {
-    return await _dio.post('/chat/channel/$channelId/accept_user/$userId/');
-  }
-
-  Future<Response> kickUser(String channelId, String userId) async {
-    return await _dio.post('/chat/channel/$channelId/kick/$userId/');
-  }
-
-  Future<Response> handleInvitation(String invitationId, String action) async {
-    return await _dio.post('/chat/handle_invitation/$invitationId/$action/');
-  }
-
-  Future<Response> getMessages(String roomName) async {
-    return await _dio.get('/chat/get_messages/$roomName/');
-  }
-
-  Future<Response> sendUserMessage(String recipientUsername, String content) async {
-    return await _dio.post('/chat/send_user_message/', data: {
-      'recipient_username': recipientUsername,
-      'content': content,
+  Future<Map<String, dynamic>> performAdminAction(int channelId, String action, int userId) async {
+    final response = await _dio.post('/chat/channel/$channelId/admin_action/', data: {
+      'action': action,
+      'user_id': userId,
     });
-  }
-
-  Future<Response> performChannelAction(String channelId, String action, String userId) async {
-    return await _dio.post('/chat/channel/$channelId/$action/$userId/');
-  }
-
-  Future<Response> sendMessage(int channelId, String content, String recipientType, int recipientId) async {
-    return await _dio.post('/chat/send_message/', data: {
-      'channel_id': channelId,
-      'content': content,
-      'recipient_type': recipientType,
-      'recipient_id': recipientId,
-    });
+    return response.data;
   }
 }

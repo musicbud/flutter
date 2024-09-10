@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:musicbud_flutter/services/chat_service.dart';
 import 'package:musicbud_flutter/services/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   final ChatService chatService;
@@ -35,6 +36,7 @@ class _LoginPageState extends State<LoginPage> {
         print('Login successful: ${response.data}');
         // Navigate to the home page
         Navigator.pushReplacementNamed(context, '/home');
+        await saveUsername(_usernameController.text);
       } else {
         print('Login failed with status code: ${response.statusCode}');
         print('Response data: ${response.data}');
@@ -53,6 +55,11 @@ class _LoginPageState extends State<LoginPage> {
         SnackBar(content: Text('Login failed: ${e.toString()}')),
       );
     }
+  }
+
+  Future<void> saveUsername(String username) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('username', username);
   }
 
   @override
