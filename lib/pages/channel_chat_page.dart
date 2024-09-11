@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:musicbud_flutter/services/chat_service.dart';
-import 'package:intl/intl.dart'; // Add this import for date formatting
-import 'package:musicbud_flutter/pages/channel_admin_page.dart'; // Update this import
+import 'package:intl/intl.dart';
+import 'package:musicbud_flutter/pages/channel_admin_page.dart';
+import 'package:musicbud_flutter/pages/spotify_control_page.dart';
 
 class ChannelChatPage extends StatefulWidget {
   final ChatService chatService;
-  final int channelId; // Change this to int
+  final int channelId;
   final String channelName;
   final String currentUsername;
 
@@ -71,7 +72,7 @@ class _ChannelChatPageState extends State<ChannelChatPage> {
     if (_messageController.text.isNotEmpty) {
       try {
         final response = await widget.chatService.sendChannelMessage(
-          widget.channelId, // This is now correct as an int
+          widget.channelId,
           widget.currentUsername,
           _messageController.text,
         );
@@ -107,6 +108,7 @@ class _ChannelChatPageState extends State<ChannelChatPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.channelName),
+        // Remove all actions from here
       ),
       body: Column(
         children: [
@@ -118,7 +120,7 @@ class _ChannelChatPageState extends State<ChannelChatPage> {
                     itemBuilder: (context, index) {
                       final message = _messages[index];
                       final content = message['content'] as String? ?? 'No content';
-                      final user = message['user'] as String? ?? 'Unknown user'; // Changed from user__username to user
+                      final user = message['user'] as String? ?? 'Unknown user';
                       final timestamp = message['timestamp'] as String? ?? '';
                       final DateTime? dateTime = DateTime.tryParse(timestamp);
                       final formattedDate = dateTime != null

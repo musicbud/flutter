@@ -1,10 +1,12 @@
 import 'package:musicbud_flutter/models/common_artist.dart';
 import 'dart:convert';
 import 'dart:developer' as developer;
+import 'package:flutter/material.dart' show Image;
 
 class CommonTrack {
-  final String? uid;
-  final String? name;
+  final String uid;
+  final String id;  // Add this line
+  final String name;
   final String? spotifyId;
   final String? uri;
   final String? spotifyUrl;
@@ -14,16 +16,21 @@ class CommonTrack {
   final String? previewUrl;
   final int? trackNumber;
   final int? discNumber;
-  final bool explicit;
+  final bool? explicit;
   final String? type;
-  final bool isLocal;
+  final bool? isLocal;
   final String? isrc;
-  final int? elementIdProperty;
-  final List<Image> images;
+  final String? elementIdProperty;  // Changed from int? to String?
+  final List<CommonImage> images;
+  final String? artistName;
+  final String? albumName;
+  final double? latitude;
+  final double? longitude;
 
   CommonTrack({
-    this.uid,
-    this.name,
+    required this.uid,
+    required this.id,  // Add this line
+    required this.name,
     this.spotifyId,
     this.uri,
     this.spotifyUrl,
@@ -33,60 +40,81 @@ class CommonTrack {
     this.previewUrl,
     this.trackNumber,
     this.discNumber,
-    this.explicit = false,
+    this.explicit,
     this.type,
-    this.isLocal = false,
+    this.isLocal,
     this.isrc,
     this.elementIdProperty,
     this.images = const [],
+    this.artistName,
+    this.albumName,
+    this.latitude,
+    this.longitude,
   });
 
   factory CommonTrack.fromJson(Map<String, dynamic> json) {
-    return CommonTrack(
-      uid: json['uid'] as String?,
-      name: json['name'] as String?,
-      spotifyId: json['spotify_id'] as String?,
-      uri: json['uri'] as String?,
-      spotifyUrl: json['spotify_url'] as String?,
-      href: json['href'] as String?,
-      durationMs: json['duration_ms'] as int?,
-      popularity: json['popularity'] as int?,
-      previewUrl: json['preview_url'] as String?,
-      trackNumber: json['track_number'] as int?,
-      discNumber: json['disc_number'] as int?,
-      explicit: json['explicit'] as bool? ?? false,
-      type: json['type'] as String?,
-      isLocal: json['is_local'] as bool? ?? false,
-      isrc: json['isrc'] as String?,
-      elementIdProperty: json['element_id_property'] != null
-          ? int.tryParse(json['element_id_property'].toString())
-          : null,
-      images: (json['images'] as List<dynamic>?)
-          ?.map((e) => Image.fromJson(e as Map<String, dynamic>))
-          .toList() ?? [],
-    );
+    if (json.containsKey('track') && json.containsKey('location')) {
+      // Handle the new structure
+      final trackData = json['track'] as Map<String, dynamic>;
+      final locationData = json['location'] as Map<String, dynamic>;
+      return CommonTrack(
+        uid: trackData['id'] ?? '',
+        id: trackData['id'] ?? '',
+        name: trackData['name'] ?? '',
+        latitude: locationData['latitude'],
+        longitude: locationData['longitude'],
+      );
+    } else {
+      // Handle the old structure
+      return CommonTrack(
+        uid: json['uid'] ?? '',
+        id: json['id'] ?? json['spotify_id'] ?? '',
+        name: json['name'] ?? '',
+        spotifyId: json['spotify_id'],
+        uri: json['uri'],
+        spotifyUrl: json['spotify_url'],
+        href: json['href'],
+        durationMs: json['duration_ms'],
+        popularity: json['popularity'],
+        previewUrl: json['preview_url'],
+        trackNumber: json['track_number'],
+        discNumber: json['disc_number'],
+        explicit: json['explicit'],
+        type: json['type'],
+        isLocal: json['is_local'],
+        isrc: json['isrc'],
+        elementIdProperty: json['element_id_property']?.toString(),
+        images: (json['images'] as List<dynamic>?)
+            ?.map((imageJson) => CommonImage.fromJson(imageJson))
+            .toList() ?? [],
+        artistName: json['artist_name'],
+        albumName: json['album_name'],
+        latitude: json['latitude']?.toDouble(),
+        longitude: json['longitude']?.toDouble(),
+      );
+    }
   }
 }
 
-class Image {
+class CommonImage {
   final String uid;
   final String url;
   final int height;
   final int width;
 
-  Image({
+  CommonImage({
     required this.uid,
     required this.url,
     required this.height,
     required this.width,
   });
 
-  factory Image.fromJson(Map<String, dynamic> json) {
-    return Image(
-      uid: json['uid'],
-      url: json['url'],
-      height: json['height'],
-      width: json['width'],
+  factory CommonImage.fromJson(Map<String, dynamic> json) {
+    return CommonImage(
+      uid: json['uid'] ?? '',
+      url: json['url'] ?? '',
+      height: json['height'] ?? 0,
+      width: json['width'] ?? 0,
     );
   }
 }

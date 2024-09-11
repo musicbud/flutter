@@ -29,6 +29,7 @@ import 'package:musicbud_flutter/services/chat_service.dart';
 import 'package:flutter/material.dart';
 import 'package:musicbud_flutter/pages/channel_chat_page.dart';                         
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:musicbud_flutter/pages/track_details_page.dart';
 
 
 
@@ -643,7 +644,15 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
     return TrackListItem(
       track: track,
       onTap: () {
-        // Handle track tap
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TrackDetailsPage(
+              track: track,
+              apiService: _apiService,
+            ),
+          ),
+        );
       },
     );
   }

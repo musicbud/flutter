@@ -37,6 +37,8 @@ dependencies:
   flutter_secure_storage: ^9.0.0
   image_picker: ^1.0.7
   intl: ^0.17.0
+  geolocator: ^9.0.2  # You can use the latest version available
+  google_maps_flutter: ^2.3.0
   # Add any other dependencies your project needs
 
 dev_dependencies:

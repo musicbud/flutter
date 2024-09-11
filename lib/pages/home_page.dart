@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:musicbud_flutter/pages/spotify_control_page.dart';
 import 'package:musicbud_flutter/services/chat_service.dart';
 import 'package:musicbud_flutter/services/api_service.dart';
-import 'package:musicbud_flutter/pages/profile_page.dart'; // Import the ProfilePage
-import 'package:musicbud_flutter/pages/chat_home_page.dart'; // Import the ChatHomePage
+import 'package:musicbud_flutter/pages/profile_page.dart';
+import 'package:musicbud_flutter/pages/chat_home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatelessWidget {
@@ -20,7 +21,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        title: Text('MusicBud'),
         actions: [
           IconButton(
             icon: Icon(Icons.person),
@@ -36,26 +37,43 @@ class HomePage extends StatelessWidget {
         ],
       ),
       body: Center(
-        child: ElevatedButton(
-          child: Text('Go to Chat'),
-          onPressed: () async {
-            String? username = await getUsername();
-            if (username != null) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatHomePage(
-                    chatService: chatService,
-                    currentUsername: username,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              child: Text('Go to Chat'),
+              onPressed: () async {
+                String? username = await getUsername();
+                if (username != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatHomePage(
+                        chatService: chatService,
+                        currentUsername: username,
+                      ),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please log in first')),
+                  );
+                }
+              },
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              child: Text('Spotify Control'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SpotifyControlPage(apiService: apiService),
                   ),
-                ),
-              );
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Please log in first')),
-              );
-            }
-          },
+                );
+              },
+            ),
+          ],
         ),
       ),
     );

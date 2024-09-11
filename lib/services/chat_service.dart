@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:musicbud_flutter/services/logging_interceptor.dart';
+import 'package:geolocator/geolocator.dart';
 
 class ChatService {
   final Dio _dio;
@@ -359,4 +360,6 @@ class ChatService {
     });
     return response.data;
   }
+
+  
 }
