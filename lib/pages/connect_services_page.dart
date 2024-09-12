@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:musicbud_flutter/services/api_service.dart';
-import 'package:uni_links/uni_links.dart';
-import 'dart:async';
-import 'dart:convert';
+import 'dart:html' as html;
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:js' as js;
 
 class ConnectServicesPage extends StatefulWidget {
   final ApiService apiService;
@@ -16,85 +16,57 @@ class ConnectServicesPage extends StatefulWidget {
 class _ConnectServicesPageState extends State<ConnectServicesPage> {
   bool _isSpotifyConnected = false;
   bool _isLoading = false;
-  StreamSubscription? _sub;
+  String? _spotifyUserId;
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
-    _checkSpotifyConnection();
-    _initUniLinks();
+    _setupSpotifyCallbackHandler();
   }
 
-  @override
-  void dispose() {
-    _sub?.cancel();
-    super.dispose();
-  }
-
-  Future<void> _initUniLinks() async {
-    _sub = uriLinkStream.listen((Uri? uri) {
-      if (uri != null && uri.host == 'spotify-callback') {
-        _handleSpotifyCallback(uri);
-      }
-    }, onError: (err) {
-      print('Error in uni_links stream: $err');
-    });
-  }
-
-  Future<void> _handleSpotifyCallback(Uri uri) async {
-    final code = uri.queryParameters['code'];
-    if (code != null) {
-      try {
-        final response = await widget.apiService.handleSpotifyCallback(code);
-        if (response['code'] == 200) {
-          setState(() {
-            _isSpotifyConnected = true;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Successfully connected to Spotify')),
-          );
-          if (response['data']['parent_user_connected'] == false) {
-            _showParentAccountDialog();
-          }
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to connect to Spotify: ${response['message']}')),
-          );
-        }
-      } catch (e) {
-        print('Error handling Spotify callback: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error connecting to Spotify: $e')),
-        );
-      }
+  void _setupSpotifyCallbackHandler() {
+    if (kIsWeb) {
+      js.context['handleSpotifyCallback'] = (dynamic data) {
+        print('Received Spotify callback: $data');
+        _handleSpotifyCallback(data);
+      };
     }
   }
 
-  Future<void> _checkSpotifyConnection() async {
-    // Implement this method to check if Spotify is already connected
+  void _handleSpotifyCallback(dynamic data) {
+    setState(() {
+      _isSpotifyConnected = true;
+      _spotifyUserId = data['user_id'];
+    });
   }
 
   Future<void> _connectSpotify() async {
     setState(() {
       _isLoading = true;
+      _errorMessage = null;
     });
 
     try {
-      await widget.apiService.connectSpotify();
+      final url = await widget.apiService.connectSpotify();
+      print('Received Spotify authorization URL: $url');  // Debug print
+      if (kIsWeb) {
+        html.window.open(url, 'Spotify Auth');
+      } else {
+        // Handle mobile platforms here
+        // You might want to use a package like url_launcher for mobile
+        // await launch(url);
+      }
     } catch (e) {
-      print('Error connecting to Spotify: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to connect to Spotify: $e')),
-      );
+      setState(() {
+        _errorMessage = 'Error connecting to Spotify: $e';
+      });
+      print('Error in _connectSpotify: $e');  // Debug print
     } finally {
       setState(() {
         _isLoading = false;
       });
     }
-  }
-
-  void _showParentAccountDialog() {
-    // Implement this method to show a dialog about connecting the parent account
   }
 
   @override
@@ -104,14 +76,29 @@ class _ConnectServicesPageState extends State<ConnectServicesPage> {
         title: Text('Connect Services'),
       ),
       body: Center(
-        child: _isLoading
-            ? CircularProgressIndicator()
-            : _isSpotifyConnected
-                ? Text('Spotify is connected')
-                : ElevatedButton(
-                    onPressed: _connectSpotify,
-                    child: Text('Connect Spotify'),
-                  ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            if (_isLoading)
+              CircularProgressIndicator()
+            else if (_isSpotifyConnected)
+              Text('Spotify connected for user: $_spotifyUserId')
+            else
+              ElevatedButton(
+                onPressed: _connectSpotify,
+                child: Text('Connect Spotify'),
+              ),
+            if (_errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  _errorMessage!,
+                  style: TextStyle(color: Colors.red),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }

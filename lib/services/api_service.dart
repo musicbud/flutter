@@ -148,7 +148,7 @@ class ApiService {
         _log('Response status: ${response.statusCode}');
         return handler.next(response);
       },
-      onError: (DioException error, handler) {
+      onError: (DioError error, handler) {
         _log('Interceptor: onError called for ${error.requestOptions.path}');
         _log('Error: ${error.message}');
         _log('Error response: ${error.response}');
@@ -184,7 +184,7 @@ class ApiService {
 
   Future<void> fetchCsrfToken() async {
     try {
-      final response = await _dio.get('/csrf-token/');
+      final response = await _dio.get('/csrf-token');
       if (response.statusCode == 200 && response.data['csrfToken'] != null) {
         _csrfToken = response.data['csrfToken'];
         await _saveCsrfToken(_csrfToken!);
@@ -219,13 +219,13 @@ class ApiService {
       } else {
         throw Exception('Failed to load CSRF token: ${response.statusCode}');
       }
-    } on DioException catch (e) {
+    } on DioError catch (e) {
       developer.log('DioException while fetching CSRF token: ${e.type}');
       developer.log('DioException message: ${e.message}');
       developer.log('DioException response: ${e.response}');
-      if (e.type == DioExceptionType.connectionTimeout) {
+      if (e.type == DioErrorType.connectionTimeout) {
         throw Exception('Connection timeout while fetching CSRF token');
-      } else if (e.type == DioExceptionType.receiveTimeout) {
+      } else if (e.type == DioErrorType.receiveTimeout) {
         throw Exception('Receive timeout while fetching CSRF token');
       } else {
         throw Exception('Failed to fetch CSRF token: ${e.message}');
@@ -278,33 +278,18 @@ class ApiService {
 
   Future<String> connectSpotify() async {
     try {
-      developer.log('Initiating Spotify connection...');
-      final response = await _dio.get('/spotify/connect');
+      final response = await _dio.get('/service/login');
+      print('Spotify connect response: ${response.data}');  // Debug print
       
-      developer.log('Spotify connect response status: ${response.statusCode}');
-      developer.log('Spotify connect response data: ${response.data}');
-
-      if (response.statusCode == 200 && response.data['url'] != null) {
-        final url = response.data['url'];
-        if (await canLaunch(url)) {
-          await launch(url, forceSafariVC: false, forceWebView: false);
-        } else {
-          throw 'Could not launch $url';
-        }
-        return url;
+      if (response.statusCode == 200 && 
+          response.data['data'] != null &&
+          response.data['data']['authorization_link'] != null) {
+        return response.data['data']['authorization_link'];
       } else {
         throw Exception('Failed to get Spotify authorization URL. Status: ${response.statusCode}, Data: ${response.data}');
       }
-    } on DioException catch (e) {
-      developer.log('DioException in connectSpotify:');
-      developer.log('Type: ${e.type}');
-      developer.log('Message: ${e.message}');
-      developer.log('Response: ${e.response}');
-      developer.log('Request Options: ${e.requestOptions.toString()}');
-      rethrow;
     } catch (e) {
-      developer.log('Error initiating Spotify connection: $e');
-      rethrow;
+      throw Exception('Error connecting to Spotify: $e');
     }
   }
 
@@ -753,7 +738,7 @@ class ApiService {
   Future<T> _handleRequest<T>(Future<T> Function() requestFunction) async {
     try {
       return await requestFunction();
-    } on DioException catch (e) {
+    } on DioError catch (e) {
       print('DioError: ${e.message}');
       print('Response: ${e.response?.data}');
       throw Exception('Failed to complete request: ${e.message}');
@@ -945,13 +930,13 @@ class ApiService {
         'statusCode': response.statusCode,
         'data': response.data,
       };
-    } on DioException catch (e) {
-      _log('DioException during server connectivity check: ${e.type}');
-      _log('DioException message: ${e.message}');
-      _log('DioException response: ${e.response}');
+    } on DioError catch (e) {
+      _log('DioError during server connectivity check: ${e.type}');
+      _log('DioError message: ${e.message}');
+      _log('DioError response: ${e.response}');
       return {
         'isReachable': false,
-        'error': 'DioException',
+        'error': 'DioError',
         'type': e.type.toString(),
         'message': e.message,
       };
