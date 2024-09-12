@@ -23,6 +23,7 @@ import 'dart:io'; // Import this for File operations
 import 'package:musicbud_flutter/services/logging_interceptor.dart';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ApiService {
   late Dio _dio;
@@ -284,7 +285,13 @@ class ApiService {
       developer.log('Spotify connect response data: ${response.data}');
 
       if (response.statusCode == 200 && response.data['url'] != null) {
-        return response.data['url'];
+        final url = response.data['url'];
+        if (await canLaunch(url)) {
+          await launch(url, forceSafariVC: false, forceWebView: false);
+        } else {
+          throw 'Could not launch $url';
+        }
+        return url;
       } else {
         throw Exception('Failed to get Spotify authorization URL. Status: ${response.statusCode}, Data: ${response.data}');
       }
@@ -298,6 +305,25 @@ class ApiService {
     } catch (e) {
       developer.log('Error initiating Spotify connection: $e');
       rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> handleSpotifyCallback(String code) async {
+    try {
+      final response = await _dio.post('/spotify/callback', data: {'code': code});
+      
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        throw Exception('Failed to connect Spotify account: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error handling Spotify callback: $e');
+      return {
+        'code': 500,
+        'message': 'Failed to connect Spotify account: $e',
+        'status': 'error',
+      };
     }
   }
 
@@ -1125,23 +1151,6 @@ class ApiService {
       }
     } catch (e) {
       print('Error getting Spotify authorization link: $e');
-      rethrow;
-    }
-  }
-
-  Future<void> completeSpotifyAuth(String code) async {
-    try {
-      final response = await _dio.post('/spotify/callback', data: {'code': code});
-      if (response.statusCode == 200) {
-        final data = response.data['data'];
-        await _secureStorage.write(key: 'spotify_access_token', value: data['access_token']);
-        await _secureStorage.write(key: 'spotify_refresh_token', value: data['refresh_token']);
-        await _secureStorage.write(key: 'spotify_expires_at', value: data['expires_at'].toString());
-      } else {
-        throw Exception('Failed to complete Spotify authentication');
-      }
-    } catch (e) {
-      print('Error completing Spotify authentication: $e');
       rethrow;
     }
   }
