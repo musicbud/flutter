@@ -67,10 +67,6 @@ class _ProfilePageState extends State<ProfilePage> {
         MaterialPageRoute(builder: (context) => LoginPage(
           chatService: ChatService(widget.apiService.dio.options.baseUrl),
           apiService: widget.apiService,
-          onLoginSuccess: () {
-            // Define what happens on successful login
-            Navigator.pushReplacementNamed(context, '/home');
-          },
         )),
       );
     }

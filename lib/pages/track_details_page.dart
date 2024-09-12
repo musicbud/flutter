@@ -49,8 +49,8 @@ class TrackDetailsPage extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () async {
-                if (track.uid == null || track.uid!.isEmpty) {
-                  print('Error: track.uid is null or empty');
+                if (track.spotifyId == null || track.spotifyId == '') {
+                  print('Error: track.spotifyId is null or empty');
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Cannot play track: Missing track ID')),
                   );
@@ -61,11 +61,11 @@ class TrackDetailsPage extends StatelessWidget {
                   final position = await Geolocator.getCurrentPosition();
                   
                   print('Track details:');
-                  print('UID: ${track.uid}');
+                  print('spotifyId: ${track.spotifyId}');
                   print('Name: ${track.name}');
                   
                   await apiService.playTrackWithLocation(
-                    track.uid!,  // Use the non-null assertion operator
+                    track.spotifyId!,  // Use the non-null assertion operator
                     track.name ?? 'Unknown Track',
                     position.latitude,
                     position.longitude,

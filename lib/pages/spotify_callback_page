@@ -1,0 +1,51 @@
+import 'package:flutter/material.dart';
+import 'package:musicbud_flutter/services/api_service.dart';
+
+class SpotifyCallbackPage extends StatefulWidget {
+  final ApiService apiService;
+
+  const SpotifyCallbackPage({Key? key, required this.apiService}) : super(key: key);
+
+  @override
+  _SpotifyCallbackPageState createState() => _SpotifyCallbackPageState();
+}
+
+class _SpotifyCallbackPageState extends State<SpotifyCallbackPage> {
+  @override
+  void initState() {
+    super.initState();
+    _handleSpotifyCallback();
+  }
+
+  Future<void> _handleSpotifyCallback() async {
+    final uri = Uri.base;
+    final code = uri.queryParameters['code'];
+    if (code != null) {
+      try {
+        await widget.apiService.completeSpotifyAuth(code);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Successfully connected to Spotify')),
+        );
+        Navigator.of(context).pushReplacementNamed('/home');
+      } catch (e) {
+        print('Error completing Spotify authentication: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to complete Spotify authentication')),
+        );
+        Navigator.of(context).pushReplacementNamed('/connect_services');
+      }
+    } else {
+      print('Error: No authorization code found in the callback URI');
+      Navigator.of(context).pushReplacementNamed('/connect_services');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+}

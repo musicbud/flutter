@@ -21,126 +21,253 @@ import 'package:dio/src/multipart_file.dart' as dio_multipart;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:io'; // Import this for File operations
 import 'package:musicbud_flutter/services/logging_interceptor.dart';
+import 'dart:io';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class ApiService {
-  static final ApiService _instance = ApiService._internal();
   late Dio _dio;
   final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+  String? _csrfToken;
+  bool _isFetchingToken = false;
 
+  // Singleton pattern
+  static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
 
   ApiService._internal() {
-    _dio = Dio(BaseOptions(
-      baseUrl: 'http://127.0.0.1:8000',  // Replace with your actual API base URL
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-    ));
+    _dio = Dio();
+    _configureDio();
+  }
 
-    // Add the logging interceptor
-    _dio.interceptors.add(LoggingInterceptor());
-
+  Future<void> _configureDio() async {
+    _dio.options.validateStatus = (status) {
+      return status! < 500;
+    };
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          // Get the access token from secure storage
-          final accessToken = await _secureStorage.read(key: 'access_token');
-          if (accessToken != null) {
-            options.headers['Authorization'] = 'Bearer $accessToken';
+          // Add CSRF token
+          if (_csrfToken != null) {
+            options.headers['X-CSRFToken'] = _csrfToken;
           }
+          
+          // Add JWT token
+          final token = await _secureStorage.read(key: 'access_token');
+          if (token != null) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          
+          options.headers['X-Requested-With'] = 'XMLHttpRequest';
           return handler.next(options);
         },
+        onResponse: (response, handler) async {
+          if (response.headers.map.containsKey('set-cookie')) {
+            final cookies = response.headers.map['set-cookie'];
+            final newCsrfToken = cookies?.firstWhere(
+              (cookie) => cookie.startsWith('csrftoken='),
+              orElse: () => '',
+            );
+            if (newCsrfToken != null && newCsrfToken.isNotEmpty) {
+              _csrfToken = newCsrfToken.split(';').first.split('=').last;
+              await _saveCsrfToken(_csrfToken!);
+            }
+          }
+          return handler.next(response);
+        },
         onError: (DioError e, handler) async {
-          if (e.response?.statusCode == 401) {
-            // Token might be expired, try to refresh it
-            if (await refreshToken()) {
+          if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
+            // Token might be expired, try to refresh
+            try {
+              await refreshToken();
               // Retry the original request
               return handler.resolve(await _retry(e.requestOptions));
+            } catch (_) {
+              // If refresh fails, proceed with the error
+              return handler.next(e);
             }
           }
           return handler.next(e);
         },
       ),
     );
+    _csrfToken = await _loadCsrfToken();
   }
 
+  Future<void> _saveCsrfToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('csrfToken', token);
+  }
+
+  Future<String?> _loadCsrfToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('csrfToken');
+  }
+
+  Future<void> initialize(String baseUrl) async {
+    _log('Initializing ApiService with base URL: $baseUrl');
+    _dio.options.baseUrl = baseUrl;
+    _dio.options.connectTimeout = Duration(seconds: 5);
+    _dio.options.receiveTimeout = Duration(seconds: 3);
+    _dio.options.headers = {
+      'X-Requested-With': 'XMLHttpRequest',
+      // 'Origin': 'http://localhost:36451',
+    };
+
+    _dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        _log('Interceptor: onRequest called for ${options.path}');
+        try {
+          final token = await _secureStorage.read(key: 'access_token');
+          if (token != null && token.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          
+          if (options.method != 'GET') {
+            await _ensureCsrfToken();
+            if (_csrfToken != null) {
+              options.headers['X-CSRFToken'] = _csrfToken;
+            } else {
+              _log('Warning: CSRF token is still null after attempting to fetch it');
+            }
+          }
+
+          _log('Interceptor: Request Headers:');
+          options.headers.forEach((key, value) {
+            _log('$key: $value');
+          });
+          return handler.next(options);
+        } catch (e) {
+          _log('Interceptor: Error in onRequest: $e');
+          // If fetching CSRF token fails, continue with the request without it
+          return handler.next(options);
+        }
+      },
+      onResponse: (response, handler) {
+        _log('Interceptor: onResponse called for ${response.requestOptions.path}');
+        _log('Response status: ${response.statusCode}');
+        return handler.next(response);
+      },
+      onError: (DioException error, handler) {
+        _log('Interceptor: onError called for ${error.requestOptions.path}');
+        _log('Error: ${error.message}');
+        _log('Error response: ${error.response}');
+        return handler.next(error);
+      },
+    ));
+    _log('ApiService initialization complete');
+    await fetchCsrfToken(); // Fetch initial CSRF token
+  }
+  void _log(String message) {
+    developer.log(message);
+    print(message); // This will output to the terminal
+  }
+  // Getter for dio instance
   Dio get dio => _dio;
 
-  Future<bool> refreshToken() async {
+  Future<void> _ensureCsrfToken() async {
+    if (_csrfToken != null) return;
+
     try {
-      final refreshToken = await _secureStorage.read(key: 'refresh_token');
-      if (refreshToken == null) {
-        return false;
-      }
-
-      final response = await _dio.post(
-        '/auth/token/refresh/',
-        data: {'refresh': refreshToken},
-      );
-
-      if (response.statusCode == 200) {
-        final newAccessToken = response.data['access'];
-        await _secureStorage.write(key: 'access_token', value: newAccessToken);
-        return true;
+      final response = await _dio.get('/csrf-token');
+      if (response.statusCode == 200 && response.data['csrfToken'] != null) {
+        _csrfToken = response.data['csrfToken'];
+        print('CSRF token fetched: $_csrfToken');
+      } else {
+        throw Exception('Failed to fetch CSRF token');
       }
     } catch (e) {
-      print('Error refreshing token: $e');
-    }
-    return false;
-  }
-
-  Future<Response<dynamic>> _retry(RequestOptions requestOptions) async {
-    final options = Options(
-      method: requestOptions.method,
-      headers: requestOptions.headers,
-    );
-    return _dio.request<dynamic>(
-      requestOptions.path,
-      data: requestOptions.data,
-      queryParameters: requestOptions.queryParameters,
-      options: options,
-    );
-  }
-
-  Future<String?> getAccessToken() async {
-    return await _secureStorage.read(key: 'access_token');
-  }
-
-  void setAuthToken(String accessToken, String refreshToken) {
-    _secureStorage.write(key: 'access_token', value: accessToken);
-    _secureStorage.write(key: 'refresh_token', value: refreshToken);
-  }
-
-  Future<void> setLoggedIn(bool value) async {
-    await _secureStorage.write(key: 'isLoggedIn', value: value.toString());
-    print('isLoggedIn set to: $value');
-  }
-
-  Future<bool> isLoggedIn() async {
-    final value = await _secureStorage.read(key: 'isLoggedIn');
-    final isLoggedIn = value == 'true';
-    print('isLoggedIn checked: $isLoggedIn');
-    return isLoggedIn;
-  }
-
-  Future<void> logout() async {
-    try {
-      await _dio.post('/auth/logout');
-      await setLoggedIn(false);
-    } catch (e) {
-      print('Error during logout: $e');
+      print('Error fetching CSRF token: $e');
       rethrow;
     }
   }
 
+  Future<void> fetchCsrfToken() async {
+    try {
+      final response = await _dio.get('/csrf-token/');
+      if (response.statusCode == 200 && response.data['csrfToken'] != null) {
+        _csrfToken = response.data['csrfToken'];
+        await _saveCsrfToken(_csrfToken!);
+        print('New CSRF token fetched: $_csrfToken');
+      } else {
+        print('Failed to fetch CSRF token. Status: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching CSRF token: $e');
+    }
+  }
+  
+
+  Future<void> _fetchCsrfToken() async {
+    try {
+      developer.log('Fetching CSRF token from ${_dio.options.baseUrl}/csrf-token');
+      final response = await _dio.get(
+        '/csrf-token',
+        options: Options(
+          headers: {'X-Requested-With': 'XMLHttpRequest'},
+          sendTimeout: Duration(seconds: 10),
+          receiveTimeout: Duration(seconds: 10),
+        ),
+      );
+      
+      developer.log('CSRF token response status: ${response.statusCode}');
+      developer.log('CSRF token response data: ${response.data}');
+      
+      if (response.statusCode == 200 && response.data != null && response.data['csrfToken'] != null) {
+        _csrfToken = response.data['csrfToken'];
+        developer.log('CSRF Token fetched: $_csrfToken');
+      } else {
+        throw Exception('Failed to load CSRF token: ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      developer.log('DioException while fetching CSRF token: ${e.type}');
+      developer.log('DioException message: ${e.message}');
+      developer.log('DioException response: ${e.response}');
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw Exception('Connection timeout while fetching CSRF token');
+      } else if (e.type == DioExceptionType.receiveTimeout) {
+        throw Exception('Receive timeout while fetching CSRF token');
+      } else {
+        throw Exception('Failed to fetch CSRF token: ${e.message}');
+      }
+    } catch (e) {
+      developer.log('Unexpected error fetching CSRF token: $e');
+      rethrow;
+    }
+  }
+
+  
+  Future<void> setLoggedIn(bool value) async {
+    await _secureStorage.write(key: 'is_logged_in', value: value.toString());
+  }
+
+  Future<bool> isLoggedIn() async {
+    final value = await _secureStorage.read(key: 'is_logged_in');
+    return value == 'true';
+  }
+
+  Future<void> logout() async {
+    await _secureStorage.delete(key: 'access_token');
+    await _secureStorage.delete(key: 'refresh_token');
+    await _secureStorage.delete(key: 'is_logged_in');
+  }
+
   Future<UserProfile> getUserProfile() async {
     try {
-      final response = await _dio.post('/me/profile');
+      await fetchCsrfToken(); // Fetch the latest CSRF token
+      print('Fetching user profile...');
+      final response = await _dio.post('/me/profile',
+        options: Options(
+          headers: {
+            'X-CSRFToken': _csrfToken,
+          },
+        ),
+      );
+      print('User profile response status: ${response.statusCode}');
+      print('User profile response data: ${response.data}');
       if (response.statusCode == 200) {
         return UserProfile.fromJson(response.data);
       } else {
-        throw Exception('Failed to load user profile');
+        throw Exception('Failed to get user profile: ${response.statusCode}');
       }
     } catch (e) {
       print('Error getting user profile: $e');
@@ -148,34 +275,30 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> getUserProfileWithCsrf() async {
+  Future<String> connectSpotify() async {
     try {
-      final csrfToken = await _getCsrfToken();
-      final cookies = await _getCookies();
+      developer.log('Initiating Spotify connection...');
+      final response = await _dio.get('/spotify/connect');
+      
+      developer.log('Spotify connect response status: ${response.statusCode}');
+      developer.log('Spotify connect response data: ${response.data}');
 
-      final response = await _dio.post(
-        '/me/profile',
-        options: Options(
-          headers: {
-            'X-CSRFToken': csrfToken ?? '',
-            'Cookie': cookies ?? '',
-          },
-        ),
-      );
-
-      if (response.statusCode == 200) {
-        return response.data;
+      if (response.statusCode == 200 && response.data['url'] != null) {
+        return response.data['url'];
       } else {
-        throw Exception('Failed to load user profile: ${response.statusCode}');
+        throw Exception('Failed to get Spotify authorization URL. Status: ${response.statusCode}, Data: ${response.data}');
       }
+    } on DioException catch (e) {
+      developer.log('DioException in connectSpotify:');
+      developer.log('Type: ${e.type}');
+      developer.log('Message: ${e.message}');
+      developer.log('Response: ${e.response}');
+      developer.log('Request Options: ${e.requestOptions.toString()}');
+      rethrow;
     } catch (e) {
-      print('Error fetching user profile: $e');
+      developer.log('Error initiating Spotify connection: $e');
       rethrow;
     }
-  }
-
-  Future<String?> _getCsrfToken() async {
-    return await _secureStorage.read(key: 'csrf_token');
   }
 
   Future<List<CommonTrack>> getTopTracks({int page = 1}) async {
@@ -467,8 +590,8 @@ class ApiService {
     }
   }
 
-  Future<Map<String, dynamic>> register(String username, String password) async {
-    final url = Uri.parse('${_dio.options.baseUrl}/register');
+  Future<Map<String, dynamic>> register(String username, String password, String email) async {
+    final url = Uri.parse('${_dio.options.baseUrl}/chat/register/');
 
     try {
       final response = await http.post(
@@ -478,7 +601,9 @@ class ApiService {
         },
         body: json.encode({
           'username': username,
-          'password': password,
+          'email': email,
+          'password1': password,
+          'password2': password,
         }),
       );
 
@@ -486,16 +611,18 @@ class ApiService {
       print('Registration response headers: ${response.headers}');
       print('Registration response body: ${response.body}');
 
-      if (response.statusCode == 200) {
-        try {
-          final responseData = json.decode(response.body);
-          return responseData;
-        } catch (e) {
-          print('Error decoding JSON: $e');
-          throw Exception('Invalid response format');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = json.decode(response.body);
+        if (responseData['status'] == 'success' && responseData['tokens'] != null) {
+          // Store the tokens
+          await setAuthToken(
+            responseData['tokens']['access'],
+          );
+          await setLoggedIn(true);
         }
+        return responseData;
       } else {
-        throw Exception('Registration failed: ${response.statusCode} ${response.reasonPhrase}');
+        throw Exception('Registration failed: ${response.statusCode} ${response.reasonPhrase}\n${response.body}');
       }
     } catch (e) {
       print('Registration error: $e');
@@ -600,7 +727,7 @@ class ApiService {
   Future<T> _handleRequest<T>(Future<T> Function() requestFunction) async {
     try {
       return await requestFunction();
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       print('DioError: ${e.message}');
       print('Response: ${e.response?.data}');
       throw Exception('Failed to complete request: ${e.message}');
@@ -714,63 +841,105 @@ class ApiService {
 
   Future<Map<String, dynamic>> login(String username, String password) async {
     try {
+      print('Attempting to login with username: $username');
       final response = await _dio.post(
         '/chat/login/',
-        data: {
-          'username': username,
-          'password': password,
-        },
-        options: Options(
-          validateStatus: (status) => status! < 500,
-        ),
+        data: {'username': username, 'password': password},
       );
-
-      print('Login response status code: ${response.statusCode}');
+      
+      print('Login response status: ${response.statusCode}');
       print('Login response data: ${response.data}');
-
+      
       if (response.statusCode == 200) {
-        try {
-          final responseData = response.data as Map<String, dynamic>;
-          final tokens = responseData['tokens'] as Map<String, dynamic>?;
-          if (tokens != null) {
-            final accessToken = tokens['access'] as String?;
-            final refreshToken = tokens['refresh'] as String?;
-            if (accessToken != null && refreshToken != null) {
-              setAuthToken(accessToken, refreshToken);
-            }
-          }
-          return {
-            'success': true,
-            'user': responseData['user'] ?? {},
-            'message': 'Login successful'
-          };
-        } catch (e) {
-          print('Error parsing response: $e');
-          return {
-            'success': false,
-            'message': 'Error parsing server response'
-          };
+        if (response.data == null) {
+          print('Login response data is null');
+          return {'status': 'error', 'message': 'Login failed: Response data is null'};
         }
+        
+        final data = response.data;
+        print('Response data type: ${data.runtimeType}');
+        
+        if (data is! Map<String, dynamic>) {
+          print('Response data is not a Map');
+          return {'status': 'error', 'message': 'Login failed: Response data is not a Map'};
+        }
+        
+        if (!data.containsKey('access_token') || !data.containsKey('refresh_token')) {
+          print('Response data does not contain "access_token" or "refresh_token" keys');
+          return {'status': 'error', 'message': 'Login failed: Response data does not contain "access_token" or "refresh_token" keys'};
+        }
+        
+        final accessToken = data['access_token'];
+        final refreshToken = data['refresh_token'];
+        
+        if (accessToken == null || refreshToken == null) {
+          print('Access token or refresh token is null');
+          return {'status': 'error', 'message': 'Login failed: Access token or refresh token is null'};
+        }
+        
+        await setAuthToken(accessToken);
+        await setRefreshToken(refreshToken);
+        print('Access token set: $accessToken');
+        print('Refresh token set: $refreshToken');
+
+        // Verify that the token is stored
+        final storedToken = await _secureStorage.read(key: 'access_token');
+        print('Stored access token: $storedToken');
+
+        return {'status': 'success', 'message': 'Login successful'};
       } else {
+        print('Login failed: ${response.statusCode}');
         return {
-          'success': false,
-          'message': response.data is Map ? response.data['detail'] ?? 'Login failed' : 'Login failed'
+          'status': 'error',
+          'message': 'Login failed: ${response.data['message'] ?? 'Unknown error'}',
+          'statusCode': response.statusCode
         };
       }
-    } on DioError catch (e) {
-      print('DioError during login: $e');
+    } catch (e, stackTrace) {
+      print('Login error: $e');
+      print('Stack trace: $stackTrace');
+      return {'status': 'error', 'message': 'An unexpected error occurred: $e'};
+    }
+  }
+
+  Future<Map<String, dynamic>> checkServerConnectivity() async {
+    try {
+      _log('Checking server connectivity to ${_dio.options.baseUrl}');
+      _log('Dio configuration: ${_dio.options.toString()}');
+      
+      final response = await _dio.get('/health-check',
+        options: Options(
+          sendTimeout: Duration(seconds: 10),
+          receiveTimeout: Duration(seconds: 10),
+        ),
+      );
+      _log('Server response: ${response.statusCode}');
       return {
-        'success': false,
-        'message': 'Network error occurred'
+        'isReachable': true,
+        'statusCode': response.statusCode,
+        'data': response.data,
+      };
+    } on DioException catch (e) {
+      _log('DioException during server connectivity check: ${e.type}');
+      _log('DioException message: ${e.message}');
+      _log('DioException response: ${e.response}');
+      return {
+        'isReachable': false,
+        'error': 'DioException',
+        'type': e.type.toString(),
+        'message': e.message,
       };
     } catch (e) {
-      print('Unexpected error during login: $e');
+      _log('Unexpected error during server connectivity check: $e');
       return {
-        'success': false,
-        'message': 'An unexpected error occurred'
+        'isReachable': false,
+        'error': 'UnexpectedException',
+        'message': e.toString(),
       };
     }
   }
+
+  String get baseUrl => _dio.options.baseUrl;
 
   Future<String?> _getCookies() async {
     return await _secureStorage.read(key: 'cookies');
@@ -922,7 +1091,132 @@ class ApiService {
       rethrow;
     }
   }
+
+  Future<String> getConnectUrl(String service) async {
+    final response = await _dio.get('/$service/connect');
+    if (response.statusCode == 200 && response.data['url'] != null) {
+      return response.data['url'];
+    } else {
+      throw Exception('Failed to get connection URL for $service');
+    }
+  }
+
+  Future<Map<String, bool>> getConnectedServices() async {
+    try {
+      final response = await _dio.get('/service/login');
+      if (response.statusCode == 200) {
+        return Map<String, bool>.from(response.data);
+      } else {
+        throw Exception('Failed to fetch connected services');
+      }
+    } catch (e) {
+      print('Error fetching connected services: $e');
+      rethrow;
+    }
+  }
+
+  Future<String> getSpotifyAuthorizationLink() async {
+    try {
+      final response = await _dio.get('/service/login');
+      if (response.statusCode == 200 && response.data['data']['authorization_link'] != null) {
+        return response.data['data']['authorization_link'];
+      } else {
+        throw Exception('Failed to get Spotify authorization link');
+      }
+    } catch (e) {
+      print('Error getting Spotify authorization link: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> completeSpotifyAuth(String code) async {
+    try {
+      final response = await _dio.post('/spotify/callback', data: {'code': code});
+      if (response.statusCode == 200) {
+        final data = response.data['data'];
+        await _secureStorage.write(key: 'spotify_access_token', value: data['access_token']);
+        await _secureStorage.write(key: 'spotify_refresh_token', value: data['refresh_token']);
+        await _secureStorage.write(key: 'spotify_expires_at', value: data['expires_at'].toString());
+      } else {
+        throw Exception('Failed to complete Spotify authentication');
+      }
+    } catch (e) {
+      print('Error completing Spotify authentication: $e');
+      rethrow;
+    }
+  }
+
+  Future<bool> isSpotifyConnected() async {
+    final expiresAt = await _secureStorage.read(key: 'spotify_expires_at');
+    if (expiresAt != null) {
+      final expirationTime = DateTime.fromMillisecondsSinceEpoch(int.parse(expiresAt) * 1000);
+      return expirationTime.isAfter(DateTime.now());
+    }
+    return false;
+  }
+
+  Future<bool> checkInternetConnectivity() async {
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    return connectivityResult != ConnectivityResult.none;
+  }
+
+  void logDioConfiguration() {
+    _log('Dio base URL: ${_dio.options.baseUrl}');
+    _log('Dio connect timeout: ${_dio.options.connectTimeout}');
+    _log('Dio receive timeout: ${_dio.options.receiveTimeout}');
+    _log('Dio headers: ${_dio.options.headers}');
+  }
+
+  Future<void> setAuthToken(String token) async {
+    if (token.isNotEmpty) {
+      await _secureStorage.write(key: 'access_token', value: token);
+      _dio.options.headers['Authorization'] = 'Bearer $token';
+    } else {
+      print('Attempted to set empty access token');
+    }
+  }
+
+  Future<void> setRefreshToken(String token) async {
+    if (token.isNotEmpty) {
+      await _secureStorage.write(key: 'refresh_token', value: token);
+    } else {
+      print('Attempted to set empty refresh token');
+    }
+  }
+
+  Future<void> refreshToken() async {
+    final refreshToken = await _secureStorage.read(key: 'refresh_token');
+    if (refreshToken == null) {
+      throw Exception('No refresh token available');
+    }
+
+    try {
+      final response = await _dio.post('/chat/refresh-token/', data: {'refresh': refreshToken});
+      if (response.statusCode == 200) {
+        final newAccessToken = response.data['access'];
+        await _secureStorage.write(key: 'access_token', value: newAccessToken);
+        print('Token refreshed successfully');
+      } else {
+        throw Exception('Failed to refresh token');
+      }
+    } catch (e) {
+      print('Error refreshing token: $e');
+      rethrow;
+    }
+  }
+
+  Future<Response<dynamic>> _retry(RequestOptions requestOptions) async {
+    final options = Options(
+      method: requestOptions.method,
+      headers: requestOptions.headers,
+    );
+    return _dio.request<dynamic>(requestOptions.path,
+        data: requestOptions.data,
+        queryParameters: requestOptions.queryParameters,
+        options: options);
+  }
 }
 
 
   
+

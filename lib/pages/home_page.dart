@@ -1,16 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:musicbud_flutter/models/user_profile.dart';
 import 'package:musicbud_flutter/pages/spotify_control_page.dart';
 import 'package:musicbud_flutter/services/chat_service.dart';
 import 'package:musicbud_flutter/services/api_service.dart';
 import 'package:musicbud_flutter/pages/profile_page.dart';
 import 'package:musicbud_flutter/pages/chat_home_page.dart';
+import 'package:musicbud_flutter/pages/connect_services_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:developer' as developer;
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final ChatService chatService;
   final ApiService apiService;
 
   const HomePage({Key? key, required this.chatService, required this.apiService}) : super(key: key);
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  UserProfile? _userProfile;
+
+  @override
+  void initState() {
+    super.initState();
+    _connectSpotify();
+  }
+
+  Future<void> _connectSpotify() async {
+    try {
+      developer.log('Attempting to connect Spotify...');
+      await widget.apiService.connectSpotify();
+      developer.log('Spotify connection successful');
+      // Update UI or show success message
+    } catch (e) {
+      developer.log('Error connecting to Spotify: $e');
+      // Show error message to user
+    }
+  }
+
+  Future<void> _loadUserProfile() async {
+    try {
+      final profile = await widget.apiService.getUserProfile();
+      setState(() {
+        _userProfile = profile;
+      });
+    } catch (e) {
+      print('Error loading user profile: $e');
+    }
+  }
 
   Future<String?> getUsername() async {
     final prefs = await SharedPreferences.getInstance();
@@ -29,7 +68,7 @@ class HomePage extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ProfilePage(apiService: apiService),
+                  builder: (context) => ProfilePage(apiService: widget.apiService),
                 ),
               );
             },
@@ -39,26 +78,24 @@ class HomePage extends StatelessWidget {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+          children: <Widget>[
+            Text(
+              'Welcome to MusicBud!',
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            SizedBox(height: 20),
             ElevatedButton(
               child: Text('Go to Chat'),
-              onPressed: () async {
-                String? username = await getUsername();
-                if (username != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ChatHomePage(
-                        chatService: chatService,
-                        currentUsername: username,
-                      ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChatHomePage(
+                      chatService: widget.chatService,
+                      currentUsername: _userProfile?.username ?? '',
                     ),
-                  );
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Please log in first')),
-                  );
-                }
+                  ),
+                );
               },
             ),
             SizedBox(height: 20),
@@ -68,7 +105,19 @@ class HomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SpotifyControlPage(apiService: apiService),
+                    builder: (context) => SpotifyControlPage(apiService: widget.apiService),
+                  ),
+                );
+              },
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              child: Text('Connect Services'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ConnectServicesPage(apiService: widget.apiService),
                   ),
                 );
               },
