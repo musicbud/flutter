@@ -25,19 +25,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _connectSpotify();
-  }
-
-  Future<void> _connectSpotify() async {
-    try {
-      developer.log('Attempting to connect Spotify...');
-      await widget.apiService.connectSpotify();
-      developer.log('Spotify connection successful');
-      // Update UI or show success message
-    } catch (e) {
-      developer.log('Error connecting to Spotify: $e');
-      // Show error message to user
-    }
+    
   }
 
   Future<void> _loadUserProfile() async {

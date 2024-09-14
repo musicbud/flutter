@@ -30,6 +30,9 @@ class ApiService {
   final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
   String? _csrfToken;
   bool _isFetchingToken = false;
+  String? _accessToken;
+  String? _refreshToken;
+  DateTime? _expiresAt;
 
   // Singleton pattern
   static final ApiService _instance = ApiService._internal();
@@ -47,17 +50,25 @@ class ApiService {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
+          // Request new CSRF token for non-GET requests
+          if (options.method != 'GET') {
+            try {
+              await fetchCsrfToken();
+            } catch (e) {
+              print('Error fetching CSRF token: $e');
+            }
+          }
+
           // Add CSRF token
           if (_csrfToken != null) {
             options.headers['X-CSRFToken'] = _csrfToken;
           }
           
           // Add JWT token
-          final token = await _secureStorage.read(key: 'access_token');
-          if (token != null) {
-            options.headers['Authorization'] = 'Bearer $token';
+          if (await shouldRefreshToken()) {
+            await refreshToken();
           }
-          
+          options.headers['Authorization'] = 'Bearer $_accessToken';
           options.headers['X-Requested-With'] = 'XMLHttpRequest';
           return handler.next(options);
         },
@@ -81,7 +92,7 @@ class ApiService {
             try {
               await refreshToken();
               // Retry the original request
-              return handler.resolve(await _retry(e.requestOptions));
+              return handler.resolve(await retry(e.requestOptions));
             } catch (_) {
               // If refresh fails, proceed with the error
               return handler.next(e);
@@ -107,22 +118,17 @@ class ApiService {
   Future<void> initialize(String baseUrl) async {
     _log('Initializing ApiService with base URL: $baseUrl');
     _dio.options.baseUrl = baseUrl;
-    _dio.options.connectTimeout = Duration(seconds: 5);
-    _dio.options.receiveTimeout = Duration(seconds: 3);
+    _dio.options.connectTimeout = Duration(seconds: 30);
+    _dio.options.receiveTimeout = Duration(seconds: 30);
     _dio.options.headers = {
       'X-Requested-With': 'XMLHttpRequest',
-      // 'Origin': 'http://localhost:36451',
+      'Origin': 'http://localhost:37879',
     };
 
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) async {
         _log('Interceptor: onRequest called for ${options.path}');
         try {
-          final token = await _secureStorage.read(key: 'access_token');
-          if (token != null && token.isNotEmpty) {
-            options.headers['Authorization'] = 'Bearer $token';
-          }
-          
           if (options.method != 'GET') {
             await _ensureCsrfToken();
             if (_csrfToken != null) {
@@ -184,7 +190,11 @@ class ApiService {
 
   Future<void> fetchCsrfToken() async {
     try {
-      final response = await _dio.get('/csrf-token');
+      final response = await _dio.get('/csrf-token',
+        options: Options(
+          headers: {'X-Requested-With': 'XMLHttpRequest'},
+        ),
+      );
       if (response.statusCode == 200 && response.data['csrfToken'] != null) {
         _csrfToken = response.data['csrfToken'];
         await _saveCsrfToken(_csrfToken!);
@@ -198,45 +208,6 @@ class ApiService {
   }
   
 
-  Future<void> _fetchCsrfToken() async {
-    try {
-      developer.log('Fetching CSRF token from ${_dio.options.baseUrl}/csrf-token');
-      final response = await _dio.get(
-        '/csrf-token',
-        options: Options(
-          headers: {'X-Requested-With': 'XMLHttpRequest'},
-          sendTimeout: Duration(seconds: 10),
-          receiveTimeout: Duration(seconds: 10),
-        ),
-      );
-      
-      developer.log('CSRF token response status: ${response.statusCode}');
-      developer.log('CSRF token response data: ${response.data}');
-      
-      if (response.statusCode == 200 && response.data != null && response.data['csrfToken'] != null) {
-        _csrfToken = response.data['csrfToken'];
-        developer.log('CSRF Token fetched: $_csrfToken');
-      } else {
-        throw Exception('Failed to load CSRF token: ${response.statusCode}');
-      }
-    } on DioError catch (e) {
-      developer.log('DioException while fetching CSRF token: ${e.type}');
-      developer.log('DioException message: ${e.message}');
-      developer.log('DioException response: ${e.response}');
-      if (e.type == DioErrorType.connectionTimeout) {
-        throw Exception('Connection timeout while fetching CSRF token');
-      } else if (e.type == DioErrorType.receiveTimeout) {
-        throw Exception('Receive timeout while fetching CSRF token');
-      } else {
-        throw Exception('Failed to fetch CSRF token: ${e.message}');
-      }
-    } catch (e) {
-      developer.log('Unexpected error fetching CSRF token: $e');
-      rethrow;
-    }
-  }
-
-  
   Future<void> setLoggedIn(bool value) async {
     await _secureStorage.write(key: 'is_logged_in', value: value.toString());
   }
@@ -276,39 +247,29 @@ class ApiService {
     }
   }
 
-  Future<String> connectSpotify() async {
-    try {
-      final response = await _dio.get('/service/login');
-      print('Spotify connect response: ${response.data}');  // Debug print
-      
-      if (response.statusCode == 200 && 
-          response.data['data'] != null &&
-          response.data['data']['authorization_link'] != null) {
-        return response.data['data']['authorization_link'];
-      } else {
-        throw Exception('Failed to get Spotify authorization URL. Status: ${response.statusCode}, Data: ${response.data}');
-      }
-    } catch (e) {
-      throw Exception('Error connecting to Spotify: $e');
-    }
-  }
 
-  Future<Map<String, dynamic>> handleSpotifyCallback(String code) async {
+
+  Future<String> connectService(String service) async {
     try {
-      final response = await _dio.post('/spotify/callback', data: {'code': code});
+      final response = await _dio.get('/service/login', queryParameters: {'service': service});
+      print('Response status: ${response.statusCode}');
+      print('Response data: ${response.data}');
       
       if (response.statusCode == 200) {
-        return response.data;
+        if (response.data['data'] != null && response.data['data']['authorization_link'] != null) {
+          final authLink = response.data['data']['authorization_link'];
+          print('Authorization link received for $service: $authLink');
+          return authLink;
+        } else {
+          print('Response does not contain authorization_link in the expected structure. Full response: ${response.data}');
+          throw Exception('Authorization link not found in response');
+        }
       } else {
-        throw Exception('Failed to connect Spotify account: ${response.statusCode}');
+        throw Exception('Failed to get $service authorization URL. Status: ${response.statusCode}');
       }
     } catch (e) {
-      print('Error handling Spotify callback: $e');
-      return {
-        'code': 500,
-        'message': 'Failed to connect Spotify account: $e',
-        'status': 'error',
-      };
+      print('Error connecting to $service: $e');
+      throw Exception('Error connecting to $service: $e');
     }
   }
 
@@ -1102,53 +1063,6 @@ class ApiService {
       rethrow;
     }
   }
-
-  Future<String> getConnectUrl(String service) async {
-    final response = await _dio.get('/$service/connect');
-    if (response.statusCode == 200 && response.data['url'] != null) {
-      return response.data['url'];
-    } else {
-      throw Exception('Failed to get connection URL for $service');
-    }
-  }
-
-  Future<Map<String, bool>> getConnectedServices() async {
-    try {
-      final response = await _dio.get('/service/login');
-      if (response.statusCode == 200) {
-        return Map<String, bool>.from(response.data);
-      } else {
-        throw Exception('Failed to fetch connected services');
-      }
-    } catch (e) {
-      print('Error fetching connected services: $e');
-      rethrow;
-    }
-  }
-
-  Future<String> getSpotifyAuthorizationLink() async {
-    try {
-      final response = await _dio.get('/service/login');
-      if (response.statusCode == 200 && response.data['data']['authorization_link'] != null) {
-        return response.data['data']['authorization_link'];
-      } else {
-        throw Exception('Failed to get Spotify authorization link');
-      }
-    } catch (e) {
-      print('Error getting Spotify authorization link: $e');
-      rethrow;
-    }
-  }
-
-  Future<bool> isSpotifyConnected() async {
-    final expiresAt = await _secureStorage.read(key: 'spotify_expires_at');
-    if (expiresAt != null) {
-      final expirationTime = DateTime.fromMillisecondsSinceEpoch(int.parse(expiresAt) * 1000);
-      return expirationTime.isAfter(DateTime.now());
-    }
-    return false;
-  }
-
   Future<bool> checkInternetConnectivity() async {
     var connectivityResult = await (Connectivity().checkConnectivity());
     return connectivityResult != ConnectivityResult.none;
@@ -1209,7 +1123,170 @@ class ApiService {
         queryParameters: requestOptions.queryParameters,
         options: options);
   }
+
+  Future<bool> shouldRefreshToken() async {
+    if (_accessToken == null || _expiresAt == null) {
+      await _loadTokens();
+    }
+    return _expiresAt != null && _expiresAt!.isBefore(DateTime.now().add(Duration(minutes: 5)));
+  }
+
+  Future<void> _loadTokens() async {
+    _accessToken = await _secureStorage.read(key: 'access_token');
+    _refreshToken = await _secureStorage.read(key: 'refresh_token');
+    final expiresAtString = await _secureStorage.read(key: 'expires_at');
+    if (expiresAtString != null) {
+      _expiresAt = DateTime.fromMillisecondsSinceEpoch(int.parse(expiresAtString) * 1000);
+    }
+  }
+
+  Future<Response<dynamic>> retry(RequestOptions requestOptions) async {
+    final options = Options(
+      method: requestOptions.method,
+      headers: requestOptions.headers,
+    );
+    return _dio.request<dynamic>(requestOptions.path,
+        data: requestOptions.data,
+        queryParameters: requestOptions.queryParameters,
+        options: options);
+  }
+
+  Future<void> updateTokens(Map<String, dynamic> data) async {
+    _accessToken = data['access_token'];
+    _refreshToken = data['refresh_token'];
+    _expiresAt = DateTime.now().add(Duration(seconds: data['expires_in']));
+    await _secureStorage.write(key: 'access_token', value: _accessToken);
+    await _secureStorage.write(key: 'refresh_token', value: _refreshToken);
+    await _secureStorage.write(key: 'expires_at', value: _expiresAt!.millisecondsSinceEpoch.toString());
+  }
+
+  Future<Map<String, dynamic>> handleSpotifyToken(String spotifyToken) async {
+    print('ApiService.handleSpotifyToken called with spotifyToken: $spotifyToken');
+    try {
+      print('Sending GET request to /spotify/connect');
+      final response = await _dio.post('/spotify/connect', data: {'spotify_token': spotifyToken});
+      print('Received response from /spotify/connect: ${response.statusCode}');
+      
+      if (response.statusCode == 200) {
+        print('Successfully processed callback');
+        // Process the response data
+        return {
+          'success': true,
+          'message': 'Spotify connected successfully',
+          // Add other relevant data from the response
+        };
+      } else {
+        print('Failed to process callback. Status: ${response.statusCode}, Data: ${response.data}');
+        throw Exception('Failed to process Spotify callback');
+      }
+    } catch (e) {
+      print('Error in handleSpotifyToken: $e');
+      return {
+        'success': false,
+        'message': 'Failed to process Spotify callback: $e',
+      };
+    }
+  }
+
+    Future<Map<String, dynamic>> handleYtMusicToken(String token) async {
+    print('ApiService.handleYtMusicToken called with token: ${token.substring(0, 10)}...');
+    try {
+      final response = await _dio.post('/ytmusic/connect', data: {'ytmusic_token': token});
+      if (response.statusCode == 200) {
+        final userData = response.data;
+        return {
+          'success': true,
+          'message': 'YouTube Music connected successfully',
+          'user_id': userData['user_id'],
+          'display_name': userData['display_name'],
+        };
+      } else {
+        print('Failed to process YouTube Music token. Status: ${response.statusCode}');
+        throw Exception('Failed to process YouTube Music token');
+      }
+    } catch (e) {
+      print('Error in handleYtMusicToken: $e');
+      return {
+        'success': false,
+        'message': 'Failed to process YouTube Music token: $e',
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> handleLastFmToken(String token) async {
+    print('ApiService.handleLastFmToken called with token: ${token.substring(0, 10)}...');
+    try {
+      final response = await _dio.post('/lastfm/connect', data: {'lastfm_token': token});
+      if (response.statusCode == 200) {
+        final userData = response.data;
+        return {
+          'success': true,
+          'message': 'Last.fm connected successfully',
+          'user_id': userData['user_id'],
+          'display_name': userData['display_name'],
+        };
+      } else {
+        print('Failed to process Last.fm token. Status: ${response.statusCode}');
+        throw Exception('Failed to process Last.fm token');
+      }
+    } catch (e) {
+      print('Error in handleLastFmToken: $e');
+      return {
+        'success': false,
+        'message': 'Failed to process Last.fm token: $e',
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> handleMalToken(String token) async {
+    print('ApiService.handleMalToken called with token: ${token.substring(0, 10)}...');
+    try {
+      final response = await _dio.post('/mal/connect', data: {'mal_token': token});
+      if (response.statusCode == 200) {
+        final userData = response.data;
+        return {
+          'success': true,
+          'message': 'MyAnimeList connected successfully',
+          'user_id': userData['user_id'],
+          'display_name': userData['display_name'],
+        };
+      } else {
+        print('Failed to process MyAnimeList token. Status: ${response.statusCode}');
+        throw Exception('Failed to process MyAnimeList token');
+      }
+    } catch (e) {
+      print('Error in handleMalToken: $e');
+      return {
+        'success': false,
+        'message': 'Failed to process MyAnimeList token: $e',
+      };
+    }
+  }
+
+  Future<Map<String, dynamic>> updateLikes(String serviceName) async {
+    try {
+      final response = await _dio.post('/me/likes/update', data: {'service': serviceName});
+      if (response.statusCode == 200) {
+        return {
+          'success': true,
+          'message': 'Likes updated successfully for $serviceName',
+          'data': response.data,
+        };
+      } else {
+        print('Failed to update likes for $serviceName. Status: ${response.statusCode}');
+        throw Exception('Failed to update likes for $serviceName');
+      }
+    } catch (e) {
+      print('Error updating likes for $serviceName: $e');
+      return {
+        'success': false,
+        'message': 'Failed to update likes for $serviceName: $e',
+      };
+    }
+  }
 }
+
+
 
 
   

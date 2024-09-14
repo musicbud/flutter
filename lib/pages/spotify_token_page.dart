@@ -14,10 +14,10 @@ class _SpotifyCallbackPageState extends State<SpotifyCallbackPage> {
   @override
   void initState() {
     super.initState();
-    _handleSpotifyCallback();
+    _handleSpotifyToken();
   }
 
-  Future<void> _handleSpotifyCallback() async {
+  Future<void> _handleSpotifyToken() async {
     final uri = Uri.base;
     final code = uri.queryParameters['code'];
     if (code != null) {
