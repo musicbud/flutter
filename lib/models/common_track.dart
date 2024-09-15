@@ -4,8 +4,8 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart' show Image;
 
 class CommonTrack {
-  final String uid;
-  final String id;  // Add this line
+  final String? uid;
+  final String? id;  // Add this line
   final String name;
   final String? spotifyId;
   final String? uri;

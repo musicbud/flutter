@@ -30,6 +30,8 @@ import 'package:flutter/material.dart';
 import 'package:musicbud_flutter/pages/channel_chat_page.dart';                         
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:musicbud_flutter/pages/track_details_page.dart';
+import 'package:musicbud_flutter/pages/artist_details_page.dart';
+import 'package:musicbud_flutter/pages/genre_details_page.dart';
 
 
 
@@ -657,9 +659,16 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
     return ArtistListItem(
       artist: artist,
       onTap: () {
-        // Handle artist tap
-        print('Tapped on artist: ${artist.name}');
-        // You can navigate to a detail page or perform any other action
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ArtistDetailsPage(
+              artistId: artist.id ?? '',  // Use id instead of uid
+              artistName: artist.name ?? 'Unknown Artist',
+              apiService: _apiService,
+            ),
+          ),
+        );
       },
     );
   }
@@ -668,7 +677,16 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
     return GenreListItem(
       genre: genre,
       onTap: () {
-        // Handle genre tap
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => GenreDetailsPage(
+              genreId: genre.name ?? '',  // Use name as the ID for genres
+              genreName: genre.name ?? 'Unknown Genre',
+              apiService: _apiService,
+            ),
+          ),
+        );
       },
     );
   }
