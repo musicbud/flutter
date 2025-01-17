@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'dart:developer' as developer;
-import 'package:flutter/src/widgets/image.dart' as flutter_image;
-import 'package:musicbud_flutter/models/common_track.dart' as common_track;
+import 'image.dart';
 
 class CommonArtist {
   final String uid;
@@ -13,7 +10,7 @@ class CommonArtist {
   final String type;
   final String uri;
   final int followers;
-  final List<common_track.Image> images;
+  final List<Image> images;
   final List<String> genres;
   final int? elementIdProperty;
 
@@ -38,3 +35,13 @@ class CommonArtist {
       name: json['name'],
       spotifyId: json['spotify_id'],
       spotifyUrl: json['spotify_url'],
+      href: json['href'],
+      popularity: json['popularity'],
+      type: json['type'],
+      uri: json['uri'],
+      followers: json['followers'],
+      images: (json['images'] as List).map((i) => Image.fromJson(i)).toList(),
+      genres: List<String>.from(json['genres']),
+    );
+  }
+}

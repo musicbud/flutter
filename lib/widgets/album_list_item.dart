@@ -18,7 +18,7 @@ class AlbumListItem extends StatelessWidget {
       subtitle: Text(album.artist),
       leading: album.imageUrl.isNotEmpty
           ? Image.network(album.imageUrl, width: 50, height: 50)
-          : Icon(Icons.album),
+          : const Icon(Icons.album),
       onTap: onTap,
     );
   }

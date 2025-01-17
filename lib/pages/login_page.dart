@@ -8,7 +8,11 @@ class LoginPage extends StatefulWidget {
   final ApiService apiService;
   final ChatService chatService;
 
-  const LoginPage({Key? key, required this.apiService, required this.chatService}) : super(key: key);
+  const LoginPage({
+    Key? key,
+    required this.apiService,
+    required this.chatService,
+  }) : super(key: key);
 
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -21,6 +25,10 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
 
   Future<void> _login() async {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -29,14 +37,20 @@ class _LoginPageState extends State<LoginPage> {
       try {
         // Check device connectivity first
         var connectivityResult = await (Connectivity().checkConnectivity());
+        if (!mounted) return;
+
         if (connectivityResult == ConnectivityResult.none) {
-          throw Exception('No internet connection. Please check your network settings.');
+          throw Exception(
+              'No internet connection. Please check your network settings.');
         }
 
         // Check server connectivity
         final serverCheck = await widget.apiService.checkServerConnectivity();
+        if (!mounted) return;
+
         if (serverCheck['isReachable'] == false) {
-          throw Exception('Unable to reach the server: ${serverCheck['error']} - ${serverCheck['message']}');
+          throw Exception(
+              'Unable to reach the server: ${serverCheck['error']} - ${serverCheck['message']}');
         }
 
         developer.log('Attempting login for user: ${_usernameController.text}');
@@ -44,47 +58,60 @@ class _LoginPageState extends State<LoginPage> {
           _usernameController.text,
           _passwordController.text,
         );
+        if (!mounted) return;
 
         if (response['status'] == 'success') {
           developer.log('Login successful');
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Login successful')),
+          scaffoldMessenger.showSnackBar(
+            const SnackBar(content: Text('Login successful')),
           );
-          Navigator.of(context).pushReplacementNamed('/home');
+          navigator.pushReplacementNamed('/home');
         } else {
           developer.log('Login failed: ${response['message']}');
-          ScaffoldMessenger.of(context).showSnackBar(
+          scaffoldMessenger.showSnackBar(
             SnackBar(content: Text(response['message'])),
           );
         }
       } catch (e) {
         developer.log('Error during login: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
+        if (!mounted) return;
+        scaffoldMessenger.showSnackBar(
           SnackBar(content: Text('An error occurred: $e')),
         );
       } finally {
-        setState(() {
-          _isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
     }
   }
 
   Future<void> _checkServerConnectivity() async {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     setState(() {
       _isLoading = true;
     });
 
     try {
       final hasInternet = await widget.apiService.checkInternetConnectivity();
+      if (!mounted) return;
+
       if (!hasInternet) {
-        throw Exception('No internet connection. Please check your network settings.');
+        throw Exception(
+            'No internet connection. Please check your network settings.');
       }
 
       final serverCheck = await widget.apiService.checkServerConnectivity();
+      if (!mounted) return;
+
       String message;
       if (serverCheck['isReachable']) {
-        message = 'Server is reachable. Status code: ${serverCheck['statusCode']}';
+        message =
+            'Server is reachable. Status code: ${serverCheck['statusCode']}';
       } else {
         message = 'Server is not reachable.\n'
             'Error: ${serverCheck['error']}\n'
@@ -100,19 +127,22 @@ class _LoginPageState extends State<LoginPage> {
               '  Query Parameters: ${requestOptions['queryParameters']}';
         }
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(message), duration: Duration(seconds: 10)),
+      scaffoldMessenger.showSnackBar(
+        SnackBar(content: Text(message), duration: const Duration(seconds: 10)),
       );
       _log(message);
     } catch (e) {
       _log('Error checking server connectivity: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
+      if (!mounted) return;
+      scaffoldMessenger.showSnackBar(
         SnackBar(content: Text('Error checking server connectivity: $e')),
       );
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -125,38 +155,39 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Login'),
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
             child: Column(
               children: <Widget>[
                 TextFormField(
                   controller: _usernameController,
-                  decoration: InputDecoration(labelText: 'Username'),
-                  validator: (value) => value!.isEmpty ? 'Please enter your username' : null,
+                  decoration: const InputDecoration(labelText: 'Username'),
+                  validator: (value) =>
+                      value!.isEmpty ? 'Please enter your username' : null,
                 ),
                 TextFormField(
                   controller: _passwordController,
-                  decoration: InputDecoration(labelText: 'Password'),
+                  decoration: const InputDecoration(labelText: 'Password'),
                   obscureText: true,
-                  validator: (value) => value!.isEmpty ? 'Please enter your password' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Please enter your password' : null,
                 ),
                 ElevatedButton(
                   onPressed: _login,
-                  child: Text('Login'),
+                  child: const Text('Login'),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Text('Current Base URL: ${widget.apiService.baseUrl}'),
                 ElevatedButton(
                   onPressed: _checkServerConnectivity,
-                  child: Text('Check Server Connectivity'),
+                  child: const Text('Check Server Connectivity'),
                 ),
-                if (_isLoading)
-                  CircularProgressIndicator(),
+                if (_isLoading) const CircularProgressIndicator(),
               ],
             ),
           ),

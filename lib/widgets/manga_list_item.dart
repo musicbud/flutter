@@ -5,17 +5,38 @@ class MangaListItem extends StatelessWidget {
   final CommonManga manga;
   final VoidCallback? onTap;
 
-  const MangaListItem({Key? key, required this.manga, this.onTap}) : super(key: key);
+  const MangaListItem({
+    Key? key,
+    required this.manga,
+    this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(manga.title),
-      subtitle: Text(manga.status),
-      leading: manga.imageUrl.isNotEmpty
-          ? Image.network(manga.imageUrl, width: 50, height: 50)
-          : Icon(Icons.book),
-      onTap: onTap,
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          children: [
+            if (manga.imageUrl.isNotEmpty)
+              Image.network(
+                manga.imageUrl,
+                height: 100,
+                width: 100,
+                fit: BoxFit.cover,
+              ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                manga.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

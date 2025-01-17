@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart'; // Add this import
+import 'package:flutter/material.dart'; 
 import 'package:flutter/src/widgets/image.dart' as flutter_image;
 import 'package:musicbud_flutter/models/common_track.dart' as common_track;
 
@@ -12,7 +12,7 @@ class TrackListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      child: Container(
+      child: SizedBox(
         width: 120,
         height: 180,
         child: Column(
@@ -28,11 +28,11 @@ class TrackListItem extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Flexible(
               flex: 1,
               child: Text(
-                track.name ?? 'Unknown Track',
+                track.name,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 12),

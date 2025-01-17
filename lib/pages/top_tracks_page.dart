@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import '../models/track.dart';
-import '../widgets/top_tracks_horizontal_list.dart';
 
 class TopTracksPage extends StatefulWidget {
-  const TopTracksPage({super.key});
+  final String artistId;
+
+  const TopTracksPage({
+    Key? key,
+    required this.artistId,
+  }) : super(key: key);
 
   @override
-  _TopTracksPageState createState() => _TopTracksPageState();
+  State<TopTracksPage> createState() => _TopTracksPageState();
 }
 
 class _TopTracksPageState extends State<TopTracksPage> {
   final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
-  List<Track> _tracks = []; // Initialize with your initial data
+  final List<Track> _tracks = []; // Initialize with your initial data
 
   @override
   void initState() {
@@ -27,7 +31,9 @@ class _TopTracksPageState extends State<TopTracksPage> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_isLoadingMore) {
+    if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent &&
+        !_isLoadingMore) {
       _loadMore();
     }
   }
@@ -65,7 +71,7 @@ class _TopTracksPageState extends State<TopTracksPage> {
           return ListTile(
             title: Text(track.name),
             subtitle: Text(track.spotifyId),
-            trailing: Text('${track.durationMs ?? 0} ms'),
+            trailing: const Text('0 ms'),
           );
         },
       ),

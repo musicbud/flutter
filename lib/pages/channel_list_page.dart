@@ -21,6 +21,12 @@ class _ChannelListPageState extends State<ChannelListPage> {
   List<Map<String, dynamic>> channels = []; // Make channels a mutable list
   bool isLoading = true;
 
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -30,50 +36,48 @@ class _ChannelListPageState extends State<ChannelListPage> {
   Future<void> _fetchChannels() async {
     try {
       final channelList = await widget.chatService.getChannelList();
+      if (!mounted) return;
       setState(() {
         channels = channelList;
         isLoading = false;
       });
     } catch (e) {
       print('Error fetching channels: $e');
+      if (!mounted) return;
       setState(() {
         isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load channels. Please try again.')),
-      );
+      _showSnackBar('Failed to load channels. Please try again.');
     }
   }
 
   Future<void> _joinChannel(String channelId) async {
     try {
       final response = await widget.chatService.joinChannel(channelId);
+      if (!mounted) return;
+
       if (response['status'] == 'success') {
-        _fetchChannels();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response['message'])),
-        );
+        await _fetchChannels();
+        if (!mounted) return;
+        _showSnackBar(response['message']);
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${response['message']}')),
-        );
+        _showSnackBar('Error: ${response['message']}');
       }
     } catch (e) {
       print('Error joining channel: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An error occurred. Please try again.')),
-      );
+      if (!mounted) return;
+      _showSnackBar('An error occurred. Please try again.');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Channel List')),
+      appBar: AppBar(title: const Text('Channel List')),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : channels.isEmpty
-              ? Center(child: Text('No channels available'))
+              ? const Center(child: Text('No channels available'))
               : ListView.builder(
                   itemCount: channels.length,
                   itemBuilder: (context, index) {
@@ -82,7 +86,7 @@ class _ChannelListPageState extends State<ChannelListPage> {
                       title: Text(channel['name'] ?? 'Unnamed Channel'),
                       subtitle: Text('ID: ${channel['id']}'),
                       trailing: channel['is_member'] == true
-                          ? Icon(Icons.check_circle, color: Colors.green)
+                          ? const Icon(Icons.check_circle, color: Colors.green)
                           : null,
                       onTap: () {
                         Navigator.push(
@@ -90,7 +94,8 @@ class _ChannelListPageState extends State<ChannelListPage> {
                           MaterialPageRoute(
                             builder: (context) => ChannelChatPage(
                               chatService: widget.chatService,
-                              channelId: channel['id'] as int, // Make sure this is an int
+                              channelId: channel['id']
+                                  as int, // Make sure this is an int
                               channelName: channel['name'] as String,
                               currentUsername: widget.currentUsername,
                             ),
@@ -105,14 +110,15 @@ class _ChannelListPageState extends State<ChannelListPage> {
           final result = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => CreateChannelPage(chatService: widget.chatService),
+              builder: (context) =>
+                  CreateChannelPage(chatService: widget.chatService),
             ),
           );
           if (result == true) {
             _fetchChannels(); // Refresh the channel list after creating a new channel
           }
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

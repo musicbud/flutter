@@ -7,12 +7,19 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:musicbud_flutter/main.dart'; // Import the main.dart file
+import 'package:musicbud_flutter/main.dart';
+import 'package:musicbud_flutter/services/api_service.dart';
+import 'package:musicbud_flutter/services/chat_service.dart'; // Import the main.dart file
+import 'package:dio/dio.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const MusicBudApp());
+    await tester.pumpWidget(MusicBudApp(
+      isLoggedIn: false,
+      apiService: ApiService(),
+      chatService: ChatService(Dio()),
+    ));
 
     // Verify that our counter starts at 0.
     expect(find.text('0'), findsOneWidget);

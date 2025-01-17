@@ -1,4 +1,4 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../models/user_profile.dart';
 import '../services/api_service.dart';
@@ -51,7 +51,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<LoadProfile>(_onLoadProfile);
   }
 
-  Future<void> _onLoadProfile(LoadProfile event, Emitter<ProfileState> emit) async {
+  Future<void> _onLoadProfile(
+      LoadProfile event, Emitter<ProfileState> emit) async {
     emit(ProfileLoading());
     try {
       final userProfile = await apiService.getUserProfile();

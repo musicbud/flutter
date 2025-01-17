@@ -17,7 +17,7 @@ class BudsCategoryPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Bud Categories')),
+      appBar: AppBar(title: const Text('Bud Categories')),
       body: ListView.builder(
         itemCount: _availableCategories.length,
         itemBuilder: (context, index) {

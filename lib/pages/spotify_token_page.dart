@@ -4,7 +4,8 @@ import 'package:musicbud_flutter/services/api_service.dart';
 class SpotifyCallbackPage extends StatefulWidget {
   final ApiService apiService;
 
-  const SpotifyCallbackPage({Key? key, required this.apiService}) : super(key: key);
+  const SpotifyCallbackPage({Key? key, required this.apiService})
+      : super(key: key);
 
   @override
   _SpotifyCallbackPageState createState() => _SpotifyCallbackPageState();
@@ -18,31 +19,42 @@ class _SpotifyCallbackPageState extends State<SpotifyCallbackPage> {
   }
 
   Future<void> _handleSpotifyToken() async {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
     final uri = Uri.base;
     final code = uri.queryParameters['code'];
     if (code != null) {
       try {
         await widget.apiService.completeSpotifyAuth(code);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Successfully connected to Spotify')),
+        if (!mounted) return;
+
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(content: Text('Successfully connected to Spotify')),
         );
-        Navigator.of(context).pushReplacementNamed('/home');
+        navigator.pushReplacementNamed('/home');
       } catch (e) {
         print('Error completing Spotify authentication: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to complete Spotify authentication')),
+        if (!mounted) return;
+
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(
+              content: Text('Failed to complete Spotify authentication')),
         );
-        Navigator.of(context).pushReplacementNamed('/connect_services');
+        navigator.pushReplacementNamed('/connect_services');
       }
     } else {
       print('Error: No authorization code found in the callback URI');
-      Navigator.of(context).pushReplacementNamed('/connect_services');
+      if (!mounted) return;
+
+      navigator.pushReplacementNamed('/connect_services');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: CircularProgressIndicator(),
       ),

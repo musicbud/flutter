@@ -25,7 +25,7 @@ class BudMatchListItem extends StatelessWidget {
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Unable to view this bud\'s profile')),
+            const SnackBar(content: Text('Unable to view this bud\'s profile')),
           );
         }
       },

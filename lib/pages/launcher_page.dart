@@ -17,7 +17,7 @@ class LauncherPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Welcome to MusicBud', style: TextStyle(fontSize: 24)),
+            const Text('Welcome to MusicBud', style: TextStyle(fontSize: 24)),
             const SizedBox(height: 20),
             OutlinedButton(
               onPressed: () {

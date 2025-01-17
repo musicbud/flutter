@@ -8,7 +8,9 @@ class ChannelDetailsPage extends StatefulWidget {
   final int channelId;
   final Dio dio;
 
-  const ChannelDetailsPage({Key? key, required this.channelId, required this.dio}) : super(key: key);
+  const ChannelDetailsPage(
+      {Key? key, required this.channelId, required this.dio})
+      : super(key: key);
 
   @override
   _ChannelDetailsPageState createState() => _ChannelDetailsPageState();
@@ -41,7 +43,8 @@ class _ChannelDetailsPageState extends State<ChannelDetailsPage> {
           _isAdmin = response.data['is_admin'] ?? false;
           _isModerator = response.data['is_moderator'] ?? false;
         });
-        print('is_member: $_isMember, is_admin: $_isAdmin, is_moderator: $_isModerator'); // Debug print
+        print(
+            'is_member: $_isMember, is_admin: $_isAdmin, is_moderator: $_isModerator'); // Debug print
       } else {
         setState(() {
           _isLoading = false;
@@ -56,23 +59,27 @@ class _ChannelDetailsPageState extends State<ChannelDetailsPage> {
     }
   }
 
-  Future<void> _requestToJoinChannel() async {
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  Future<void> _requestJoinChannel() async {
     try {
       final response = await chatService.requestJoinChannel(widget.channelId);
+      if (!mounted) return;
+
       if (response.statusCode == 200 && response.data['status'] == 'success') {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(response.data['message'])),
-        );
+        _showSnackBar('Join request sent successfully');
+        // Update UI if needed
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${response.data['message']}')),
-        );
+        _showSnackBar('Failed to send join request');
       }
     } catch (e) {
       print('Error requesting to join channel: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An error occurred. Please try again.')),
-      );
+      if (!mounted) return;
+      _showSnackBar('Error sending join request');
     }
   }
 
@@ -80,65 +87,75 @@ class _ChannelDetailsPageState extends State<ChannelDetailsPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => ChatRoomPage(channelId: widget.channelId, dio: widget.dio),
+        builder: (context) =>
+            ChatRoomPage(channelId: widget.channelId, dio: widget.dio),
+      ),
+    );
+  }
+
+  void _navigateToDashboard() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ChannelDashboardPage(
+          channelId: widget.channelId,
+          chatService: chatService,
+        ),
       ),
     );
   }
 
   Future<void> _openDashboard() async {
     bool isAdmin = await chatService.isUserAdmin(widget.channelId);
+    if (!mounted) return;
+
     if (isAdmin) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ChannelDashboardPage(channelId: widget.channelId, dio: widget.dio),
-        ),
-      );
+      _navigateToDashboard();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('You do not have permission to access the dashboard.')),
-      );
+      _showSnackBar('You do not have permission to access the dashboard.');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Channel Details')),
+      appBar: AppBar(title: const Text('Channel Details')),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : _details == null
-              ? Center(child: Text('Failed to load details'))
+              ? const Center(child: Text('Failed to load details'))
               : Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Details for Channel ${widget.channelId}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 16),
+                      Text('Details for Channel ${widget.channelId}',
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 16),
                       Text('Name: ${_details!['name']}'),
                       Text('Description: ${_details!['description']}'),
-                      SizedBox(height: 16),
+                      const SizedBox(height: 16),
                       if (_isMember) ...[
-                        Text('You are a member of this channel.'),
+                        const Text('You are a member of this channel.'),
                         if (_isAdmin)
-                          Text('You are an admin of this channel.')
+                          const Text('You are an admin of this channel.')
                         else if (_isModerator)
-                          Text('You are a moderator of this channel.'),
+                          const Text('You are a moderator of this channel.'),
                         ElevatedButton(
                           onPressed: _enterChatRoom,
-                          child: Text('Enter Chat'),
+                          child: const Text('Enter Chat'),
                         ),
                         if (_isAdmin)
                           ElevatedButton(
                             onPressed: _openDashboard,
-                            child: Text('Dashboard'),
+                            child: const Text('Dashboard'),
                           ),
                       ] else ...[
-                        Text('You are not a member of this channel.'),
+                        const Text('You are not a member of this channel.'),
                         ElevatedButton(
-                          onPressed: _requestToJoinChannel,
-                          child: Text('Request to Join'),
+                          onPressed: _requestJoinChannel,
+                          child: const Text('Request to Join'),
                         ),
                       ],
                     ],

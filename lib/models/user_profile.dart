@@ -29,6 +29,8 @@ class UserProfile {
     );
   }
 
+  get uid => null;
+
   // You can add a toJson method if needed
   Map<String, dynamic> toJson() {
     return {

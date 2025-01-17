@@ -14,7 +14,7 @@ class ConnectServicesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Connect Services'),
+        title: const Text('Connect Services'),
       ),
       body: ListView(
         children: [
@@ -71,7 +71,7 @@ class ConnectServicesPage extends StatelessWidget {
     return ListTile(
       leading: Icon(icon),
       title: Text(title),
-      trailing: Icon(Icons.chevron_right),
+      trailing: const Icon(Icons.chevron_right),
       onTap: onTap,
     );
   }

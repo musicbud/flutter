@@ -15,7 +15,7 @@ class ArtistListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      child: Container(
+      child: SizedBox(
         width: 120,
         height: 180,
         child: Column(
@@ -31,7 +31,7 @@ class ArtistListItem extends StatelessWidget {
                 ),
               ),
             ),
-            SizedBox(height: 4),
+            const SizedBox(height: 4),
             Flexible(
               flex: 1,
               child: Text(

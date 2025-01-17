@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'bud.dart';
-
 class BudMatch {
   final Bud bud;
   final double similarityScore;

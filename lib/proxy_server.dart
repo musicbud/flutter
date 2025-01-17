@@ -1,7 +1,6 @@
 import 'package:shelf/shelf.dart' as shelf;
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_proxy/shelf_proxy.dart';
-import 'package:http/http.dart' as http;
 
 Future<void> startProxyServer() async {
   final targetUrl = 'http://84.235.170.234';

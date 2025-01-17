@@ -1,13 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/services/api_service.dart';
-import 'package:musicbud_flutter/models/common_track.dart';
-import 'package:musicbud_flutter/models/common_artist.dart';
-import 'package:musicbud_flutter/models/common_album.dart';
-import 'package:musicbud_flutter/models/common_genre.dart';
-import 'package:musicbud_flutter/widgets/track_list_item.dart';
-import 'package:musicbud_flutter/widgets/artist_list_item.dart';
-import 'package:musicbud_flutter/widgets/genre_list_item.dart';
-import 'package:musicbud_flutter/widgets/album_list_item.dart';
+
 
 class CommonItemsPage<T> extends StatefulWidget {
   final String title;
@@ -76,21 +68,21 @@ class _CommonItemsPageState<T> extends State<CommonItemsPage<T>> {
 
   Widget _buildBody() {
     if (_items.isEmpty && _isLoading) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     } else if (_error != null && _items.isEmpty) {
       return Center(child: Text('Error: $_error'));
     } else if (_items.isEmpty) {
-      return Center(child: Text('No items found'));
+      return const Center(child: Text('No items found'));
     } else {
       return ListView.builder(
         itemCount: _items.length + (_hasMoreItems ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == _items.length) {
             if (_isLoading) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else {
               _loadItems(); // Load more items when reaching the end
-              return SizedBox.shrink();
+              return const SizedBox.shrink();
             }
           }
           return widget.itemBuilder(context, _items[index]);

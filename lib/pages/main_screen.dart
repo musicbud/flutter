@@ -7,9 +7,9 @@ class MainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Main Screen'),
+        title: const Text('Main Screen'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Welcome to the main screen!'),
       ),
     );

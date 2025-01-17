@@ -46,18 +46,18 @@ class _ChannelStatisticsPageState extends State<ChannelStatisticsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Channel Statistics')),
+      appBar: AppBar(title: const Text('Channel Statistics')),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : _statistics == null
-              ? Center(child: Text('Failed to load statistics'))
+              ? const Center(child: Text('Failed to load statistics'))
               : Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Statistics for Channel ${widget.channelId}', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      SizedBox(height: 16),
+                      Text('Statistics for Channel ${widget.channelId}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 16),
                       Text('Total Messages: ${_statistics!['total_messages']}'),
                       Text('Active Users: ${_statistics!['active_users']}'),
                       // Add more statistics as needed

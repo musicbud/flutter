@@ -7,7 +7,7 @@ class TopArtistsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Top Artists'),
+        title: const Text('Top Artists'),
       ),
       body: ListView(
         children: [

@@ -45,7 +45,7 @@ class _BudsPageState extends State<BudsPage> with SingleTickerProviderStateMixin
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Buds'),
+        title: const Text('Buds'),
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
@@ -98,7 +98,7 @@ class __BudsListState extends State<_BudsList> {
       future: _budsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

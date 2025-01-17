@@ -73,7 +73,7 @@ class _BudCommonItemsPageState extends State<BudCommonItemsPage> {
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(title: Text('Common Items with ${widget.budName}')),
-        body: Center(child: CircularProgressIndicator()),
+        body: const Center(child: CircularProgressIndicator()),
       );
     }
 

@@ -49,7 +49,7 @@ class _GenreDetailsPageState extends State<GenreDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Genre Details'),
+        title: const Text('Genre Details'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -64,14 +64,14 @@ class _GenreDetailsPageState extends State<GenreDetailsPage> {
             ),
             ElevatedButton(
               onPressed: _isLoading ? null : _getBudsByGenre,
-              child: _isLoading ? CircularProgressIndicator() : Text('Get Buds for This Genre'),
+              child: _isLoading ? const CircularProgressIndicator() : const Text('Get Buds for This Genre'),
             ),
             if (_errorMessage != null)
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
                   _errorMessage!,
-                  style: TextStyle(color: Colors.red),
+                  style: const TextStyle(color: Colors.red),
                 ),
               ),
             if (_buds.isNotEmpty)
@@ -84,10 +84,10 @@ class _GenreDetailsPageState extends State<GenreDetailsPage> {
                       'Buds who like this genre:',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     ListView.builder(
                       shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: _buds.length,
                       itemBuilder: (context, index) {
                         final bud = _buds[index];

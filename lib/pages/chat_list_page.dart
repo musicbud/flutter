@@ -28,11 +28,12 @@ class _ChatListPageState extends State<ChatListPage> {
 
     try {
       // Login with provided credentials
-      final loginResult = await widget.chatService.login('mahmwood', 'password');
+      final loginResult =
+          await widget.chatService.login('mahmwood', 'password');
       print('Login result: $loginResult');
       print('Access token after login: ${widget.chatService.accessToken}');
 
-      if (!loginResult['success']) {
+      if (loginResult.statusCode != 200) {
         // Handle login failure
         setState(() {
           _isLoading = false;
@@ -40,12 +41,12 @@ class _ChatListPageState extends State<ChatListPage> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Login Failed'),
-            content: Text(loginResult['message']),
+            title: const Text('Login Failed'),
+            content: Text(loginResult.data['message']),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           ),
@@ -54,7 +55,7 @@ class _ChatListPageState extends State<ChatListPage> {
       }
 
       // Add a small delay to ensure any asynchronous operations complete
-      await Future.delayed(Duration(seconds: 1));
+      await Future.delayed(const Duration(seconds: 1));
 
       // Get channel list
       final channelList = await widget.chatService.getChannelList();
@@ -75,18 +76,19 @@ class _ChatListPageState extends State<ChatListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Chat List')),
+      appBar: AppBar(title: const Text('Chat List')),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : _channels.isEmpty
-              ? Center(child: Text('No channels available'))
+              ? const Center(child: Text('No channels available'))
               : ListView.builder(
                   itemCount: _channels.length,
                   itemBuilder: (context, index) {
                     final channel = _channels[index];
                     return ListTile(
                       title: Text(channel['name'] ?? 'Unnamed Channel'),
-                      subtitle: Text(channel['description'] ?? 'No description'),
+                      subtitle:
+                          Text(channel['description'] ?? 'No description'),
                       onTap: () {
                         Navigator.push(
                           context,

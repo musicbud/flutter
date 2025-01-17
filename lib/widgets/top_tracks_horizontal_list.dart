@@ -55,10 +55,10 @@ class _TopTracksHorizontalListState extends State<TopTracksHorizontalList> {
       itemBuilder: (context, index) {
         if (index == _tracks.length) {
           return _isLoading
-              ? Center(child: CircularProgressIndicator())
+              ? const Center(child: CircularProgressIndicator())
               : TextButton(
                   onPressed: _loadMoreTracks,
-                  child: Text('Load More'),
+                  child: const Text('Load More'),
                 );
         }
         final track = _tracks[index];

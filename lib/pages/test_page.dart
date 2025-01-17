@@ -7,9 +7,9 @@ class TestPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Test Page'),
+        title: const Text('Test Page'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('This is a test page', style: TextStyle(fontSize: 24)),
       ),
     );

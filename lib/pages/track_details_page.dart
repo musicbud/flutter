@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:musicbud_flutter/models/common_track.dart';
 import 'package:musicbud_flutter/services/api_service.dart';
-import 'package:geolocator/geolocator.dart';
 
 class TrackDetailsPage extends StatefulWidget {
   final CommonTrack track;
@@ -25,6 +24,8 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
   String get _trackIdentifier => widget.track.uid ?? widget.track.id ?? '';
 
   Future<void> _getBudsByTrack() async {
+    if (!mounted) return;
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -32,21 +33,29 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
 
     try {
       final buds = await widget.apiService.getBudsByTrack(_trackIdentifier);
+      if (!mounted) return;
+
       setState(() {
         _buds = buds;
       });
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _errorMessage = 'Error fetching buds: $e';
       });
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
   Future<void> _playTrack({String? service}) async {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -54,24 +63,33 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
 
     try {
       await widget.apiService.playTrack(_trackIdentifier, service: service);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(service != null ? 'Playing on $service' : 'Playing track')),
+      if (!mounted) return;
+
+      scaffoldMessenger.showSnackBar(
+        SnackBar(
+            content: Text(
+                service != null ? 'Playing on $service' : 'Playing track')),
       );
     } catch (e) {
+      if (!mounted) return;
+
       setState(() {
         if (e.toString().contains('Track not found')) {
-          _errorMessage = 'Track not found. It might not be available in our system.';
+          _errorMessage =
+              'Track not found. It might not be available in our system.';
         } else {
           _errorMessage = 'Error playing track: $e';
         }
       });
-      ScaffoldMessenger.of(context).showSnackBar(
+      scaffoldMessenger.showSnackBar(
         SnackBar(content: Text(_errorMessage!)),
       );
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -85,7 +103,7 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Track Details'),
+        title: const Text('Track Details'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -97,16 +115,16 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.track.name ?? 'Unknown Track',
+                    widget.track.name,
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     widget.track.artistName ?? 'Unknown Artist',
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   if (widget.track.albumName != null) ...[
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Text(
                       'Album: ${widget.track.albumName}',
                       style: Theme.of(context).textTheme.bodyMedium,
@@ -121,31 +139,38 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                    onPressed: _isLoading ? null : () => _playTrack(service: 'spotify'),
-                    child: Text('Play on Spotify'),
+                    onPressed: _isLoading
+                        ? null
+                        : () => _playTrack(service: 'spotify'),
+                    child: const Text('Play on Spotify'),
                   ),
                   ElevatedButton(
-                    onPressed: _isLoading ? null : () => _playTrack(service: 'ytmusic'),
-                    child: Text('Play on YouTube Music'),
+                    onPressed: _isLoading
+                        ? null
+                        : () => _playTrack(service: 'ytmusic'),
+                    child: const Text('Play on YouTube Music'),
                   ),
                   ElevatedButton(
-                    onPressed: _isLoading ? null : () => _playTrack(service: 'lastfm'),
-                    child: Text('Play on Last.fm'),
+                    onPressed:
+                        _isLoading ? null : () => _playTrack(service: 'lastfm'),
+                    child: const Text('Play on Last.fm'),
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _isLoading ? null : _getBudsByTrack,
-              child: _isLoading ? CircularProgressIndicator() : Text('Get Buds for This Track'),
+              child: _isLoading
+                  ? const CircularProgressIndicator()
+                  : const Text('Get Buds for This Track'),
             ),
             if (_errorMessage != null)
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
                   _errorMessage!,
-                  style: TextStyle(color: Colors.red),
+                  style: const TextStyle(color: Colors.red),
                 ),
               ),
             if (_buds.isNotEmpty)
@@ -158,10 +183,10 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
                       'Buds who like this track:',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     ListView.builder(
                       shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: _buds.length,
                       itemBuilder: (context, index) {
                         final bud = _buds[index];

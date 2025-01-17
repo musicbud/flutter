@@ -7,9 +7,9 @@ class StoriesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Stories'),
+        title: const Text('Stories'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Stories content will be displayed here'),
       ),
     );

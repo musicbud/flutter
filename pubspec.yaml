@@ -43,6 +43,9 @@ dependencies:
   uni_links: ^0.5.1
   connectivity_plus: ^3.0.3
   webview_flutter: ^4.0.0
+  equatable: ^2.0.0
+  flutter_bloc: ^8.1.0  # or latest version
+  shelf_proxy: ^1.0.0
   # Add any other dependencies your project needs
 
 dev_dependencies:

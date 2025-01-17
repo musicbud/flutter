@@ -47,7 +47,7 @@ class _PlayedTracksMapPageState extends State<PlayedTracksMapPage> {
   void _createMarkers() {
     for (var track in tracksWithLocation) {
       if (track.latitude != null && track.longitude != null) {
-        final markerId = MarkerId(track.id);
+        final markerId = MarkerId(track.id ?? '');
         final marker = Marker(
           markerId: markerId,
           position: LatLng(track.latitude!, track.longitude!),
@@ -69,7 +69,7 @@ class _PlayedTracksMapPageState extends State<PlayedTracksMapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Played Tracks Map'),
+        title: const Text('Played Tracks Map'),
       ),
       body: _buildBody(),
     );
@@ -77,11 +77,11 @@ class _PlayedTracksMapPageState extends State<PlayedTracksMapPage> {
 
   Widget _buildBody() {
     if (isLoading) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     } else if (errorMessage != null) {
       return Center(child: Text(errorMessage!));
     } else if (tracksWithLocation.isEmpty) {
-      return Center(child: Text('No tracks with location data available.'));
+      return const Center(child: Text('No tracks with location data available.'));
     } else {
       return GoogleMap(
         onMapCreated: _onMapCreated,

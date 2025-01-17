@@ -5,17 +5,37 @@ class AnimeListItem extends StatelessWidget {
   final CommonAnime anime;
   final VoidCallback? onTap;
 
-  const AnimeListItem({Key? key, required this.anime, this.onTap}) : super(key: key);
+  const AnimeListItem({
+    Key? key,
+    required this.anime,
+    this.onTap,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(anime.title),
-      subtitle: Text(anime.status),
-      leading: anime.imageUrl.isNotEmpty
-          ? Image.network(anime.imageUrl, width: 50, height: 50)
-          : Icon(Icons.movie),
-      onTap: onTap,
+    return Card(
+      child: InkWell(
+        onTap: onTap,
+        child: Column(
+          children: [
+            Image.network(
+              anime.imageUrl,
+              height: 100,
+              width: 100,
+              fit: BoxFit.cover,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                anime.title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,7 +1,4 @@
-import 'package:musicbud_flutter/models/common_artist.dart';
 import 'dart:convert';
-import 'dart:developer' as developer;
-import 'package:flutter/material.dart' show Image;
 
 class CommonTrack {
   final String? uid;

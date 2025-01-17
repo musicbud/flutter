@@ -140,10 +140,10 @@ class _LastFmConnectPageState extends State<LastFmConnectPage> {
           if (token != null) {
             _handleToken(token);
           } else {
-            throw FormatException('Token not found in JSON data');
+            throw const FormatException('Token not found in JSON data');
           }
         } else {
-          throw FormatException('Invalid JSON format');
+          throw const FormatException('Invalid JSON format');
         }
       } catch (e) {
         // If JSON parsing fails, assume it's a plain token string
@@ -166,7 +166,7 @@ class _LastFmConnectPageState extends State<LastFmConnectPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Connect Last.fm'),
+        title: const Text('Connect Last.fm'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -175,37 +175,37 @@ class _LastFmConnectPageState extends State<LastFmConnectPage> {
           children: [
             if (_isConnected)
               Text('Last.fm connected for user: $_displayName ($_userId)'),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _isLoading ? null : _connect,
-              child: _isLoading ? CircularProgressIndicator() : Text('Connect Last.fm'),
+              child: _isLoading ? const CircularProgressIndicator() : const Text('Connect Last.fm'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _isLoading ? null : _updateLikes,
-              child: _isLoading ? CircularProgressIndicator() : Text('Update Likes'),
+              child: _isLoading ? const CircularProgressIndicator() : const Text('Update Likes'),
             ),
-            SizedBox(height: 20),
-            Text('If automatic connection fails, paste the authentication data here:'),
+            const SizedBox(height: 20),
+            const Text('If automatic connection fails, paste the authentication data here:'),
             TextField(
               controller: _authDataController,
               maxLines: 5,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: 'Paste authentication data here',
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: _submitManualAuthData,
-              child: Text('Submit Authentication Data'),
+              child: const Text('Submit Authentication Data'),
             ),
             if (_errorMessage != null)
               Padding(
                 padding: const EdgeInsets.only(top: 16.0),
                 child: Text(
                   _errorMessage!,
-                  style: TextStyle(color: Colors.red),
+                  style: const TextStyle(color: Colors.red),
                 ),
               ),
           ],

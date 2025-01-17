@@ -19,6 +19,7 @@ class UserListPage extends StatefulWidget {
 class _UserListPageState extends State<UserListPage> {
   List<Map<String, dynamic>> _users = [];
   bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
@@ -27,20 +28,26 @@ class _UserListPageState extends State<UserListPage> {
   }
 
   Future<void> _fetchUsers() async {
-    try {
-      final Map<String, dynamic> response = await widget.chatService.getUsers();
+    if (widget.currentUsername.isEmpty) {
       setState(() {
-        _users = List<Map<String, dynamic>>.from(response['users'] as List);
+        _error = 'Current user not found. Please log in again.';
+        _isLoading = false;
+      });
+      return;
+    }
+
+    try {
+      final users = await widget.chatService.getUsers();
+      setState(() {
+        _users = users;
         _isLoading = false;
       });
     } catch (e) {
       print('Error fetching users: $e');
       setState(() {
+        _error = 'Failed to load users. Please try again.';
         _isLoading = false;
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load users. Please try again.')),
-      );
     }
   }
 
@@ -48,34 +55,36 @@ class _UserListPageState extends State<UserListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('User List'),
+        title: const Text('User List'),
       ),
       body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : _users.isEmpty
-              ? Center(child: Text('No users available'))
-              : ListView.builder(
-                  itemCount: _users.length,
-                  itemBuilder: (context, index) {
-                    final user = _users[index];
-                    return ListTile(
-                      title: Text(user['username'] ?? 'Unknown User'),
-                      subtitle: Text('ID: ${user['id']}'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => UserChatPage(
-                              chatService: widget.chatService,
-                              currentUsername: widget.currentUsername, // Make sure this is set
-                              otherUsername: user['username'], // The username of the selected user
-                            ),
-                          ),
+          ? const Center(child: CircularProgressIndicator())
+          : _error != null
+              ? Center(child: Text(_error!))
+              : _users.isEmpty
+                  ? const Center(child: Text('No users available'))
+                  : ListView.builder(
+                      itemCount: _users.length,
+                      itemBuilder: (context, index) {
+                        final user = _users[index];
+                        return ListTile(
+                          title: Text(user['username'] ?? 'Unknown User'),
+                          subtitle: Text('ID: ${user['id']}'),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UserChatPage(
+                                  chatService: widget.chatService,
+                                  currentUsername: widget.currentUsername,
+                                  otherUsername: user['username'],
+                                ),
+                              ),
+                            );
+                          },
                         );
                       },
-                    );
-                  },
-                ),
+                    ),
     );
   }
 }

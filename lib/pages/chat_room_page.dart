@@ -6,7 +6,8 @@ class ChatRoomPage extends StatefulWidget {
   final int channelId;
   final Dio dio;
 
-  const ChatRoomPage({Key? key, required this.channelId, required this.dio}) : super(key: key);
+  const ChatRoomPage({Key? key, required this.channelId, required this.dio})
+      : super(key: key);
 
   @override
   _ChatRoomPageState createState() => _ChatRoomPageState();
@@ -47,6 +48,12 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     }
   }
 
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   Future<void> _sendMessage() async {
     final content = _messageController.text;
     if (content.isEmpty) return;
@@ -58,37 +65,36 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         'recipient_id': widget.channelId,
       });
 
-      if (response.statusCode == 200 && response.data['status'] == 'success') {
+      if (!mounted) return;
+
+      if (response['status'] == 'success') {
         setState(() {
           _messages.insert(0, {
             'content': content,
-            'username': 'You', // Replace with actual username if available
+            'username': 'You',
             'timestamp': DateTime.now().toIso8601String(),
           });
           _messageController.clear();
         });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${response.data['message']}')),
-        );
+        _showSnackBar('Error: ${response['message']}');
       }
     } catch (e) {
       print('Error sending message: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An error occurred. Please try again.')),
-      );
+      if (!mounted) return;
+      _showSnackBar('An error occurred. Please try again.');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Chat Room')),
+      appBar: AppBar(title: const Text('Chat Room')),
       body: Column(
         children: [
           Expanded(
             child: _isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : ListView.builder(
                     reverse: true,
                     itemCount: _messages.length,
@@ -109,13 +115,13 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                 Expanded(
                   child: TextField(
                     controller: _messageController,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Enter your message',
                     ),
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send),
+                  icon: const Icon(Icons.send),
                   onPressed: _sendMessage,
                 ),
               ],

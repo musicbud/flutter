@@ -3,8 +3,13 @@ import 'package:musicbud_flutter/services/api_service.dart';
 
 class UpdateLikesPage extends StatefulWidget {
   final ApiService apiService;
+  final String channelId;
 
-  const UpdateLikesPage({Key? key, required this.apiService}) : super(key: key);
+  const UpdateLikesPage({
+    Key? key,
+    required this.apiService,
+    required this.channelId,
+  }) : super(key: key);
 
   @override
   _UpdateLikesPageState createState() => _UpdateLikesPageState();
@@ -21,7 +26,7 @@ class _UpdateLikesPageState extends State<UpdateLikesPage> {
     });
 
     try {
-      final result = await widget.apiService.updateMyLikes();
+      final result = await widget.apiService.updateLikes(widget.channelId);
       if (result['status'] == 'success') {
         setState(() {
           _updateStatus = 'Likes updated successfully!';
@@ -50,11 +55,12 @@ class _UpdateLikesPageState extends State<UpdateLikesPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Spotify Account Not Connected'),
-          content: Text('Please connect your Spotify account to update your likes.'),
+          title: const Text('Spotify Account Not Connected'),
+          content:
+              const Text('Please connect your Spotify account to update your likes.'),
           actions: <Widget>[
             TextButton(
-              child: Text('OK'),
+              child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
                 // Navigate to the ConnectServicesPage or implement the logic to connect Spotify
@@ -70,20 +76,20 @@ class _UpdateLikesPageState extends State<UpdateLikesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Update My Likes'),
+        title: const Text('Update My Likes'),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (_isUpdating)
-              CircularProgressIndicator()
+              const CircularProgressIndicator()
             else
               ElevatedButton(
                 onPressed: _updateLikes,
-                child: Text('Update My Likes'),
+                child: const Text('Update My Likes'),
               ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(_updateStatus),
           ],
         ),

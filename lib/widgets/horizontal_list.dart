@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/models/common_track.dart';
-import 'package:musicbud_flutter/models/common_artist.dart';
-import 'package:musicbud_flutter/models/common_genre.dart';
-import 'package:musicbud_flutter/models/common_album.dart';
 
 class HorizontalList extends StatelessWidget {
   final String title;
@@ -32,7 +28,7 @@ class HorizontalList extends StatelessWidget {
               ),
               TextButton(
                 onPressed: onSeeAll,
-                child: Text('See All'),
+                child: const Text('See All'),
               ),
             ],
           ),

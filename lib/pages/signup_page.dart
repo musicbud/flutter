@@ -20,6 +20,10 @@ class _SignUpPageState extends State<SignUpPage> {
   bool _isLoading = false;
 
   Future<void> _register() async {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -31,30 +35,36 @@ class _SignUpPageState extends State<SignUpPage> {
           _passwordController.text,
           _emailController.text,
         );
+        if (!mounted) return;
 
         if (response['status'] == 'success') {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Registration successful')),
+          scaffoldMessenger.showSnackBar(
+            const SnackBar(content: Text('Registration successful')),
           );
-          
+
           // Add a delay before navigating
-          await Future.delayed(Duration(seconds: 2));
-          
+          await Future.delayed(const Duration(seconds: 2));
+          if (!mounted) return;
+
           // Navigate to the home page
-          Navigator.of(context).pushReplacementNamed('/home');
+          navigator.pushReplacementNamed('/home');
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Registration failed: ${response['message']}')),
+          scaffoldMessenger.showSnackBar(
+            SnackBar(
+                content: Text('Registration failed: ${response['message']}')),
           );
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
+        if (!mounted) return;
+        scaffoldMessenger.showSnackBar(
           SnackBar(content: Text('An error occurred: $e')),
         );
       } finally {
-        setState(() {
-          _isLoading = false;
-        });
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
     }
   }
@@ -75,7 +85,7 @@ class _SignUpPageState extends State<SignUpPage> {
               children: <Widget>[
                 TextFormField(
                   controller: _emailController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Email',
                     border: OutlineInputBorder(),
                   ),
@@ -86,10 +96,10 @@ class _SignUpPageState extends State<SignUpPage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextFormField(
                   controller: _usernameController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Username',
                     border: OutlineInputBorder(),
                   ),
@@ -100,10 +110,10 @@ class _SignUpPageState extends State<SignUpPage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextFormField(
                   controller: _passwordController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Password',
                     border: OutlineInputBorder(),
                   ),
@@ -115,10 +125,10 @@ class _SignUpPageState extends State<SignUpPage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextFormField(
                   controller: _confirmPasswordController,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Confirm Password',
                     border: OutlineInputBorder(),
                   ),
@@ -130,12 +140,12 @@ class _SignUpPageState extends State<SignUpPage> {
                     return null;
                   },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _isLoading ? null : _register,
                   child: _isLoading
-                      ? CircularProgressIndicator()
-                      : Text('Sign Up'),
+                      ? const CircularProgressIndicator()
+                      : const Text('Sign Up'),
                 ),
               ],
             ),

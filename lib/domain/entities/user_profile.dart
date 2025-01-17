@@ -3,13 +3,13 @@ import 'package:equatable/equatable.dart';
 class UserProfile extends Equatable {
   final String uid;
   final String username;
-  final String? email;
+  final String email;
   final String? photoUrl;
 
   const UserProfile({
     required this.uid,
     required this.username,
-    this.email,
+    required this.email,
     this.photoUrl,
   });
 

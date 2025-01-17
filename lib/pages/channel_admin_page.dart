@@ -5,7 +5,9 @@ class ChannelAdminPage extends StatefulWidget {
   final ChatService chatService;
   final int channelId;
 
-  const ChannelAdminPage({Key? key, required this.chatService, required this.channelId}) : super(key: key);
+  const ChannelAdminPage(
+      {Key? key, required this.chatService, required this.channelId})
+      : super(key: key);
 
   @override
   _ChannelAdminPageState createState() => _ChannelAdminPageState();
@@ -29,9 +31,11 @@ class _ChannelAdminPageState extends State<ChannelAdminPage> {
 
   Future<void> _fetchChannelData() async {
     try {
-      final roles = await widget.chatService.checkChannelRoles(widget.channelId);
-      final dashboard = await widget.chatService.getChannelDashboardData(widget.channelId);
-      
+      final roles =
+          await widget.chatService.checkChannelRoles(widget.channelId);
+      final dashboard =
+          await widget.chatService.getChannelDashboardData(widget.channelId);
+
       setState(() {
         isAdmin = roles['is_admin'] ?? false;
         isModerator = roles['is_moderator'] ?? false;
@@ -48,170 +52,281 @@ class _ChannelAdminPageState extends State<ChannelAdminPage> {
   }
 
   Future<void> _removeAdmin(int userId) async {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     try {
-      final response = await widget.chatService.removeAdmin(widget.channelId, userId);
+      final response =
+          await widget.chatService.removeAdmin(widget.channelId, userId);
+      if (!mounted) return;
+
       if (response['status'] == 'success') {
         _fetchChannelData();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Admin removed successfully')));
+        scaffoldMessenger.showSnackBar(
+            const SnackBar(content: Text('Admin removed successfully')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
+        scaffoldMessenger.showSnackBar(SnackBar(
+            content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
       }
     } catch (e) {
       print('Error removing admin: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: Unable to remove admin')));
+      if (!mounted) return;
+      scaffoldMessenger.showSnackBar(
+          const SnackBar(content: Text('Error: Unable to remove admin')));
     }
   }
 
   Future<void> _removeUser(int userId) async {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     try {
-      final response = await widget.chatService.removeChannelMember(widget.channelId, userId);
+      final response = await widget.chatService
+          .removeChannelMember(widget.channelId, userId);
+      if (!mounted) return;
+
       if (response['status'] == 'success') {
         _fetchChannelData();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User removed successfully')));
+        scaffoldMessenger.showSnackBar(
+            const SnackBar(content: Text('User removed successfully')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
+        scaffoldMessenger.showSnackBar(SnackBar(
+            content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
       }
     } catch (e) {
       print('Error removing user: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: Unable to remove user')));
+      if (!mounted) return;
+      scaffoldMessenger.showSnackBar(
+          const SnackBar(content: Text('Error: Unable to remove user')));
     }
   }
 
   Future<void> _addChannelMember() async {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     if (_addMemberController.text.isNotEmpty) {
       try {
-        final response = await widget.chatService.addChannelMember(widget.channelId, _addMemberController.text);
+        final response = await widget.chatService
+            .addChannelMember(widget.channelId, _addMemberController.text);
+        if (!mounted) return;
+
         if (response['status'] == 'success') {
           _addMemberController.clear();
           _fetchChannelData();
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Member added successfully')));
+          scaffoldMessenger.showSnackBar(
+              const SnackBar(content: Text('Member added successfully')));
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
+          scaffoldMessenger.showSnackBar(SnackBar(
+              content:
+                  Text('Error: ${response['message'] ?? 'Unknown error'}')));
         }
       } catch (e) {
         print('Error adding channel member: $e');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: Unable to add member')));
+        if (!mounted) return;
+        scaffoldMessenger.showSnackBar(
+            const SnackBar(content: Text('Error: Unable to add member')));
       }
     }
   }
 
   Future<void> _makeAdmin(int userId) async {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     try {
-      final response = await widget.chatService.makeAdmin(widget.channelId, userId);
+      final response =
+          await widget.chatService.makeAdmin(widget.channelId, userId);
+      if (!mounted) return;
+
       if (response['status'] == 'success') {
         _fetchChannelData();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User made admin successfully')));
+        scaffoldMessenger.showSnackBar(
+            const SnackBar(content: Text('User made admin successfully')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
+        scaffoldMessenger.showSnackBar(SnackBar(
+            content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
       }
     } catch (e) {
       print('Error making user admin: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: Unable to make user admin')));
+      if (!mounted) return;
+      scaffoldMessenger.showSnackBar(
+          const SnackBar(content: Text('Error: Unable to make user admin')));
     }
   }
 
   Future<void> _addModerator(int userId) async {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     try {
-      final response = await widget.chatService.addModerator(widget.channelId, userId);
+      final response =
+          await widget.chatService.addModerator(widget.channelId, userId);
+      if (!mounted) return;
+
       if (response['status'] == 'success') {
         _fetchChannelData();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Moderator added successfully')));
+        scaffoldMessenger.showSnackBar(
+            const SnackBar(content: Text('Moderator added successfully')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
+        scaffoldMessenger.showSnackBar(SnackBar(
+            content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
       }
     } catch (e) {
       print('Error adding moderator: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: Unable to add moderator')));
+      if (!mounted) return;
+      scaffoldMessenger.showSnackBar(
+          const SnackBar(content: Text('Error: Unable to add moderator')));
     }
   }
 
   Future<void> _removeModerator(int userId) async {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     try {
-      final response = await widget.chatService.removeModerator(widget.channelId, userId);
+      final response =
+          await widget.chatService.removeModerator(widget.channelId, userId);
+      if (!mounted) return;
+
       if (response['status'] == 'success') {
         _fetchChannelData();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Moderator removed successfully')));
+        scaffoldMessenger.showSnackBar(
+            const SnackBar(content: Text('Moderator removed successfully')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
+        scaffoldMessenger.showSnackBar(SnackBar(
+            content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
       }
     } catch (e) {
       print('Error removing moderator: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: Unable to remove moderator')));
+      if (!mounted) return;
+      scaffoldMessenger.showSnackBar(
+          const SnackBar(content: Text('Error: Unable to remove moderator')));
     }
   }
 
   Future<void> _acceptUser(int userId) async {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     try {
-      final response = await widget.chatService.acceptUser(widget.channelId, userId);
+      final response =
+          await widget.chatService.acceptUser(widget.channelId, userId);
+      if (!mounted) return;
+
       if (response['status'] == 'success') {
         _fetchChannelData();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User accepted successfully')));
+        scaffoldMessenger.showSnackBar(
+            const SnackBar(content: Text('User accepted successfully')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
+        scaffoldMessenger.showSnackBar(SnackBar(
+            content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
       }
     } catch (e) {
       print('Error accepting user: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: Unable to accept user')));
+      if (!mounted) return;
+      scaffoldMessenger.showSnackBar(
+          const SnackBar(content: Text('Error: Unable to accept user')));
     }
   }
 
   Future<void> _kickUser(int userId) async {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     try {
-      final response = await widget.chatService.kickUser(widget.channelId, userId);
+      final response =
+          await widget.chatService.kickUser(widget.channelId, userId);
+      if (!mounted) return;
+
       if (response['status'] == 'success') {
         _fetchChannelData();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User kicked successfully')));
+        scaffoldMessenger.showSnackBar(
+            const SnackBar(content: Text('User kicked successfully')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
+        scaffoldMessenger.showSnackBar(SnackBar(
+            content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
       }
     } catch (e) {
       print('Error kicking user: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: Unable to kick user')));
+      if (!mounted) return;
+      scaffoldMessenger.showSnackBar(
+          const SnackBar(content: Text('Error: Unable to kick user')));
     }
   }
 
   Future<void> _blockUser(int userId) async {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     try {
-      final response = await widget.chatService.blockUser(widget.channelId, userId);
+      final response =
+          await widget.chatService.blockUser(widget.channelId, userId);
+      if (!mounted) return;
+
       if (response['status'] == 'success') {
         _fetchChannelData();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User blocked successfully')));
+        scaffoldMessenger.showSnackBar(
+            const SnackBar(content: Text('User blocked successfully')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
+        scaffoldMessenger.showSnackBar(SnackBar(
+            content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
       }
     } catch (e) {
       print('Error blocking user: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: Unable to block user')));
+      if (!mounted) return;
+      scaffoldMessenger.showSnackBar(
+          const SnackBar(content: Text('Error: Unable to block user')));
     }
   }
 
   Future<void> _unblockUser(int userId) async {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     try {
-      final response = await widget.chatService.unblockUser(widget.channelId, userId);
+      final response =
+          await widget.chatService.unblockUser(widget.channelId, userId);
+      if (!mounted) return;
+
       if (response['status'] == 'success') {
         _fetchChannelData();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('User unblocked successfully')));
+        scaffoldMessenger.showSnackBar(
+            const SnackBar(content: Text('User unblocked successfully')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
+        scaffoldMessenger.showSnackBar(SnackBar(
+            content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
       }
     } catch (e) {
       print('Error unblocking user: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: Unable to unblock user')));
+      if (!mounted) return;
+      scaffoldMessenger.showSnackBar(
+          const SnackBar(content: Text('Error: Unable to unblock user')));
     }
   }
 
   Future<void> _deleteMessage(int messageId) async {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
     try {
-      final response = await widget.chatService.deleteMessage(widget.channelId, messageId);
+      final response =
+          await widget.chatService.deleteMessage(widget.channelId, messageId);
+      if (!mounted) return;
+
       if (response['status'] == 'success') {
         _fetchChannelData();
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Message deleted successfully')));
+        scaffoldMessenger.showSnackBar(
+            const SnackBar(content: Text('Message deleted successfully')));
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
+        scaffoldMessenger.showSnackBar(SnackBar(
+            content: Text('Error: ${response['message'] ?? 'Unknown error'}')));
       }
     } catch (e) {
       print('Error deleting message: $e');
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: Unable to delete message')));
+      if (!mounted) return;
+      scaffoldMessenger.showSnackBar(
+          const SnackBar(content: Text('Error: Unable to delete message')));
     }
   }
 
@@ -219,13 +334,15 @@ class _ChannelAdminPageState extends State<ChannelAdminPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Channel Admin'),
+        title: const Text('Channel Admin'),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : isAdmin || isModerator
               ? _buildAdminContent()
-              : Center(child: Text('You do not have permission to access this page.')),
+              : const Center(
+                  child:
+                      Text('You do not have permission to access this page.')),
     );
   }
 
@@ -236,16 +353,19 @@ class _ChannelAdminPageState extends State<ChannelAdminPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Channel Dashboard', style: Theme.of(context).textTheme.titleLarge),
-            SizedBox(height: 16),
+            Text('Channel Dashboard',
+                style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 16),
             _buildDashboardInfo(),
-            SizedBox(height: 24),
-            Text('Channel Members', style: Theme.of(context).textTheme.titleMedium),
-            SizedBox(height: 8),
+            const SizedBox(height: 24),
+            Text('Channel Members',
+                style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
             _buildMembersList(),
-            SizedBox(height: 24),
-            Text('Add New Member', style: Theme.of(context).textTheme.titleMedium),
-            SizedBox(height: 8),
+            const SizedBox(height: 24),
+            Text('Add New Member',
+                style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
             _buildAddMemberForm(),
           ],
         ),
@@ -261,10 +381,14 @@ class _ChannelAdminPageState extends State<ChannelAdminPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Channel Name: ${dashboardData['channel_name'] ?? 'N/A'}'),
-            Text('Total Members: ${(dashboardData['members'] as List?)?.length ?? 'N/A'}'),
-            Text('Total Messages: ${(dashboardData['messages'] as List?)?.length ?? 'N/A'}'),
-            Text('Admins: ${(dashboardData['admins'] as List?)?.length ?? 'N/A'}'),
-            Text('Moderators: ${(dashboardData['moderators'] as List?)?.length ?? 'N/A'}'),
+            Text(
+                'Total Members: ${(dashboardData['members'] as List?)?.length ?? 'N/A'}'),
+            Text(
+                'Total Messages: ${(dashboardData['messages'] as List?)?.length ?? 'N/A'}'),
+            Text(
+                'Admins: ${(dashboardData['admins'] as List?)?.length ?? 'N/A'}'),
+            Text(
+                'Moderators: ${(dashboardData['moderators'] as List?)?.length ?? 'N/A'}'),
           ],
         ),
       ),
@@ -273,32 +397,32 @@ class _ChannelAdminPageState extends State<ChannelAdminPage> {
 
   Widget _buildMembersList() {
     List<Map<String, dynamic>> allMembers = [];
-    
+
     // Add admins
-    allMembers.addAll((dashboardData['admins'] as List? ?? []).map((admin) => {...admin, 'role': 'Admin'}));
-    
+    allMembers.addAll((dashboardData['admins'] as List? ?? [])
+        .map((admin) => {...admin, 'role': 'Admin'}));
+
     // Add moderators
-    allMembers.addAll((dashboardData['moderators'] as List? ?? []).map((mod) => {...mod, 'role': 'Moderator'}));
-    
+    allMembers.addAll((dashboardData['moderators'] as List? ?? [])
+        .map((mod) => {...mod, 'role': 'Moderator'}));
+
     // Add regular members (excluding those already added as admins or moderators)
     Set adminModIds = Set.from(allMembers.map((m) => m['id']));
     allMembers.addAll((dashboardData['members'] as List? ?? [])
-      .where((member) => !adminModIds.contains(member['id']))
-      .map((member) => {...member, 'role': 'Member'}));
+        .where((member) => !adminModIds.contains(member['id']))
+        .map((member) => {...member, 'role': 'Member'}));
 
     return Card(
       child: ListView.builder(
         shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         itemCount: allMembers.length,
         itemBuilder: (context, index) {
           final user = allMembers[index];
           return ListTile(
             title: Text(user['username'] ?? 'Unknown User'),
             subtitle: Text(user['role'] ?? 'Member'),
-            trailing: isAdmin
-                ? _buildAdminActions(user)
-                : null,
+            trailing: isAdmin ? _buildAdminActions(user) : null,
           );
         },
       ),
@@ -309,16 +433,17 @@ class _ChannelAdminPageState extends State<ChannelAdminPage> {
     if (user['role'] == 'Admin') {
       // Don't show remove option for the current user
       if (user['username'] == widget.chatService.currentUsername) {
-        return SizedBox.shrink(); // Return an empty SizedBox instead of null
+        return const SizedBox
+            .shrink(); // Return an empty SizedBox instead of null
       }
       return IconButton(
-        icon: Icon(Icons.admin_panel_settings_outlined),
+        icon: const Icon(Icons.admin_panel_settings_outlined),
         onPressed: () => _removeAdmin(user['id']),
         tooltip: 'Remove Admin',
       );
     } else {
       return IconButton(
-        icon: Icon(Icons.person_remove_outlined),
+        icon: const Icon(Icons.person_remove_outlined),
         onPressed: () => _removeUser(user['id']),
         tooltip: 'Remove User',
       );
@@ -331,16 +456,16 @@ class _ChannelAdminPageState extends State<ChannelAdminPage> {
         Expanded(
           child: TextField(
             controller: _addMemberController,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               hintText: 'Enter username',
               border: OutlineInputBorder(),
             ),
           ),
         ),
-        SizedBox(width: 16),
+        const SizedBox(width: 16),
         ElevatedButton(
           onPressed: _addChannelMember,
-          child: Text('Add Member'),
+          child: const Text('Add Member'),
         ),
       ],
     );

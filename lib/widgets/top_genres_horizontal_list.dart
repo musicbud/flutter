@@ -74,7 +74,7 @@ class _TopGenresHorizontalListState extends State<TopGenresHorizontalList> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading && _genres.isEmpty) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
 
     return SizedBox(
@@ -109,7 +109,7 @@ class _TopGenresHorizontalListState extends State<TopGenresHorizontalList> {
         child: ElevatedButton(
           onPressed: _isLoading ? null : _loadMore,
           child: _isLoading
-              ? SizedBox(
+              ? const SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
@@ -117,7 +117,7 @@ class _TopGenresHorizontalListState extends State<TopGenresHorizontalList> {
                     valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   ),
                 )
-              : Text('Load More'),
+              : const Text('Load More'),
         ),
       ),
     );

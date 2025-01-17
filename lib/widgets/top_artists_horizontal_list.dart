@@ -80,7 +80,7 @@ class _TopArtistsHorizontalListState extends State<TopArtistsHorizontalList> {
   @override
   Widget build(BuildContext context) {
     if (isLoading && artists.isEmpty) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (errorMessage.isNotEmpty && artists.isEmpty) {
@@ -110,7 +110,7 @@ class _TopArtistsHorizontalListState extends State<TopArtistsHorizontalList> {
       child: Center(
         child: ElevatedButton(
           onPressed: isLoadingMore ? null : _loadMore,
-          child: isLoadingMore ? CircularProgressIndicator() : Text('Load More'),
+          child: isLoadingMore ? const CircularProgressIndicator() : const Text('Load More'),
         ),
       ),
     );
@@ -131,11 +131,11 @@ class _TopArtistsHorizontalListState extends State<TopArtistsHorizontalList> {
                 width: 100,
                 height: 100,
                 color: Colors.grey,
-                child: Icon(Icons.error),
+                child: const Icon(Icons.error),
               );
             },
           ),
-          Text(artist.name ?? 'Unknown Artist'),
+          Text(artist.name),
         ],
       ),
     );

@@ -8,7 +8,8 @@ import 'package:musicbud_flutter/pages/played_tracks_map_page.dart';
 class SpotifyControlPage extends StatefulWidget {
   final ApiService apiService;
 
-  const SpotifyControlPage({Key? key, required this.apiService}) : super(key: key);
+  const SpotifyControlPage({Key? key, required this.apiService})
+      : super(key: key);
 
   @override
   _SpotifyControlPageState createState() => _SpotifyControlPageState();
@@ -29,35 +30,35 @@ class _SpotifyControlPageState extends State<SpotifyControlPage> {
   Future<void> _sendLocation() async {
     try {
       final position = await _getCurrentLocation();
-      await widget.apiService.saveLocation(position.latitude, position.longitude);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Location sent successfully')),
-      );
+      await widget.apiService
+          .saveLocation(position.latitude, position.longitude);
+      if (!mounted) return;
+      _showSnackBar(context, 'Location sent successfully');
     } catch (e) {
       print('Error sending location: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to send location')),
-      );
+      if (!mounted) return;
+      _showSnackBar(context, 'Failed to send location');
     }
   }
 
   Future<void> _fetchPlayedTracks() async {
     try {
       final tracks = await widget.apiService.getPlayedTracks();
+      if (!mounted) return;
       setState(() {
         _playedTracks = tracks;
       });
     } catch (e) {
       print('Error fetching played tracks: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load played tracks')),
-      );
+      if (!mounted) return;
+      _showSnackBar(context, 'Failed to load played tracks');
     }
   }
 
   Future<void> _fetchSpotifyDevices() async {
     try {
       final devices = await widget.apiService.getSpotifyDevices();
+      if (!mounted) return;
       setState(() {
         _spotifyDevices = devices;
         if (devices.isNotEmpty) {
@@ -66,29 +67,26 @@ class _SpotifyControlPageState extends State<SpotifyControlPage> {
       });
     } catch (e) {
       print('Error fetching Spotify devices: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load Spotify devices')),
-      );
+      if (!mounted) return;
+      _showSnackBar(context, 'Failed to load Spotify devices');
     }
   }
 
   Future<void> _playSpotifyTrack(String trackId) async {
     try {
-      final success = await widget.apiService.playSpotifyTrack(trackId, deviceId: _selectedDeviceId);
+      final success = await widget.apiService
+          .playSpotifyTrack(trackId, deviceId: _selectedDeviceId);
+      if (!mounted) return;
+
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Track played on Spotify')),
-        );
+        _showSnackBar(context, 'Track played on Spotify');
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to play track on Spotify')),
-        );
+        _showSnackBar(context, 'Failed to play track on Spotify');
       }
     } catch (e) {
       print('Error playing Spotify track: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error playing track on Spotify')),
-      );
+      if (!mounted) return;
+      _showSnackBar(context, 'Error playing track on Spotify');
     }
   }
 
@@ -98,7 +96,7 @@ class _SpotifyControlPageState extends State<SpotifyControlPage> {
       itemBuilder: (context, index) {
         final track = _playedTracks[index];
         return ListTile(
-          title: Text(track.name ?? 'Unknown Track'),
+          title: Text(track.name),
           subtitle: Text(track.artistName ?? 'Unknown Artist'),
           onTap: () {
             Navigator.push(
@@ -112,24 +110,24 @@ class _SpotifyControlPageState extends State<SpotifyControlPage> {
             );
           },
           trailing: IconButton(
-            icon: Icon(Icons.play_arrow),
+            icon: const Icon(Icons.play_arrow),
             onPressed: () async {
               try {
                 final position = await Geolocator.getCurrentPosition();
                 await widget.apiService.playTrackWithLocation(
-                  track.id,
-                  track.name ?? 'Unknown Track',
+                  track.id ?? '',
+                  track.name,
                   position.latitude,
                   position.longitude,
                 );
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Track played with location')),
-                );
+                if (context.mounted) {
+                  _showSnackBar(context, 'Track played with location');
+                }
               } catch (e) {
                 print('Error playing track with location: $e');
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Failed to play track with location')),
-                );
+                if (context.mounted) {
+                  _showSnackBar(context, 'Failed to play track with location');
+                }
               }
             },
           ),
@@ -152,7 +150,7 @@ class _SpotifyControlPageState extends State<SpotifyControlPage> {
           _selectedDeviceId = newValue;
         });
       },
-      hint: Text('Select Spotify Device'),
+      hint: const Text('Select Spotify Device'),
     );
   }
 
@@ -180,24 +178,30 @@ class _SpotifyControlPageState extends State<SpotifyControlPage> {
     return await Geolocator.getCurrentPosition();
   }
 
+  void _showSnackBar(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Spotify Control'),
+        title: const Text('Spotify Control'),
         actions: [
           IconButton(
-            icon: Icon(Icons.devices),
+            icon: const Icon(Icons.devices),
             onPressed: () {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Select Spotify Device'),
+                    title: const Text('Select Spotify Device'),
                     content: _buildSpotifyDeviceDropdown(),
                     actions: [
                       TextButton(
-                        child: Text('Close'),
+                        child: const Text('Close'),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
@@ -209,17 +213,18 @@ class _SpotifyControlPageState extends State<SpotifyControlPage> {
             },
           ),
           IconButton(
-            icon: Icon(Icons.location_on),
+            icon: const Icon(Icons.location_on),
             onPressed: _sendLocation,
             tooltip: 'Send Location',
           ),
           IconButton(
-            icon: Icon(Icons.map),
+            icon: const Icon(Icons.map),
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => PlayedTracksMapPage(apiService: widget.apiService),
+                  builder: (context) =>
+                      PlayedTracksMapPage(apiService: widget.apiService),
                 ),
               );
             },

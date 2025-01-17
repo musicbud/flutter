@@ -4,7 +4,8 @@ import 'package:musicbud_flutter/services/chat_service.dart';
 class CreateChannelPage extends StatefulWidget {
   final ChatService chatService;
 
-  const CreateChannelPage({Key? key, required this.chatService}) : super(key: key);
+  const CreateChannelPage({Key? key, required this.chatService})
+      : super(key: key);
 
   @override
   _CreateChannelPageState createState() => _CreateChannelPageState();
@@ -16,6 +17,12 @@ class _CreateChannelPageState extends State<CreateChannelPage> {
   final _descriptionController = TextEditingController();
   bool _isPrivate = false;
 
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   Future<void> _createChannel() async {
     if (_formKey.currentState!.validate()) {
       try {
@@ -24,18 +31,18 @@ class _CreateChannelPageState extends State<CreateChannelPage> {
           'description': _descriptionController.text,
           'is_private': _isPrivate,
         });
+
+        if (!mounted) return;
+
         if (response['status'] == 'success') {
           Navigator.pop(context, true);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error creating channel: ${response['message']}')),
-          );
+          _showSnackBar('Error creating channel: ${response['message']}');
         }
       } catch (e) {
         print('Error creating channel: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('An error occurred. Please try again.')),
-        );
+        if (!mounted) return;
+        _showSnackBar('An error occurred. Please try again.');
       }
     }
   }
@@ -44,7 +51,7 @@ class _CreateChannelPageState extends State<CreateChannelPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Channel'),
+        title: const Text('Create Channel'),
       ),
       body: Form(
         key: _formKey,
@@ -55,7 +62,7 @@ class _CreateChannelPageState extends State<CreateChannelPage> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: InputDecoration(labelText: 'Channel Name'),
+                decoration: const InputDecoration(labelText: 'Channel Name'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a channel name';
@@ -65,10 +72,10 @@ class _CreateChannelPageState extends State<CreateChannelPage> {
               ),
               TextFormField(
                 controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: const InputDecoration(labelText: 'Description'),
               ),
               SwitchListTile(
-                title: Text('Private Channel'),
+                title: const Text('Private Channel'),
                 value: _isPrivate,
                 onChanged: (bool value) {
                   setState(() {
@@ -78,7 +85,7 @@ class _CreateChannelPageState extends State<CreateChannelPage> {
               ),
               ElevatedButton(
                 onPressed: _createChannel,
-                child: Text('Create Channel'),
+                child: const Text('Create Channel'),
               ),
             ],
           ),

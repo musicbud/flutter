@@ -7,8 +7,6 @@ import 'package:musicbud_flutter/models/common_track.dart';
 import 'package:musicbud_flutter/models/common_artist.dart';
 import 'package:musicbud_flutter/models/common_genre.dart';
 import 'package:musicbud_flutter/models/common_album.dart';
-import 'package:musicbud_flutter/models/common_anime.dart';
-import 'package:musicbud_flutter/models/common_manga.dart';
 import 'package:musicbud_flutter/widgets/horizontal_list.dart';
 import 'package:musicbud_flutter/models/bud_match.dart';
 import 'package:musicbud_flutter/pages/common_items_page.dart';
@@ -18,22 +16,18 @@ import 'package:musicbud_flutter/widgets/track_list_item.dart';
 import 'package:musicbud_flutter/widgets/artist_list_item.dart';
 import 'package:musicbud_flutter/widgets/genre_list_item.dart';
 import 'package:musicbud_flutter/widgets/album_list_item.dart';
-import 'package:musicbud_flutter/widgets/anime_list_item.dart';
-import 'package:musicbud_flutter/widgets/manga_list_item.dart';
-import 'package:flutter/src/widgets/image.dart' as flutter_image;
-import 'package:musicbud_flutter/models/common_track.dart' as common_track;
 import 'package:musicbud_flutter/widgets/bud_match_list_item.dart';
 import 'package:musicbud_flutter/pages/buds_category_page.dart';
 import 'package:musicbud_flutter/pages/chat_home_page.dart';
 import 'package:musicbud_flutter/services/chat_service.dart';
-import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/pages/channel_chat_page.dart';                         
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:musicbud_flutter/pages/track_details_page.dart';
 import 'package:musicbud_flutter/pages/artist_details_page.dart';
 import 'package:musicbud_flutter/pages/genre_details_page.dart';
-
-
+import 'package:musicbud_flutter/widgets/anime_list_item.dart';
+import 'package:musicbud_flutter/widgets/manga_list_item.dart';
+import '../models/common_anime.dart';
+import '../models/common_manga.dart';
 
 class ProfilePage extends StatefulWidget {
   final ApiService apiService;
@@ -47,57 +41,55 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   int _selectedIndex = 0;
   bool _isAuthenticated = false;
-  UserProfile? _userProfile;
-  List<CommonArtist> _commonTopArtists = [];
 
   @override
   void initState() {
     super.initState();
     _checkAuthentication();
-    _loadUserProfile();
+    // _loadUserProfile();
+  }
+
+  void _navigateToLogin() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => LoginPage(
+          chatService: ChatService(widget.apiService.dio),
+          apiService: widget.apiService,
+        ),
+      ),
+    );
   }
 
   Future<void> _checkAuthentication() async {
     try {
       await widget.apiService.getUserProfile();
+      if (!context.mounted) return;
       setState(() {
         _isAuthenticated = true;
       });
     } catch (e) {
       print('Authentication failed: $e');
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => LoginPage(
-          chatService: ChatService(widget.apiService.dio.options.baseUrl),
-          apiService: widget.apiService,
-        )),
-      );
+      if (!context.mounted) return;
+      _navigateToLogin();
     }
   }
 
   Future<void> _loadUserProfile() async {
     try {
-      final userProfile = await widget.apiService.getUserProfile();
+      if (!mounted) return;
       setState(() {
-        _userProfile = userProfile;
       });
     } catch (e) {
       print('Error loading user profile: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load user profile. Please try again.')),
-      );
+      if (!mounted) return;
+      _handleError('Failed to load user profile. Please try again.');
     }
   }
 
-  Future<void> _loadCommonTopArtists(String budId) async {
-    try {
-      final commonTopArtists = await widget.apiService.getCommonTopArtists(budId);
-      setState(() {
-        _commonTopArtists = commonTopArtists;
-      });
-    } catch (e) {
-      print('Error loading common top artists: $e');
-      // Handle the error (e.g., show an error message to the user)
-    }
+  void _handleError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   String _getTitle() {
@@ -118,7 +110,7 @@ class _ProfilePageState extends State<ProfilePage> {
       case 0:
         return ProfilePageContent(apiService: widget.apiService);
       case 1:
-        return BudsPage();
+        return const BudsPage();
       case 2:
         return FutureBuilder<String?>(
           future: getUsername(),
@@ -126,14 +118,15 @@ class _ProfilePageState extends State<ProfilePage> {
             if (snapshot.connectionState == ConnectionState.done) {
               if (snapshot.hasData && snapshot.data != null) {
                 return ChatHomePage(
-                  chatService: ChatService(widget.apiService.dio.options.baseUrl),
+                  chatService: ChatService(widget.apiService.dio),
                   currentUsername: snapshot.data!,
                 );
               } else {
-                return Center(child: Text('Please log in to access chat.'));
+                return const Center(
+                    child: Text('Please log in to access chat.'));
               }
             } else {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             }
           },
         );
@@ -156,7 +149,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     if (!_isAuthenticated) {
-      return Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
@@ -164,7 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
         title: Text(_getTitle()),
         actions: [
           IconButton(
-            icon: Icon(Icons.people),
+            icon: const Icon(Icons.people),
             onPressed: () {
               Navigator.push(
                 context,
@@ -200,22 +193,24 @@ class _ProfilePageState extends State<ProfilePage> {
         onPressed: () async {
           String? username = await getUsername();
           if (username != null) {
+            if (!context.mounted) return;
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => ChatHomePage(
-                  chatService: ChatService(widget.apiService.dio.options.baseUrl),
+                  chatService: ChatService(widget.apiService.dio),
                   currentUsername: username,
                 ),
               ),
             );
           } else {
+            if (!context.mounted) return;
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Please log in first')),
+              const SnackBar(content: Text('Please log in first')),
             );
           }
         },
-        child: Icon(Icons.chat),
+        child: const Icon(Icons.chat),
       ),
     );
   }
@@ -224,7 +219,8 @@ class _ProfilePageState extends State<ProfilePage> {
 class ProfilePageContent extends StatefulWidget {
   final ApiService apiService;
 
-  const ProfilePageContent({Key? key, required this.apiService}) : super(key: key);
+  const ProfilePageContent({Key? key, required this.apiService})
+      : super(key: key);
 
   @override
   _ProfilePageContentState createState() => _ProfilePageContentState();
@@ -245,8 +241,8 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
   List<CommonTrack> _playedTracks = [];
 
   // Anime-related lists
-  // List<CommonAnime> _topAnime = [];
-  // List<CommonManga> _topManga = [];
+  List<CommonAnime> _topAnime = [];
+  List<CommonManga> _topManga = [];
 
   @override
   void initState() {
@@ -267,50 +263,52 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
       await _loadTopArtists();
       await _loadTopGenres();
       await _loadPlayedTracks();
-      // await _loadTopAnime();
-      // await _loadTopManga();
     } catch (e) {
       print('Error loading data: $e');
+      if (!mounted) return;
       setState(() {
         _error = e.toString();
       });
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
     }
+
+    if (!mounted) return;
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Future<void> _loadUserProfile() async {
     try {
       final userProfile = await _apiService.getUserProfile();
+      if (!mounted) return;
       setState(() {
         _userProfile = userProfile;
       });
     } catch (e) {
       print('Error loading user profile: $e');
-      rethrow;
+      if (!mounted) return;
+      _handleError('Failed to load user profile. Please try again.');
     }
   }
 
   Future<void> _loadTopTracks() async {
     try {
       final topTracks = await _apiService.getTopTracks();
+      if (!context.mounted) return;
       setState(() {
         _topTracks = topTracks;
       });
     } catch (e) {
       print('Error loading top tracks: $e');
-      // Show a user-friendly error message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unable to load top tracks. Please try again later.')),
-      );
+      if (!mounted) return;
+      _handleError('Unable to load top tracks. Please try again later.');
     }
   }
 
   Future<void> _loadTopArtists() async {
     try {
       final topArtists = await _apiService.getTopArtists();
+      if (!context.mounted) return;
       setState(() {
         _topArtists = topArtists;
       });
@@ -323,6 +321,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
   Future<void> _loadTopGenres() async {
     try {
       final genres = await _apiService.getTopGenres();
+      if (!context.mounted) return;
       setState(() {
         _topGenres = genres.map((genre) => CommonGenre(name: genre)).toList();
       });
@@ -335,6 +334,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
   Future<void> _loadPlayedTracks() async {
     try {
       final tracks = await _apiService.getPlayedTracks();
+      if (!context.mounted) return;
       setState(() {
         _playedTracks = tracks;
       });
@@ -344,41 +344,43 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
     }
   }
 
-  // Future<void> _loadTopAnime() async {
-  //   try {
-  //     final topAnime = await _apiService.getTopAnime();
-  //     setState(() {
-  //       _topAnime = topAnime;
-  //     });
-  //   } catch (e) {
-  //     print('Error loading top anime: $e');
-  //     setState(() {
-  //       _topAnime = []; // Set to an empty list in case of an error
-  //     });
-  //   }
-  // }
+  Future<void> _loadTopAnime() async {
+    try {
+      final topAnime = await _apiService.getTopAnime();
+      setState(() {
+        _topAnime = topAnime;
+      });
+    } catch (e) {
+      print('Error loading top anime: $e');
+      setState(() {
+        _topAnime = []; // Set to an empty list in case of an error
+      });
+    }
+  }
 
-  // Future<void> _loadTopManga() async {
-  //   try {
-  //     final topManga = await _apiService.getTopManga();
-  //     setState(() {
-  //       _topManga = topManga;
-  //     });
-  //   } catch (e) {
-  //     print('Error loading top manga: $e');
-  //     setState(() {
-  //       _topManga = []; // Set to an empty list in case of an error
-  //     });
-  //   }
-  // }
+  Future<void> _loadTopManga() async {
+    try {
+      final topManga = await _apiService.getTopManga();
+      setState(() {
+        _topManga = topManga;
+      });
+    } catch (e) {
+      print('Error loading top manga: $e');
+      setState(() {
+        _topManga = []; // Set to an empty list in case of an error
+      });
+    }
+  }
 
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       try {
-        final String? newPhotoUrl = await _apiService.uploadProfilePhoto(image.path);
-        
+        final String? newPhotoUrl =
+            await _apiService.uploadProfilePhoto(image.path);
+        if (!context.mounted) return;
+
         if (newPhotoUrl != null && _userProfile != null) {
           setState(() {
             _userProfile = _userProfile!.copyWith(photoUrl: newPhotoUrl);
@@ -386,17 +388,22 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
         }
       } catch (e) {
         print('Error uploading image: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to upload image. Please try again.')),
-        );
+        if (!mounted) return;
+        _handleError('Failed to upload image. Please try again.');
       }
     }
+  }
+
+  void _handleError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Center(child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
 
     if (_error != null) {
@@ -405,10 +412,10 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(_error!),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _initializeApiAndLoadData,
-              child: Text('Retry'),
+              child: const Text('Retry'),
             ),
           ],
         ),
@@ -418,9 +425,9 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
     return ListView(
       children: [
         _buildUserProfileSection(),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         _buildServiceDropdown(),
-        SizedBox(height: 20),
+        const SizedBox(height: 20),
         ..._buildContentLists(),
         _buildCommonItemsSection(context),
       ],
@@ -429,7 +436,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
 
   Widget _buildUserProfileSection() {
     if (_userProfile == null) {
-      return Center(child: Text('User profile not available'));
+      return const Center(child: Text('User profile not available'));
     }
 
     return Center(
@@ -442,27 +449,27 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
               child: CircleAvatar(
                 radius: 50,
                 backgroundImage: _userProfile?.photoUrl != null
-                  ? NetworkImage(_userProfile!.photoUrl!)
-                  : null,
+                    ? NetworkImage(_userProfile!.photoUrl!)
+                    : null,
                 child: _userProfile?.photoUrl == null
-                  ? Icon(Icons.person, size: 50)
-                  : null,
+                    ? const Icon(Icons.person, size: 50)
+                    : null,
               ),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
               _userProfile!.displayName ?? _userProfile!.username,
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(_userProfile!.email),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             if (_userProfile!.bio != null)
               Text(
                 _userProfile!.bio!,
                 textAlign: TextAlign.center,
               ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -471,17 +478,24 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
                   size: 12,
                   color: _userProfile!.isActive ? Colors.green : Colors.red,
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(
                   _userProfile!.isActive ? 'Active' : 'Inactive',
-                  style: TextStyle(color: _userProfile!.isActive ? Colors.green : Colors.red),
+                  style: TextStyle(
+                      color:
+                          _userProfile!.isActive ? Colors.green : Colors.red),
                 ),
               ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              _userProfile!.isAuthenticated ? 'Authenticated' : 'Not Authenticated',
-              style: TextStyle(color: _userProfile!.isAuthenticated ? Colors.blue : Colors.orange),
+              _userProfile!.isAuthenticated
+                  ? 'Authenticated'
+                  : 'Not Authenticated',
+              style: TextStyle(
+                  color: _userProfile!.isAuthenticated
+                      ? Colors.blue
+                      : Colors.orange),
             ),
           ],
         ),
@@ -502,7 +516,8 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
             });
           }
         },
-        items: ContentService.values.map<DropdownMenuItem<ContentService>>((ContentService value) {
+        items: ContentService.values
+            .map<DropdownMenuItem<ContentService>>((ContentService value) {
           return DropdownMenuItem<ContentService>(
             value: value,
             child: Text(value.name),
@@ -517,10 +532,12 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
       return [
         HorizontalList(
           title: 'Top Tracks',
-          items: _topTracks.map((track) => SizedBox(
-            width: 150, // Set a fixed width for each item
-            child: _buildTrackItem(track),
-          )).toList(),
+          items: _topTracks
+              .map((track) => SizedBox(
+                    width: 150, // Set a fixed width for each item
+                    child: _buildTrackItem(track),
+                  ))
+              .toList(),
           onSeeAll: () {
             Navigator.push(
               context,
@@ -536,10 +553,12 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
         ),
         HorizontalList(
           title: 'Top Artists',
-          items: _topArtists.map((artist) => SizedBox(
-            width: 150, // Set a fixed width for each item
-            child: _buildArtistItem(artist),
-          )).toList(),
+          items: _topArtists
+              .map((artist) => SizedBox(
+                    width: 150, // Set a fixed width for each item
+                    child: _buildArtistItem(artist),
+                  ))
+              .toList(),
           onSeeAll: () {
             Navigator.push(
               context,
@@ -562,10 +581,12 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
         ),
         HorizontalList(
           title: 'Recently Played',
-          items: _playedTracks.map((track) => SizedBox(
-            width: 150, // Set a fixed width for each item
-            child: _buildTrackItem(track),
-          )).toList(),
+          items: _playedTracks
+              .map((track) => SizedBox(
+                    width: 150, // Set a fixed width for each item
+                    child: _buildTrackItem(track),
+                  ))
+              .toList(),
           onSeeAll: () {
             Navigator.push(
               context,
@@ -579,14 +600,17 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
             );
           },
         ),
-        SizedBox(height: 16), // Add some space before the Top Genres section
+        const SizedBox(
+            height: 16), // Add some space before the Top Genres section
         if (_topGenres.isNotEmpty)
           HorizontalList(
             title: 'Top Genres',
-            items: _topGenres.map((genre) => SizedBox(
-              width: 150, // Set a fixed width for each item
-              child: _buildGenreItem(genre),
-            )).toList(),
+            items: _topGenres
+                .map((genre) => SizedBox(
+                      width: 150, // Set a fixed width for each item
+                      child: _buildGenreItem(genre),
+                    ))
+                .toList(),
             onSeeAll: () {
               // Navigate to see all genres
             },
@@ -594,44 +618,48 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
       ];
     } else if (_selectedService == ContentService.anime) {
       return [
-        // HorizontalList(
-        //   title: 'Top Anime',
-        //   items: _topAnime.map((anime) => SizedBox(
-        //     width: 150, // Set a fixed width for each item
-        //     child: _buildAnimeItem(anime),
-        //   )).toList(),
-        //   onSeeAll: () {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //         builder: (context) => CommonItemsPage<CommonAnime>(
-        //           title: 'Top Anime',
-        //           fetchItems: (page) => _apiService.getTopAnime(page: page),
-        //           itemBuilder: (context, anime) => AnimeListItem(anime: anime),
-        //         ),
-        //       ),
-        //     );
-        //   },
-        // ),
-        // HorizontalList(
-        //   title: 'Top Manga',
-        //   items: _topManga.map((manga) => SizedBox(
-        //     width: 150, // Set a fixed width for each item
-        //     child: _buildMangaItem(manga),
-        //   )).toList(),
-        //   onSeeAll: () {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //         builder: (context) => CommonItemsPage<CommonManga>(
-        //           title: 'Top Manga',
-        //           fetchItems: (page) => _apiService.getTopManga(page: page),
-        //           itemBuilder: (context, manga) => MangaListItem(manga: manga),
-        //         ),
-        //       ),
-        //     );
-        //   },
-        // ),
+        HorizontalList(
+          title: 'Top Anime',
+          items: _topAnime
+              .map((anime) => SizedBox(
+                    width: 150, // Set a fixed width for each item
+                    child: _buildAnimeItem(anime),
+                  ))
+              .toList(),
+          onSeeAll: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CommonItemsPage<CommonAnime>(
+                  title: 'Top Anime',
+                  fetchItems: (page) => _apiService.getTopAnime(page: page),
+                  itemBuilder: (context, anime) => AnimeListItem(anime: anime),
+                ),
+              ),
+            );
+          },
+        ),
+        HorizontalList(
+          title: 'Top Manga',
+          items: _topManga
+              .map((manga) => SizedBox(
+                    width: 150, // Set a fixed width for each item
+                    child: _buildMangaItem(manga),
+                  ))
+              .toList(),
+          onSeeAll: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CommonItemsPage<CommonManga>(
+                  title: 'Top Manga',
+                  fetchItems: (page) => _apiService.getTopManga(page: page),
+                  itemBuilder: (context, manga) => MangaListItem(manga: manga),
+                ),
+              ),
+            );
+          },
+        ),
       ];
     } else {
       return [];
@@ -663,7 +691,7 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
           context,
           MaterialPageRoute(
             builder: (context) => ArtistDetailsPage(
-              artistId: artist.id ?? '',  // Use id instead of uid
+              artistId: artist.id ?? '', // Use id instead of uid
               artistName: artist.name ?? 'Unknown Artist',
               apiService: _apiService,
             ),
@@ -681,8 +709,8 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
           context,
           MaterialPageRoute(
             builder: (context) => GenreDetailsPage(
-              genreId: genre.name ?? '',  // Use name as the ID for genres
-              genreName: genre.name ?? 'Unknown Genre',
+              genreId: genre.name, // Use name as the ID for genres
+              genreName: genre.name,
               apiService: _apiService,
             ),
           ),
@@ -700,30 +728,61 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
     );
   }
 
-  // Widget _buildAnimeItem(CommonAnime anime) {
-  //   return AnimeListItem(
-  //     anime: anime,
-  //     onTap: () {
-  //       // Handle anime tap
-  //     },
-  //   );
-  // }
+  Widget _buildAnimeItem(CommonAnime anime) {
+    return Card(
+      child: Column(
+        children: [
+          Image.network(
+            anime.imageUrl,
+            height: 100,
+            width: 100,
+            fit: BoxFit.cover,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              anime.title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-  // Widget _buildMangaItem(CommonManga manga) {
-  //   return MangaListItem(
-  //     manga: manga,
-  //     onTap: () {
-  //       // Handle manga tap
-  //     },
-  //   );
-  // }
+  Widget _buildMangaItem(CommonManga manga) {
+    return Card(
+      child: Column(
+        children: [
+          Image.network(
+            manga.imageUrl,
+            height: 100,
+            width: 100,
+            fit: BoxFit.cover,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              manga.title,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-  Widget _buildItemCard({required String? imageUrl, required String title, String? subtitle}) {
+  Widget _buildItemCard(
+      {required String? imageUrl, required String title, String? subtitle}) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         children: [
-          flutter_image.Image.network(
+          Image.network(
             imageUrl ?? 'https://example.com/default_image.png',
             width: 100,
             height: 100,
@@ -747,15 +806,16 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
               MaterialPageRoute(
                 builder: (context) => CommonItemsPage<BudMatch>(
                   title: 'Played Tracks Buds',
-                  fetchItems: (page) => ApiService().getPlayedTracksBuds(page: page),
-                  itemBuilder: (context, budMatch) => BudMatchListItem(budMatch: budMatch),
+                  fetchItems: (page) =>
+                      ApiService().getPlayedTracksBuds(page: page),
+                  itemBuilder: (context, budMatch) =>
+                      BudMatchListItem(budMatch: budMatch),
                 ),
               ),
             );
           },
-          child: Text('View All'),
+          child: const Text('View All'),
         ),
-
         _buildSectionTitle('Liked Genres Buds'),
         ElevatedButton(
           onPressed: () {
@@ -764,13 +824,15 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
               MaterialPageRoute(
                 builder: (context) => CommonItemsPage<BudMatch>(
                   title: 'Liked Genres Buds',
-                  fetchItems: (page) => ApiService().getLikedGenresBuds(page: page),
-                  itemBuilder: (context, budMatch) => BudMatchListItem(budMatch: budMatch),
+                  fetchItems: (page) =>
+                      ApiService().getLikedGenresBuds(page: page),
+                  itemBuilder: (context, budMatch) =>
+                      BudMatchListItem(budMatch: budMatch),
                 ),
               ),
             );
           },
-          child: Text('View All'),
+          child: const Text('View All'),
         ),
       ],
     );
@@ -781,10 +843,8 @@ class _ProfilePageContentState extends State<ProfilePageContent> {
       padding: const EdgeInsets.all(8.0),
       child: Text(
         title,
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
       ),
     );
   }
 }
-
-

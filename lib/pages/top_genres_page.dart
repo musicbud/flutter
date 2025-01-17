@@ -6,9 +6,9 @@ class TopGenresPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Top Genres'),
+        title: const Text('Top Genres'),
       ),
-      body: Center(
+      body: const Center(
         child: Text('Top Genres Content'),
       ),
     );

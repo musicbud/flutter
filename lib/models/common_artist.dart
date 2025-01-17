@@ -1,7 +1,5 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
-import 'package:flutter/src/widgets/image.dart' as flutter_image;
-import 'package:musicbud_flutter/models/common_track.dart' as common_track;
 
 class CommonArtist {
   final String? id;
