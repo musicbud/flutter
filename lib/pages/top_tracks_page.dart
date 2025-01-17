@@ -70,7 +70,7 @@ class _TopTracksPageState extends State<TopTracksPage> {
           final track = _tracks[index];
           return ListTile(
             title: Text(track.name),
-            subtitle: Text(track.spotifyId),
+            subtitle: Text(track.name),
             trailing: const Text('0 ms'),
           );
         },
