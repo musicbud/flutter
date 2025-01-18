@@ -1,66 +1,87 @@
 class UserProfile {
+  final String id;
   final String username;
-  final String email;
-  final String? photoUrl;
   final String? displayName;
   final String? bio;
-  final bool isActive;
-  final bool isAuthenticated;
+  final String? avatarUrl;
+  final String? location;
+  final int? followersCount;
+  final int? followingCount;
+  final bool isFollowing;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   UserProfile({
+    required this.id,
     required this.username,
-    required this.email,
-    this.photoUrl,
     this.displayName,
     this.bio,
-    required this.isActive,
-    required this.isAuthenticated,
+    this.avatarUrl,
+    this.location,
+    this.followersCount,
+    this.followingCount,
+    this.isFollowing = false,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     return UserProfile(
-      username: json['username'] ?? '',
-      email: json['email'] ?? '',
-      photoUrl: json['photo_url'],
-      displayName: json['display_name'],
-      bio: json['bio'],
-      isActive: json['is_active'] ?? false,
-      isAuthenticated: json['is_authenticated'] ?? false,
+      id: json['id'] as String,
+      username: json['username'] as String,
+      displayName: json['display_name'] as String?,
+      bio: json['bio'] as String?,
+      avatarUrl: json['avatar_url'] as String?,
+      location: json['location'] as String?,
+      followersCount: json['followers_count'] as int?,
+      followingCount: json['following_count'] as int?,
+      isFollowing: json['is_following'] as bool? ?? false,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
     );
   }
 
-  get uid => null;
-
-  // You can add a toJson method if needed
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'username': username,
-      'email': email,
-      'photo_url': photoUrl,
       'display_name': displayName,
       'bio': bio,
-      'is_active': isActive,
-      'is_authenticated': isAuthenticated,
+      'avatar_url': avatarUrl,
+      'location': location,
+      'followers_count': followersCount,
+      'following_count': followingCount,
+      'is_following': isFollowing,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
     };
   }
 
   UserProfile copyWith({
+    String? id,
     String? username,
-    String? email,
-    String? photoUrl,
     String? displayName,
     String? bio,
-    bool? isActive,
-    bool? isAuthenticated,
+    String? avatarUrl,
+    String? location,
+    int? followersCount,
+    int? followingCount,
+    bool? isFollowing,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return UserProfile(
+      id: id ?? this.id,
       username: username ?? this.username,
-      email: email ?? this.email,
-      photoUrl: photoUrl ?? this.photoUrl,
       displayName: displayName ?? this.displayName,
       bio: bio ?? this.bio,
-      isActive: isActive ?? this.isActive,
-      isAuthenticated: isAuthenticated ?? this.isAuthenticated,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      location: location ?? this.location,
+      followersCount: followersCount ?? this.followersCount,
+      followingCount: followingCount ?? this.followingCount,
+      isFollowing: isFollowing ?? this.isFollowing,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 }

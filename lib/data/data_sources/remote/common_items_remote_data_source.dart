@@ -1,220 +1,290 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../../../core/constants/api_constants.dart';
-import '../../../core/error/exceptions.dart';
-import '../../../models/common_artist.dart';
-import '../../../models/common_track.dart';
-import '../../../models/common_album.dart';
-import '../../../models/common_genre.dart';
-import '../../../models/common_anime.dart';
-import '../../../models/common_manga.dart';
+import '../../../../core/error/exceptions.dart';
+import '../../../../models/common_track.dart';
+import '../../../../models/common_artist.dart';
+import '../../../../models/common_album.dart';
+import '../../../../models/common_genre.dart';
+import '../../../../models/common_anime.dart';
+import '../../../../models/common_manga.dart';
+import '../../../../models/categorized_common_items.dart';
 
 abstract class CommonItemsRemoteDataSource {
-  Future<List<CommonArtist>> getCommonLikedArtists(String username);
   Future<List<CommonTrack>> getCommonLikedTracks(String username);
+  Future<List<CommonArtist>> getCommonLikedArtists(String username);
   Future<List<CommonAlbum>> getCommonLikedAlbums(String username);
-  Future<List<CommonGenre>> getCommonLikedGenres(String username);
-  Future<List<CommonTrack>> getCommonPlayedTracks(String username);
+  Future<List<CommonTrack>> getCommonPlayedTracks(String identifier,
+      {int page = 1});
   Future<List<CommonArtist>> getCommonTopArtists(String username);
-  Future<List<CommonTrack>> getCommonTopTracks(String username);
   Future<List<CommonGenre>> getCommonTopGenres(String username);
   Future<List<CommonAnime>> getCommonTopAnime(String username);
   Future<List<CommonManga>> getCommonTopManga(String username);
+  Future<List<CommonTrack>> getCommonTracks(String budUid);
+  Future<List<CommonArtist>> getCommonArtists(String budUid);
+  Future<List<CommonGenre>> getCommonGenres(String budUid);
+  Future<CategorizedCommonItems> getCategorizedCommonItems(String username);
 }
 
 class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
-  final http.Client client;
-  final String token;
+  final http.Client _client;
+  final String _token;
+  final String _baseUrl = 'https://api.musicbud.com';
 
-  CommonItemsRemoteDataSourceImpl({required this.client, required this.token});
+  CommonItemsRemoteDataSourceImpl({
+    required http.Client client,
+    required String token,
+  })  : _client = client,
+        _token = token;
+
+  Map<String, String> get _headers => {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $_token',
+      };
 
   @override
-  Future<List<CommonArtist>> getCommonLikedArtists(String username) async {
-    final response = await client.get(
-      Uri.parse(
-          '${ApiConstants.baseUrl}/bud/common/liked/artists?username=$username'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+  Future<List<CommonTrack>> getCommonLikedTracks(String username) async {
+    try {
+      final response = await _client.post(
+        Uri.parse('$_baseUrl/bud/common/liked/tracks'),
+        headers: _headers,
+        body: jsonEncode({'username': username}),
+      );
 
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => CommonArtist.fromJson(json)).toList();
-    } else {
-      throw ServerException(message: 'Failed to get common liked artists');
+      if (response.statusCode != 200) {
+        throw ServerException(message: 'Failed to get common liked tracks');
+      }
+
+      final data = jsonDecode(response.body)['data'] as List;
+      return data.map((json) => CommonTrack.fromJson(json)).toList();
+    } catch (e) {
+      throw ServerException(message: e.toString());
     }
   }
 
   @override
-  Future<List<CommonTrack>> getCommonLikedTracks(String username) async {
-    final response = await client.get(
-      Uri.parse(
-          '${ApiConstants.baseUrl}/bud/common/liked/tracks?username=$username'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+  Future<List<CommonArtist>> getCommonLikedArtists(String username) async {
+    try {
+      final response = await _client.post(
+        Uri.parse('$_baseUrl/bud/common/liked/artists'),
+        headers: _headers,
+        body: jsonEncode({'username': username}),
+      );
 
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => CommonTrack.fromJson(json)).toList();
-    } else {
-      throw ServerException(message: 'Failed to get common liked tracks');
+      if (response.statusCode != 200) {
+        throw ServerException(message: 'Failed to get common liked artists');
+      }
+
+      final data = jsonDecode(response.body)['data'] as List;
+      return data.map((json) => CommonArtist.fromJson(json)).toList();
+    } catch (e) {
+      throw ServerException(message: e.toString());
     }
   }
 
   @override
   Future<List<CommonAlbum>> getCommonLikedAlbums(String username) async {
-    final response = await client.get(
-      Uri.parse(
-          '${ApiConstants.baseUrl}/bud/common/liked/albums?username=$username'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+    try {
+      final response = await _client.post(
+        Uri.parse('$_baseUrl/bud/common/liked/albums'),
+        headers: _headers,
+        body: jsonEncode({'username': username}),
+      );
 
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
+      if (response.statusCode != 200) {
+        throw ServerException(message: 'Failed to get common liked albums');
+      }
+
+      final data = jsonDecode(response.body)['data'] as List;
       return data.map((json) => CommonAlbum.fromJson(json)).toList();
-    } else {
-      throw ServerException(message: 'Failed to get common liked albums');
+    } catch (e) {
+      throw ServerException(message: e.toString());
     }
   }
 
   @override
-  Future<List<CommonGenre>> getCommonLikedGenres(String username) async {
-    final response = await client.get(
-      Uri.parse(
-          '${ApiConstants.baseUrl}/bud/common/liked/genres?username=$username'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+  Future<List<CommonTrack>> getCommonPlayedTracks(String identifier,
+      {int page = 1}) async {
+    try {
+      final data = identifier.contains('@')
+          ? {'username': identifier}
+          : {'bud_id': identifier, 'page': page};
 
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => CommonGenre.fromJson(json)).toList();
-    } else {
-      throw ServerException(message: 'Failed to get common liked genres');
-    }
-  }
+      final response = await _client.post(
+        Uri.parse('$_baseUrl/bud/common/played/tracks'),
+        headers: _headers,
+        body: jsonEncode(data),
+      );
 
-  @override
-  Future<List<CommonTrack>> getCommonPlayedTracks(String username) async {
-    final response = await client.get(
-      Uri.parse(
-          '${ApiConstants.baseUrl}/bud/common/played/tracks?username=$username'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+      if (response.statusCode != 200) {
+        throw ServerException(message: 'Failed to get common played tracks');
+      }
 
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => CommonTrack.fromJson(json)).toList();
-    } else {
-      throw ServerException(message: 'Failed to get common played tracks');
+      final responseData = jsonDecode(response.body)['data'] as List;
+      return responseData.map((json) => CommonTrack.fromJson(json)).toList();
+    } catch (e) {
+      throw ServerException(message: e.toString());
     }
   }
 
   @override
   Future<List<CommonArtist>> getCommonTopArtists(String username) async {
-    final response = await client.get(
-      Uri.parse(
-          '${ApiConstants.baseUrl}/bud/common/top/artists?username=$username'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+    try {
+      final response = await _client.post(
+        Uri.parse('$_baseUrl/bud/common/top/artists'),
+        headers: _headers,
+        body: jsonEncode({'username': username}),
+      );
 
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
+      if (response.statusCode != 200) {
+        throw ServerException(message: 'Failed to get common top artists');
+      }
+
+      final data = jsonDecode(response.body)['data'] as List;
       return data.map((json) => CommonArtist.fromJson(json)).toList();
-    } else {
-      throw ServerException(message: 'Failed to get common top artists');
-    }
-  }
-
-  @override
-  Future<List<CommonTrack>> getCommonTopTracks(String username) async {
-    final response = await client.get(
-      Uri.parse(
-          '${ApiConstants.baseUrl}/bud/common/top/tracks?username=$username'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => CommonTrack.fromJson(json)).toList();
-    } else {
-      throw ServerException(message: 'Failed to get common top tracks');
+    } catch (e) {
+      throw ServerException(message: e.toString());
     }
   }
 
   @override
   Future<List<CommonGenre>> getCommonTopGenres(String username) async {
-    final response = await client.get(
-      Uri.parse(
-          '${ApiConstants.baseUrl}/bud/common/top/genres?username=$username'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+    try {
+      final response = await _client.post(
+        Uri.parse('$_baseUrl/bud/common/top/genres'),
+        headers: _headers,
+        body: jsonEncode({'username': username}),
+      );
 
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
+      if (response.statusCode != 200) {
+        throw ServerException(message: 'Failed to get common top genres');
+      }
+
+      final data = jsonDecode(response.body)['data'] as List;
       return data.map((json) => CommonGenre.fromJson(json)).toList();
-    } else {
-      throw ServerException(message: 'Failed to get common top genres');
+    } catch (e) {
+      throw ServerException(message: e.toString());
     }
   }
 
   @override
   Future<List<CommonAnime>> getCommonTopAnime(String username) async {
-    final response = await client.get(
-      Uri.parse(
-          '${ApiConstants.baseUrl}/bud/common/top/anime?username=$username'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+    try {
+      final response = await _client.post(
+        Uri.parse('$_baseUrl/bud/common/top/anime'),
+        headers: _headers,
+        body: jsonEncode({'username': username}),
+      );
 
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
+      if (response.statusCode != 200) {
+        throw ServerException(message: 'Failed to get common top anime');
+      }
+
+      final data = jsonDecode(response.body)['data'] as List;
       return data.map((json) => CommonAnime.fromJson(json)).toList();
-    } else {
-      throw ServerException(message: 'Failed to get common top anime');
+    } catch (e) {
+      throw ServerException(message: e.toString());
     }
   }
 
   @override
   Future<List<CommonManga>> getCommonTopManga(String username) async {
-    final response = await client.get(
-      Uri.parse(
-          '${ApiConstants.baseUrl}/bud/common/top/manga?username=$username'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
+    try {
+      final response = await _client.post(
+        Uri.parse('$_baseUrl/bud/common/top/manga'),
+        headers: _headers,
+        body: jsonEncode({'username': username}),
+      );
 
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
+      if (response.statusCode != 200) {
+        throw ServerException(message: 'Failed to get common top manga');
+      }
+
+      final data = jsonDecode(response.body)['data'] as List;
       return data.map((json) => CommonManga.fromJson(json)).toList();
-    } else {
-      throw ServerException(message: 'Failed to get common top manga');
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List<CommonTrack>> getCommonTracks(String budUid) async {
+    try {
+      final response = await _client.post(
+        Uri.parse('$_baseUrl/bud/common/top/tracks'),
+        headers: _headers,
+        body: jsonEncode({'bud_id': budUid}),
+      );
+
+      if (response.statusCode != 200) {
+        throw ServerException(message: 'Failed to get common tracks');
+      }
+
+      final data = jsonDecode(response.body)['data'] as List;
+      return data.map((json) => CommonTrack.fromJson(json)).toList();
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List<CommonArtist>> getCommonArtists(String budUid) async {
+    try {
+      final response = await _client.post(
+        Uri.parse('$_baseUrl/bud/common/top/artists'),
+        headers: _headers,
+        body: jsonEncode({'bud_id': budUid}),
+      );
+
+      if (response.statusCode != 200) {
+        throw ServerException(message: 'Failed to get common artists');
+      }
+
+      final data = jsonDecode(response.body)['data'] as List;
+      return data.map((json) => CommonArtist.fromJson(json)).toList();
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<List<CommonGenre>> getCommonGenres(String budUid) async {
+    try {
+      final response = await _client.post(
+        Uri.parse('$_baseUrl/bud/common/top/genres'),
+        headers: _headers,
+        body: jsonEncode({'bud_id': budUid}),
+      );
+
+      if (response.statusCode != 200) {
+        throw ServerException(message: 'Failed to get common genres');
+      }
+
+      final data = jsonDecode(response.body)['data'] as List;
+      return data.map((json) => CommonGenre.fromJson(json)).toList();
+    } catch (e) {
+      throw ServerException(message: e.toString());
+    }
+  }
+
+  @override
+  Future<CategorizedCommonItems> getCategorizedCommonItems(
+      String username) async {
+    try {
+      final response = await _client.post(
+        Uri.parse('$_baseUrl/bud/common/all'),
+        headers: _headers,
+        body: jsonEncode({'username': username}),
+      );
+
+      if (response.statusCode != 200) {
+        throw ServerException(
+            message: 'Failed to get categorized common items');
+      }
+
+      return CategorizedCommonItems.fromJson(jsonDecode(response.body));
+    } catch (e) {
+      throw ServerException(message: e.toString());
     }
   }
 }

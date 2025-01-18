@@ -31,7 +31,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  dio: ^5.4.0
+  dio: ^5.7.0
   shared_preferences: ^2.2.2
   http: ^1.2.0
   flutter_secure_storage: ^9.0.0
@@ -46,6 +46,7 @@ dependencies:
   equatable: ^2.0.0
   flutter_bloc: ^8.1.0  # or latest version
   shelf_proxy: ^1.0.0
+  dartz: ^0.10.1
   # Add any other dependencies your project needs
 
 dev_dependencies:

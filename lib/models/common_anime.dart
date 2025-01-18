@@ -1,22 +1,47 @@
 class CommonAnime {
-  final String uid;
+  final String id;
   final String title;
-  final String status;
-  final String imageUrl;
+  final String? imageUrl;
+  final bool isLiked;
+  final String? source;
+  final List<String>? genres;
+  final int? episodes;
+  final double? rating;
 
   CommonAnime({
-    required this.uid,
+    required this.id,
     required this.title,
-    required this.status,
-    required this.imageUrl,
+    this.imageUrl,
+    this.isLiked = false,
+    this.source,
+    this.genres,
+    this.episodes,
+    this.rating,
   });
 
   factory CommonAnime.fromJson(Map<String, dynamic> json) {
     return CommonAnime(
-      uid: json['uid'] ?? '',
-      title: json['title'] ?? '',
-      status: json['status'] ?? '',
-      imageUrl: json['image_url'] ?? '',
+      id: json['id'] as String,
+      title: json['title'] as String,
+      imageUrl: json['image_url'] as String?,
+      isLiked: json['is_liked'] as bool? ?? false,
+      source: json['source'] as String?,
+      genres: (json['genres'] as List<dynamic>?)?.cast<String>(),
+      episodes: json['episodes'] as int?,
+      rating: json['rating'] as double?,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'image_url': imageUrl,
+      'is_liked': isLiked,
+      'source': source,
+      'genres': genres,
+      'episodes': episodes,
+      'rating': rating,
+    };
   }
 }

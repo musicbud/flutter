@@ -1,29 +1,62 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../../../core/constants/api_constants.dart';
-import '../../../core/error/exceptions.dart';
-import '../../../models/movie.dart';
-import '../../../models/track.dart';
-import '../../../models/artist.dart';
-import '../../../models/album.dart';
-import '../../../models/anime.dart';
-import '../../../models/manga.dart';
+import '../../../domain/models/common_track.dart';
+import '../../../domain/models/common_artist.dart';
+import '../../../domain/models/common_album.dart';
+import '../../../domain/models/common_genre.dart';
+import '../../../domain/models/common_anime.dart';
+import '../../../domain/models/common_manga.dart';
 
 abstract class ContentRemoteDataSource {
   // Home page
   Future<Map<String, dynamic>> getHomePageData();
 
   // Popular content
-  Future<List<Movie>> getPopularMovies({int limit = 20});
-  Future<List<Track>> getPopularTracks({int limit = 20});
-  Future<List<Artist>> getPopularArtists({int limit = 20});
-  Future<List<Album>> getPopularAlbums({int limit = 20});
-  Future<List<Anime>> getPopularAnime({int limit = 20});
-  Future<List<Manga>> getPopularManga({int limit = 20});
+  Future<List<CommonTrack>> getPopularTracks({int limit = 20});
+  Future<List<CommonArtist>> getPopularArtists({int limit = 20});
+  Future<List<CommonAlbum>> getPopularAlbums({int limit = 20});
+  Future<List<CommonAnime>> getPopularAnime({int limit = 20});
+  Future<List<CommonManga>> getPopularManga({int limit = 20});
+
+  // Top content
+  Future<List<CommonTrack>> getTopTracks();
+  Future<List<CommonArtist>> getTopArtists();
+  Future<List<CommonGenre>> getTopGenres();
+  Future<List<CommonAnime>> getTopAnime();
+  Future<List<CommonManga>> getTopManga();
+
+  // Liked content
+  Future<List<CommonTrack>> getLikedTracks();
+  Future<List<CommonArtist>> getLikedArtists();
+  Future<List<CommonAlbum>> getLikedAlbums();
+  Future<List<CommonGenre>> getLikedGenres();
+
+  // Played content
+  Future<List<CommonTrack>> getPlayedTracks();
+  Future<List<CommonTrack>> getPlayedTracksWithLocation();
+  Future<List<CommonTrack>> getCurrentlyPlayedTracks();
 
   // Like/Unlike operations
-  Future<void> likeItem(String itemType, String itemId);
-  Future<void> unlikeItem(String itemType, String itemId);
+  Future<bool> likeTrack(String id);
+  Future<bool> likeArtist(String id);
+  Future<bool> likeAlbum(String id);
+  Future<bool> likeGenre(String id);
+  Future<bool> likeAnime(String id);
+  Future<bool> likeManga(String id);
+  Future<bool> unlikeTrack(String id);
+  Future<bool> unlikeArtist(String id);
+  Future<bool> unlikeAlbum(String id);
+  Future<bool> unlikeGenre(String id);
+  Future<bool> unlikeAnime(String id);
+  Future<bool> unlikeManga(String id);
+
+  // Search operations
+  Future<List<CommonTrack>> searchTracks(String query);
+  Future<List<CommonArtist>> searchArtists(String query);
+  Future<List<CommonAlbum>> searchAlbums(String query);
+  Future<List<CommonGenre>> searchGenres(String query);
+  Future<List<CommonAnime>> searchAnime(String query);
+  Future<List<CommonManga>> searchManga(String query);
 
   // Playback operations
   Future<List<String>> getSpotifyDevices();
@@ -32,229 +65,566 @@ abstract class ContentRemoteDataSource {
       String trackId, double latitude, double longitude);
   Future<void> savePlayedTrack(
       String trackId, double latitude, double longitude);
-  Future<List<Track>> getPlayedTracksWithLocation();
-  Future<List<Track>> getCurrentlyPlayedTracks();
 }
 
 class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
-  final http.Client client;
-  final String token;
+  final http.Client _client;
+  final String _token;
+  final String _baseUrl = 'https://api.musicbud.com';
 
-  ContentRemoteDataSourceImpl({required this.client, required this.token});
+  ContentRemoteDataSourceImpl({
+    required http.Client client,
+    required String token,
+  })  : _client = client,
+        _token = token;
+
+  Map<String, String> get _headers => {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $_token',
+      };
 
   @override
   Future<Map<String, dynamic>> getHomePageData() async {
-    final response = await client.get(
-      Uri.parse('${ApiConstants.baseUrl}/home'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/home'),
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      return jsonDecode(response.body);
     } else {
-      throw ServerException(message: 'Failed to get home page data');
+      throw Exception('Failed to load home page data');
     }
   }
 
   @override
-  Future<List<Movie>> getPopularMovies({int limit = 20}) async {
-    final response = await client.get(
-      Uri.parse('${ApiConstants.baseUrl}/popular/movies?limit=$limit'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+  Future<List<CommonTrack>> getPopularTracks({int limit = 20}) async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/popular/tracks').replace(
+        queryParameters: {'limit': limit.toString()},
+      ),
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => Movie.fromJson(json)).toList();
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonTrack.fromJson(json)).toList();
     } else {
-      throw ServerException(message: 'Failed to get popular movies');
+      throw Exception('Failed to load popular tracks');
     }
   }
 
   @override
-  Future<List<Track>> getPopularTracks({int limit = 20}) async {
-    final response = await client.get(
-      Uri.parse(
-          '${ApiConstants.baseUrl}/popular/music?type=tracks&limit=$limit'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+  Future<List<CommonArtist>> getPopularArtists({int limit = 20}) async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/popular/artists').replace(
+        queryParameters: {'limit': limit.toString()},
+      ),
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => Track.fromJson(json)).toList();
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonArtist.fromJson(json)).toList();
     } else {
-      throw ServerException(message: 'Failed to get popular tracks');
+      throw Exception('Failed to load popular artists');
     }
   }
 
   @override
-  Future<List<Artist>> getPopularArtists({int limit = 20}) async {
-    final response = await client.get(
-      Uri.parse(
-          '${ApiConstants.baseUrl}/popular/music?type=artists&limit=$limit'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+  Future<List<CommonAlbum>> getPopularAlbums({int limit = 20}) async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/popular/albums').replace(
+        queryParameters: {'limit': limit.toString()},
+      ),
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => Artist.fromJson(json)).toList();
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonAlbum.fromJson(json)).toList();
     } else {
-      throw ServerException(message: 'Failed to get popular artists');
+      throw Exception('Failed to load popular albums');
     }
   }
 
   @override
-  Future<List<Album>> getPopularAlbums({int limit = 20}) async {
-    final response = await client.get(
-      Uri.parse(
-          '${ApiConstants.baseUrl}/popular/music?type=albums&limit=$limit'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+  Future<List<CommonAnime>> getPopularAnime({int limit = 20}) async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/popular/anime').replace(
+        queryParameters: {'limit': limit.toString()},
+      ),
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => Album.fromJson(json)).toList();
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonAnime.fromJson(json)).toList();
     } else {
-      throw ServerException(message: 'Failed to get popular albums');
+      throw Exception('Failed to load popular anime');
     }
   }
 
   @override
-  Future<List<Anime>> getPopularAnime({int limit = 20}) async {
-    final response = await client.get(
-      Uri.parse('${ApiConstants.baseUrl}/popular/anime?limit=$limit'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+  Future<List<CommonManga>> getPopularManga({int limit = 20}) async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/popular/manga').replace(
+        queryParameters: {'limit': limit.toString()},
+      ),
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => Anime.fromJson(json)).toList();
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonManga.fromJson(json)).toList();
     } else {
-      throw ServerException(message: 'Failed to get popular anime');
+      throw Exception('Failed to load popular manga');
     }
   }
 
   @override
-  Future<List<Manga>> getPopularManga({int limit = 20}) async {
-    final response = await client.get(
-      Uri.parse('${ApiConstants.baseUrl}/popular/manga?limit=$limit'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+  Future<List<CommonTrack>> getTopTracks() async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/top/tracks'),
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => Manga.fromJson(json)).toList();
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonTrack.fromJson(json)).toList();
     } else {
-      throw ServerException(message: 'Failed to get popular manga');
+      throw Exception('Failed to load top tracks');
     }
   }
 
   @override
-  Future<void> likeItem(String itemType, String itemId) async {
-    final response = await client.post(
-      Uri.parse('${ApiConstants.baseUrl}/like'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({
-        'type': itemType,
-        'id': itemId,
-      }),
+  Future<List<CommonArtist>> getTopArtists() async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/top/artists'),
+      headers: _headers,
     );
 
-    if (response.statusCode != 200) {
-      throw ServerException(message: 'Failed to like item');
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonArtist.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load top artists');
     }
   }
 
   @override
-  Future<void> unlikeItem(String itemType, String itemId) async {
-    final response = await client.post(
-      Uri.parse('${ApiConstants.baseUrl}/unlike'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({
-        'type': itemType,
-        'id': itemId,
-      }),
+  Future<List<CommonGenre>> getTopGenres() async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/top/genres'),
+      headers: _headers,
     );
 
-    if (response.statusCode != 200) {
-      throw ServerException(message: 'Failed to unlike item');
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonGenre.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load top genres');
+    }
+  }
+
+  @override
+  Future<List<CommonAnime>> getTopAnime() async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/top/anime'),
+      headers: _headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonAnime.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load top anime');
+    }
+  }
+
+  @override
+  Future<List<CommonManga>> getTopManga() async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/top/manga'),
+      headers: _headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonManga.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load top manga');
+    }
+  }
+
+  @override
+  Future<List<CommonTrack>> getLikedTracks() async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/liked/tracks'),
+      headers: _headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonTrack.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load liked tracks');
+    }
+  }
+
+  @override
+  Future<List<CommonArtist>> getLikedArtists() async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/liked/artists'),
+      headers: _headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonArtist.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load liked artists');
+    }
+  }
+
+  @override
+  Future<List<CommonAlbum>> getLikedAlbums() async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/liked/albums'),
+      headers: _headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonAlbum.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load liked albums');
+    }
+  }
+
+  @override
+  Future<List<CommonGenre>> getLikedGenres() async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/liked/genres'),
+      headers: _headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonGenre.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load liked genres');
+    }
+  }
+
+  @override
+  Future<List<CommonTrack>> getPlayedTracks() async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/played/tracks'),
+      headers: _headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonTrack.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load played tracks');
+    }
+  }
+
+  @override
+  Future<List<CommonTrack>> getPlayedTracksWithLocation() async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/played/tracks/with-location'),
+      headers: _headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonTrack.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load played tracks with location');
+    }
+  }
+
+  @override
+  Future<List<CommonTrack>> getCurrentlyPlayedTracks() async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/played/tracks/current'),
+      headers: _headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonTrack.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load currently played tracks');
+    }
+  }
+
+  @override
+  Future<bool> likeTrack(String id) async {
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/api/content/tracks/$id/like'),
+      headers: _headers,
+    );
+
+    return response.statusCode == 200;
+  }
+
+  @override
+  Future<bool> likeArtist(String id) async {
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/api/content/artists/$id/like'),
+      headers: _headers,
+    );
+
+    return response.statusCode == 200;
+  }
+
+  @override
+  Future<bool> likeAlbum(String id) async {
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/api/content/albums/$id/like'),
+      headers: _headers,
+    );
+
+    return response.statusCode == 200;
+  }
+
+  @override
+  Future<bool> likeGenre(String id) async {
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/api/content/genres/$id/like'),
+      headers: _headers,
+    );
+
+    return response.statusCode == 200;
+  }
+
+  @override
+  Future<bool> likeAnime(String id) async {
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/api/content/anime/$id/like'),
+      headers: _headers,
+    );
+
+    return response.statusCode == 200;
+  }
+
+  @override
+  Future<bool> likeManga(String id) async {
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/api/content/manga/$id/like'),
+      headers: _headers,
+    );
+
+    return response.statusCode == 200;
+  }
+
+  @override
+  Future<bool> unlikeTrack(String id) async {
+    final response = await _client.delete(
+      Uri.parse('$_baseUrl/api/content/tracks/$id/like'),
+      headers: _headers,
+    );
+
+    return response.statusCode == 200;
+  }
+
+  @override
+  Future<bool> unlikeArtist(String id) async {
+    final response = await _client.delete(
+      Uri.parse('$_baseUrl/api/content/artists/$id/like'),
+      headers: _headers,
+    );
+
+    return response.statusCode == 200;
+  }
+
+  @override
+  Future<bool> unlikeAlbum(String id) async {
+    final response = await _client.delete(
+      Uri.parse('$_baseUrl/api/content/albums/$id/like'),
+      headers: _headers,
+    );
+
+    return response.statusCode == 200;
+  }
+
+  @override
+  Future<bool> unlikeGenre(String id) async {
+    final response = await _client.delete(
+      Uri.parse('$_baseUrl/api/content/genres/$id/like'),
+      headers: _headers,
+    );
+
+    return response.statusCode == 200;
+  }
+
+  @override
+  Future<bool> unlikeAnime(String id) async {
+    final response = await _client.delete(
+      Uri.parse('$_baseUrl/api/content/anime/$id/like'),
+      headers: _headers,
+    );
+
+    return response.statusCode == 200;
+  }
+
+  @override
+  Future<bool> unlikeManga(String id) async {
+    final response = await _client.delete(
+      Uri.parse('$_baseUrl/api/content/manga/$id/like'),
+      headers: _headers,
+    );
+
+    return response.statusCode == 200;
+  }
+
+  @override
+  Future<List<CommonTrack>> searchTracks(String query) async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/search/tracks').replace(
+        queryParameters: {'q': query},
+      ),
+      headers: _headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonTrack.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to search tracks');
+    }
+  }
+
+  @override
+  Future<List<CommonArtist>> searchArtists(String query) async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/search/artists').replace(
+        queryParameters: {'q': query},
+      ),
+      headers: _headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonArtist.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to search artists');
+    }
+  }
+
+  @override
+  Future<List<CommonAlbum>> searchAlbums(String query) async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/search/albums').replace(
+        queryParameters: {'q': query},
+      ),
+      headers: _headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonAlbum.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to search albums');
+    }
+  }
+
+  @override
+  Future<List<CommonGenre>> searchGenres(String query) async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/search/genres').replace(
+        queryParameters: {'q': query},
+      ),
+      headers: _headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonGenre.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to search genres');
+    }
+  }
+
+  @override
+  Future<List<CommonAnime>> searchAnime(String query) async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/search/anime').replace(
+        queryParameters: {'q': query},
+      ),
+      headers: _headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonAnime.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to search anime');
+    }
+  }
+
+  @override
+  Future<List<CommonManga>> searchManga(String query) async {
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/search/manga').replace(
+        queryParameters: {'q': query},
+      ),
+      headers: _headers,
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => CommonManga.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to search manga');
     }
   }
 
   @override
   Future<List<String>> getSpotifyDevices() async {
-    final response = await client.get(
-      Uri.parse('${ApiConstants.baseUrl}/spotify/devices'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/api/content/spotify/devices'),
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => json['id'] as String).toList();
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      return jsonList.map((json) => json['id'] as String).toList();
     } else {
-      throw ServerException(message: 'Failed to get Spotify devices');
+      throw Exception('Failed to get Spotify devices');
     }
   }
 
   @override
   Future<void> playTrack(String trackId, {String? deviceId}) async {
-    final response = await client.post(
-      Uri.parse('${ApiConstants.baseUrl}/spotify/play'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({
-        'track_id': trackId,
-        if (deviceId != null) 'device_id': deviceId,
-      }),
+    final Map<String, dynamic> data = {'track_id': trackId};
+    if (deviceId != null) {
+      data['device_id'] = deviceId;
+    }
+
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/api/content/spotify/play'),
+      headers: _headers,
+      body: jsonEncode(data),
     );
 
     if (response.statusCode != 200) {
-      throw ServerException(message: 'Failed to play track');
+      throw Exception('Failed to play track');
     }
   }
 
   @override
   Future<void> playTrackWithLocation(
       String trackId, double latitude, double longitude) async {
-    final response = await client.post(
-      Uri.parse('${ApiConstants.baseUrl}/me/play-track-with-location'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/api/content/spotify/play-with-location'),
+      headers: _headers,
+      body: jsonEncode({
         'track_id': trackId,
         'latitude': latitude,
         'longitude': longitude,
@@ -262,65 +632,25 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
     );
 
     if (response.statusCode != 200) {
-      throw ServerException(message: 'Failed to play track with location');
+      throw Exception('Failed to play track with location');
     }
   }
 
   @override
   Future<void> savePlayedTrack(
       String trackId, double latitude, double longitude) async {
-    final response = await client.post(
-      Uri.parse('${ApiConstants.baseUrl}/me/location/save'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-      body: json.encode({
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/api/content/played/tracks'),
+      headers: _headers,
+      body: jsonEncode({
         'track_id': trackId,
         'latitude': latitude,
         'longitude': longitude,
       }),
     );
 
-    if (response.statusCode != 200) {
-      throw ServerException(message: 'Failed to save played track location');
-    }
-  }
-
-  @override
-  Future<List<Track>> getPlayedTracksWithLocation() async {
-    final response = await client.get(
-      Uri.parse('${ApiConstants.baseUrl}/spotify/played-tracks-with-location'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => Track.fromJson(json)).toList();
-    } else {
-      throw ServerException(
-          message: 'Failed to get played tracks with location');
-    }
-  }
-
-  @override
-  Future<List<Track>> getCurrentlyPlayedTracks() async {
-    final response = await client.get(
-      Uri.parse('${ApiConstants.baseUrl}/me/currently-played'),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((json) => Track.fromJson(json)).toList();
-    } else {
-      throw ServerException(message: 'Failed to get currently played tracks');
+    if (response.statusCode != 201) {
+      throw Exception('Failed to save played track');
     }
   }
 }

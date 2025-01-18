@@ -1,50 +1,102 @@
-import 'package:musicbud_flutter/models/common_manga.dart';
+import '../domain/models/common_manga.dart';
 
 class Manga {
   final String uid;
-  final int mangaId;
-  final String title;
-  final String? status;
-  final List<Map<String, dynamic>> mainPictures;
+  final String name;
+  final String synopsis;
+  final String imageUrl;
+  final int chapters;
+  final int volumes;
+  final double score;
+  final String type;
+  final List<String> genres;
+  final DateTime? startDate;
+  final DateTime? endDate;
+  final String source;
+  final String author;
+  final String rating;
+  final bool isLiked;
 
   Manga({
     required this.uid,
-    required this.mangaId,
-    required this.title,
-    this.status,
-    this.mainPictures = const [],
+    required this.name,
+    required this.synopsis,
+    required this.imageUrl,
+    required this.chapters,
+    required this.volumes,
+    required this.score,
+    required this.type,
+    required this.genres,
+    this.startDate,
+    this.endDate,
+    required this.source,
+    required this.author,
+    required this.rating,
+    this.isLiked = false,
   });
 
   factory Manga.fromJson(Map<String, dynamic> json) {
     return Manga(
       uid: json['uid'] as String,
-      mangaId: json['manga_id'] as int,
-      title: json['title'] as String,
-      status: json['status'] as String?,
-      mainPictures: (json['main_picture'] as List<dynamic>?)
-              ?.map((e) => e as Map<String, dynamic>)
-              .toList() ??
-          [],
+      name: json['name'] as String,
+      synopsis: json['synopsis'] as String,
+      imageUrl: json['image_url'] as String,
+      chapters: json['chapters'] as int,
+      volumes: json['volumes'] as int,
+      score: (json['score'] as num).toDouble(),
+      type: json['type'] as String,
+      genres:
+          (json['genres'] as List<dynamic>).map((e) => e as String).toList(),
+      startDate: json['start_date'] != null
+          ? DateTime.parse(json['start_date'] as String)
+          : null,
+      endDate: json['end_date'] != null
+          ? DateTime.parse(json['end_date'] as String)
+          : null,
+      source: json['source'] as String,
+      author: json['author'] as String,
+      rating: json['rating'] as String,
+      isLiked: json['is_liked'] as bool? ?? false,
+    );
+  }
+
+  factory Manga.fromCommon(CommonManga common) {
+    return Manga(
+      uid: common.uid,
+      name: common.name,
+      synopsis: common.synopsis,
+      imageUrl: common.imageUrl,
+      chapters: common.chapters,
+      volumes: common.volumes,
+      score: common.score,
+      type: common.type,
+      genres: common.genres,
+      startDate: common.startDate,
+      endDate: common.endDate,
+      source: common.source,
+      author: common.author,
+      rating: common.rating,
+      isLiked: common.isLiked,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'uid': uid,
-      'manga_id': mangaId,
-      'title': title,
-      'status': status,
-      'main_picture': mainPictures,
+      'name': name,
+      'synopsis': synopsis,
+      'image_url': imageUrl,
+      'chapters': chapters,
+      'volumes': volumes,
+      'score': score,
+      'type': type,
+      'genres': genres,
+      'start_date': startDate?.toIso8601String(),
+      'end_date': endDate?.toIso8601String(),
+      'source': source,
+      'author': author,
+      'rating': rating,
+      'is_liked': isLiked,
     };
-  }
-
-  CommonManga toCommonManga() {
-    return CommonManga(
-      uid: this.uid,
-      title: this.title,
-      status: this.status ?? 'Unknown',
-      imageUrl:
-          mainPictures.isNotEmpty ? mainPictures.first['medium'] ?? '' : '',
-    );
   }
 }

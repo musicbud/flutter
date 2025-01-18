@@ -1,15 +1,31 @@
 class CommonGenre {
+  final String id;
   final String name;
-  final int? elementIdProperty;
+  final bool isLiked;
+  final String source;
 
-  CommonGenre({required this.name, this.elementIdProperty});
+  CommonGenre({
+    required this.id,
+    required this.name,
+    this.isLiked = false,
+    required this.source,
+  });
 
   factory CommonGenre.fromJson(Map<String, dynamic> json) {
     return CommonGenre(
-      name: json['name'],
-      elementIdProperty: json['element_id_property'] != null
-          ? int.tryParse(json['element_id_property'].toString())
-          : null,
+      id: json['id'] as String,
+      name: json['name'] as String,
+      isLiked: json['is_liked'] as bool? ?? false,
+      source: json['source'] as String,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'is_liked': isLiked,
+      'source': source,
+    };
   }
 }

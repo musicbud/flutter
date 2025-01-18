@@ -1,168 +1,49 @@
-import 'dart:convert';
-
 class CommonTrack {
-  final String? uid;
-  final String? id;  // Add this line
-  final String name;
-  final String? spotifyId;
-  final String? uri;
-  final String? spotifyUrl;
-  final String? href;
-  final int? durationMs;
-  final int? popularity;
-  final String? previewUrl;
-  final int? trackNumber;
-  final int? discNumber;
-  final bool? explicit;
-  final String? type;
-  final bool? isLocal;
-  final String? isrc;
-  final String? elementIdProperty;  // Changed from int? to String?
-  final List<CommonImage> images;
-  final String? artistName;
+  final String id;
+  final String title;
+  final String artistName;
   final String? albumName;
-  final double? latitude;
-  final double? longitude;
+  final String? imageUrl;
+  final bool isLiked;
+  final DateTime? playedAt;
+  final String source;
 
   CommonTrack({
-    required this.uid,
-    required this.id,  // Add this line
-    required this.name,
-    this.spotifyId,
-    this.uri,
-    this.spotifyUrl,
-    this.href,
-    this.durationMs,
-    this.popularity,
-    this.previewUrl,
-    this.trackNumber,
-    this.discNumber,
-    this.explicit,
-    this.type,
-    this.isLocal,
-    this.isrc,
-    this.elementIdProperty,
-    this.images = const [],
-    this.artistName,
+    required this.id,
+    required this.title,
+    required this.artistName,
     this.albumName,
-    this.latitude,
-    this.longitude,
+    this.imageUrl,
+    this.isLiked = false,
+    this.playedAt,
+    required this.source,
   });
 
   factory CommonTrack.fromJson(Map<String, dynamic> json) {
-    if (json.containsKey('track') && json.containsKey('location')) {
-      // Handle the new structure
-      final trackData = json['track'] as Map<String, dynamic>;
-      final locationData = json['location'] as Map<String, dynamic>;
-      return CommonTrack(
-        uid: trackData['id'] ?? '',
-        id: trackData['id'] ?? '',
-        name: trackData['name'] ?? '',
-        latitude: locationData['latitude'],
-        longitude: locationData['longitude'],
-      );
-    } else {
-      // Handle the old structure
-      return CommonTrack(
-        uid: json['uid'] ?? '',
-        id: json['id'] ?? json['spotify_id'] ?? '',
-        name: json['name'] ?? '',
-        spotifyId: json['spotify_id'],
-        uri: json['uri'],
-        spotifyUrl: json['spotify_url'],
-        href: json['href'],
-        durationMs: json['duration_ms'],
-        popularity: json['popularity'],
-        previewUrl: json['preview_url'],
-        trackNumber: json['track_number'],
-        discNumber: json['disc_number'],
-        explicit: json['explicit'],
-        type: json['type'],
-        isLocal: json['is_local'],
-        isrc: json['isrc'],
-        elementIdProperty: json['element_id_property']?.toString(),
-        images: (json['images'] as List<dynamic>?)
-            ?.map((imageJson) => CommonImage.fromJson(imageJson))
-            .toList() ?? [],
-        artistName: json['artist_name'],
-        albumName: json['album_name'],
-        latitude: json['latitude']?.toDouble(),
-        longitude: json['longitude']?.toDouble(),
-      );
-    }
-  }
-}
-
-class CommonImage {
-  final String uid;
-  final String url;
-  final int height;
-  final int width;
-
-  CommonImage({
-    required this.uid,
-    required this.url,
-    required this.height,
-    required this.width,
-  });
-
-  factory CommonImage.fromJson(Map<String, dynamic> json) {
-    return CommonImage(
-      uid: json['uid'] ?? '',
-      url: json['url'] ?? '',
-      height: json['height'] ?? 0,
-      width: json['width'] ?? 0,
+    return CommonTrack(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      artistName: json['artist_name'] as String,
+      albumName: json['album_name'] as String?,
+      imageUrl: json['image_url'] as String?,
+      isLiked: json['is_liked'] as bool? ?? false,
+      playedAt: json['played_at'] != null
+          ? DateTime.parse(json['played_at'] as String)
+          : null,
+      source: json['source'] as String,
     );
   }
-}
 
-class TracksResponse {
-  final int count;
-  final String? next;
-  final String? previous;
-  final List<CommonTrack> data;
-  final String message;
-  final int code;
-  final bool successful;
-
-  TracksResponse({
-    required this.count,
-    this.next,
-    this.previous,
-    required this.data,
-    required this.message,
-    required this.code,
-    required this.successful,
-  });
-
-  factory TracksResponse.fromJson(Map<String, dynamic> json) {
-    return TracksResponse(
-      count: json['count'],
-      next: json['next'],
-      previous: json['previous'],
-      data: (json['data'] as List<dynamic>)
-          .map((trackJson) => CommonTrack.fromJson(trackJson))
-          .toList(),
-      message: json['message'],
-      code: json['code'],
-      successful: json['successful'],
-    );
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'artist_name': artistName,
+      'album_name': albumName,
+      'image_url': imageUrl,
+      'is_liked': isLiked,
+      'played_at': playedAt?.toIso8601String(),
+      'source': source,
+    };
   }
-}
-
-TracksResponse parseTracksResponse(String jsonString) {
-  try {
-    final Map<String, dynamic> decodedJson = json.decode(jsonString);
-    return TracksResponse.fromJson(decodedJson);
-  } catch (e) {
-    print('Error parsing tracks response: $e');
-    print('Raw JSON: $jsonString');
-    rethrow;
-  }
-}
-
-List<CommonTrack> parseTracks(String jsonString) {
-  final Map<String, dynamic> decodedJson = json.decode(jsonString);
-  final List<dynamic> tracksJson = decodedJson['data'];
-  return tracksJson.map((json) => CommonTrack.fromJson(json)).toList();
 }

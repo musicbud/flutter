@@ -1,40 +1,47 @@
-import 'package:musicbud_flutter/models/common_artist.dart';
-
 class CommonAlbum {
-  final String uid;
-  final String name;
-  final String artist;
-  final String spotifyId;
-  final String spotifyUrl;
-  final List<ArtworkImage> images;
-  final double? similarityScore;
+  final String id;
+  final String title;
+  final String artistName;
+  final String? imageUrl;
+  final bool isLiked;
+  final String source;
+  final int? year;
+  final List<String> genres;
 
   CommonAlbum({
-    required this.uid,
-    required this.name,
-    required this.artist,
-    required this.spotifyId,
-    required this.spotifyUrl,
-    required this.images,
-    this.similarityScore,
+    required this.id,
+    required this.title,
+    required this.artistName,
+    this.imageUrl,
+    this.isLiked = false,
+    required this.source,
+    this.year,
+    this.genres = const [],
   });
-
-  String get imageUrl => images.isNotEmpty ? images.first.url : '';
 
   factory CommonAlbum.fromJson(Map<String, dynamic> json) {
     return CommonAlbum(
-      uid: json['uid'] ?? '',
-      name: json['name'] ?? '',
-      artist: json['artist'] ?? '',
-      spotifyId: json['spotify_id'] ?? '',
-      spotifyUrl: json['spotify_url'] ?? '',
-      images: (json['images'] as List<dynamic>?)
-              ?.map((image) => ArtworkImage.fromJson(image))
-              .toList() ??
-          [],
-      similarityScore: json['similarity_score'] != null
-          ? double.tryParse(json['similarity_score'].toString())
-          : null,
+      id: json['id'] as String,
+      title: json['title'] as String,
+      artistName: json['artist_name'] as String,
+      imageUrl: json['image_url'] as String?,
+      isLiked: json['is_liked'] as bool? ?? false,
+      source: json['source'] as String,
+      year: json['year'] as int?,
+      genres: (json['genres'] as List<dynamic>?)?.cast<String>() ?? [],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'artist_name': artistName,
+      'image_url': imageUrl,
+      'is_liked': isLiked,
+      'source': source,
+      'year': year,
+      'genres': genres,
+    };
   }
 }
