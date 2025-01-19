@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/services/api_service.dart';
-import 'package:musicbud_flutter/models/bud_match.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:musicbud_flutter/blocs/bud/bud_bloc.dart';
+import 'package:musicbud_flutter/blocs/bud/bud_event.dart';
+import 'package:musicbud_flutter/blocs/bud/bud_state.dart';
+import 'package:musicbud_flutter/models/bud.dart';
 import 'package:musicbud_flutter/presentation/widgets/bud_match_list_item.dart';
 import 'package:musicbud_flutter/utils/string_extensions.dart';
 
@@ -13,7 +16,8 @@ class BudsPage extends StatefulWidget {
   _BudsPageState createState() => _BudsPageState();
 }
 
-class _BudsPageState extends State<BudsPage> with SingleTickerProviderStateMixin {
+class _BudsPageState extends State<BudsPage>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final List<String> _categories = [
     'liked/artists',
@@ -23,7 +27,7 @@ class _BudsPageState extends State<BudsPage> with SingleTickerProviderStateMixin
     'top/tracks',
     'top/genres',
     'played/tracks'
-  ]; // Removed 'liked/aio'
+  ];
 
   @override
   void initState() {
@@ -49,12 +53,16 @@ class _BudsPageState extends State<BudsPage> with SingleTickerProviderStateMixin
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
-          tabs: _categories.map((category) => Tab(text: _getCategoryTitle(category))).toList(),
+          tabs: _categories
+              .map((category) => Tab(text: _getCategoryTitle(category)))
+              .toList(),
         ),
       ),
       body: TabBarView(
         controller: _tabController,
-        children: _categories.map((category) => _BudsList(category: category)).toList(),
+        children: _categories
+            .map((category) => _BudsList(category: category))
+            .toList(),
       ),
     );
   }
@@ -74,45 +82,74 @@ class _BudsList extends StatefulWidget {
 }
 
 class __BudsListState extends State<_BudsList> {
-  late Future<List<BudMatch>> _budsFuture;
-
   @override
   void initState() {
     super.initState();
-    _budsFuture = _fetchBuds();
+    _fetchBuds();
   }
 
-  Future<List<BudMatch>> _fetchBuds() async {
-    final apiService = ApiService();
-    try {
-      return await apiService.getBuds(widget.category);
-    } catch (e) {
-      print('Error fetching buds from ${widget.category}: $e');
-      return [];
+  void _fetchBuds() {
+    final event = _getCategoryEvent(widget.category);
+    if (event != null) {
+      context.read<BudBloc>().add(event);
     }
+  }
+
+  BudEvent? _getCategoryEvent(String category) {
+    switch (category) {
+      case 'liked/artists':
+        return BudsByLikedArtistsRequested();
+      case 'liked/tracks':
+        return BudsByLikedTracksRequested();
+      case 'liked/genres':
+        return BudsByLikedGenresRequested();
+      case 'top/artists':
+        return BudsByTopArtistsRequested();
+      case 'top/tracks':
+        return BudsByTopTracksRequested();
+      case 'top/genres':
+        return BudsByTopGenresRequested();
+      case 'played/tracks':
+        return BudsByPlayedTracksRequested();
+      default:
+        return null;
+    }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<BudMatch>>(
-      future: _budsFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+    return BlocConsumer<BudBloc, BudState>(
+      listener: (context, state) {
+        if (state is BudFailure) {
+          _showSnackBar('Error: ${state.error}');
+        }
+      },
+      builder: (context, state) {
+        if (state is BudLoading) {
           return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No buds found for ${widget.category}'));
-        } else {
+        }
+
+        if (state is BudsLoaded) {
+          if (state.buds.isEmpty) {
+            return Center(child: Text('No buds found for ${widget.category}'));
+          }
+
           return ListView.builder(
-            itemCount: snapshot.data!.length,
+            itemCount: state.buds.length,
             itemBuilder: (context, index) {
-              return BudMatchListItem(budMatch: snapshot.data![index]);
+              return BudMatchListItem(budMatch: state.buds[index]);
             },
           );
         }
+
+        return const Center(child: Text('Failed to load buds'));
       },
     );
   }
 }
-

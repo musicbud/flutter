@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/services/chat_service.dart';
-import 'package:musicbud_flutter/presentation/pages/create_channel_page.dart'; // Import the CreateChannelPage
-import 'package:musicbud_flutter/presentation/pages/channel_chat_page.dart'; // Import the ChannelChatPage
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:musicbud_flutter/blocs/chat/chat_bloc.dart';
+import 'package:musicbud_flutter/blocs/chat/chat_event.dart';
+import 'package:musicbud_flutter/blocs/chat/chat_state.dart';
+import 'package:musicbud_flutter/models/channel.dart';
+import 'package:musicbud_flutter/presentation/pages/create_channel_page.dart';
+import 'package:musicbud_flutter/presentation/pages/channel_chat_page.dart';
 
 class ChannelListPage extends StatefulWidget {
-  final ChatService chatService;
   final String currentUsername;
 
   const ChannelListPage({
     Key? key,
-    required this.chatService,
     required this.currentUsername,
   }) : super(key: key);
 
@@ -18,8 +20,19 @@ class ChannelListPage extends StatefulWidget {
 }
 
 class _ChannelListPageState extends State<ChannelListPage> {
-  List<Map<String, dynamic>> channels = []; // Make channels a mutable list
-  bool isLoading = true;
+  @override
+  void initState() {
+    super.initState();
+    _fetchChannels();
+  }
+
+  void _fetchChannels() {
+    context.read<ChatBloc>().add(ChatChannelListRequested());
+  }
+
+  void _joinChannel(int channelId) {
+    context.read<ChatBloc>().add(ChatChannelJoined(channelId.toString()));
+  }
 
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -28,98 +41,81 @@ class _ChannelListPageState extends State<ChannelListPage> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _fetchChannels();
-  }
-
-  Future<void> _fetchChannels() async {
-    try {
-      final channelList = await widget.chatService.getChannelList();
-      if (!mounted) return;
-      setState(() {
-        channels = channelList;
-        isLoading = false;
-      });
-    } catch (e) {
-      print('Error fetching channels: $e');
-      if (!mounted) return;
-      setState(() {
-        isLoading = false;
-      });
-      _showSnackBar('Failed to load channels. Please try again.');
-    }
-  }
-
-  Future<void> _joinChannel(String channelId) async {
-    try {
-      final response = await widget.chatService.joinChannel(channelId);
-      if (!mounted) return;
-
-      if (response['status'] == 'success') {
-        await _fetchChannels();
-        if (!mounted) return;
-        _showSnackBar(response['message']);
-      } else {
-        _showSnackBar('Error: ${response['message']}');
-      }
-    } catch (e) {
-      print('Error joining channel: $e');
-      if (!mounted) return;
-      _showSnackBar('An error occurred. Please try again.');
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Channel List')),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : channels.isEmpty
-              ? const Center(child: Text('No channels available'))
-              : ListView.builder(
-                  itemCount: channels.length,
-                  itemBuilder: (context, index) {
-                    final channel = channels[index];
-                    return ListTile(
-                      title: Text(channel['name'] ?? 'Unnamed Channel'),
-                      subtitle: Text('ID: ${channel['id']}'),
-                      trailing: channel['is_member'] == true
-                          ? const Icon(Icons.check_circle, color: Colors.green)
-                          : null,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChannelChatPage(
-                              chatService: widget.chatService,
-                              channelId: channel['id']
-                                  as int, // Make sure this is an int
-                              channelName: channel['name'] as String,
-                              currentUsername: widget.currentUsername,
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  },
+    return BlocConsumer<ChatBloc, ChatState>(
+      listener: (context, state) {
+        if (state is ChatChannelJoinedSuccess) {
+          _showSnackBar('Successfully joined channel');
+          _fetchChannels(); // Refresh the channel list
+        } else if (state is ChatFailure) {
+          _showSnackBar('Error: ${state.error}');
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(title: const Text('Channel List')),
+          body: _buildBody(state),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () async {
+              final result = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const CreateChannelPage(),
                 ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) =>
-                  CreateChannelPage(chatService: widget.chatService),
-            ),
-          );
-          if (result == true) {
-            _fetchChannels(); // Refresh the channel list after creating a new channel
-          }
-        },
-        child: const Icon(Icons.add),
-      ),
+              );
+              if (result == true) {
+                _fetchChannels(); // Refresh the channel list after creating a new channel
+              }
+            },
+            child: const Icon(Icons.add),
+          ),
+        );
+      },
     );
+  }
+
+  Widget _buildBody(ChatState state) {
+    if (state is ChatLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (state is ChatChannelListLoaded) {
+      if (state.channels.isEmpty) {
+        return const Center(child: Text('No channels available'));
+      }
+
+      return ListView.builder(
+        itemCount: state.channels.length,
+        itemBuilder: (context, index) {
+          final channel = state.channels[index];
+          return ListTile(
+            title: Text(channel.name),
+            subtitle: Text('ID: ${channel.id}'),
+            trailing: TextButton(
+              onPressed: () => _joinChannel(channel.id),
+              child: const Text('Join'),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ChannelChatPage(
+                    channelId: channel.id,
+                    channelName: channel.name,
+                    currentUsername: widget.currentUsername,
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      );
+    }
+
+    if (state is ChatFailure) {
+      return Center(child: Text('Error: ${state.error}'));
+    }
+
+    return const Center(child: Text('No channels available'));
   }
 }

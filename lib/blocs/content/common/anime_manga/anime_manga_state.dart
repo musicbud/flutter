@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import '../../../../models/common_anime.dart';
-import '../../../../models/common_manga.dart';
+import '../../../../domain/models/common_anime.dart';
+import '../../../../domain/models/common_manga.dart';
 
 abstract class AnimeMangaState extends Equatable {
   const AnimeMangaState();

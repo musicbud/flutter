@@ -1,42 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/models/common_manga.dart';
+import 'package:musicbud_flutter/domain/models/common_manga.dart';
 
 class MangaListItem extends StatelessWidget {
   final CommonManga manga;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   const MangaListItem({
     Key? key,
     required this.manga,
     this.onTap,
+    this.onLongPress,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          children: [
-            if (manga.imageUrl.isNotEmpty)
-              Image.network(
-                manga.imageUrl,
-                height: 100,
-                width: 100,
-                fit: BoxFit.cover,
-              ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                manga.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-              ),
+    return ListTile(
+      leading: manga.imageUrl != null
+          ? CircleAvatar(
+              backgroundImage: NetworkImage(manga.imageUrl!),
+              radius: 25,
+            )
+          : const CircleAvatar(
+              child: Icon(Icons.book),
+              radius: 25,
             ),
-          ],
-        ),
+      title: Text(
+        manga.title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
+      subtitle: manga.genres?.isNotEmpty == true
+          ? Text(
+              manga.genres!.join(', '),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            )
+          : null,
+      trailing: manga.isLiked
+          ? const Icon(Icons.favorite, color: Colors.red)
+          : const Icon(Icons.favorite_border),
+      onTap: onTap,
+      onLongPress: onLongPress,
     );
   }
 }

@@ -1,74 +1,58 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/services/api_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../blocs/likes/likes_bloc.dart';
+import '../../blocs/likes/likes_event.dart';
+import '../../blocs/likes/likes_state.dart';
+import '../widgets/loading_indicator.dart';
 
 class UpdateLikesPage extends StatefulWidget {
-  final ApiService apiService;
   final String channelId;
 
   const UpdateLikesPage({
-    Key? key,
-    required this.apiService,
+    super.key,
     required this.channelId,
-  }) : super(key: key);
+  });
 
   @override
-  _UpdateLikesPageState createState() => _UpdateLikesPageState();
+  State<UpdateLikesPage> createState() => _UpdateLikesPageState();
 }
 
 class _UpdateLikesPageState extends State<UpdateLikesPage> {
-  bool _isUpdating = false;
-  String _updateStatus = '';
+  @override
+  void initState() {
+    super.initState();
+    _updateLikes();
+  }
 
-  Future<void> _updateLikes() async {
-    setState(() {
-      _isUpdating = true;
-      _updateStatus = 'Updating likes...';
-    });
+  void _updateLikes() {
+    context.read<LikesBloc>().add(LikesUpdateRequested(widget.channelId));
+  }
 
-    try {
-      final result = await widget.apiService.updateLikes(widget.channelId);
-      if (result['status'] == 'success') {
-        setState(() {
-          _updateStatus = 'Likes updated successfully!';
-        });
-      } else {
-        setState(() {
-          _updateStatus = result['message'];
-        });
-        if (result['message'].contains('No Spotify account found')) {
-          _showConnectSpotifyDialog();
-        }
-      }
-    } catch (e) {
-      setState(() {
-        _updateStatus = 'Error updating likes: $e';
-      });
-    } finally {
-      setState(() {
-        _isUpdating = false;
-      });
-    }
+  void _connectSpotify() {
+    context.read<LikesBloc>().add(SpotifyConnectionRequested());
   }
 
   void _showConnectSpotifyDialog() {
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Spotify Account Not Connected'),
-          content:
-              const Text('Please connect your Spotify account to update your likes.'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                // Navigate to the ConnectServicesPage or implement the logic to connect Spotify
-              },
-            ),
-          ],
-        );
-      },
+      builder: (context) => AlertDialog(
+        title: const Text('Connect Spotify'),
+        content: const Text(
+            'You need to connect your Spotify account to update likes.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _connectSpotify();
+            },
+            child: const Text('Connect'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -76,23 +60,66 @@ class _UpdateLikesPageState extends State<UpdateLikesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Update My Likes'),
+        title: const Text('Update Likes'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (_isUpdating)
-              const CircularProgressIndicator()
-            else
-              ElevatedButton(
-                onPressed: _updateLikes,
-                child: const Text('Update My Likes'),
+      body: BlocConsumer<LikesBloc, LikesState>(
+        listener: (context, state) {
+          if (state is LikesUpdateFailure && state.needsSpotifyConnection) {
+            _showConnectSpotifyDialog();
+          }
+        },
+        builder: (context, state) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (state is LikesUpdating) ...[
+                    const LoadingIndicator(),
+                    const SizedBox(height: 16),
+                    const Text('Updating likes...'),
+                  ] else if (state is LikesUpdateSuccess) ...[
+                    const Icon(
+                      Icons.check_circle_outline,
+                      color: Colors.green,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(state.message),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: _updateLikes,
+                      child: const Text('Update Again'),
+                    ),
+                  ] else if (state is LikesUpdateFailure) ...[
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 48,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      state.error,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(color: Colors.red),
+                    ),
+                    const SizedBox(height: 16),
+                    ElevatedButton(
+                      onPressed: _updateLikes,
+                      child: const Text('Try Again'),
+                    ),
+                  ] else ...[
+                    ElevatedButton(
+                      onPressed: _updateLikes,
+                      child: const Text('Update Likes'),
+                    ),
+                  ],
+                ],
               ),
-            const SizedBox(height: 20),
-            Text(_updateStatus),
-          ],
-        ),
+            ),
+          );
+        },
       ),
     );
   }

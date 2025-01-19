@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/models/common_genre.dart';
+import 'package:musicbud_flutter/domain/models/common_genre.dart';
 
 class GenreListItem extends StatelessWidget {
   final CommonGenre genre;
   final VoidCallback? onTap;
 
-  const GenreListItem({Key? key, required this.genre, this.onTap}) : super(key: key);
+  const GenreListItem({Key? key, required this.genre, this.onTap})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,10 @@ class GenreListItem extends StatelessWidget {
                 genre.name,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontSize: 12),
+                style: Theme.of(context)
+                    .textTheme
+                    .bodyMedium
+                    ?.copyWith(fontSize: 12),
               ),
             ),
           ],

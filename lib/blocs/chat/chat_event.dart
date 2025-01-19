@@ -9,6 +9,8 @@ abstract class ChatEvent extends Equatable {
 
 class ChatChannelListRequested extends ChatEvent {}
 
+class ChatUserListRequested extends ChatEvent {}
+
 class ChatChannelUsersRequested extends ChatEvent {
   final int channelId;
 
@@ -177,4 +179,26 @@ class ChatUserMessageSent extends ChatEvent {
 
   @override
   List<Object> get props => [senderUsername, recipientUsername, content];
+}
+
+class ChatChannelMemberAdded extends ChatEvent {
+  final int channelId;
+  final String username;
+
+  const ChatChannelMemberAdded({
+    required this.channelId,
+    required this.username,
+  });
+
+  @override
+  List<Object> get props => [channelId, username];
+}
+
+class ChatChannelStatisticsRequested extends ChatEvent {
+  final int channelId;
+
+  const ChatChannelStatisticsRequested(this.channelId);
+
+  @override
+  List<Object> get props => [channelId];
 }

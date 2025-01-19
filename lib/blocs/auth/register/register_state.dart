@@ -11,6 +11,30 @@ class RegisterInitial extends RegisterState {}
 
 class RegisterLoading extends RegisterState {}
 
+class RegisterConnectivityStatus extends RegisterState {
+  final bool isConnected;
+
+  const RegisterConnectivityStatus(this.isConnected);
+
+  @override
+  List<Object> get props => [isConnected];
+}
+
+class RegisterServerStatus extends RegisterState {
+  final bool isReachable;
+  final String? error;
+  final String? message;
+
+  const RegisterServerStatus({
+    required this.isReachable,
+    this.error,
+    this.message,
+  });
+
+  @override
+  List<Object?> get props => [isReachable, error, message];
+}
+
 class RegisterSuccess extends RegisterState {
   final Map<String, dynamic> data;
 

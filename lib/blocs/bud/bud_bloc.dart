@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/bud_repository.dart';
+import '../../models/bud_match.dart';
 import 'bud_event.dart';
 import 'bud_state.dart';
 
@@ -33,7 +34,6 @@ class BudBloc extends Bloc<BudEvent, BudState> {
     on<BudsSearchRequested>(_onBudsSearchRequested);
   }
 
-  // By liked items handlers
   Future<void> _onBudsByLikedArtistsRequested(
     BudsByLikedArtistsRequested event,
     Emitter<BudState> emit,
@@ -41,7 +41,9 @@ class BudBloc extends Bloc<BudEvent, BudState> {
     emit(BudLoading());
     try {
       final buds = await _budRepository.getBudsByLikedArtists();
-      emit(BudsLoaded(buds));
+      emit(BudsLoaded(buds
+          .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
+          .toList()));
     } catch (e) {
       emit(BudFailure(e.toString()));
     }
@@ -54,7 +56,9 @@ class BudBloc extends Bloc<BudEvent, BudState> {
     emit(BudLoading());
     try {
       final buds = await _budRepository.getBudsByLikedTracks();
-      emit(BudsLoaded(buds));
+      emit(BudsLoaded(buds
+          .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
+          .toList()));
     } catch (e) {
       emit(BudFailure(e.toString()));
     }
@@ -67,7 +71,9 @@ class BudBloc extends Bloc<BudEvent, BudState> {
     emit(BudLoading());
     try {
       final buds = await _budRepository.getBudsByLikedGenres();
-      emit(BudsLoaded(buds));
+      emit(BudsLoaded(buds
+          .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
+          .toList()));
     } catch (e) {
       emit(BudFailure(e.toString()));
     }
@@ -80,7 +86,9 @@ class BudBloc extends Bloc<BudEvent, BudState> {
     emit(BudLoading());
     try {
       final buds = await _budRepository.getBudsByLikedAlbums();
-      emit(BudsLoaded(buds));
+      emit(BudsLoaded(buds
+          .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
+          .toList()));
     } catch (e) {
       emit(BudFailure(e.toString()));
     }
@@ -93,13 +101,14 @@ class BudBloc extends Bloc<BudEvent, BudState> {
     emit(BudLoading());
     try {
       final buds = await _budRepository.getBudsByPlayedTracks();
-      emit(BudsLoaded(buds));
+      emit(BudsLoaded(buds
+          .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
+          .toList()));
     } catch (e) {
       emit(BudFailure(e.toString()));
     }
   }
 
-  // By top items handlers
   Future<void> _onBudsByTopArtistsRequested(
     BudsByTopArtistsRequested event,
     Emitter<BudState> emit,
@@ -107,7 +116,9 @@ class BudBloc extends Bloc<BudEvent, BudState> {
     emit(BudLoading());
     try {
       final buds = await _budRepository.getBudsByTopArtists();
-      emit(BudsLoaded(buds));
+      emit(BudsLoaded(buds
+          .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
+          .toList()));
     } catch (e) {
       emit(BudFailure(e.toString()));
     }
@@ -120,7 +131,9 @@ class BudBloc extends Bloc<BudEvent, BudState> {
     emit(BudLoading());
     try {
       final buds = await _budRepository.getBudsByTopTracks();
-      emit(BudsLoaded(buds));
+      emit(BudsLoaded(buds
+          .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
+          .toList()));
     } catch (e) {
       emit(BudFailure(e.toString()));
     }
@@ -133,7 +146,9 @@ class BudBloc extends Bloc<BudEvent, BudState> {
     emit(BudLoading());
     try {
       final buds = await _budRepository.getBudsByTopGenres();
-      emit(BudsLoaded(buds));
+      emit(BudsLoaded(buds
+          .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
+          .toList()));
     } catch (e) {
       emit(BudFailure(e.toString()));
     }
@@ -146,7 +161,9 @@ class BudBloc extends Bloc<BudEvent, BudState> {
     emit(BudLoading());
     try {
       final buds = await _budRepository.getBudsByTopAnime();
-      emit(BudsLoaded(buds));
+      emit(BudsLoaded(buds
+          .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
+          .toList()));
     } catch (e) {
       emit(BudFailure(e.toString()));
     }
@@ -159,13 +176,14 @@ class BudBloc extends Bloc<BudEvent, BudState> {
     emit(BudLoading());
     try {
       final buds = await _budRepository.getBudsByTopManga();
-      emit(BudsLoaded(buds));
+      emit(BudsLoaded(buds
+          .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
+          .toList()));
     } catch (e) {
       emit(BudFailure(e.toString()));
     }
   }
 
-  // By specific item handlers
   Future<void> _onBudsByArtistRequested(
     BudsByArtistRequested event,
     Emitter<BudState> emit,
@@ -173,7 +191,9 @@ class BudBloc extends Bloc<BudEvent, BudState> {
     emit(BudLoading());
     try {
       final buds = await _budRepository.getBudsByArtist(event.artistId);
-      emit(BudsLoaded(buds));
+      emit(BudsLoaded(buds
+          .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
+          .toList()));
     } catch (e) {
       emit(BudFailure(e.toString()));
     }
@@ -186,7 +206,9 @@ class BudBloc extends Bloc<BudEvent, BudState> {
     emit(BudLoading());
     try {
       final buds = await _budRepository.getBudsByTrack(event.trackId);
-      emit(BudsLoaded(buds));
+      emit(BudsLoaded(buds
+          .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
+          .toList()));
     } catch (e) {
       emit(BudFailure(e.toString()));
     }
@@ -199,7 +221,9 @@ class BudBloc extends Bloc<BudEvent, BudState> {
     emit(BudLoading());
     try {
       final buds = await _budRepository.getBudsByGenre(event.genreId);
-      emit(BudsLoaded(buds));
+      emit(BudsLoaded(buds
+          .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
+          .toList()));
     } catch (e) {
       emit(BudFailure(e.toString()));
     }
@@ -212,13 +236,14 @@ class BudBloc extends Bloc<BudEvent, BudState> {
     emit(BudLoading());
     try {
       final buds = await _budRepository.getBudsByAlbum(event.albumId);
-      emit(BudsLoaded(buds));
+      emit(BudsLoaded(buds
+          .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
+          .toList()));
     } catch (e) {
       emit(BudFailure(e.toString()));
     }
   }
 
-  // Search handler
   Future<void> _onBudsSearchRequested(
     BudsSearchRequested event,
     Emitter<BudState> emit,
@@ -226,7 +251,9 @@ class BudBloc extends Bloc<BudEvent, BudState> {
     emit(BudLoading());
     try {
       final buds = await _budRepository.searchBuds(event.query);
-      emit(BudsLoaded(buds));
+      emit(BudsLoaded(buds
+          .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
+          .toList()));
     } catch (e) {
       emit(BudFailure(e.toString()));
     }

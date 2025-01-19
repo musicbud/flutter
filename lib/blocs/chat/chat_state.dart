@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import '../../models/channel.dart';
 import '../../models/channel_user.dart';
 import '../../models/message.dart';
+import '../../models/user_profile.dart';
 
 abstract class ChatState extends Equatable {
   const ChatState();
@@ -21,6 +22,15 @@ class ChatFailure extends ChatState {
 
   @override
   List<Object> get props => [error];
+}
+
+class ChatUserListLoaded extends ChatState {
+  final List<UserProfile> users;
+
+  const ChatUserListLoaded(this.users);
+
+  @override
+  List<Object> get props => [users];
 }
 
 class ChatChannelListLoaded extends ChatState {
@@ -146,4 +156,13 @@ class ChatUserMessageSentSuccess extends ChatState {
 
   @override
   List<Object> get props => [message];
+}
+
+class ChatChannelStatisticsLoaded extends ChatState {
+  final Map<String, dynamic> statistics;
+
+  const ChatChannelStatisticsLoaded(this.statistics);
+
+  @override
+  List<Object> get props => [statistics];
 }

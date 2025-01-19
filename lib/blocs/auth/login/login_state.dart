@@ -28,3 +28,27 @@ class LoginFailure extends LoginState {
   @override
   List<Object> get props => [error];
 }
+
+class LoginConnectivityStatus extends LoginState {
+  final bool isConnected;
+
+  const LoginConnectivityStatus({required this.isConnected});
+
+  @override
+  List<Object> get props => [isConnected];
+}
+
+class LoginServerStatus extends LoginState {
+  final bool isReachable;
+  final String? error;
+  final String? message;
+
+  const LoginServerStatus({
+    required this.isReachable,
+    this.error,
+    this.message,
+  });
+
+  @override
+  List<Object?> get props => [isReachable, error, message];
+}

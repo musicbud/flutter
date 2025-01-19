@@ -1,35 +1,128 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/presentation/pages/chat_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import '../../blocs/chats/chats_bloc.dart';
+import '../../blocs/chats/chats_event.dart';
+import '../../blocs/chats/chats_state.dart';
+import '../widgets/loading_indicator.dart';
+import 'chat_screen.dart';
 
-class ChatsPage extends StatelessWidget {
+class ChatsPage extends StatefulWidget {
   const ChatsPage({super.key});
 
   @override
+  State<ChatsPage> createState() => _ChatsPageState();
+}
+
+class _ChatsPageState extends State<ChatsPage> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<ChatsBloc>().add(const ChatsRequested());
+  }
+
+  String _formatTimestamp(DateTime timestamp) {
+    final now = DateTime.now();
+    final difference = now.difference(timestamp);
+
+    if (difference.inDays > 0) {
+      return DateFormat('MMM d').format(timestamp);
+    } else {
+      return DateFormat('HH:mm').format(timestamp);
+    }
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        return Card(
-          shape: RoundedRectangleBorder(
-            side: BorderSide(color: Theme.of(context).primaryColor),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: ListTile(
-            leading: CircleAvatar(
-              child: Text('U${index + 1}'),
-            ),
-            title: Text('User ${index + 1}'),
-            subtitle: Text('Last message from User ${index + 1}'),
-            trailing: const Text('12:00 PM'),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatScreen(user: 'User ${index + 1}'),
+    return BlocConsumer<ChatsBloc, ChatsState>(
+      listener: (context, state) {
+        if (state is ChatsFailure) {
+          _showErrorSnackBar(state.error);
+        }
+      },
+      builder: (context, state) {
+        if (state is ChatsLoading) {
+          return const LoadingIndicator();
+        }
+
+        if (state is ChatsLoaded) {
+          if (state.chats.isEmpty) {
+            return const Center(
+              child: Text('No chats yet'),
+            );
+          }
+
+          return ListView.builder(
+            itemCount: state.chats.length,
+            itemBuilder: (context, index) {
+              final chat = state.chats[index];
+              return Dismissible(
+                key: Key(chat.userId),
+                background: Container(
+                  color: Colors.red,
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: const Icon(Icons.delete, color: Colors.white),
+                ),
+                direction: DismissDirection.endToStart,
+                onDismissed: (direction) {
+                  context
+                      .read<ChatsBloc>()
+                      .add(ChatDeleted(userId: chat.userId));
+                },
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(
+                      color: chat.isRead
+                          ? Colors.transparent
+                          : Theme.of(context).primaryColor,
+                    ),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: chat.avatarUrl != null
+                          ? NetworkImage(chat.avatarUrl!)
+                          : null,
+                      child: chat.avatarUrl == null
+                          ? Text(chat.username[0].toUpperCase())
+                          : null,
+                    ),
+                    title: Text(chat.username),
+                    subtitle: Text(
+                      chat.lastMessage,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    trailing: Text(_formatTimestamp(chat.lastMessageTimestamp)),
+                    onTap: () {
+                      if (!chat.isRead) {
+                        context
+                            .read<ChatsBloc>()
+                            .add(ChatRead(userId: chat.userId));
+                      }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatScreen(userId: chat.userId),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               );
             },
-          ),
+          );
+        }
+
+        return const Center(
+          child: Text('Something went wrong'),
         );
       },
     );

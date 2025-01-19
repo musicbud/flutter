@@ -1,70 +1,80 @@
-import '../domain/models/common_artist.dart';
+import 'package:musicbud_flutter/domain/models/common_artist.dart';
 
 class Artist {
+  final String id;
   final String uid;
   final String name;
-  final String spotifyId;
-  final String ytmusicId;
-  final String lastfmId;
-  final List<String> imageUrls;
-  final int popularity;
-  final int followers;
+  final List<String>? genres;
+  final List<String>? imageUrls;
+  final String? spotifyId;
+  final String? ytmusicId;
+  final String? lastfmId;
   final bool isLiked;
+  final int? popularity;
+  final int? followers;
 
   Artist({
-    required this.uid,
+    required this.id,
+    this.uid = '',
     required this.name,
-    this.spotifyId = '',
-    this.ytmusicId = '',
-    this.lastfmId = '',
-    this.imageUrls = const [],
-    this.popularity = 0,
-    this.followers = 0,
+    this.genres,
+    this.imageUrls,
+    this.spotifyId,
+    this.ytmusicId,
+    this.lastfmId,
     this.isLiked = false,
+    this.popularity,
+    this.followers,
   });
 
   factory Artist.fromJson(Map<String, dynamic> json) {
     return Artist(
-      uid: json['uid'] as String,
+      id: json['id'] as String? ?? json['uid'] as String,
+      uid: json['uid'] as String? ?? '',
       name: json['name'] as String,
-      spotifyId: json['spotify_id'] as String? ?? '',
-      ytmusicId: json['ytmusic_id'] as String? ?? '',
-      lastfmId: json['lastfm_id'] as String? ?? '',
+      genres:
+          (json['genres'] as List<dynamic>?)?.map((e) => e as String).toList(),
       imageUrls: (json['image_urls'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
-      popularity: json['popularity'] as int? ?? 0,
-      followers: json['followers'] as int? ?? 0,
+          ?.map((e) => e as String)
+          .toList(),
+      spotifyId: json['spotify_id'] as String?,
+      ytmusicId: json['ytmusic_id'] as String?,
+      lastfmId: json['lastfm_id'] as String?,
       isLiked: json['is_liked'] as bool? ?? false,
-    );
-  }
-
-  factory Artist.fromCommon(CommonArtist common) {
-    return Artist(
-      uid: common.uid,
-      name: common.name,
-      spotifyId: common.spotifyId,
-      ytmusicId: common.ytmusicId,
-      lastfmId: common.lastfmId,
-      imageUrls: common.imageUrls,
-      popularity: common.popularity,
-      followers: common.followers,
-      isLiked: common.isLiked,
+      popularity: json['popularity'] as int?,
+      followers: json['followers'] as int?,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'uid': uid,
       'name': name,
+      'genres': genres,
+      'image_urls': imageUrls,
       'spotify_id': spotifyId,
       'ytmusic_id': ytmusicId,
       'lastfm_id': lastfmId,
-      'image_urls': imageUrls,
+      'is_liked': isLiked,
       'popularity': popularity,
       'followers': followers,
-      'is_liked': isLiked,
     };
+  }
+
+  CommonArtist toCommonArtist() {
+    return CommonArtist(
+      id: id,
+      uid: uid,
+      name: name,
+      genres: genres,
+      imageUrls: imageUrls,
+      spotifyId: spotifyId,
+      ytmusicId: ytmusicId,
+      lastfmId: lastfmId,
+      isLiked: isLiked,
+      popularity: popularity,
+      followers: followers,
+    );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../models/bud.dart';
+import '../../models/bud_match.dart';
 
 abstract class BudState extends Equatable {
   const BudState();
@@ -22,7 +22,7 @@ class BudFailure extends BudState {
 }
 
 class BudsLoaded extends BudState {
-  final List<Bud> buds;
+  final List<BudMatch> buds;
 
   const BudsLoaded(this.buds);
 

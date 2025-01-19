@@ -1,65 +1,51 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 
 class DioClient {
-  static final DioClient _instance = DioClient._internal();
-  late Dio dio;
+  final Dio _dio;
+  final String baseUrl;
 
-  factory DioClient() {
-    return _instance;
+  DioClient({required String baseUrl})
+      : baseUrl = baseUrl,
+        _dio = Dio(BaseOptions(
+          baseUrl: baseUrl,
+          connectTimeout: const Duration(seconds: 5),
+          receiveTimeout: const Duration(seconds: 3),
+        ));
+
+  Future<Response> get(String path,
+      {Map<String, dynamic>? queryParameters}) async {
+    try {
+      final response = await _dio.get(path, queryParameters: queryParameters);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  DioClient._internal() {
-    const baseUrl = String.fromEnvironment('API_URL',
-        defaultValue: 'https://api.musicbud.com');
-
-    dio = Dio(
-      BaseOptions(
-        baseUrl: baseUrl,
-        connectTimeout: const Duration(seconds: 30),
-        receiveTimeout: const Duration(seconds: 30),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      ),
-    );
-
-    dio.interceptors.add(
-      InterceptorsWrapper(
-        onRequest: (options, handler) {
-          if (kDebugMode) {
-            debugPrint('Request: ${options.uri}');
-            debugPrint('Request headers: ${options.headers}');
-            debugPrint('Request data: ${options.data}');
-          }
-          return handler.next(options);
-        },
-        onResponse: (response, handler) {
-          if (kDebugMode) {
-            debugPrint('Response: ${response.statusCode}');
-            debugPrint('Response headers: ${response.headers}');
-            debugPrint('Response data: ${response.data}');
-          }
-          return handler.next(response);
-        },
-        onError: (DioException e, handler) {
-          if (kDebugMode) {
-            debugPrint('Error: ${e.error}');
-            debugPrint('Error message: ${e.message}');
-            debugPrint('Error response: ${e.response}');
-          }
-          return handler.next(e);
-        },
-      ),
-    );
+  Future<Response> post(String path, {dynamic data}) async {
+    try {
+      final response = await _dio.post(path, data: data);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  void setAuthToken(String token) {
-    dio.options.headers['Authorization'] = 'Bearer $token';
+  Future<Response> put(String path, {dynamic data}) async {
+    try {
+      final response = await _dio.put(path, data: data);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  void clearAuthToken() {
-    dio.options.headers.remove('Authorization');
+  Future<Response> delete(String path) async {
+    try {
+      final response = await _dio.delete(path);
+      return response;
+    } catch (e) {
+      rethrow;
+    }
   }
 }

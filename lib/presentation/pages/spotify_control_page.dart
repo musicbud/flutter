@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/services/api_service.dart';
-import 'package:musicbud_flutter/presentation/pages/track_details_page.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:musicbud_flutter/models/common_track.dart';
-import 'package:musicbud_flutter/presentation/pages/played_tracks_map_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../blocs/spotify_control/spotify_control_bloc.dart';
+import '../../blocs/spotify_control/spotify_control_event.dart';
+import '../../blocs/spotify_control/spotify_control_state.dart';
+import '../../domain/models/common_track.dart';
+import '../widgets/loading_indicator.dart';
+import 'played_tracks_map_page.dart';
+import 'track_details_page.dart';
 
 class SpotifyControlPage extends StatefulWidget {
-  final ApiService apiService;
-
-  const SpotifyControlPage({Key? key, required this.apiService})
-      : super(key: key);
+  const SpotifyControlPage({Key? key}) : super(key: key);
 
   @override
   _SpotifyControlPageState createState() => _SpotifyControlPageState();
@@ -17,8 +17,9 @@ class SpotifyControlPage extends StatefulWidget {
 
 class _SpotifyControlPageState extends State<SpotifyControlPage> {
   List<CommonTrack> _playedTracks = [];
-  List<dynamic> _spotifyDevices = [];
+  List<Map<String, dynamic>> _spotifyDevices = [];
   String? _selectedDeviceId;
+  int _volume = 50;
 
   @override
   void initState() {
@@ -27,158 +28,62 @@ class _SpotifyControlPageState extends State<SpotifyControlPage> {
     _fetchSpotifyDevices();
   }
 
+  Future<({double latitude, double longitude})> _getCurrentLocation() async {
+    // TODO: Implement actual location service
+    // For now, return mock location
+    return (
+      latitude: 0.0,
+      longitude: 0.0,
+    );
+  }
+
   Future<void> _sendLocation() async {
     try {
       final position = await _getCurrentLocation();
-      await widget.apiService
-          .saveLocation(position.latitude, position.longitude);
+      context.read<SpotifyControlBloc>().add(SpotifyTrackLocationSaved(
+            trackId: '', // No track ID since we're just saving location
+            latitude: position.latitude,
+            longitude: position.longitude,
+          ));
       if (!mounted) return;
-      _showSnackBar(context, 'Location sent successfully');
+      _showSnackBar('Location sent successfully');
     } catch (e) {
       print('Error sending location: $e');
       if (!mounted) return;
-      _showSnackBar(context, 'Failed to send location');
+      _showSnackBar('Failed to send location');
     }
   }
 
-  Future<void> _fetchPlayedTracks() async {
-    try {
-      final tracks = await widget.apiService.getPlayedTracks();
-      if (!mounted) return;
-      setState(() {
-        _playedTracks = tracks;
-      });
-    } catch (e) {
-      print('Error fetching played tracks: $e');
-      if (!mounted) return;
-      _showSnackBar(context, 'Failed to load played tracks');
-    }
+  void _fetchPlayedTracks() {
+    context.read<SpotifyControlBloc>().add(SpotifyPlayedTracksRequested());
   }
 
-  Future<void> _fetchSpotifyDevices() async {
-    try {
-      final devices = await widget.apiService.getSpotifyDevices();
-      if (!mounted) return;
-      setState(() {
-        _spotifyDevices = devices;
-        if (devices.isNotEmpty) {
-          _selectedDeviceId = devices[0]['id'];
-        }
-      });
-    } catch (e) {
-      print('Error fetching Spotify devices: $e');
-      if (!mounted) return;
-      _showSnackBar(context, 'Failed to load Spotify devices');
-    }
+  void _fetchSpotifyDevices() {
+    context.read<SpotifyControlBloc>().add(SpotifyDevicesRequested());
   }
 
-  Future<void> _playSpotifyTrack(String trackId) async {
-    try {
-      final success = await widget.apiService
-          .playSpotifyTrack(trackId, deviceId: _selectedDeviceId);
-      if (!mounted) return;
-
-      if (success) {
-        _showSnackBar(context, 'Track played on Spotify');
-      } else {
-        _showSnackBar(context, 'Failed to play track on Spotify');
-      }
-    } catch (e) {
-      print('Error playing Spotify track: $e');
-      if (!mounted) return;
-      _showSnackBar(context, 'Error playing track on Spotify');
-    }
+  void _selectDevice(String deviceId) {
+    context.read<SpotifyControlBloc>().add(SpotifyDeviceSelected(deviceId));
   }
 
-  Widget _buildPlayedTracksList() {
-    return ListView.builder(
-      itemCount: _playedTracks.length,
-      itemBuilder: (context, index) {
-        final track = _playedTracks[index];
-        return ListTile(
-          title: Text(track.name),
-          subtitle: Text(track.artistName ?? 'Unknown Artist'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TrackDetailsPage(
-                  track: track,
-                  apiService: widget.apiService,
-                ),
-              ),
-            );
-          },
-          trailing: IconButton(
-            icon: const Icon(Icons.play_arrow),
-            onPressed: () async {
-              try {
-                final position = await Geolocator.getCurrentPosition();
-                await widget.apiService.playTrackWithLocation(
-                  track.id ?? '',
-                  track.name,
-                  position.latitude,
-                  position.longitude,
-                );
-                if (context.mounted) {
-                  _showSnackBar(context, 'Track played with location');
-                }
-              } catch (e) {
-                print('Error playing track with location: $e');
-                if (context.mounted) {
-                  _showSnackBar(context, 'Failed to play track with location');
-                }
-              }
-            },
-          ),
-        );
-      },
-    );
+  void _playbackControl(String action) {
+    context.read<SpotifyControlBloc>().add(SpotifyPlaybackControlRequested(
+          action: action,
+          deviceId: _selectedDeviceId,
+        ));
   }
 
-  Widget _buildSpotifyDeviceDropdown() {
-    return DropdownButton<String>(
-      value: _selectedDeviceId,
-      items: _spotifyDevices.map((device) {
-        return DropdownMenuItem<String>(
-          value: device['id'],
-          child: Text(device['name']),
-        );
-      }).toList(),
-      onChanged: (String? newValue) {
-        setState(() {
-          _selectedDeviceId = newValue;
-        });
-      },
-      hint: const Text('Select Spotify Device'),
-    );
+  void _onVolumeChanged(int value) {
+    setState(() {
+      _volume = value;
+    });
+    context.read<SpotifyControlBloc>().add(SpotifyVolumeChanged(
+          volume: value,
+          deviceId: _selectedDeviceId,
+        ));
   }
 
-  Future<Position> _getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied.');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error('Location permissions are permanently denied.');
-    }
-
-    return await Geolocator.getCurrentPosition();
-  }
-
-  void _showSnackBar(BuildContext context, String message) {
+  void _showSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),
     );
@@ -186,53 +91,200 @@ class _SpotifyControlPageState extends State<SpotifyControlPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Spotify Control'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.devices),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('Select Spotify Device'),
-                    content: _buildSpotifyDeviceDropdown(),
-                    actions: [
-                      TextButton(
-                        child: const Text('Close'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
+    return BlocConsumer<SpotifyControlBloc, SpotifyControlState>(
+      listener: (context, state) {
+        if (state is SpotifyControlFailure) {
+          _showSnackBar('Error: ${state.error}');
+        } else if (state is SpotifyTrackLocationSavedState) {
+          _showSnackBar('Location saved successfully');
+        }
+      },
+      builder: (context, state) {
+        if (state is SpotifyPlayedTracksLoaded) {
+          _playedTracks = List<CommonTrack>.from(state.tracks);
+        } else if (state is SpotifyDevicesLoaded) {
+          _spotifyDevices = state.devices;
+          _selectedDeviceId = state.selectedDeviceId;
+        }
+
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Spotify Control'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.map),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PlayedTracksMapPage(),
+                    ),
                   );
                 },
-              );
-            },
+              ),
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: () {
+                  _fetchPlayedTracks();
+                  _fetchSpotifyDevices();
+                },
+              ),
+            ],
           ),
-          IconButton(
-            icon: const Icon(Icons.location_on),
-            onPressed: _sendLocation,
-            tooltip: 'Send Location',
-          ),
-          IconButton(
-            icon: const Icon(Icons.map),
-            onPressed: () {
+          body: state is SpotifyControlLoading
+              ? const Center(child: LoadingIndicator())
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDeviceSelector(),
+                      const SizedBox(height: 16),
+                      _buildPlaybackControls(),
+                      const SizedBox(height: 16),
+                      _buildVolumeControl(),
+                      const SizedBox(height: 24),
+                      const Text(
+                        'Recently Played Tracks',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      _buildTrackList(),
+                    ],
+                  ),
+                ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDeviceSelector() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Available Devices',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            DropdownButton<String>(
+              value: _selectedDeviceId,
+              isExpanded: true,
+              hint: const Text('Select a device'),
+              items: _spotifyDevices.map((device) {
+                return DropdownMenuItem<String>(
+                  value: device['id'] as String,
+                  child: Text(device['name'] as String),
+                );
+              }).toList(),
+              onChanged: (deviceId) {
+                if (deviceId != null) {
+                  _selectDevice(deviceId);
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlaybackControls() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.skip_previous),
+              onPressed: () => _playbackControl('previous'),
+            ),
+            IconButton(
+              icon: const Icon(Icons.play_arrow),
+              onPressed: () => _playbackControl('play'),
+            ),
+            IconButton(
+              icon: const Icon(Icons.pause),
+              onPressed: () => _playbackControl('pause'),
+            ),
+            IconButton(
+              icon: const Icon(Icons.skip_next),
+              onPressed: () => _playbackControl('next'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVolumeControl() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Volume',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Slider(
+              value: _volume.toDouble(),
+              min: 0,
+              max: 100,
+              divisions: 100,
+              label: _volume.toString(),
+              onChanged: (value) => _onVolumeChanged(value.round()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTrackList() {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: _playedTracks.length,
+      itemBuilder: (context, index) {
+        final track = _playedTracks[index];
+        return Card(
+          child: ListTile(
+            leading: track.imageUrl != null
+                ? Image.network(
+                    track.imageUrl!,
+                    width: 48,
+                    height: 48,
+                    fit: BoxFit.cover,
+                  )
+                : const Icon(Icons.music_note),
+            title: Text(track.title),
+            subtitle: Text(track.artistName),
+            onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      PlayedTracksMapPage(apiService: widget.apiService),
+                  builder: (context) => TrackDetailsPage(track: track),
                 ),
               );
             },
-            tooltip: 'View Tracks on Map',
           ),
-        ],
-      ),
-      body: _buildPlayedTracksList(),
+        );
+      },
     );
   }
 }

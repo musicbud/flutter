@@ -1,107 +1,138 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/services/api_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domain/models/common_artist.dart';
+import '../../blocs/artist/artist_bloc.dart';
+import '../../blocs/artist/artist_event.dart';
+import '../../blocs/artist/artist_state.dart';
+import '../widgets/loading_indicator.dart';
+import '../widgets/bud_match_list_item.dart';
 
 class ArtistDetailsPage extends StatefulWidget {
   final String artistId;
   final String artistName;
-  final ApiService apiService;
 
   const ArtistDetailsPage({
-    Key? key,
+    super.key,
     required this.artistId,
     required this.artistName,
-    required this.apiService,
-  }) : super(key: key);
+  });
 
   @override
-  _ArtistDetailsPageState createState() => _ArtistDetailsPageState();
+  State<ArtistDetailsPage> createState() => _ArtistDetailsPageState();
 }
 
 class _ArtistDetailsPageState extends State<ArtistDetailsPage> {
-  bool _isLoading = false;
-  String? _errorMessage;
-  List<dynamic> _buds = [];
+  @override
+  void initState() {
+    super.initState();
+    _loadArtistDetails();
+  }
 
-  Future<void> _getBudsByArtist() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+  void _loadArtistDetails() {
+    context.read<ArtistBloc>().add(ArtistDetailsRequested(widget.artistId));
+  }
 
-    try {
-      print('Fetching buds for artist ID: ${widget.artistId}');
-      final buds = await widget.apiService.getBudsByArtist(widget.artistId);
-      setState(() {
-        _buds = buds;
-      });
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Error fetching buds: $e';
-      });
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  void _toggleLike() {
+    context.read<ArtistBloc>().add(ArtistLikeToggled(widget.artistId));
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Artist Details'),
+        title: Text(widget.artistName),
+        actions: [
+          BlocBuilder<ArtistBloc, ArtistState>(
+            builder: (context, state) {
+              if (state is ArtistDetailsLoaded) {
+                return IconButton(
+                  icon: Icon(
+                    state.artist.isLiked
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                  ),
+                  onPressed: _toggleLike,
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                widget.artistName,
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-            ),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _getBudsByArtist,
-              child: _isLoading ? const CircularProgressIndicator() : const Text('Get Buds for This Artist'),
-            ),
-            if (_errorMessage != null)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  _errorMessage!,
-                  style: const TextStyle(color: Colors.red),
+      body: BlocConsumer<ArtistBloc, ArtistState>(
+        listener: (context, state) {
+          if (state is ArtistFailure) {
+            _showErrorSnackBar(state.error);
+          }
+        },
+        builder: (context, state) {
+          if (state is ArtistLoading) {
+            return const LoadingIndicator();
+          }
+
+          if (state is ArtistDetailsLoaded) {
+            return ListView(
+              children: [
+                ListTile(
+                  title: Text(state.artist.name),
+                  subtitle: state.artist.source != null
+                      ? Text('Source: ${state.artist.source}')
+                      : null,
                 ),
-              ),
-            if (_buds.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Buds who like this artist:',
+                if (state.artist.imageUrls?.isNotEmpty == true ||
+                    state.artist.imageUrl != null)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Image.network(
+                      state.artist.imageUrl ?? state.artist.imageUrls!.first,
+                      height: 200,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                if (state.artist.genres?.isNotEmpty == true)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Wrap(
+                      spacing: 8.0,
+                      runSpacing: 4.0,
+                      children: state.artist.genres!
+                          .map((genre) => Chip(label: Text(genre)))
+                          .toList(),
+                    ),
+                  ),
+                const Divider(),
+                if (state.buds.isNotEmpty) ...[
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Buds who like this artist',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
-                    const SizedBox(height: 8),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _buds.length,
-                      itemBuilder: (context, index) {
-                        final bud = _buds[index];
-                        return ListTile(
-                          title: Text(bud['username'] ?? 'Unknown User'),
-                          subtitle: Text(bud['email'] ?? ''),
-                        );
-                      },
+                  ),
+                  ...state.buds
+                      .map((budMatch) => BudMatchListItem(budMatch: budMatch)),
+                ] else
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text('No buds found for this artist'),
                     ),
-                  ],
-                ),
-              ),
-          ],
-        ),
+                  ),
+              ],
+            );
+          }
+
+          return const Center(
+            child: Text('Failed to load artist details'),
+          );
+        },
       ),
     );
   }

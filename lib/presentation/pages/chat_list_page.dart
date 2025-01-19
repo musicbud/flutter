@@ -1,108 +1,87 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/services/chat_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:musicbud_flutter/blocs/chat/chat_bloc.dart';
+import 'package:musicbud_flutter/blocs/chat/chat_event.dart';
+import 'package:musicbud_flutter/blocs/chat/chat_state.dart';
 import 'package:musicbud_flutter/presentation/pages/channel_details_page.dart';
 
 class ChatListPage extends StatefulWidget {
-  final ChatService chatService;
-
-  const ChatListPage({Key? key, required this.chatService}) : super(key: key);
+  const ChatListPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _ChatListPageState createState() => _ChatListPageState();
 }
 
 class _ChatListPageState extends State<ChatListPage> {
-  List<dynamic> _channels = [];
-  bool _isLoading = false;
-
   @override
   void initState() {
     super.initState();
-    _loginAndFetchChannels();
+    _fetchChannels();
   }
 
-  Future<void> _loginAndFetchChannels() async {
-    setState(() {
-      _isLoading = true;
-    });
+  void _fetchChannels() {
+    context.read<ChatBloc>().add(ChatChannelListRequested());
+  }
 
-    try {
-      // Login with provided credentials
-      final loginResult =
-          await widget.chatService.login('mahmwood', 'password');
-      print('Login result: $loginResult');
-      print('Access token after login: ${widget.chatService.accessToken}');
-
-      if (loginResult.statusCode != 200) {
-        // Handle login failure
-        setState(() {
-          _isLoading = false;
-        });
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Login Failed'),
-            content: Text(loginResult.data['message']),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
-        return;
-      }
-
-      // Add a small delay to ensure any asynchronous operations complete
-      await Future.delayed(const Duration(seconds: 1));
-
-      // Get channel list
-      final channelList = await widget.chatService.getChannelList();
-      print('Channel list: $channelList');
-
-      setState(() {
-        _channels = channelList;
-        _isLoading = false;
-      });
-    } catch (e) {
-      print('Error: $e');
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Chat List')),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _channels.isEmpty
-              ? const Center(child: Text('No channels available'))
-              : ListView.builder(
-                  itemCount: _channels.length,
-                  itemBuilder: (context, index) {
-                    final channel = _channels[index];
-                    return ListTile(
-                      title: Text(channel['name'] ?? 'Unnamed Channel'),
-                      subtitle:
-                          Text(channel['description'] ?? 'No description'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ChannelDetailsPage(
-                              channelId: channel['id'],
-                              dio: widget.chatService.dio,
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                ),
+    return BlocConsumer<ChatBloc, ChatState>(
+      listener: (context, state) {
+        if (state is ChatFailure) {
+          _showSnackBar('Error: ${state.error}');
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(title: const Text('Chat List')),
+          body: _buildBody(state),
+        );
+      },
     );
+  }
+
+  Widget _buildBody(ChatState state) {
+    if (state is ChatLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (state is ChatChannelListLoaded) {
+      if (state.channels.isEmpty) {
+        return const Center(child: Text('No channels available'));
+      }
+
+      return ListView.builder(
+        itemCount: state.channels.length,
+        itemBuilder: (context, index) {
+          final channel = state.channels[index];
+          return Card(
+            child: ListTile(
+              title: Text(channel.name),
+              subtitle: Text(channel.description ?? 'No description'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChannelDetailsPage(
+                      channelId: channel.id,
+                    ),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      );
+    }
+
+    return const Center(child: Text('Failed to load channels'));
   }
 }

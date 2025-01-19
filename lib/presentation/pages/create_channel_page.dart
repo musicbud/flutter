@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/services/chat_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:musicbud_flutter/blocs/chat/chat_bloc.dart';
+import 'package:musicbud_flutter/blocs/chat/chat_event.dart';
+import 'package:musicbud_flutter/blocs/chat/chat_state.dart';
 
 class CreateChannelPage extends StatefulWidget {
-  final ChatService chatService;
-
-  const CreateChannelPage({Key? key, required this.chatService})
-      : super(key: key);
+  const CreateChannelPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _CreateChannelPageState createState() => _CreateChannelPageState();
@@ -23,74 +25,90 @@ class _CreateChannelPageState extends State<CreateChannelPage> {
     );
   }
 
-  Future<void> _createChannel() async {
+  void _createChannel() {
     if (_formKey.currentState!.validate()) {
-      try {
-        final response = await widget.chatService.createChannel({
-          'name': _nameController.text,
-          'description': _descriptionController.text,
-          'is_private': _isPrivate,
-        });
-
-        if (!mounted) return;
-
-        if (response['status'] == 'success') {
-          Navigator.pop(context, true);
-        } else {
-          _showSnackBar('Error creating channel: ${response['message']}');
-        }
-      } catch (e) {
-        print('Error creating channel: $e');
-        if (!mounted) return;
-        _showSnackBar('An error occurred. Please try again.');
-      }
+      context.read<ChatBloc>().add(ChatChannelCreated({
+            'name': _nameController.text,
+            'description': _descriptionController.text,
+            'is_private': _isPrivate,
+          }));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Channel'),
-      ),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              TextFormField(
-                controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Channel Name'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a channel name';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _descriptionController,
-                decoration: const InputDecoration(labelText: 'Description'),
-              ),
-              SwitchListTile(
-                title: const Text('Private Channel'),
-                value: _isPrivate,
-                onChanged: (bool value) {
-                  setState(() {
-                    _isPrivate = value;
-                  });
-                },
-              ),
-              ElevatedButton(
-                onPressed: _createChannel,
-                child: const Text('Create Channel'),
-              ),
-            ],
+    return BlocListener<ChatBloc, ChatState>(
+      listener: (context, state) {
+        if (state is ChatChannelCreatedSuccess) {
+          Navigator.pop(context, true);
+        } else if (state is ChatFailure) {
+          _showSnackBar('Error: ${state.error}');
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Create Channel'),
+        ),
+        body: Form(
+          key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Channel Name',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a channel name';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: _descriptionController,
+                  decoration: const InputDecoration(
+                    labelText: 'Description',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 16),
+                SwitchListTile(
+                  title: const Text('Private Channel'),
+                  subtitle: const Text('Only invited members can join'),
+                  value: _isPrivate,
+                  onChanged: (bool value) {
+                    setState(() {
+                      _isPrivate = value;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _createChannel,
+                    child: const Text('Create Channel'),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
 }

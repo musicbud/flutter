@@ -1,85 +1,74 @@
+import '../../domain/models/common_track.dart';
+import '../../domain/models/common_artist.dart';
+import '../../domain/models/common_genre.dart';
+import '../../domain/models/bud_match.dart';
 import '../../domain/repositories/bud_repository.dart';
-import '../../models/bud.dart';
-import '../data_sources/remote/bud_remote_data_source.dart';
+import '../network/dio_client.dart';
 
 class BudRepositoryImpl implements BudRepository {
-  final BudRemoteDataSource _remoteDataSource;
+  final DioClient _dioClient;
 
-  BudRepositoryImpl({required BudRemoteDataSource remoteDataSource})
-      : _remoteDataSource = remoteDataSource;
+  BudRepositoryImpl({required DioClient dioClient}) : _dioClient = dioClient;
 
   @override
-  Future<List<Bud>> getBudsByLikedArtists() async {
-    return await _remoteDataSource.getBudsByLikedArtists();
+  Future<List<BudMatch>> getCommonTracks(String userId) async {
+    final response = await _dioClient.get('/buds/$userId/common/tracks');
+    return (response.data as List)
+        .map((json) => BudMatch.fromJson(json))
+        .toList();
   }
 
   @override
-  Future<List<Bud>> getBudsByLikedTracks() async {
-    return await _remoteDataSource.getBudsByLikedTracks();
+  Future<List<BudMatch>> getCommonArtists(String userId) async {
+    final response = await _dioClient.get('/buds/$userId/common/artists');
+    return (response.data as List)
+        .map((json) => BudMatch.fromJson(json))
+        .toList();
   }
 
   @override
-  Future<List<Bud>> getBudsByLikedGenres() async {
-    return await _remoteDataSource.getBudsByLikedGenres();
+  Future<List<BudMatch>> getCommonGenres(String userId) async {
+    final response = await _dioClient.get('/buds/$userId/common/genres');
+    return (response.data as List)
+        .map((json) => BudMatch.fromJson(json))
+        .toList();
   }
 
   @override
-  Future<List<Bud>> getBudsByLikedAlbums() async {
-    return await _remoteDataSource.getBudsByLikedAlbums();
+  Future<List<CommonTrack>> getCommonPlayedTracks(String userId) async {
+    final response = await _dioClient.get('/buds/$userId/common/played');
+    return (response.data as List)
+        .map((json) => CommonTrack.fromJson(json))
+        .toList();
   }
 
   @override
-  Future<List<Bud>> getBudsByPlayedTracks() async {
-    return await _remoteDataSource.getBudsByPlayedTracks();
+  Future<List<BudMatch>> getBudMatches() async {
+    final response = await _dioClient.get('/buds/matches');
+    return (response.data as List)
+        .map((json) => BudMatch.fromJson(json))
+        .toList();
   }
 
   @override
-  Future<List<Bud>> getBudsByTopArtists() async {
-    return await _remoteDataSource.getBudsByTopArtists();
+  Future<void> sendBudRequest(String userId) async {
+    await _dioClient.post('/buds/requests', data: {
+      'user_id': userId,
+    });
   }
 
   @override
-  Future<List<Bud>> getBudsByTopTracks() async {
-    return await _remoteDataSource.getBudsByTopTracks();
+  Future<void> acceptBudRequest(String userId) async {
+    await _dioClient.post('/buds/requests/$userId/accept');
   }
 
   @override
-  Future<List<Bud>> getBudsByTopGenres() async {
-    return await _remoteDataSource.getBudsByTopGenres();
+  Future<void> rejectBudRequest(String userId) async {
+    await _dioClient.post('/buds/requests/$userId/reject');
   }
 
   @override
-  Future<List<Bud>> getBudsByTopAnime() async {
-    return await _remoteDataSource.getBudsByTopAnime();
-  }
-
-  @override
-  Future<List<Bud>> getBudsByTopManga() async {
-    return await _remoteDataSource.getBudsByTopManga();
-  }
-
-  @override
-  Future<List<Bud>> getBudsByArtist(String artistId) async {
-    return await _remoteDataSource.getBudsByArtist(artistId);
-  }
-
-  @override
-  Future<List<Bud>> getBudsByTrack(String trackId) async {
-    return await _remoteDataSource.getBudsByTrack(trackId);
-  }
-
-  @override
-  Future<List<Bud>> getBudsByGenre(String genreId) async {
-    return await _remoteDataSource.getBudsByGenre(genreId);
-  }
-
-  @override
-  Future<List<Bud>> getBudsByAlbum(String albumId) async {
-    return await _remoteDataSource.getBudsByAlbum(albumId);
-  }
-
-  @override
-  Future<List<Bud>> searchBuds(String query) async {
-    return await _remoteDataSource.searchBuds(query);
+  Future<void> removeBud(String userId) async {
+    await _dioClient.delete('/buds/$userId');
   }
 }

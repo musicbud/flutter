@@ -1,13 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../domain/repositories/content_repository.dart';
 import '../../domain/models/common_track.dart';
 import '../../domain/models/common_artist.dart';
 import '../../domain/models/common_album.dart';
 import '../../domain/models/common_genre.dart';
 import '../../domain/models/common_anime.dart';
 import '../../domain/models/common_manga.dart';
-import '../../models/categorized_common_items.dart';
+import '../../domain/models/categorized_common_items.dart';
+import '../../domain/repositories/content_repository.dart';
+import 'content_event.dart';
+import 'content_state.dart';
 
 // Events
 abstract class ContentEvent extends Equatable {

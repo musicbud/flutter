@@ -3,6 +3,7 @@ import '../../domain/repositories/chat_repository.dart';
 import '../../models/channel.dart';
 import '../../models/channel_user.dart';
 import '../../models/message.dart';
+import '../../models/user_profile.dart';
 import 'chat_event.dart';
 import 'chat_state.dart';
 
@@ -13,6 +14,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       : _chatRepository = chatRepository,
         super(ChatInitial()) {
     on<ChatChannelListRequested>(_onChannelListRequested);
+    on<ChatUserListRequested>(_onUserListRequested);
     on<ChatChannelUsersRequested>(_onChannelUsersRequested);
     on<ChatChannelMessagesRequested>(_onChannelMessagesRequested);
     on<ChatMessageSent>(_onMessageSent);
@@ -29,6 +31,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     on<ChatUserInvitationsRequested>(_onUserInvitationsRequested);
     on<ChatUserMessagesRequested>(_onUserMessagesRequested);
     on<ChatUserMessageSent>(_onUserMessageSent);
+    on<ChatChannelMemberAdded>(_onChannelMemberAdded);
+    on<ChatChannelStatisticsRequested>(_onChannelStatisticsRequested);
   }
 
   Future<void> _onChannelListRequested(
@@ -39,6 +43,41 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     try {
       final channels = await _chatRepository.getChannelList();
       emit(ChatChannelListLoaded(channels));
+    } catch (e) {
+      emit(ChatFailure(e.toString()));
+    }
+  }
+
+  Future<void> _onUserListRequested(
+    ChatUserListRequested event,
+    Emitter<ChatState> emit,
+  ) async {
+    emit(ChatLoading());
+    try {
+      final usersData = await _chatRepository.getUsers();
+      final users = usersData.map((userData) {
+        final createdAt = userData['created_at'] != null
+            ? DateTime.parse(userData['created_at'])
+            : DateTime.now();
+        final updatedAt = userData['updated_at'] != null
+            ? DateTime.parse(userData['updated_at'])
+            : DateTime.now();
+
+        return UserProfile(
+          id: userData['id'].toString(),
+          username: userData['username'] ?? '',
+          displayName: userData['display_name'],
+          bio: userData['bio'],
+          avatarUrl: userData['avatar_url'],
+          location: userData['location'],
+          followersCount: userData['followers_count'],
+          followingCount: userData['following_count'],
+          isFollowing: userData['is_following'] ?? false,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
+        );
+      }).toList();
+      emit(ChatUserListLoaded(users));
     } catch (e) {
       emit(ChatFailure(e.toString()));
     }
@@ -269,6 +308,36 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         event.content,
       );
       emit(ChatUserMessageSentSuccess(Message.fromJson(message)));
+    } catch (e) {
+      emit(ChatFailure(e.toString()));
+    }
+  }
+
+  Future<void> _onChannelMemberAdded(
+    ChatChannelMemberAdded event,
+    Emitter<ChatState> emit,
+  ) async {
+    emit(ChatLoading());
+    try {
+      await _chatRepository.addChannelMember(
+        event.channelId,
+        event.username,
+      );
+      emit(ChatAdminActionSuccess());
+    } catch (e) {
+      emit(ChatFailure(e.toString()));
+    }
+  }
+
+  Future<void> _onChannelStatisticsRequested(
+    ChatChannelStatisticsRequested event,
+    Emitter<ChatState> emit,
+  ) async {
+    emit(ChatLoading());
+    try {
+      final statistics =
+          await _chatRepository.getChannelStatistics(event.channelId);
+      emit(ChatChannelStatisticsLoaded(statistics));
     } catch (e) {
       emit(ChatFailure(e.toString()));
     }

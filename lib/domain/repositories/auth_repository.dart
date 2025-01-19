@@ -1,33 +1,16 @@
 abstract class AuthRepository {
-  Future<Map<String, dynamic>> login({
-    required String username,
-    required String password,
-  });
-
-  Future<Map<String, dynamic>> register({
-    required String username,
-    required String email,
-    required String password,
-  });
-
-  Future<Map<String, dynamic>> refreshToken(String refreshToken);
-
-  Future<void> logout();
-
-  // Service connections
+  Future<Map<String, dynamic>> login(String username, String password);
+  Future<Map<String, dynamic>> register(
+      String username, String email, String password);
+  Future<bool> isAuthenticated();
+  Future<bool> checkServerStatus();
+  Future<String> refreshToken();
   Future<String> getSpotifyAuthUrl();
-  Future<void> connectSpotify(String code);
-  Future<void> disconnectSpotify();
-
   Future<String> getYTMusicAuthUrl();
-  Future<void> connectYTMusic(String code);
-  Future<void> disconnectYTMusic();
-
-  Future<String> getMALAuthUrl();
-  Future<void> connectMAL(String code);
-  Future<void> disconnectMAL();
-
   Future<String> getLastFMAuthUrl();
-  Future<void> connectLastFM(String code);
-  Future<void> disconnectLastFM();
+  Future<String> getMALAuthUrl();
+  Future<String> connectSpotify(String code);
+  Future<String> connectYTMusic(String code);
+  Future<String> connectLastFM(String code);
+  Future<String> connectMAL(String code);
 }

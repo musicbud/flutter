@@ -1,107 +1,116 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/services/api_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domain/models/common_genre.dart';
+import '../../blocs/genre/genre_bloc.dart';
+import '../../blocs/genre/genre_event.dart';
+import '../../blocs/genre/genre_state.dart';
+import '../widgets/loading_indicator.dart';
+import '../widgets/bud_match_list_item.dart';
 
 class GenreDetailsPage extends StatefulWidget {
   final String genreId;
   final String genreName;
-  final ApiService apiService;
 
   const GenreDetailsPage({
-    Key? key,
+    super.key,
     required this.genreId,
     required this.genreName,
-    required this.apiService,
-  }) : super(key: key);
+  });
 
   @override
-  _GenreDetailsPageState createState() => _GenreDetailsPageState();
+  State<GenreDetailsPage> createState() => _GenreDetailsPageState();
 }
 
 class _GenreDetailsPageState extends State<GenreDetailsPage> {
-  bool _isLoading = false;
-  String? _errorMessage;
-  List<dynamic> _buds = [];
+  @override
+  void initState() {
+    super.initState();
+    _loadGenreDetails();
+  }
 
-  Future<void> _getBudsByGenre() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
+  void _loadGenreDetails() {
+    context.read<GenreBloc>().add(GenreDetailsRequested(widget.genreId));
+  }
 
-    try {
-      print('Fetching buds for genre ID: ${widget.genreId}');
-      final buds = await widget.apiService.getBudsByGenre(widget.genreId);
-      setState(() {
-        _buds = buds;
-      });
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Error fetching buds: $e';
-      });
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  void _toggleLike() {
+    context.read<GenreBloc>().add(GenreLikeToggled(widget.genreId));
+  }
+
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Genre Details'),
+        title: Text(widget.genreName),
+        actions: [
+          BlocBuilder<GenreBloc, GenreState>(
+            builder: (context, state) {
+              if (state is GenreDetailsLoaded) {
+                return IconButton(
+                  icon: Icon(
+                    state.genre.isLiked
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                  ),
+                  onPressed: _toggleLike,
+                );
+              }
+              return const SizedBox.shrink();
+            },
+          ),
+        ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                widget.genreName,
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-            ),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _getBudsByGenre,
-              child: _isLoading ? const CircularProgressIndicator() : const Text('Get Buds for This Genre'),
-            ),
-            if (_errorMessage != null)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  _errorMessage!,
-                  style: const TextStyle(color: Colors.red),
+      body: BlocConsumer<GenreBloc, GenreState>(
+        listener: (context, state) {
+          if (state is GenreFailure) {
+            _showErrorSnackBar(state.error);
+          }
+        },
+        builder: (context, state) {
+          if (state is GenreLoading) {
+            return const LoadingIndicator();
+          }
+
+          if (state is GenreDetailsLoaded) {
+            return ListView(
+              children: [
+                ListTile(
+                  title: Text(state.genre.name),
+                  subtitle: state.genre.source != null
+                      ? Text('Source: ${state.genre.source}')
+                      : null,
                 ),
-              ),
-            if (_buds.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Buds who like this genre:',
+                const Divider(),
+                if (state.buds.isNotEmpty) ...[
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Buds who like this genre',
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
-                    const SizedBox(height: 8),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _buds.length,
-                      itemBuilder: (context, index) {
-                        final bud = _buds[index];
-                        return ListTile(
-                          title: Text(bud['username'] ?? 'Unknown User'),
-                          subtitle: Text(bud['email'] ?? ''),
-                        );
-                      },
+                  ),
+                  ...state.buds
+                      .map((budMatch) => BudMatchListItem(budMatch: budMatch)),
+                ] else
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text('No buds found for this genre'),
                     ),
-                  ],
-                ),
-              ),
-          ],
-        ),
+                  ),
+              ],
+            );
+          }
+
+          return const Center(
+            child: Text('Failed to load genre details'),
+          );
+        },
       ),
     );
   }

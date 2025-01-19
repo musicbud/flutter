@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/services/chat_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:musicbud_flutter/blocs/chat/chat_bloc.dart';
+import 'package:musicbud_flutter/blocs/chat/chat_event.dart';
+import 'package:musicbud_flutter/blocs/chat/chat_state.dart';
 
 class ChannelDashboardPage extends StatefulWidget {
   final int channelId;
-  final ChatService chatService;
 
   const ChannelDashboardPage({
     Key? key,
     required this.channelId,
-    required this.chatService,
   }) : super(key: key);
 
   @override
@@ -16,80 +17,58 @@ class ChannelDashboardPage extends StatefulWidget {
 }
 
 class _ChannelDashboardPageState extends State<ChannelDashboardPage> {
-  Map<String, dynamic>? _dashboardData;
-  bool _isLoading = true;
-
   @override
   void initState() {
     super.initState();
     _fetchDashboardData();
   }
 
-  Future<void> _fetchDashboardData() async {
-    if (!mounted) return;
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
-
-    try {
-      final response =
-          await widget.chatService.getChannelDashboardData(widget.channelId);
-      if (!mounted) return;
-
-      setState(() {
-        _dashboardData = response;
-        _isLoading = false;
-      });
-    } catch (e) {
-      print('Error fetching dashboard data: $e');
-      if (!mounted) return;
-
-      setState(() {
-        _isLoading = false;
-      });
-      scaffoldMessenger.showSnackBar(
-        const SnackBar(
-            content: Text('Failed to load dashboard data. Please try again.')),
-      );
-    }
+  void _fetchDashboardData() {
+    context
+        .read<ChatBloc>()
+        .add(ChatChannelDashboardRequested(widget.channelId));
   }
 
-  Future<void> _performAdminAction(String action, int userId) async {
-    if (!mounted) return;
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
+  void _performAdminAction(String action, int userId) {
+    context.read<ChatBloc>().add(ChatAdminActionPerformed(
+          channelId: widget.channelId,
+          action: action,
+          userId: userId,
+        ));
+  }
 
-    try {
-      final response = await widget.chatService
-          .performAdminAction(widget.channelId, action, userId);
-      if (!mounted) return;
-
-      if (response['status'] == 'success') {
-        scaffoldMessenger.showSnackBar(
-          SnackBar(content: Text(response['message'])),
-        );
-        _fetchDashboardData(); // Refresh the data after performing an action
-      } else {
-        scaffoldMessenger.showSnackBar(
-          SnackBar(content: Text('Error: ${response['message']}')),
-        );
-      }
-    } catch (e) {
-      print('Error performing admin action: $e');
-      if (!mounted) return;
-
-      scaffoldMessenger.showSnackBar(
-        const SnackBar(content: Text('An error occurred. Please try again.')),
-      );
-    }
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Channel Dashboard'),
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : _dashboardData == null
+    return BlocConsumer<ChatBloc, ChatState>(
+      listener: (context, state) {
+        if (state is ChatAdminActionSuccess) {
+          _showSnackBar('Action completed successfully');
+          _fetchDashboardData(); // Refresh data after successful action
+        } else if (state is ChatFailure) {
+          _showSnackBar('Error: ${state.error}');
+        }
+      },
+      builder: (context, state) {
+        if (state is ChatLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        final dashboardData =
+            state is ChatChannelDashboardLoaded ? state.dashboard : null;
+
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('Channel Dashboard'),
+          ),
+          body: dashboardData == null
               ? const Center(child: Text('Failed to load dashboard data'))
               : SingleChildScrollView(
                   child: Padding(
@@ -98,32 +77,34 @@ class _ChannelDashboardPageState extends State<ChannelDashboardPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Channel Name: ${_dashboardData!['channel_name']}',
+                          'Channel Name: ${dashboardData['channel_name']}',
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
                         const SizedBox(height: 16),
                         Text(
-                            'Total Members: ${_dashboardData!['members'].length}'),
+                            'Total Members: ${dashboardData['members']?.length ?? 0}'),
                         const SizedBox(height: 8),
                         Text(
-                            'Total Messages: ${_dashboardData!['messages'].length}'),
+                            'Total Messages: ${dashboardData['messages']?.length ?? 0}'),
                         const SizedBox(height: 16),
                         Text(
                           'Members:',
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
-                        ..._buildMembersList(),
+                        ..._buildMembersList(dashboardData),
                       ],
                     ),
                   ),
                 ),
+        );
+      },
     );
   }
 
-  List<Widget> _buildMembersList() {
-    final List<dynamic> members = _dashboardData!['members'] ?? [];
-    final List<dynamic> admins = _dashboardData!['admins'] ?? [];
-    final List<dynamic> moderators = _dashboardData!['moderators'] ?? [];
+  List<Widget> _buildMembersList(Map<String, dynamic> dashboardData) {
+    final List<dynamic> members = dashboardData['members'] ?? [];
+    final List<dynamic> admins = dashboardData['admins'] ?? [];
+    final List<dynamic> moderators = dashboardData['moderators'] ?? [];
 
     return members.map((member) {
       String role = 'Member';
@@ -133,26 +114,29 @@ class _ChannelDashboardPageState extends State<ChannelDashboardPage> {
         role = 'Moderator';
       }
 
-      return ListTile(
-        title: Text(member['username']),
-        subtitle: Text(role),
-        trailing: role != 'Admin'
-            ? PopupMenuButton<String>(
-                onSelected: (String action) =>
-                    _performAdminAction(action, member['id']),
-                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                  if (role == 'Member')
+      return Card(
+        child: ListTile(
+          title: Text(member['username']),
+          subtitle: Text(role),
+          trailing: role != 'Admin'
+              ? PopupMenuButton<String>(
+                  onSelected: (String action) =>
+                      _performAdminAction(action, member['id']),
+                  itemBuilder: (BuildContext context) =>
+                      <PopupMenuEntry<String>>[
+                    if (role == 'Member')
+                      const PopupMenuItem<String>(
+                        value: 'add_moderator',
+                        child: Text('Promote to Moderator'),
+                      ),
                     const PopupMenuItem<String>(
-                      value: 'promote',
-                      child: Text('Promote to Moderator'),
+                      value: 'remove_user',
+                      child: Text('Remove from Channel'),
                     ),
-                  const PopupMenuItem<String>(
-                    value: 'remove',
-                    child: Text('Remove from Channel'),
-                  ),
-                ],
-              )
-            : null,
+                  ],
+                )
+              : null,
+        ),
       );
     }).toList();
   }

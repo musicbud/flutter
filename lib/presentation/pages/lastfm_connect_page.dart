@@ -1,30 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/services/api_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:musicbud_flutter/blocs/auth/lastfm/lastfm_bloc.dart';
+import 'package:musicbud_flutter/blocs/auth/lastfm/lastfm_event.dart';
+import 'package:musicbud_flutter/blocs/auth/lastfm/lastfm_state.dart';
 import 'dart:html' as html;
 import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class LastFmConnectPage extends StatefulWidget {
-  final ApiService apiService;
-
-  const LastFmConnectPage({Key? key, required this.apiService}) : super(key: key);
+  const LastFmConnectPage({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _LastFmConnectPageState createState() => _LastFmConnectPageState();
 }
 
 class _LastFmConnectPageState extends State<LastFmConnectPage> {
-  bool _isConnected = false;
-  bool _isLoading = false;
-  String? _userId;
-  String? _displayName;
-  String? _errorMessage;
   final TextEditingController _authDataController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _setupMessageListener();
+    context.read<LastFMBloc>().add(LastFMAuthUrlRequested());
   }
 
   void _setupMessageListener() {
@@ -39,176 +38,120 @@ class _LastFmConnectPageState extends State<LastFmConnectPage> {
     if (data is Map<String, dynamic>) {
       final token = data['token'] as String?;
       if (token != null) {
-        _handleToken(token);
-      } else {
-        setState(() {
-          _errorMessage = 'Token not found in callback data';
-        });
+        context.read<LastFMBloc>().add(LastFMConnectRequested(token));
       }
-    } else {
-      setState(() {
-        _errorMessage = 'Invalid callback data format';
-      });
     }
   }
 
-  void _handleToken(String token) async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    try {
-      final result = await widget.apiService.handleLastFmToken(token);
-      setState(() {
-        _isConnected = result['success'];
-        _userId = result['user_id'];
-        _displayName = result['display_name'];
-        _errorMessage = result['success'] ? null : result['message'];
-      });
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Error handling Last.fm token: $e';
-      });
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  void _connect() {
+    context.read<LastFMBloc>().add(LastFMAuthUrlRequested());
   }
 
-  Future<void> _connect() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    try {
-      final url = await widget.apiService.connectService('lastfm');
-      if (kIsWeb) {
-        html.window.open(url, 'Last.fm Auth', 'width=800,height=600');
-      } else {
-        // Handle mobile platforms here
-      }
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Error connecting to Last.fm: $e';
-      });
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-  }
-
-  Future<void> _updateLikes() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-
-    try {
-      final result = await widget.apiService.updateLikes('lastfm');
-      if (result['success']) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['message'])),
-        );
-      } else {
-        setState(() {
-          _errorMessage = result['message'];
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Error updating likes: $e';
-      });
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
+  void _disconnect() {
+    context.read<LastFMBloc>().add(LastFMDisconnectRequested());
   }
 
   void _submitManualAuthData() {
     final authData = _authDataController.text.trim();
     if (authData.isNotEmpty) {
       try {
-        // First, try to parse as JSON
         final decodedData = json.decode(authData);
         if (decodedData is Map<String, dynamic>) {
           final token = decodedData['token'] ?? decodedData['access_token'];
           if (token != null) {
-            _handleToken(token);
-          } else {
-            throw const FormatException('Token not found in JSON data');
+            context.read<LastFMBloc>().add(LastFMConnectRequested(token));
           }
-        } else {
-          throw const FormatException('Invalid JSON format');
+        } else if (authData.startsWith('ya29.') || authData.length > 20) {
+          context.read<LastFMBloc>().add(LastFMConnectRequested(authData));
         }
       } catch (e) {
-        // If JSON parsing fails, assume it's a plain token string
         if (authData.startsWith('ya29.') || authData.length > 20) {
-          _handleToken(authData);
-        } else {
-          setState(() {
-            _errorMessage = 'Invalid token format. Please enter a valid token.';
-          });
+          context.read<LastFMBloc>().add(LastFMConnectRequested(authData));
         }
       }
-    } else {
-      setState(() {
-        _errorMessage = 'Please enter the authentication data';
-      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Connect Last.fm'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (_isConnected)
-              Text('Last.fm connected for user: $_displayName ($_userId)'),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _connect,
-              child: _isLoading ? const CircularProgressIndicator() : const Text('Connect Last.fm'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _updateLikes,
-              child: _isLoading ? const CircularProgressIndicator() : const Text('Update Likes'),
-            ),
-            const SizedBox(height: 20),
-            const Text('If automatic connection fails, paste the authentication data here:'),
-            TextField(
-              controller: _authDataController,
-              maxLines: 5,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                hintText: 'Paste authentication data here',
-              ),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: _submitManualAuthData,
-              child: const Text('Submit Authentication Data'),
-            ),
-            if (_errorMessage != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 16.0),
-                child: Text(
-                  _errorMessage!,
-                  style: const TextStyle(color: Colors.red),
-                ),
-              ),
-          ],
+    return BlocListener<LastFMBloc, LastFMState>(
+      listener: (context, state) {
+        if (state is LastFMAuthUrlLoaded && kIsWeb) {
+          html.window.open(state.url, 'Last.fm Auth', 'width=800,height=600');
+        } else if (state is LastFMFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.error)),
+          );
+        } else if (state is LastFMConnected) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Successfully connected to Last.fm')),
+          );
+        } else if (state is LastFMDisconnected) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Successfully disconnected from Last.fm')),
+          );
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Connect Last.fm'),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: BlocBuilder<LastFMBloc, LastFMState>(
+            builder: (context, state) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  if (state is LastFMConnected)
+                    Column(
+                      children: [
+                        const Text('Connected to Last.fm'),
+                        ElevatedButton(
+                          onPressed: _disconnect,
+                          child: const Text('Disconnect'),
+                        ),
+                      ],
+                    )
+                  else
+                    ElevatedButton(
+                      onPressed: state is! LastFMLoading ? _connect : null,
+                      child: state is LastFMLoading
+                          ? const CircularProgressIndicator()
+                          : const Text('Connect Last.fm'),
+                    ),
+                  const SizedBox(height: 20),
+                  const Text(
+                      'If automatic connection fails, paste the authentication data here:'),
+                  TextField(
+                    controller: _authDataController,
+                    maxLines: 5,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      hintText: 'Paste authentication data here',
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed:
+                        state is! LastFMLoading ? _submitManualAuthData : null,
+                    child: state is LastFMLoading
+                        ? const CircularProgressIndicator()
+                        : const Text('Submit Authentication Data'),
+                  ),
+                  if (state is LastFMFailure)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: Text(
+                        state.error,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );

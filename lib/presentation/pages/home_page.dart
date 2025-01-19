@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:musicbud_flutter/blocs/user/user_bloc.dart';
 import 'package:musicbud_flutter/models/user_profile.dart';
 import 'package:musicbud_flutter/presentation/pages/spotify_control_page.dart';
-import 'package:musicbud_flutter/services/chat_service.dart';
-import 'package:musicbud_flutter/services/api_service.dart';
 import 'package:musicbud_flutter/presentation/pages/profile_page.dart';
 import 'package:musicbud_flutter/presentation/pages/chat_home_page.dart';
 import 'package:musicbud_flutter/presentation/pages/connect_services_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:musicbud_flutter/presentation/pages/login_page.dart'; 
+import 'package:musicbud_flutter/presentation/pages/login_page.dart';
 
 class HomePage extends StatefulWidget {
-  final ChatService chatService;
-  final ApiService apiService;
-
-  const HomePage({Key? key, required this.chatService, required this.apiService}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -21,7 +17,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   UserProfile? _userProfile;
-  String? _currentUsername;
 
   @override
   void initState() {
@@ -29,122 +24,113 @@ class _HomePageState extends State<HomePage> {
     _initializeData();
   }
 
-  Future<void> _initializeData() async {
-    try {
-      await _loadUserProfile();
-      if (_userProfile != null) {
-        setState(() {
-          _currentUsername = _userProfile!.username;
-        });
-      } else {
-        throw Exception('User profile is null');
-      }
-    } catch (e) {
-      print('Error initializing data: $e');
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => LoginPage(
-            apiService: widget.apiService,
-            chatService: widget.chatService,
-          )),
-        );
-      });
-    }
-  }
-
-  Future<void> _loadUserProfile() async {
-    try {
-      final profile = await widget.apiService.getUserProfile();
-      setState(() {
-        _userProfile = profile;
-      });
-    } catch (e) {
-      print('Error loading user profile: $e');
-      rethrow;
-    }
-  }
-
-  Future<void> _loadUsername() async {
-    final username = await getUsername();
-    setState(() {
-      _currentUsername = username;
-    });
-  }
-
-  Future<String?> getUsername() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('username');
+  void _initializeData() {
+    context.read<UserBloc>().add(LoadMyProfile());
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('MusicBud'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ProfilePage(apiService: widget.apiService),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Welcome to MusicBud!',
-              style: Theme.of(context).textTheme.headlineMedium,
+    return BlocConsumer<UserBloc, UserState>(
+      listener: (context, state) {
+        if (state is UserError) {
+          // If there's an error, navigate to login page
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const LoginPage(),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              child: const Text('Go to Chat'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ChatHomePage(
-                      chatService: widget.chatService,
-                      currentUsername: _currentUsername ?? '',
+          );
+        }
+      },
+      builder: (context, state) {
+        if (state is UserLoading) {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
+        if (state is ProfileLoaded) {
+          _userProfile = state.profile;
+        }
+
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('MusicBud'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.person),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ProfilePage(),
                     ),
+                  );
+                },
+              ),
+            ],
+          ),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Welcome to MusicBud!',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                if (_userProfile != null) ...[
+                  const SizedBox(height: 10),
+                  Text(
+                    'Hello, ${_userProfile!.username}!',
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
-                );
-              },
+                ],
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  child: const Text('Go to Chat'),
+                  onPressed: () {
+                    if (_userProfile != null) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatHomePage(
+                            currentUsername: _userProfile!.username,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  child: const Text('Spotify Control'),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SpotifyControlPage(),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  child: const Text('Connect Services'),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ConnectServicesPage(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              child: const Text('Spotify Control'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SpotifyControlPage(apiService: widget.apiService),
-                  ),
-                );
-              },
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              child: const Text('Connect Services'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ConnectServicesPage(apiService: widget.apiService),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

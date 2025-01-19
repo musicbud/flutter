@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/services/api_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../blocs/spotify_auth/spotify_auth_bloc.dart';
+import '../../blocs/spotify_auth/spotify_auth_event.dart';
+import '../../blocs/spotify_auth/spotify_auth_state.dart';
 
 class SpotifyCallbackPage extends StatefulWidget {
-  final ApiService apiService;
-
-  const SpotifyCallbackPage({Key? key, required this.apiService})
-      : super(key: key);
+  const SpotifyCallbackPage({super.key});
 
   @override
-  _SpotifyCallbackPageState createState() => _SpotifyCallbackPageState();
+  State<SpotifyCallbackPage> createState() => _SpotifyCallbackPageState();
 }
 
 class _SpotifyCallbackPageState extends State<SpotifyCallbackPage> {
@@ -18,45 +18,59 @@ class _SpotifyCallbackPageState extends State<SpotifyCallbackPage> {
     _handleSpotifyToken();
   }
 
-  Future<void> _handleSpotifyToken() async {
-    if (!mounted) return;
-    final scaffoldMessenger = ScaffoldMessenger.of(context);
-    final navigator = Navigator.of(context);
-
+  void _handleSpotifyToken() {
     final uri = Uri.base;
     final code = uri.queryParameters['code'];
     if (code != null) {
-      try {
-        await widget.apiService.completeSpotifyAuth(code);
-        if (!mounted) return;
-
-        scaffoldMessenger.showSnackBar(
-          const SnackBar(content: Text('Successfully connected to Spotify')),
-        );
-        navigator.pushReplacementNamed('/home');
-      } catch (e) {
-        print('Error completing Spotify authentication: $e');
-        if (!mounted) return;
-
-        scaffoldMessenger.showSnackBar(
-          const SnackBar(
-              content: Text('Failed to complete Spotify authentication')),
-        );
-        navigator.pushReplacementNamed('/connect_services');
-      }
+      context.read<SpotifyAuthBloc>().add(SpotifyAuthCodeReceived(code));
     } else {
       print('Error: No authorization code found in the callback URI');
-      if (!mounted) return;
-
-      navigator.pushReplacementNamed('/connect_services');
+      Navigator.of(context).pushReplacementNamed('/connect_services');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
+    return Scaffold(
+      body: BlocConsumer<SpotifyAuthBloc, SpotifyAuthState>(
+        listener: (context, state) {
+          if (state is SpotifyAuthSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                  content: Text('Successfully connected to Spotify')),
+            );
+            Navigator.of(context).pushReplacementNamed('/home');
+          } else if (state is SpotifyAuthFailure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Failed to connect: ${state.error}')),
+            );
+            Navigator.of(context).pushReplacementNamed('/connect_services');
+          }
+        },
+        builder: (context, state) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (state is SpotifyAuthLoading) ...[
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 16),
+                  const Text('Connecting to Spotify...'),
+                ] else if (state is SpotifyAuthFailure) ...[
+                  const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                  const SizedBox(height: 16),
+                  Text(
+                    state.error,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ] else ...[
+                  const CircularProgressIndicator(),
+                ],
+              ],
+            ),
+          );
+        },
       ),
     );
   }

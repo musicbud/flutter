@@ -5,7 +5,8 @@ class TopGenresHorizontalList extends StatefulWidget {
   const TopGenresHorizontalList({Key? key}) : super(key: key);
 
   @override
-  _TopGenresHorizontalListState createState() => _TopGenresHorizontalListState();
+  _TopGenresHorizontalListState createState() =>
+      _TopGenresHorizontalListState();
 }
 
 class _TopGenresHorizontalListState extends State<TopGenresHorizontalList> {
@@ -13,7 +14,6 @@ class _TopGenresHorizontalListState extends State<TopGenresHorizontalList> {
   int _currentPage = 1;
   bool _isLoading = false;
   final ScrollController _scrollController = ScrollController();
-  final ApiService _apiService = ApiService();
 
   @override
   void initState() {

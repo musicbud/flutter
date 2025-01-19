@@ -19,3 +19,7 @@ class LoginSubmitted extends LoginEvent {
   @override
   List<Object> get props => [username, password];
 }
+
+class LoginConnectivityChecked extends LoginEvent {}
+
+class LoginServerStatusChecked extends LoginEvent {}

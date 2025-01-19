@@ -1,41 +1,47 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/models/common_anime.dart';
+import 'package:musicbud_flutter/domain/models/common_anime.dart';
 
 class AnimeListItem extends StatelessWidget {
   final CommonAnime anime;
   final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
 
   const AnimeListItem({
     Key? key,
     required this.anime,
     this.onTap,
+    this.onLongPress,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          children: [
-            Image.network(
-              anime.imageUrl,
-              height: 100,
-              width: 100,
-              fit: BoxFit.cover,
+    return ListTile(
+      leading: anime.imageUrl != null
+          ? CircleAvatar(
+              backgroundImage: NetworkImage(anime.imageUrl!),
+              radius: 25,
+            )
+          : const CircleAvatar(
+              child: Icon(Icons.movie),
+              radius: 25,
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(
-                anime.title,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
+      title: Text(
+        anime.title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
       ),
+      subtitle: anime.genres?.isNotEmpty == true
+          ? Text(
+              anime.genres!.join(', '),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            )
+          : null,
+      trailing: anime.isLiked
+          ? const Icon(Icons.favorite, color: Colors.red)
+          : const Icon(Icons.favorite_border),
+      onTap: onTap,
+      onLongPress: onLongPress,
     );
   }
 }
