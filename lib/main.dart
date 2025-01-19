@@ -13,10 +13,15 @@ import 'domain/repositories/auth_repository.dart';
 import 'domain/repositories/user_repository.dart';
 import 'domain/repositories/chat_repository.dart';
 import 'app.dart';
+import 'injection.dart';
 
-void main() {
-  const baseUrl =
-      'https://api.musicbud.com'; // Replace with your actual API URL
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize dependencies
+  await initializeDependencies();
+
+  const baseUrl = 'http://127.0.0.1:8000'; // Replace with your actual API URL
   final client = http.Client();
   const token = ''; // Replace with actual token handling
 

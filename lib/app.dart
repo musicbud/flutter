@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'domain/repositories/auth_repository.dart';
+import 'domain/repositories/profile_repository.dart';
 import 'presentation/pages/login_page.dart';
 import 'presentation/pages/home_page.dart';
 import 'presentation/pages/main_screen.dart';
@@ -12,6 +13,7 @@ import 'blocs/auth/spotify/spotify_bloc.dart';
 import 'blocs/auth/ytmusic/ytmusic_bloc.dart';
 import 'blocs/auth/mal/mal_bloc.dart';
 import 'blocs/auth/lastfm/lastfm_bloc.dart';
+import 'blocs/main/main_screen_bloc.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -42,6 +44,11 @@ class App extends StatelessWidget {
         ),
         BlocProvider<LastFmBloc>(
           create: (context) => LastFmBloc(authRepository: authRepository),
+        ),
+        BlocProvider<MainScreenBloc>(
+          create: (context) => MainScreenBloc(
+            profileRepository: GetIt.instance<ProfileRepository>(),
+          ),
         ),
       ],
       child: MaterialApp(

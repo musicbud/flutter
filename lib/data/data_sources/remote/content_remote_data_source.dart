@@ -70,7 +70,7 @@ abstract class ContentRemoteDataSource {
 class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   final http.Client _client;
   final String _token;
-  final String _baseUrl = 'https://api.musicbud.com';
+  final String _baseUrl = 'http://127.0.0.1:8000';
 
   ContentRemoteDataSourceImpl({
     required http.Client client,

@@ -48,7 +48,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   final http.Client _client;
   final String _token;
   final String _baseUrl =
-      'https://api.musicbud.com'; // Replace with your actual API URL
+      'http://127.0.0.1:8000'; // Replace with your actual API URL
 
   UserRemoteDataSourceImpl({
     required http.Client client,

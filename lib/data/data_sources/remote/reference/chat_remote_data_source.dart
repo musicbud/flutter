@@ -48,7 +48,7 @@ abstract class ChatRemoteDataSource {
 
 class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   final Dio _dio;
-  static const String _baseUrl = 'https://api.musicbud.com';
+  static const String _baseUrl = 'http://127.0.0.1:8000';
 
   ChatRemoteDataSourceImpl() : _dio = DioClient(baseUrl: _baseUrl).dio;
 
