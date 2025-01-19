@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../domain/models/common_artist.dart';
-import '../../models/bud_match.dart';
+import '../../domain/models/bud_match.dart';
 
 abstract class ArtistState extends Equatable {
   const ArtistState();

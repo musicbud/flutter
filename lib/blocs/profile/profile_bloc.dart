@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../../domain/repositories/content_repository.dart';
 import '../../domain/repositories/bud_repository.dart';
-import '../../models/bud_match.dart';
+import '../../domain/models/bud_match.dart';
 import 'profile_event.dart';
 import 'profile_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,12 +35,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     ProfileRequested event,
     Emitter<ProfileState> emit,
   ) async {
-    emit(ProfileLoading());
     try {
       final profile = await _profileRepository.getUserProfile();
-      emit(ProfileLoaded(profile));
+      emit(ProfileLoaded(profile: profile));
     } catch (e) {
-      emit(ProfileFailure(e.toString()));
+      emit(ProfileFailure(error: e.toString()));
     }
   }
 
@@ -48,13 +47,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     ProfileUpdateRequested event,
     Emitter<ProfileState> emit,
   ) async {
-    emit(ProfileLoading());
     try {
       await _profileRepository.updateProfile(event.profileData);
-      emit(ProfileUpdateSuccess());
-      add(ProfileRequested()); // Refresh profile data
+      final profile = await _profileRepository.getUserProfile();
+      emit(ProfileUpdateSuccess(profile: profile));
     } catch (e) {
-      emit(ProfileFailure(e.toString()));
+      emit(ProfileFailure(error: e.toString()));
     }
   }
 
@@ -62,13 +60,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     ProfileAvatarUpdateRequested event,
     Emitter<ProfileState> emit,
   ) async {
-    emit(ProfileLoading());
     try {
       final avatarUrl = await _profileRepository.updateAvatar(event.imageFile);
-      emit(ProfileAvatarUpdateSuccess(avatarUrl));
-      add(ProfileRequested()); // Refresh profile data
+      emit(ProfileAvatarUpdateSuccess(avatarUrl: avatarUrl));
     } catch (e) {
-      emit(ProfileFailure(e.toString()));
+      emit(ProfileFailure(error: e.toString()));
     }
   }
 
@@ -76,13 +72,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     ProfileAuthenticationChecked event,
     Emitter<ProfileState> emit,
   ) async {
-    emit(ProfileLoading());
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('auth_token');
-      emit(ProfileAuthenticationStatus(token != null));
+      final isAuthenticated = await _profileRepository.isAuthenticated();
+      emit(ProfileAuthenticationStatus(isAuthenticated: isAuthenticated));
     } catch (e) {
-      emit(ProfileFailure(e.toString()));
+      emit(ProfileFailure(error: e.toString()));
     }
   }
 
@@ -90,13 +84,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     ProfileLogoutRequested event,
     Emitter<ProfileState> emit,
   ) async {
-    emit(ProfileLoading());
     try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('auth_token');
+      await _profileRepository.logout();
       emit(ProfileLogoutSuccess());
     } catch (e) {
-      emit(ProfileFailure(e.toString()));
+      emit(ProfileFailure(error: e.toString()));
     }
   }
 
@@ -104,12 +96,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     ProfileTopItemsRequested event,
     Emitter<ProfileState> emit,
   ) async {
-    emit(ProfileLoading());
     try {
       final items = await _contentRepository.getTopItems(event.category);
-      emit(ProfileTopItemsLoaded(event.category, items));
+      emit(ProfileTopItemsLoaded(items: items, category: event.category));
     } catch (e) {
-      emit(ProfileFailure(e.toString()));
+      emit(ProfileFailure(error: e.toString()));
     }
   }
 
@@ -117,12 +108,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     ProfileLikedItemsRequested event,
     Emitter<ProfileState> emit,
   ) async {
-    emit(ProfileLoading());
     try {
       final items = await _contentRepository.getLikedItems(event.category);
-      emit(ProfileLikedItemsLoaded(event.category, items));
+      emit(ProfileLikedItemsLoaded(items: items, category: event.category));
     } catch (e) {
-      emit(ProfileFailure(e.toString()));
+      emit(ProfileFailure(error: e.toString()));
     }
   }
 
@@ -130,12 +120,11 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     ProfileBudsRequested event,
     Emitter<ProfileState> emit,
   ) async {
-    emit(ProfileLoading());
     try {
       final buds = await _getBudsByCategory(event.category);
-      emit(ProfileBudsLoaded(event.category, buds));
+      emit(ProfileBudsLoaded(buds: buds, category: event.category));
     } catch (e) {
-      emit(ProfileFailure(e.toString()));
+      emit(ProfileFailure(error: e.toString()));
     }
   }
 
@@ -143,47 +132,28 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     ProfileConnectedServicesRequested event,
     Emitter<ProfileState> emit,
   ) async {
-    emit(ProfileLoading());
     try {
       final services = await _profileRepository.getConnectedServices();
-      emit(ProfileConnectedServicesLoaded(services));
+      emit(ProfileConnectedServicesLoaded(services: services));
     } catch (e) {
-      emit(ProfileFailure(e.toString()));
+      emit(ProfileFailure(error: e.toString()));
     }
   }
 
   Future<List<BudMatch>> _getBudsByCategory(String category) async {
     switch (category) {
       case 'liked/artists':
-        final buds = await _budRepository.getBudsByLikedArtists();
-        return buds
-            .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
-            .toList();
+        return await _budRepository.getBudsByLikedArtists();
       case 'liked/tracks':
-        final buds = await _budRepository.getBudsByLikedTracks();
-        return buds
-            .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
-            .toList();
+        return await _budRepository.getBudsByLikedTracks();
       case 'liked/genres':
-        final buds = await _budRepository.getBudsByLikedGenres();
-        return buds
-            .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
-            .toList();
+        return await _budRepository.getBudsByLikedGenres();
       case 'top/artists':
-        final buds = await _budRepository.getBudsByTopArtists();
-        return buds
-            .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
-            .toList();
+        return await _budRepository.getBudsByTopArtists();
       case 'top/tracks':
-        final buds = await _budRepository.getBudsByTopTracks();
-        return buds
-            .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
-            .toList();
+        return await _budRepository.getBudsByTopTracks();
       case 'top/genres':
-        final buds = await _budRepository.getBudsByTopGenres();
-        return buds
-            .map((bud) => BudMatch(bud: bud, similarityScore: 0.0))
-            .toList();
+        return await _budRepository.getBudsByTopGenres();
       default:
         throw Exception('Invalid category: $category');
     }

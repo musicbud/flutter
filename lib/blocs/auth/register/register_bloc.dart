@@ -38,9 +38,9 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     try {
       final status = await _authRepository.checkServerStatus();
       emit(RegisterServerStatus(
-        isReachable: status['isReachable'] as bool? ?? false,
-        error: status['error'] as String?,
-        message: status['message'] as String?,
+        isReachable: status.isReachable,
+        error: status.error,
+        message: status.message,
       ));
     } catch (e) {
       emit(RegisterFailure(e.toString()));
@@ -54,9 +54,9 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     emit(RegisterLoading());
     try {
       final data = await _authRepository.register(
-        username: event.username,
-        email: event.email,
-        password: event.password,
+        event.username,
+        event.email,
+        event.password,
       );
       emit(RegisterSuccess(data));
     } catch (e) {

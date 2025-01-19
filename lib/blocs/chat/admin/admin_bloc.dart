@@ -25,7 +25,8 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   ) async {
     emit(AdminLoading());
     try {
-      final isAdmin = await _chatRepository.isChannelAdmin(event.channelId);
+      final isAdmin =
+          await _chatRepository.isChannelAdmin(event.channelId.toString());
       emit(AdminStatusLoaded(isAdmin));
     } catch (e) {
       emit(AdminFailure(e.toString()));
@@ -38,7 +39,10 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   ) async {
     emit(AdminLoading());
     try {
-      await _chatRepository.addModerator(event.channelId, event.userId);
+      await _chatRepository.addModerator(
+        event.channelId.toString(),
+        event.userId.toString(),
+      );
       emit(ModeratorAddedSuccess());
     } catch (e) {
       emit(AdminFailure(e.toString()));
@@ -51,7 +55,10 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   ) async {
     emit(AdminLoading());
     try {
-      await _chatRepository.removeModerator(event.channelId, event.userId);
+      await _chatRepository.removeModerator(
+        event.channelId.toString(),
+        event.userId.toString(),
+      );
       emit(ModeratorRemovedSuccess());
     } catch (e) {
       emit(AdminFailure(e.toString()));
@@ -64,7 +71,10 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   ) async {
     emit(AdminLoading());
     try {
-      await _chatRepository.makeAdmin(event.channelId, event.userId);
+      await _chatRepository.makeAdmin(
+        event.channelId.toString(),
+        event.userId.toString(),
+      );
       emit(AdminAddedSuccess());
     } catch (e) {
       emit(AdminFailure(e.toString()));
@@ -77,7 +87,10 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   ) async {
     emit(AdminLoading());
     try {
-      await _chatRepository.removeAdmin(event.channelId, event.userId);
+      await _chatRepository.removeAdmin(
+        event.channelId.toString(),
+        event.userId.toString(),
+      );
       emit(AdminRemovedSuccess());
     } catch (e) {
       emit(AdminFailure(e.toString()));
@@ -90,7 +103,10 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   ) async {
     emit(AdminLoading());
     try {
-      await _chatRepository.kickUser(event.channelId, event.userId);
+      await _chatRepository.kickUser(
+        event.channelId.toString(),
+        event.userId.toString(),
+      );
       emit(UserKickedSuccess());
     } catch (e) {
       emit(AdminFailure(e.toString()));
@@ -103,7 +119,10 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   ) async {
     emit(AdminLoading());
     try {
-      await _chatRepository.blockUser(event.channelId, event.userId);
+      await _chatRepository.blockUser(
+        event.channelId.toString(),
+        event.userId.toString(),
+      );
       emit(UserBlockedSuccess());
     } catch (e) {
       emit(AdminFailure(e.toString()));
@@ -116,7 +135,10 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   ) async {
     emit(AdminLoading());
     try {
-      await _chatRepository.unblockUser(event.channelId, event.userId);
+      await _chatRepository.unblockUser(
+        event.channelId.toString(),
+        event.userId.toString(),
+      );
       emit(UserUnblockedSuccess());
     } catch (e) {
       emit(AdminFailure(e.toString()));

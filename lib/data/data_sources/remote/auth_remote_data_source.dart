@@ -3,12 +3,9 @@ import '../../../core/error/exceptions.dart';
 import '../../network/dio_client.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<Map<String, dynamic>> login(
-      {required String username, required String password});
+  Future<Map<String, dynamic>> login(String username, String password);
   Future<Map<String, dynamic>> register(
-      {required String username,
-      required String email,
-      required String password});
+      String username, String email, String password);
   Future<Map<String, dynamic>> refreshToken(String refreshToken);
   Future<void> logout();
 
@@ -33,13 +30,11 @@ abstract class AuthRemoteDataSource {
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final Dio _dio;
 
-  AuthRemoteDataSourceImpl() : _dio = DioClient().dio;
+  AuthRemoteDataSourceImpl({required String baseUrl})
+      : _dio = DioClient(baseUrl: baseUrl).dio;
 
   @override
-  Future<Map<String, dynamic>> login({
-    required String username,
-    required String password,
-  }) async {
+  Future<Map<String, dynamic>> login(String username, String password) async {
     try {
       final response = await _dio.post('/auth/login', data: {
         'username': username,
@@ -52,11 +47,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> register({
-    required String username,
-    required String email,
-    required String password,
-  }) async {
+  Future<Map<String, dynamic>> register(
+      String username, String email, String password) async {
     try {
       final response = await _dio.post('/auth/register', data: {
         'username': username,
@@ -72,7 +64,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<Map<String, dynamic>> refreshToken(String refreshToken) async {
     try {
-      final response = await _dio.post('/auth/refresh');
+      final response = await _dio.post('/auth/refresh', data: {
+        'refresh_token': refreshToken,
+      });
       return response.data;
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to refresh token');
@@ -93,7 +87,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<String> getSpotifyAuthUrl() async {
     try {
       final response = await _dio.get('/auth/spotify/url');
-      return response.data['url'];
+      return response.data['auth_url'];
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get Spotify auth URL');
@@ -123,7 +117,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<String> getYTMusicAuthUrl() async {
     try {
       final response = await _dio.get('/auth/ytmusic/url');
-      return response.data['url'];
+      return response.data['auth_url'];
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get YouTube Music auth URL');
@@ -154,7 +148,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<String> getMALAuthUrl() async {
     try {
       final response = await _dio.get('/auth/mal/url');
-      return response.data['url'];
+      return response.data['auth_url'];
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get MAL auth URL');
     }
@@ -182,7 +176,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<String> getLastFMAuthUrl() async {
     try {
       final response = await _dio.get('/auth/lastfm/url');
-      return response.data['url'];
+      return response.data['auth_url'];
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get LastFM auth URL');

@@ -148,10 +148,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     try {
       emit(AuthLoading());
-      final result = await _authRepository.login(
-        username: event.username,
-        password: event.password,
-      );
+      final result =
+          await _authRepository.login(event.username, event.password);
       emit(Authenticated(token: result['token']));
     } catch (e) {
       emit(AuthError(e.toString()));
@@ -165,9 +163,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       emit(AuthLoading());
       final result = await _authRepository.register(
-        username: event.username,
-        email: event.email,
-        password: event.password,
+        event.username,
+        event.email,
+        event.password,
       );
       emit(Authenticated(token: result['token']));
     } catch (e) {
@@ -194,8 +192,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     try {
       emit(AuthLoading());
-      final result = await _authRepository.refreshToken(event.refreshToken);
-      emit(Authenticated(token: result['token']));
+      final token = await _authRepository.refreshToken();
+      emit(Authenticated(token: token));
     } catch (e) {
       emit(AuthError(e.toString()));
     }

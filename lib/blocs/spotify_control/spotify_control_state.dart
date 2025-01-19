@@ -1,57 +1,48 @@
 import '../../domain/models/common_track.dart';
+import '../../domain/models/spotify_device.dart';
 
+/// Base class for all Spotify control states
 abstract class SpotifyControlState {}
 
+/// Initial state
 class SpotifyControlInitial extends SpotifyControlState {}
 
+/// Loading state
 class SpotifyControlLoading extends SpotifyControlState {}
 
-class SpotifyControlFailure extends SpotifyControlState {
-  final String error;
-
-  SpotifyControlFailure({required this.error});
-}
-
+/// State when played tracks are loaded
 class SpotifyPlayedTracksLoaded extends SpotifyControlState {
   final List<CommonTrack> tracks;
 
   SpotifyPlayedTracksLoaded({required this.tracks});
 }
 
+/// State when devices are loaded
 class SpotifyDevicesLoaded extends SpotifyControlState {
-  final List<Map<String, dynamic>> devices;
-  final String? selectedDeviceId;
+  final List<SpotifyDevice> devices;
+  final SpotifyDevice? selectedDevice;
 
   SpotifyDevicesLoaded({
     required this.devices,
-    this.selectedDeviceId,
+    this.selectedDevice,
   });
 }
 
+/// State when playback state changes
 class SpotifyPlaybackStateChanged extends SpotifyControlState {
   final bool isPlaying;
 
   SpotifyPlaybackStateChanged({required this.isPlaying});
 }
 
+/// State when volume changes
 class SpotifyVolumeStateChanged extends SpotifyControlState {
   final int volume;
 
   SpotifyVolumeStateChanged({required this.volume});
 }
 
-class SpotifyTrackChanged extends SpotifyControlState {
-  final CommonTrack track;
-
-  SpotifyTrackChanged({required this.track});
-}
-
-class SpotifyDeviceChanged extends SpotifyControlState {
-  final String deviceId;
-
-  SpotifyDeviceChanged({required this.deviceId});
-}
-
+/// State when track location is saved
 class SpotifyTrackLocationSaved extends SpotifyControlState {
   final CommonTrack track;
   final double latitude;
@@ -62,4 +53,11 @@ class SpotifyTrackLocationSaved extends SpotifyControlState {
     required this.latitude,
     required this.longitude,
   });
+}
+
+/// Error state
+class SpotifyControlFailure extends SpotifyControlState {
+  final String error;
+
+  SpotifyControlFailure({required this.error});
 }

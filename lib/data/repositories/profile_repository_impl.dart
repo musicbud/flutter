@@ -18,17 +18,35 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
+  Future<void> updateProfile(Map<String, dynamic> profileData) async {
+    await _dioClient.put('/profile', data: profileData);
+  }
+
+  @override
   Future<String> updateAvatar(XFile image) async {
-    final formData = FormData.fromMap({
-      'avatar': await MultipartFile.fromFile(image.path),
-    });
-    final response = await _dioClient.post('/profile/avatar', data: formData);
+    final formData = FormData();
+    formData.files.add(MapEntry(
+      'avatar',
+      await MultipartFile.fromFile(image.path),
+    ));
+    final response =
+        await _dioClient.dio.post('/profile/avatar', data: formData);
     return response.data['avatar_url'];
   }
 
   @override
   Future<void> logout() async {
     await _dioClient.post('/auth/logout');
+  }
+
+  @override
+  Future<bool> isAuthenticated() async {
+    try {
+      await _dioClient.get('/auth/status');
+      return true;
+    } catch (e) {
+      return false;
+    }
   }
 
   @override

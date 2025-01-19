@@ -1,8 +1,12 @@
 import 'package:equatable/equatable.dart';
-import '../../models/channel.dart';
-import '../../models/channel_user.dart';
-import '../../models/message.dart';
-import '../../models/user_profile.dart';
+import '../../domain/models/channel.dart';
+import '../../domain/models/channel_user.dart';
+import '../../domain/models/message.dart';
+import '../../domain/models/user_profile.dart';
+import '../../domain/models/channel_details.dart';
+import '../../domain/models/channel_dashboard.dart';
+import '../../domain/models/channel_invitation.dart';
+import '../../domain/models/channel_statistics.dart';
 
 abstract class ChatState extends Equatable {
   const ChatState();
@@ -85,7 +89,7 @@ class ChatChannelJoinedSuccess extends ChatState {}
 class ChatChannelJoinRequestedSuccess extends ChatState {}
 
 class ChatChannelDetailsLoaded extends ChatState {
-  final Map<String, dynamic> details;
+  final ChannelDetails details;
 
   const ChatChannelDetailsLoaded(this.details);
 
@@ -94,7 +98,7 @@ class ChatChannelDetailsLoaded extends ChatState {
 }
 
 class ChatChannelDashboardLoaded extends ChatState {
-  final Map<String, dynamic> dashboard;
+  final ChannelDashboard dashboard;
 
   const ChatChannelDashboardLoaded(this.dashboard);
 
@@ -114,7 +118,7 @@ class ChatChannelRolesLoaded extends ChatState {
 class ChatAdminActionSuccess extends ChatState {}
 
 class ChatChannelInvitationsLoaded extends ChatState {
-  final List<Map<String, dynamic>> invitations;
+  final List<ChannelInvitation> invitations;
 
   const ChatChannelInvitationsLoaded(this.invitations);
 
@@ -123,7 +127,7 @@ class ChatChannelInvitationsLoaded extends ChatState {
 }
 
 class ChatChannelBlockedUsersLoaded extends ChatState {
-  final List<Map<String, dynamic>> blockedUsers;
+  final List<UserProfile> blockedUsers;
 
   const ChatChannelBlockedUsersLoaded(this.blockedUsers);
 
@@ -132,7 +136,7 @@ class ChatChannelBlockedUsersLoaded extends ChatState {
 }
 
 class ChatUserInvitationsLoaded extends ChatState {
-  final List<Map<String, dynamic>> invitations;
+  final List<ChannelInvitation> invitations;
 
   const ChatUserInvitationsLoaded(this.invitations);
 
@@ -159,7 +163,7 @@ class ChatUserMessageSentSuccess extends ChatState {
 }
 
 class ChatChannelStatisticsLoaded extends ChatState {
-  final Map<String, dynamic> statistics;
+  final ChannelStatistics statistics;
 
   const ChatChannelStatisticsLoaded(this.statistics);
 

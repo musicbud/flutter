@@ -1,7 +1,9 @@
 class CommonAlbum {
   final String id;
+  final String uid;
   final String name;
   final String? artistName;
+  final String? artistId;
   final String? source;
   final String? spotifyId;
   final String? ytmusicId;
@@ -12,11 +14,14 @@ class CommonAlbum {
   final List<String>? imageUrls;
   final String? imageUrl;
   final int? releaseYear;
+  final int? totalTracks;
 
   CommonAlbum({
     required this.id,
+    this.uid = '',
     required this.name,
     this.artistName,
+    this.artistId,
     this.source,
     this.spotifyId,
     this.ytmusicId,
@@ -27,13 +32,16 @@ class CommonAlbum {
     this.imageUrls,
     this.imageUrl,
     this.releaseYear,
+    this.totalTracks,
   });
 
   factory CommonAlbum.fromJson(Map<String, dynamic> json) {
     return CommonAlbum(
       id: json['id'] as String,
+      uid: json['uid'] as String? ?? '',
       name: json['name'] as String,
       artistName: json['artist_name'] as String?,
+      artistId: json['artist_id'] as String?,
       source: json['source'] as String?,
       spotifyId: json['spotify_id'] as String?,
       ytmusicId: json['ytmusic_id'] as String?,
@@ -47,14 +55,17 @@ class CommonAlbum {
           .toList(),
       imageUrl: json['image_url'] as String?,
       releaseYear: json['release_year'] as int?,
+      totalTracks: json['total_tracks'] as int?,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'uid': uid,
       'name': name,
       'artist_name': artistName,
+      'artist_id': artistId,
       'source': source,
       'spotify_id': spotifyId,
       'ytmusic_id': ytmusicId,
@@ -65,13 +76,16 @@ class CommonAlbum {
       'image_urls': imageUrls,
       'image_url': imageUrl,
       'release_year': releaseYear,
+      'total_tracks': totalTracks,
     };
   }
 
   CommonAlbum copyWith({
     String? id,
+    String? uid,
     String? name,
     String? artistName,
+    String? artistId,
     String? source,
     String? spotifyId,
     String? ytmusicId,
@@ -82,11 +96,14 @@ class CommonAlbum {
     List<String>? imageUrls,
     String? imageUrl,
     int? releaseYear,
+    int? totalTracks,
   }) {
     return CommonAlbum(
       id: id ?? this.id,
+      uid: uid ?? this.uid,
       name: name ?? this.name,
       artistName: artistName ?? this.artistName,
+      artistId: artistId ?? this.artistId,
       source: source ?? this.source,
       spotifyId: spotifyId ?? this.spotifyId,
       ytmusicId: ytmusicId ?? this.ytmusicId,
@@ -97,6 +114,7 @@ class CommonAlbum {
       imageUrls: imageUrls ?? this.imageUrls,
       imageUrl: imageUrl ?? this.imageUrl,
       releaseYear: releaseYear ?? this.releaseYear,
+      totalTracks: totalTracks ?? this.totalTracks,
     );
   }
 }

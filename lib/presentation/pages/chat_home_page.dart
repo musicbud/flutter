@@ -8,9 +8,19 @@ import 'channel_list_page.dart';
 import 'user_list_page.dart';
 import 'login_page.dart';
 
-class ChatHomePage extends StatelessWidget {
-  const ChatHomePage({super.key});
+class ChatHomePage extends StatefulWidget {
+  final String currentUsername;
 
+  const ChatHomePage({
+    Key? key,
+    required this.currentUsername,
+  }) : super(key: key);
+
+  @override
+  _ChatHomePageState createState() => _ChatHomePageState();
+}
+
+class _ChatHomePageState extends State<ChatHomePage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ChatHomeBloc, ChatHomeState>(

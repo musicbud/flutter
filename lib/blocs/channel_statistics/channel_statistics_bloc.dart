@@ -20,8 +20,8 @@ class ChannelStatisticsBloc
   ) async {
     try {
       emit(ChannelStatisticsLoading());
-      final statistics =
-          await _chatRepository.getChannelStatistics(event.channelId);
+      final statistics = await _chatRepository
+          .getChannelStatistics(event.channelId.toString());
       emit(ChannelStatisticsLoaded(statistics));
     } catch (error) {
       emit(ChannelStatisticsFailure(error.toString()));
@@ -33,8 +33,8 @@ class ChannelStatisticsBloc
     Emitter<ChannelStatisticsState> emit,
   ) async {
     try {
-      final statistics =
-          await _chatRepository.getChannelStatistics(event.channelId);
+      final statistics = await _chatRepository
+          .getChannelStatistics(event.channelId.toString());
       emit(ChannelStatisticsLoaded(statistics));
     } catch (error) {
       emit(ChannelStatisticsFailure(error.toString()));

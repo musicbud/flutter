@@ -21,27 +21,31 @@ class ChatChannelUsersRequested extends ChatEvent {
 }
 
 class ChatChannelMessagesRequested extends ChatEvent {
-  final int channelId;
+  final String channelId;
+  final int? limit;
+  final String? before;
 
-  const ChatChannelMessagesRequested(this.channelId);
+  const ChatChannelMessagesRequested(
+    this.channelId, {
+    this.limit,
+    this.before,
+  });
 
   @override
-  List<Object> get props => [channelId];
+  List<Object?> get props => [channelId, limit, before];
 }
 
 class ChatMessageSent extends ChatEvent {
-  final int channelId;
-  final String senderUsername;
+  final String channelId;
   final String content;
 
   const ChatMessageSent({
     required this.channelId,
-    required this.senderUsername,
     required this.content,
   });
 
   @override
-  List<Object> get props => [channelId, senderUsername, content];
+  List<Object> get props => [channelId, content];
 }
 
 class ChatMessageDeleted extends ChatEvent {
@@ -58,12 +62,16 @@ class ChatMessageDeleted extends ChatEvent {
 }
 
 class ChatChannelCreated extends ChatEvent {
-  final Map<String, dynamic> channelData;
+  final String name;
+  final String description;
 
-  const ChatChannelCreated(this.channelData);
+  const ChatChannelCreated({
+    required this.name,
+    required this.description,
+  });
 
   @override
-  List<Object> get props => [channelData];
+  List<Object> get props => [name, description];
 }
 
 class ChatChannelJoined extends ChatEvent {
@@ -85,7 +93,7 @@ class ChatChannelJoinRequested extends ChatEvent {
 }
 
 class ChatChannelDetailsRequested extends ChatEvent {
-  final int channelId;
+  final String channelId;
 
   const ChatChannelDetailsRequested(this.channelId);
 
@@ -94,7 +102,7 @@ class ChatChannelDetailsRequested extends ChatEvent {
 }
 
 class ChatChannelDashboardRequested extends ChatEvent {
-  final int channelId;
+  final String channelId;
 
   const ChatChannelDashboardRequested(this.channelId);
 
@@ -182,7 +190,7 @@ class ChatUserMessageSent extends ChatEvent {
 }
 
 class ChatChannelMemberAdded extends ChatEvent {
-  final int channelId;
+  final String channelId;
   final String username;
 
   const ChatChannelMemberAdded({
@@ -195,7 +203,7 @@ class ChatChannelMemberAdded extends ChatEvent {
 }
 
 class ChatChannelStatisticsRequested extends ChatEvent {
-  final int channelId;
+  final String channelId;
 
   const ChatChannelStatisticsRequested(this.channelId);
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:musicbud_flutter/blocs/user/user_bloc.dart';
-import 'package:musicbud_flutter/models/user_profile.dart';
+import 'package:musicbud_flutter/domain/models/user_profile.dart';
 import 'package:musicbud_flutter/presentation/pages/spotify_control_page.dart';
 import 'package:musicbud_flutter/presentation/pages/profile_page.dart';
 import 'package:musicbud_flutter/presentation/pages/chat_home_page.dart';

@@ -1,54 +1,45 @@
-import 'package:equatable/equatable.dart';
 import '../../domain/models/common_track.dart';
 
-abstract class SpotifyControlEvent extends Equatable {
-  const SpotifyControlEvent();
+/// Base class for all Spotify control events
+abstract class SpotifyControlEvent {}
 
-  @override
-  List<Object?> get props => [];
-}
-
+/// Event to request played tracks
 class SpotifyPlayedTracksRequested extends SpotifyControlEvent {}
 
+/// Event to request available devices
 class SpotifyDevicesRequested extends SpotifyControlEvent {}
 
+/// Event to control playback (play, pause, etc.)
 class SpotifyPlaybackControlRequested extends SpotifyControlEvent {
   final String command;
-  final String? deviceId;
+  final String deviceId;
 
-  const SpotifyPlaybackControlRequested({
+  SpotifyPlaybackControlRequested({
     required this.command,
-    this.deviceId,
+    required this.deviceId,
   });
-
-  @override
-  List<Object?> get props => [command, deviceId];
 }
 
+/// Event to change volume
 class SpotifyVolumeChangeRequested extends SpotifyControlEvent {
   final int volume;
-  final String? deviceId;
+  final String deviceId;
 
-  const SpotifyVolumeChangeRequested({
+  SpotifyVolumeChangeRequested({
     required this.volume,
-    this.deviceId,
+    required this.deviceId,
   });
-
-  @override
-  List<Object?> get props => [volume, deviceId];
 }
 
+/// Event to save track location
 class SpotifyTrackLocationSaveRequested extends SpotifyControlEvent {
   final CommonTrack track;
   final double latitude;
   final double longitude;
 
-  const SpotifyTrackLocationSaveRequested({
+  SpotifyTrackLocationSaveRequested({
     required this.track,
     required this.latitude,
     required this.longitude,
   });
-
-  @override
-  List<Object> get props => [track, latitude, longitude];
 }

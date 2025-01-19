@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../models/bud_match.dart';
+import '../../domain/models/bud_match.dart';
 
 abstract class BudState extends Equatable {
   const BudState();

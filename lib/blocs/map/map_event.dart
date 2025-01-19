@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../../domain/models/track.dart';
 
 abstract class MapEvent extends Equatable {
   const MapEvent();
@@ -9,6 +10,15 @@ abstract class MapEvent extends Equatable {
 }
 
 class MapTracksRequested extends MapEvent {}
+
+class MapTrackSelectedEvent extends MapEvent {
+  final Track track;
+
+  const MapTrackSelectedEvent({required this.track});
+
+  @override
+  List<Object?> get props => [track];
+}
 
 class MapControllerSet extends MapEvent {
   final GoogleMapController controller;

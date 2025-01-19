@@ -1,13 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/models/common_track.dart';
 import '../../domain/repositories/content_repository.dart';
 import 'spotify_control_event.dart' as events;
 import 'spotify_control_state.dart' as states;
 
+/// Bloc that handles Spotify playback control and track management
 class SpotifyControlBloc
     extends Bloc<events.SpotifyControlEvent, states.SpotifyControlState> {
   final ContentRepository _contentRepository;
 
+  /// Creates a new instance of [SpotifyControlBloc]
   SpotifyControlBloc({required ContentRepository contentRepository})
       : _contentRepository = contentRepository,
         super(states.SpotifyControlInitial()) {
@@ -23,6 +24,7 @@ class SpotifyControlBloc
     Emitter<states.SpotifyControlState> emit,
   ) async {
     try {
+      emit(states.SpotifyControlLoading());
       final tracks = await _contentRepository.getPlayedTracks();
       emit(states.SpotifyPlayedTracksLoaded(tracks: tracks));
     } catch (e) {
@@ -35,6 +37,7 @@ class SpotifyControlBloc
     Emitter<states.SpotifyControlState> emit,
   ) async {
     try {
+      emit(states.SpotifyControlLoading());
       final devices = await _contentRepository.getSpotifyDevices();
       emit(states.SpotifyDevicesLoaded(devices: devices));
     } catch (e) {
@@ -46,8 +49,15 @@ class SpotifyControlBloc
     events.SpotifyPlaybackControlRequested event,
     Emitter<states.SpotifyControlState> emit,
   ) async {
+    if (event.deviceId == null || event.deviceId!.isEmpty) {
+      emit(states.SpotifyControlFailure(error: 'No device selected'));
+      return;
+    }
+
     try {
-      await _contentRepository.controlSpotifyPlayback(event.command);
+      emit(states.SpotifyControlLoading());
+      await _contentRepository.controlSpotifyPlayback(
+          event.command, event.deviceId!);
       emit(states.SpotifyPlaybackStateChanged(
           isPlaying: event.command == 'play'));
     } catch (e) {
@@ -59,8 +69,14 @@ class SpotifyControlBloc
     events.SpotifyVolumeChangeRequested event,
     Emitter<states.SpotifyControlState> emit,
   ) async {
+    if (event.deviceId == null || event.deviceId!.isEmpty) {
+      emit(states.SpotifyControlFailure(error: 'No device selected'));
+      return;
+    }
+
     try {
-      await _contentRepository.setSpotifyVolume(event.volume);
+      emit(states.SpotifyControlLoading());
+      await _contentRepository.setSpotifyVolume(event.deviceId!, event.volume);
       emit(states.SpotifyVolumeStateChanged(volume: event.volume));
     } catch (e) {
       emit(states.SpotifyControlFailure(error: e.toString()));
@@ -72,8 +88,9 @@ class SpotifyControlBloc
     Emitter<states.SpotifyControlState> emit,
   ) async {
     try {
+      emit(states.SpotifyControlLoading());
       await _contentRepository.saveTrackLocation(
-        event.track,
+        event.track.id,
         event.latitude,
         event.longitude,
       );

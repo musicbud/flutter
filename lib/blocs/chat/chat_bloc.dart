@@ -1,9 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/chat_repository.dart';
-import '../../models/channel.dart';
-import '../../models/channel_user.dart';
-import '../../models/message.dart';
-import '../../models/user_profile.dart';
+import '../../domain/models/channel.dart';
+import '../../domain/models/channel_user.dart';
+import '../../domain/models/message.dart';
+import '../../domain/models/user_profile.dart';
+import '../../domain/models/channel_details.dart';
+import '../../domain/models/channel_dashboard.dart';
+import '../../domain/models/channel_invitation.dart';
+import '../../domain/models/channel_statistics.dart';
 import 'chat_event.dart';
 import 'chat_state.dart';
 
@@ -41,7 +45,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      final channels = await _chatRepository.getChannelList();
+      final channels = await _chatRepository.getChannels();
       emit(ChatChannelListLoaded(channels));
     } catch (e) {
       emit(ChatFailure(e.toString()));
@@ -54,29 +58,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      final usersData = await _chatRepository.getUsers();
-      final users = usersData.map((userData) {
-        final createdAt = userData['created_at'] != null
-            ? DateTime.parse(userData['created_at'])
-            : DateTime.now();
-        final updatedAt = userData['updated_at'] != null
-            ? DateTime.parse(userData['updated_at'])
-            : DateTime.now();
-
-        return UserProfile(
-          id: userData['id'].toString(),
-          username: userData['username'] ?? '',
-          displayName: userData['display_name'],
-          bio: userData['bio'],
-          avatarUrl: userData['avatar_url'],
-          location: userData['location'],
-          followersCount: userData['followers_count'],
-          followingCount: userData['following_count'],
-          isFollowing: userData['is_following'] ?? false,
-          createdAt: createdAt,
-          updatedAt: updatedAt,
-        );
-      }).toList();
+      final users = await _chatRepository.getUsers();
       emit(ChatUserListLoaded(users));
     } catch (e) {
       emit(ChatFailure(e.toString()));
@@ -89,9 +71,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      final users = await _chatRepository.getChannelUsers(event.channelId);
-      emit(ChatChannelUsersLoaded(
-          users.entries.map((e) => ChannelUser.fromJson(e.value)).toList()));
+      final usersMap =
+          await _chatRepository.getChannelUsers(event.channelId.toString());
+      final users = usersMap.entries
+          .map((e) => ChannelUser.fromJson(e.value as Map<String, dynamic>))
+          .toList();
+      emit(ChatChannelUsersLoaded(users));
     } catch (e) {
       emit(ChatFailure(e.toString()));
     }
@@ -103,8 +88,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      final messages =
-          await _chatRepository.getChannelMessages(event.channelId);
+      final messages = await _chatRepository.getChannelMessages(
+        event.channelId,
+        limit: event.limit,
+        before: event.before,
+      );
       emit(ChatChannelMessagesLoaded(messages));
     } catch (e) {
       emit(ChatFailure(e.toString()));
@@ -119,10 +107,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     try {
       final message = await _chatRepository.sendChannelMessage(
         event.channelId,
-        event.senderUsername,
         event.content,
       );
-      emit(ChatMessageSentSuccess(Message.fromJson(message)));
+      emit(ChatMessageSentSuccess(message));
     } catch (e) {
       emit(ChatFailure(e.toString()));
     }
@@ -134,7 +121,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      await _chatRepository.deleteMessage(event.channelId, event.messageId);
+      await _chatRepository.deleteMessage(
+        event.channelId.toString(),
+        event.messageId.toString(),
+      );
       emit(ChatMessageDeletedSuccess());
     } catch (e) {
       emit(ChatFailure(e.toString()));
@@ -147,8 +137,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      final channel = await _chatRepository.createChannel(event.channelData);
-      emit(ChatChannelCreatedSuccess(Channel.fromJson(channel)));
+      final channel = await _chatRepository.createChannel(
+        event.name,
+        event.description,
+      );
+      emit(ChatChannelCreatedSuccess(channel));
     } catch (e) {
       emit(ChatFailure(e.toString()));
     }
@@ -171,9 +164,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     ChatChannelJoinRequested event,
     Emitter<ChatState> emit,
   ) async {
-    emit(ChatLoading());
     try {
-      await _chatRepository.requestJoinChannel(event.channelId);
+      await _chatRepository.requestJoinChannel(event.channelId.toString());
       emit(ChatChannelJoinRequestedSuccess());
     } catch (e) {
       emit(ChatFailure(e.toString()));
@@ -187,7 +179,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(ChatLoading());
     try {
       final details = await _chatRepository.getChannelDetails(event.channelId);
-      emit(ChatChannelDetailsLoaded(details));
+      final channelDetails = ChannelDetails.fromJson(details);
+      emit(ChatChannelDetailsLoaded(channelDetails));
     } catch (e) {
       emit(ChatFailure(e.toString()));
     }
@@ -201,7 +194,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     try {
       final dashboard =
           await _chatRepository.getChannelDashboardData(event.channelId);
-      emit(ChatChannelDashboardLoaded(dashboard));
+      final channelDashboard = ChannelDashboard.fromJson(dashboard);
+      emit(ChatChannelDashboardLoaded(channelDashboard));
     } catch (e) {
       emit(ChatFailure(e.toString()));
     }
@@ -213,7 +207,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      final roles = await _chatRepository.checkChannelRoles(event.channelId);
+      final roles =
+          await _chatRepository.checkChannelRoles(event.channelId.toString());
       emit(ChatChannelRolesLoaded(roles));
     } catch (e) {
       emit(ChatFailure(e.toString()));
@@ -224,12 +219,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     ChatAdminActionPerformed event,
     Emitter<ChatState> emit,
   ) async {
-    emit(ChatLoading());
     try {
       await _chatRepository.performAdminAction(
-        event.channelId,
+        event.channelId.toString(),
         event.action,
-        event.userId,
+        event.userId.toString(),
       );
       emit(ChatAdminActionSuccess());
     } catch (e) {
@@ -243,8 +237,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      final invitations =
-          await _chatRepository.getChannelInvitations(event.channelId);
+      final invitationsData = await _chatRepository
+          .getChannelInvitations(event.channelId.toString());
+      final invitations = invitationsData
+          .map((data) => ChannelInvitation.fromJson(data))
+          .toList();
       emit(ChatChannelInvitationsLoaded(invitations));
     } catch (e) {
       emit(ChatFailure(e.toString()));
@@ -257,8 +254,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
+      final blockedUsersData = await _chatRepository
+          .getChannelBlockedUsers(event.channelId.toString());
       final blockedUsers =
-          await _chatRepository.getChannelBlockedUsers(event.channelId);
+          blockedUsersData.map((data) => UserProfile.fromJson(data)).toList();
       emit(ChatChannelBlockedUsersLoaded(blockedUsers));
     } catch (e) {
       emit(ChatFailure(e.toString()));
@@ -271,8 +270,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      final invitations =
-          await _chatRepository.getUserInvitations(event.userId);
+      final invitationsData =
+          await _chatRepository.getUserInvitations(event.userId.toString());
+      final invitations = invitationsData
+          .map((data) => ChannelInvitation.fromJson(data))
+          .toList();
       emit(ChatUserInvitationsLoaded(invitations));
     } catch (e) {
       emit(ChatFailure(e.toString()));
@@ -287,10 +289,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     try {
       final messages = await _chatRepository.getUserMessages(
         event.currentUsername,
-        event.otherUsername,
+        limit: null,
+        before: null,
       );
-      emit(ChatUserMessagesLoaded(
-          messages.entries.map((e) => Message.fromJson(e.value)).toList()));
+      emit(ChatUserMessagesLoaded(messages));
     } catch (e) {
       emit(ChatFailure(e.toString()));
     }
@@ -304,10 +306,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     try {
       final message = await _chatRepository.sendUserMessage(
         event.senderUsername,
-        event.recipientUsername,
         event.content,
       );
-      emit(ChatUserMessageSentSuccess(Message.fromJson(message)));
+      emit(ChatUserMessageSentSuccess(message));
     } catch (e) {
       emit(ChatFailure(e.toString()));
     }
@@ -317,13 +318,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     ChatChannelMemberAdded event,
     Emitter<ChatState> emit,
   ) async {
-    emit(ChatLoading());
     try {
-      await _chatRepository.addChannelMember(
-        event.channelId,
-        event.username,
-      );
-      emit(ChatAdminActionSuccess());
+      await _chatRepository.addChannelMember(event.channelId, event.username);
+      emit(ChatChannelJoinedSuccess());
     } catch (e) {
       emit(ChatFailure(e.toString()));
     }
@@ -335,8 +332,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      final statistics =
+      final statisticsData =
           await _chatRepository.getChannelStatistics(event.channelId);
+      final statistics = ChannelStatistics.fromJson(statisticsData);
       emit(ChatChannelStatisticsLoaded(statistics));
     } catch (e) {
       emit(ChatFailure(e.toString()));

@@ -1,36 +1,56 @@
+import 'package:equatable/equatable.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../../domain/models/common_track.dart';
+import '../../domain/models/track.dart';
 
-abstract class MapState {}
+abstract class MapState extends Equatable {
+  const MapState();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class MapInitial extends MapState {}
 
 class MapLoading extends MapState {}
 
-class MapFailure extends MapState {
-  final String error;
-
-  MapFailure({required this.error});
-}
-
 class MapTracksLoaded extends MapState {
-  final List<CommonTrack> tracks;
+  final List<Track> tracks;
   final Set<Marker> markers;
   final LatLngBounds bounds;
 
-  MapTracksLoaded({
+  const MapTracksLoaded({
     required this.tracks,
     required this.markers,
     required this.bounds,
   });
+
+  @override
+  List<Object?> get props => [tracks, markers, bounds];
 }
 
-class MapTrackSelected extends MapState {
-  final CommonTrack track;
-  final LatLng position;
+class MapTrackSelectedState extends MapTracksLoaded {
+  final Track selectedTrack;
 
-  MapTrackSelected({
-    required this.track,
-    required this.position,
-  });
+  const MapTrackSelectedState({
+    required this.selectedTrack,
+    required List<Track> tracks,
+    required Set<Marker> markers,
+    required LatLngBounds bounds,
+  }) : super(
+          tracks: tracks,
+          markers: markers,
+          bounds: bounds,
+        );
+
+  @override
+  List<Object?> get props => [selectedTrack, ...super.props];
+}
+
+class MapFailure extends MapState {
+  final String error;
+
+  const MapFailure({required this.error});
+
+  @override
+  List<Object?> get props => [error];
 }

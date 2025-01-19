@@ -9,74 +9,59 @@ class InvitationBloc extends Bloc<InvitationEvent, InvitationState> {
   InvitationBloc({required ChatRepository chatRepository})
       : _chatRepository = chatRepository,
         super(InvitationInitial()) {
-    on<ChannelInvitationsSent>(_onChannelInvitationsSent);
-    on<ChannelInvitationsAccepted>(_onChannelInvitationsAccepted);
-    on<ChannelInvitationsRejected>(_onChannelInvitationsRejected);
-    on<ChannelInvitationsListRequested>(_onChannelInvitationsListRequested);
-    on<UserInvitationsListRequested>(_onUserInvitationsListRequested);
+    on<InvitationAccepted>(_onInvitationAccepted);
+    on<InvitationRejected>(_onInvitationRejected);
+    on<ChannelInvitationsRequested>(_onChannelInvitationsRequested);
+    on<UserInvitationsRequested>(_onUserInvitationsRequested);
   }
 
-  Future<void> _onChannelInvitationsSent(
-    ChannelInvitationsSent event,
+  Future<void> _onInvitationAccepted(
+    InvitationAccepted event,
     Emitter<InvitationState> emit,
   ) async {
-    emit(InvitationLoading());
     try {
-      await _chatRepository.addChannelMember(event.channelId, event.username);
-      emit(InvitationSentSuccess());
-    } catch (e) {
-      emit(InvitationFailure(e.toString()));
-    }
-  }
-
-  Future<void> _onChannelInvitationsAccepted(
-    ChannelInvitationsAccepted event,
-    Emitter<InvitationState> emit,
-  ) async {
-    emit(InvitationLoading());
-    try {
-      await _chatRepository.acceptUser(event.channelId, event.userId);
+      await _chatRepository.addChannelMember(
+          event.channelId.toString(), event.userId);
       emit(InvitationAcceptedSuccess());
     } catch (e) {
       emit(InvitationFailure(e.toString()));
     }
   }
 
-  Future<void> _onChannelInvitationsRejected(
-    ChannelInvitationsRejected event,
+  Future<void> _onInvitationRejected(
+    InvitationRejected event,
     Emitter<InvitationState> emit,
   ) async {
-    emit(InvitationLoading());
     try {
-      await _chatRepository.removeChannelMember(event.channelId, event.userId);
+      await _chatRepository.kickUser(event.channelId.toString(), event.userId);
       emit(InvitationRejectedSuccess());
     } catch (e) {
       emit(InvitationFailure(e.toString()));
     }
   }
 
-  Future<void> _onChannelInvitationsListRequested(
-    ChannelInvitationsListRequested event,
+  Future<void> _onChannelInvitationsRequested(
+    ChannelInvitationsRequested event,
     Emitter<InvitationState> emit,
   ) async {
     emit(InvitationLoading());
     try {
-      final invitations =
-          await _chatRepository.getChannelInvitations(event.channelId);
+      final invitations = await _chatRepository
+          .getChannelInvitations(event.channelId.toString());
       emit(ChannelInvitationsLoaded(invitations));
     } catch (e) {
       emit(InvitationFailure(e.toString()));
     }
   }
 
-  Future<void> _onUserInvitationsListRequested(
-    UserInvitationsListRequested event,
+  Future<void> _onUserInvitationsRequested(
+    UserInvitationsRequested event,
     Emitter<InvitationState> emit,
   ) async {
     emit(InvitationLoading());
     try {
       final invitations =
-          await _chatRepository.getUserInvitations(event.userId);
+          await _chatRepository.getUserInvitations(event.userId.toString());
       emit(UserInvitationsLoaded(invitations));
     } catch (e) {
       emit(InvitationFailure(e.toString()));

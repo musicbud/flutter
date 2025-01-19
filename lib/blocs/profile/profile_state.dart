@@ -1,6 +1,6 @@
 import '../../domain/models/content_service.dart';
-import '../../models/user_profile.dart';
-import '../../models/bud_match.dart';
+import '../../domain/models/user_profile.dart';
+import '../../domain/models/bud_match.dart';
 
 abstract class ProfileState {}
 

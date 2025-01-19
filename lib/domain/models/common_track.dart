@@ -1,7 +1,10 @@
 class CommonTrack {
   final String id;
-  final String title;
+  final String name;
   final String? artistName;
+  final String? imageUrl;
+  final List<String>? imageUrls;
+  final int? durationMs;
   final String? albumName;
   final String? source;
   final String? spotifyId;
@@ -12,13 +15,16 @@ class CommonTrack {
   final DateTime? playedAt;
   final double? latitude;
   final double? longitude;
-  final String? imageUrl;
-  final List<String>? imageUrls;
 
-  CommonTrack({
+  String get title => name;
+
+  const CommonTrack({
     required this.id,
-    required this.title,
+    required this.name,
     this.artistName,
+    this.imageUrl,
+    this.imageUrls,
+    this.durationMs,
     this.albumName,
     this.source,
     this.spotifyId,
@@ -29,15 +35,18 @@ class CommonTrack {
     this.playedAt,
     this.latitude,
     this.longitude,
-    this.imageUrl,
-    this.imageUrls,
   });
 
   factory CommonTrack.fromJson(Map<String, dynamic> json) {
     return CommonTrack(
       id: json['id'] as String,
-      title: json['title'] as String,
+      name: json['name'] as String,
       artistName: json['artist_name'] as String?,
+      imageUrl: json['image_url'] as String?,
+      imageUrls: (json['image_urls'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+      durationMs: json['duration_ms'] as int?,
       albumName: json['album_name'] as String?,
       source: json['source'] as String?,
       spotifyId: json['spotify_id'] as String?,
@@ -50,18 +59,17 @@ class CommonTrack {
           : null,
       latitude: json['latitude'] as double?,
       longitude: json['longitude'] as double?,
-      imageUrl: json['image_url'] as String?,
-      imageUrls: (json['image_urls'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'title': title,
+      'name': name,
       'artist_name': artistName,
+      'image_url': imageUrl,
+      'image_urls': imageUrls,
+      'duration_ms': durationMs,
       'album_name': albumName,
       'source': source,
       'spotify_id': spotifyId,
@@ -72,15 +80,16 @@ class CommonTrack {
       'played_at': playedAt?.toIso8601String(),
       'latitude': latitude,
       'longitude': longitude,
-      'image_url': imageUrl,
-      'image_urls': imageUrls,
     };
   }
 
   CommonTrack copyWith({
     String? id,
-    String? title,
+    String? name,
     String? artistName,
+    String? imageUrl,
+    List<String>? imageUrls,
+    int? durationMs,
     String? albumName,
     String? source,
     String? spotifyId,
@@ -91,13 +100,14 @@ class CommonTrack {
     DateTime? playedAt,
     double? latitude,
     double? longitude,
-    String? imageUrl,
-    List<String>? imageUrls,
   }) {
     return CommonTrack(
       id: id ?? this.id,
-      title: title ?? this.title,
+      name: name ?? this.name,
       artistName: artistName ?? this.artistName,
+      imageUrl: imageUrl ?? this.imageUrl,
+      imageUrls: imageUrls ?? this.imageUrls,
+      durationMs: durationMs ?? this.durationMs,
       albumName: albumName ?? this.albumName,
       source: source ?? this.source,
       spotifyId: spotifyId ?? this.spotifyId,
@@ -108,8 +118,6 @@ class CommonTrack {
       playedAt: playedAt ?? this.playedAt,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
-      imageUrl: imageUrl ?? this.imageUrl,
-      imageUrls: imageUrls ?? this.imageUrls,
     );
   }
 }

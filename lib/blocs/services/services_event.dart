@@ -9,31 +9,13 @@ abstract class ServicesEvent extends Equatable {
 
 class ServicesStatusRequested extends ServicesEvent {}
 
-class ServiceConnectRequested extends ServicesEvent {
-  final String service;
-
-  const ServiceConnectRequested(this.service);
-
-  @override
-  List<Object> get props => [service];
-}
-
-class ServiceDisconnectRequested extends ServicesEvent {
-  final String service;
-
-  const ServiceDisconnectRequested(this.service);
-
-  @override
-  List<Object> get props => [service];
-}
-
 class ServiceAuthUrlRequested extends ServicesEvent {
   final String service;
 
   const ServiceAuthUrlRequested(this.service);
 
   @override
-  List<Object> get props => [service];
+  List<Object?> get props => [service];
 }
 
 class ServiceTokenSubmitted extends ServicesEvent {
@@ -46,5 +28,14 @@ class ServiceTokenSubmitted extends ServicesEvent {
   });
 
   @override
-  List<Object> get props => [service, token];
+  List<Object?> get props => [service, token];
+}
+
+class ServiceDisconnectRequested extends ServicesEvent {
+  final String service;
+
+  const ServiceDisconnectRequested(this.service);
+
+  @override
+  List<Object?> get props => [service];
 }

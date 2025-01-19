@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import '../../domain/models/common_track.dart';
-import '../../models/bud_match.dart';
+import '../../domain/models/bud_match.dart';
 
 abstract class TrackState extends Equatable {
   const TrackState();

@@ -1,26 +1,43 @@
-class BudMatch {
+import 'package:equatable/equatable.dart';
+import 'bud.dart';
+
+/// A model class representing a match with another user (bud) based on common interests
+class BudMatch extends Equatable {
   final String id;
   final String userId;
   final String username;
   final String? avatarUrl;
   final double matchScore;
-  final int commonItemsCount;
-  final String status; // 'pending', 'accepted', 'rejected'
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final double similarityScore;
+  final List<String> commonInterests;
+  final DateTime matchedAt;
 
-  BudMatch({
+  const BudMatch({
     required this.id,
     required this.userId,
     required this.username,
     this.avatarUrl,
     required this.matchScore,
-    required this.commonItemsCount,
-    required this.status,
-    required this.createdAt,
-    required this.updatedAt,
+    required this.similarityScore,
+    required this.commonInterests,
+    required this.matchedAt,
   });
 
+  /// Creates a [BudMatch] from a [Bud] instance
+  factory BudMatch.fromBud(Bud bud) {
+    return BudMatch(
+      id: bud.id,
+      userId: bud.id,
+      username: bud.username,
+      avatarUrl: bud.avatarUrl,
+      matchScore: bud.matchScore,
+      similarityScore: bud.matchScore,
+      commonInterests: bud.commonInterests,
+      matchedAt: bud.matchedAt,
+    );
+  }
+
+  /// Creates a [BudMatch] from a JSON map
   factory BudMatch.fromJson(Map<String, dynamic> json) {
     return BudMatch(
       id: json['id'] as String,
@@ -28,48 +45,37 @@ class BudMatch {
       username: json['username'] as String,
       avatarUrl: json['avatar_url'] as String?,
       matchScore: (json['match_score'] as num).toDouble(),
-      commonItemsCount: json['common_items_count'] as int,
-      status: json['status'] as String,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
+      similarityScore: (json['similarity_score'] as num).toDouble(),
+      commonInterests: (json['common_interests'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
+      matchedAt: DateTime.parse(json['matched_at'] as String),
     );
   }
 
+  /// Converts this [BudMatch] to a JSON map
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'user_id': userId,
       'username': username,
-      if (avatarUrl != null) 'avatar_url': avatarUrl,
+      'avatar_url': avatarUrl,
       'match_score': matchScore,
-      'common_items_count': commonItemsCount,
-      'status': status,
-      'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt.toIso8601String(),
+      'similarity_score': similarityScore,
+      'common_interests': commonInterests,
+      'matched_at': matchedAt.toIso8601String(),
     };
   }
 
-  BudMatch copyWith({
-    String? id,
-    String? userId,
-    String? username,
-    String? avatarUrl,
-    double? matchScore,
-    int? commonItemsCount,
-    String? status,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-  }) {
-    return BudMatch(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      username: username ?? this.username,
-      avatarUrl: avatarUrl ?? this.avatarUrl,
-      matchScore: matchScore ?? this.matchScore,
-      commonItemsCount: commonItemsCount ?? this.commonItemsCount,
-      status: status ?? this.status,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-    );
-  }
+  @override
+  List<Object?> get props => [
+        id,
+        userId,
+        username,
+        avatarUrl,
+        matchScore,
+        similarityScore,
+        commonInterests,
+        matchedAt
+      ];
 }

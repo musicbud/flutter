@@ -8,32 +8,36 @@ abstract class MessageEvent extends Equatable {
 }
 
 class ChannelMessagesRequested extends MessageEvent {
-  final int channelId;
+  final String channelId;
+  final int? limit;
+  final String? before;
 
-  const ChannelMessagesRequested(this.channelId);
+  const ChannelMessagesRequested(
+    this.channelId, {
+    this.limit,
+    this.before,
+  });
 
   @override
-  List<Object> get props => [channelId];
+  List<Object?> get props => [channelId, limit, before];
 }
 
 class MessageSent extends MessageEvent {
-  final int channelId;
-  final String senderUsername;
+  final String channelId;
   final String content;
 
   const MessageSent({
     required this.channelId,
-    required this.senderUsername,
     required this.content,
   });
 
   @override
-  List<Object> get props => [channelId, senderUsername, content];
+  List<Object> get props => [channelId, content];
 }
 
 class MessageDeleted extends MessageEvent {
-  final int channelId;
-  final int messageId;
+  final String channelId;
+  final String messageId;
 
   const MessageDeleted({
     required this.channelId,
@@ -42,6 +46,34 @@ class MessageDeleted extends MessageEvent {
 
   @override
   List<Object> get props => [channelId, messageId];
+}
+
+class UserMessagesRequested extends MessageEvent {
+  final String userId;
+  final int? limit;
+  final String? before;
+
+  const UserMessagesRequested(
+    this.userId, {
+    this.limit,
+    this.before,
+  });
+
+  @override
+  List<Object?> get props => [userId, limit, before];
+}
+
+class UserMessageSent extends MessageEvent {
+  final String userId;
+  final String content;
+
+  const UserMessageSent({
+    required this.userId,
+    required this.content,
+  });
+
+  @override
+  List<Object> get props => [userId, content];
 }
 
 class DirectMessagesRequested extends MessageEvent {

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../models/message.dart';
+import '../../../domain/models/message.dart';
 
 abstract class ChatScreenState extends Equatable {
   const ChatScreenState();
@@ -15,59 +15,38 @@ class ChatScreenLoading extends ChatScreenState {}
 class ChatScreenLoaded extends ChatScreenState {
   final List<Message> messages;
   final bool isTyping;
-  final String? typingUserId;
 
-  const ChatScreenLoaded({
-    required this.messages,
-    this.isTyping = false,
-    this.typingUserId,
-  });
+  const ChatScreenLoaded(this.messages, {this.isTyping = false});
 
   @override
-  List<Object?> get props => [messages, isTyping, typingUserId];
-
-  ChatScreenLoaded copyWith({
-    List<Message>? messages,
-    bool? isTyping,
-    String? typingUserId,
-  }) {
-    return ChatScreenLoaded(
-      messages: messages ?? this.messages,
-      isTyping: isTyping ?? this.isTyping,
-      typingUserId: typingUserId ?? this.typingUserId,
-    );
-  }
+  List<Object> get props => [messages, isTyping];
 }
 
-class ChatScreenMessageSendSuccess extends ChatScreenState {
+class ChatScreenMessageSentState extends ChatScreenState {
   final Message message;
 
-  const ChatScreenMessageSendSuccess(this.message);
+  const ChatScreenMessageSentState(this.message);
 
   @override
   List<Object> get props => [message];
 }
 
-class ChatScreenMessageReceiveSuccess extends ChatScreenState {
-  final Message message;
-
-  const ChatScreenMessageReceiveSuccess(this.message);
-
-  @override
-  List<Object> get props => [message];
-}
-
-class ChatScreenTypingStatus extends ChatScreenState {
+class ChatScreenTypingState extends ChatScreenState {
   final String userId;
-  final bool isTyping;
 
-  const ChatScreenTypingStatus({
-    required this.userId,
-    required this.isTyping,
-  });
+  const ChatScreenTypingState(this.userId);
 
   @override
-  List<Object> get props => [userId, isTyping];
+  List<Object> get props => [userId];
+}
+
+class ChatScreenTypingStoppedState extends ChatScreenState {
+  final String userId;
+
+  const ChatScreenTypingStoppedState(this.userId);
+
+  @override
+  List<Object> get props => [userId];
 }
 
 class ChatScreenFailure extends ChatScreenState {

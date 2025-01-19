@@ -31,7 +31,7 @@ class TrackListItem extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(
-        track.artistName,
+        track.artistName ?? 'Unknown Artist',
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),

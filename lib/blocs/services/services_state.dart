@@ -17,7 +17,7 @@ class ServicesStatusLoaded extends ServicesState {
   const ServicesStatusLoaded(this.services);
 
   @override
-  List<Object> get props => [services];
+  List<Object?> get props => [services];
 }
 
 class ServiceAuthUrlLoaded extends ServicesState {
@@ -48,15 +48,11 @@ class ServiceConnected extends ServicesState {
 
 class ServiceDisconnected extends ServicesState {
   final String service;
-  final Map<String, dynamic> data;
 
-  const ServiceDisconnected({
-    required this.service,
-    required this.data,
-  });
+  const ServiceDisconnected(this.service);
 
   @override
-  List<Object> get props => [service, data];
+  List<Object?> get props => [service];
 }
 
 class ServicesFailure extends ServicesState {
@@ -65,5 +61,5 @@ class ServicesFailure extends ServicesState {
   const ServicesFailure(this.error);
 
   @override
-  List<Object> get props => [error];
+  List<Object?> get props => [error];
 }

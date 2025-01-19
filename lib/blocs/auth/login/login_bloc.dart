@@ -31,16 +31,16 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
       // Check server status
       final serverStatus = await _authRepository.checkServerStatus();
-      if (!serverStatus['isReachable']) {
-        emit(LoginFailure(
-            'Unable to reach the server: ${serverStatus['error']} - ${serverStatus['message']}'));
+      if (!serverStatus.isReachable) {
+        emit(const LoginFailure(
+            'Unable to reach the server. Please try again later.'));
         return;
       }
 
       // Proceed with login
       final data = await _authRepository.login(
-        username: event.username,
-        password: event.password,
+        event.username,
+        event.password,
       );
       emit(LoginSuccess(data));
     } catch (e) {
@@ -71,9 +71,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       final serverStatus = await _authRepository.checkServerStatus();
       emit(LoginServerStatus(
-        isReachable: serverStatus['isReachable'],
-        error: serverStatus['error'],
-        message: serverStatus['message'],
+        isReachable: serverStatus.isReachable,
+        error: serverStatus.error,
+        message: serverStatus.message,
       ));
     } catch (e) {
       emit(LoginFailure(e.toString()));

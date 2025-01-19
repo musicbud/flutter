@@ -4,7 +4,9 @@ import '../models/content_service.dart';
 
 abstract class ProfileRepository {
   Future<UserProfile> getUserProfile();
+  Future<void> updateProfile(Map<String, dynamic> profileData);
   Future<String> updateAvatar(XFile image);
   Future<void> logout();
+  Future<bool> isAuthenticated();
   Future<List<ContentService>> getConnectedServices();
 }

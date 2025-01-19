@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../domain/repositories/user_repository.dart';
-import '../../models/user_profile.dart';
+import '../../domain/models/user_profile.dart';
 import '../../models/track.dart';
 import '../../models/artist.dart';
 import '../../models/album.dart';

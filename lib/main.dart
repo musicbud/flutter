@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
+import 'package:musicbud_flutter/data/data_sources/remote/auth_remote_data_source.dart';
+import 'package:musicbud_flutter/data/repositories/auth_repository_impl.dart';
+import 'package:musicbud_flutter/domain/repositories/auth_repository.dart';
+import 'package:musicbud_flutter/data/network/dio_client.dart';
+import 'app.dart';
 import 'package:musicbud_flutter/blocs/auth/login/login_bloc.dart';
 import 'package:musicbud_flutter/blocs/auth/register/register_bloc.dart';
 import 'package:musicbud_flutter/blocs/auth/spotify/spotify_bloc.dart';
 import 'package:musicbud_flutter/blocs/auth/ytmusic/ytmusic_bloc.dart';
 import 'package:musicbud_flutter/blocs/auth/mal/mal_bloc.dart';
 import 'package:musicbud_flutter/blocs/auth/lastfm/lastfm_bloc.dart';
-import 'package:musicbud_flutter/domain/repositories/auth_repository.dart';
 import 'package:musicbud_flutter/services/chat_service.dart';
 import 'package:musicbud_flutter/services/api_service.dart';
 import 'package:musicbud_flutter/presentation/pages/login_page.dart';
@@ -18,18 +23,27 @@ import 'package:musicbud_flutter/presentation/pages/ytmusic_connect_page.dart';
 import 'package:musicbud_flutter/presentation/pages/mal_connect_page.dart';
 import 'package:musicbud_flutter/presentation/pages/lastfm_connect_page.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+void main() {
+  setupDependencies();
+  runApp(const App());
+}
 
-  final apiService = ApiService(baseUrl: 'http://localhost:8000');
-  final chatService = ChatService(baseUrl: 'http://localhost:8000');
-  final authRepository = AuthRepository(apiService: apiService);
+void setupDependencies() {
+  final getIt = GetIt.instance;
 
-  runApp(MusicBudApp(
-    apiService: apiService,
-    chatService: chatService,
-    authRepository: authRepository,
-  ));
+  // Network
+  const baseUrl = 'https://api.musicbud.com'; // Replace with your actual API URL
+  getIt.registerLazySingleton(() => DioClient(baseUrl: baseUrl));
+
+  // Data sources
+  getIt.registerLazySingleton<AuthRemoteDataSource>(
+    () => AuthRemoteDataSourceImpl(baseUrl: baseUrl),
+  );
+
+  // Repositories
+  getIt.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(dioClient: getIt<DioClient>()),
+  );
 }
 
 class MusicBudApp extends StatelessWidget {

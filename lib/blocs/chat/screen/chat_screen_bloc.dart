@@ -1,124 +1,82 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/repositories/chat_repository.dart';
-import '../../../models/message.dart';
+import '../../../domain/models/message.dart';
 import 'chat_screen_event.dart';
 import 'chat_screen_state.dart';
 
 class ChatScreenBloc extends Bloc<ChatScreenEvent, ChatScreenState> {
   final ChatRepository _chatRepository;
-  final String _currentUsername;
 
-  ChatScreenBloc({
-    required ChatRepository chatRepository,
-    required String currentUsername,
-  })  : _chatRepository = chatRepository,
-        _currentUsername = currentUsername,
+  ChatScreenBloc({required ChatRepository chatRepository})
+      : _chatRepository = chatRepository,
         super(ChatScreenInitial()) {
-    on<ChatScreenMessagesRequested>(_onChatScreenMessagesRequested);
-    on<ChatScreenMessageSent>(_onChatScreenMessageSent);
-    on<ChatScreenMessageReceived>(_onChatScreenMessageReceived);
-    on<ChatScreenTypingStarted>(_onChatScreenTypingStarted);
-    on<ChatScreenTypingStopped>(_onChatScreenTypingStopped);
+    on<ChatScreenMessagesRequested>(_onMessagesRequested);
+    on<ChatScreenMessageSent>(_onMessageSent);
+    on<ChatScreenMessageReceived>(_onMessageReceived);
+    on<ChatScreenTypingStarted>(_onTypingStarted);
+    on<ChatScreenTypingStopped>(_onTypingStopped);
   }
 
-  Future<void> _onChatScreenMessagesRequested(
+  Future<void> _onMessagesRequested(
     ChatScreenMessagesRequested event,
     Emitter<ChatScreenState> emit,
   ) async {
     emit(ChatScreenLoading());
     try {
-      final response = await _chatRepository.getUserMessages(
-        _currentUsername,
+      final messages = await _chatRepository.getUserMessages(
         event.userId,
+        limit: event.limit,
+        before: event.before,
       );
-      final messages = (response['messages'] as List)
-          .map((m) => Message.fromJson(m))
-          .toList();
-      emit(ChatScreenLoaded(messages: messages));
+      emit(ChatScreenLoaded(messages));
     } catch (e) {
       emit(ChatScreenFailure(e.toString()));
     }
   }
 
-  Future<void> _onChatScreenMessageSent(
+  Future<void> _onMessageSent(
     ChatScreenMessageSent event,
     Emitter<ChatScreenState> emit,
   ) async {
+    emit(ChatScreenLoading());
     try {
-      final response = await _chatRepository.sendUserMessage(
-        _currentUsername,
+      final message = await _chatRepository.sendUserMessage(
         event.userId,
-        event.message,
+        event.content,
       );
-      final message = Message.fromJson(response);
-      emit(ChatScreenMessageSendSuccess(message));
-
-      if (state is ChatScreenLoaded) {
-        final currentState = state as ChatScreenLoaded;
-        emit(currentState.copyWith(
-          messages: [...currentState.messages, message],
-        ));
-      }
+      emit(ChatScreenMessageSentState(message));
     } catch (e) {
       emit(ChatScreenFailure(e.toString()));
     }
   }
 
-  void _onChatScreenMessageReceived(
+  void _onMessageReceived(
     ChatScreenMessageReceived event,
     Emitter<ChatScreenState> emit,
   ) {
-    try {
-      final message = Message(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        channelId: 0, // Direct message, no channel
-        content: event.message,
-        senderUsername: event.userId,
-        senderDisplayName: event.userId,
-        createdAt: DateTime.now(),
-      );
-      emit(ChatScreenMessageReceiveSuccess(message));
-
-      if (state is ChatScreenLoaded) {
-        final currentState = state as ChatScreenLoaded;
-        emit(currentState.copyWith(
-          messages: [...currentState.messages, message],
-          isTyping: false,
-          typingUserId: null,
-        ));
-      }
-    } catch (e) {
-      emit(ChatScreenFailure(e.toString()));
+    if (state is ChatScreenLoaded) {
+      final currentMessages = (state as ChatScreenLoaded).messages;
+      emit(ChatScreenLoaded([...currentMessages, event.message]));
     }
   }
 
-  void _onChatScreenTypingStarted(
+  void _onTypingStarted(
     ChatScreenTypingStarted event,
     Emitter<ChatScreenState> emit,
   ) {
-    emit(ChatScreenTypingStatus(userId: event.userId, isTyping: true));
-
     if (state is ChatScreenLoaded) {
       final currentState = state as ChatScreenLoaded;
-      emit(currentState.copyWith(
-        isTyping: true,
-        typingUserId: event.userId,
-      ));
+      emit(ChatScreenLoaded(currentState.messages, isTyping: true));
     }
   }
 
-  void _onChatScreenTypingStopped(
+  void _onTypingStopped(
     ChatScreenTypingStopped event,
     Emitter<ChatScreenState> emit,
   ) {
-    emit(ChatScreenTypingStatus(userId: event.userId, isTyping: false));
-
     if (state is ChatScreenLoaded) {
       final currentState = state as ChatScreenLoaded;
-      emit(currentState.copyWith(
-        isTyping: false,
-        typingUserId: null,
-      ));
+      emit(ChatScreenLoaded(currentState.messages, isTyping: false));
     }
   }
 }

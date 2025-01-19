@@ -4,39 +4,30 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../blocs/map/map_bloc.dart';
 import '../../blocs/map/map_event.dart';
 import '../../blocs/map/map_state.dart';
+import '../../domain/models/track.dart';
 import '../widgets/loading_indicator.dart';
 import '../widgets/track_list_item.dart';
 
 class PlayedTracksMapPage extends StatefulWidget {
-  const PlayedTracksMapPage({super.key});
+  const PlayedTracksMapPage({Key? key}) : super(key: key);
 
   @override
   State<PlayedTracksMapPage> createState() => _PlayedTracksMapPageState();
 }
 
 class _PlayedTracksMapPageState extends State<PlayedTracksMapPage> {
+  GoogleMapController? _mapController;
+
   @override
   void initState() {
     super.initState();
     context.read<MapBloc>().add(MapTracksRequested());
   }
 
-  void _onMapCreated(GoogleMapController controller) {
-    context.read<MapBloc>().add(MapControllerSet(controller));
-  }
-
-  void _onCameraMove(CameraPosition position) {
-    final bounds = LatLngBounds(
-      southwest: position.target.offset(-0.1, -0.1),
-      northeast: position.target.offset(0.1, 0.1),
-    );
-    context.read<MapBloc>().add(MapBoundsChanged(bounds));
-  }
-
-  void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+  @override
+  void dispose() {
+    _mapController?.dispose();
+    super.dispose();
   }
 
   @override
@@ -47,58 +38,93 @@ class _PlayedTracksMapPageState extends State<PlayedTracksMapPage> {
       ),
       body: BlocConsumer<MapBloc, MapState>(
         listener: (context, state) {
-          if (state is MapFailure) {
-            _showErrorSnackBar(state.error);
-          } else if (state is MapTrackSelected) {
-            showModalBottomSheet(
-              context: context,
-              builder: (context) => Container(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TrackListItem(track: state.track),
-                    Text(
-                      'Played at: ${state.track.playedAt?.toString() ?? 'Unknown time'}',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ],
-                ),
-              ),
-            );
+          if (state is MapTracksLoaded || state is MapTrackSelectedState) {
+            _fitBounds(state as MapTracksLoaded);
           }
         },
         builder: (context, state) {
           if (state is MapLoading) {
-            return const LoadingIndicator();
+            return const Center(child: CircularProgressIndicator());
           }
 
-          if (state is MapTracksLoaded) {
-            return GoogleMap(
-              onMapCreated: _onMapCreated,
-              onCameraMove: _onCameraMove,
-              initialCameraPosition: const CameraPosition(
-                target: LatLng(0, 0),
-                zoom: 2,
-              ),
-              markers: Set<Marker>.of(state.markers.values),
+          if (state is MapFailure) {
+            return Center(child: Text('Error: ${state.error}'));
+          }
+
+          if (state is MapTracksLoaded || state is MapTrackSelectedState) {
+            final loadedState = state as MapTracksLoaded;
+            return Stack(
+              children: [
+                GoogleMap(
+                  initialCameraPosition: const CameraPosition(
+                    target: LatLng(0, 0),
+                    zoom: 2,
+                  ),
+                  markers: loadedState.markers,
+                  onMapCreated: (controller) {
+                    _mapController = controller;
+                    _fitBounds(loadedState);
+                  },
+                ),
+                if (state is MapTrackSelectedState)
+                  _buildTrackInfoCard(state.selectedTrack),
+              ],
             );
           }
 
-          return const Center(
-            child: Text('Failed to load map'),
-          );
+          return const Center(child: Text('No tracks to display'));
         },
       ),
     );
   }
-}
 
-extension on LatLng {
-  LatLng offset(double lat, double lng) {
-    return LatLng(
-      latitude + lat,
-      longitude + lng,
+  void _fitBounds(MapTracksLoaded state) {
+    if (_mapController != null && state.markers.isNotEmpty) {
+      _mapController!.animateCamera(
+        CameraUpdate.newLatLngBounds(state.bounds, 50),
+      );
+    }
+  }
+
+  Widget _buildTrackInfoCard(Track track) {
+    return Positioned(
+      bottom: 16,
+      left: 16,
+      right: 16,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                track.title,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                track.artistName,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              if (track.albumName != null) ...[
+                const SizedBox(height: 4),
+                Text(
+                  track.albumName!,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ],
+              if (track.playedAt != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  'Played on: ${track.playedAt!.toString()}',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

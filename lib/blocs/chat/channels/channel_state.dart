@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../models/channel.dart';
+import '../../../domain/models/channel.dart';
 
 abstract class ChannelState extends Equatable {
   const ChannelState();
@@ -44,7 +44,7 @@ class ChannelJoinedSuccess extends ChannelState {}
 class ChannelJoinRequestedSuccess extends ChannelState {}
 
 class ChannelDetailsLoaded extends ChannelState {
-  final Map<String, dynamic> details;
+  final Channel details;
 
   const ChannelDetailsLoaded(this.details);
 

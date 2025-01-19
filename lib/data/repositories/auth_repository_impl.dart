@@ -1,4 +1,5 @@
 import '../../domain/repositories/auth_repository.dart';
+import '../../domain/models/server_status.dart';
 import '../network/dio_client.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -40,13 +41,77 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<bool> checkServerStatus() async {
+  Future<ServerStatus> checkServerStatus() async {
     try {
-      await _dioClient.get('/health');
-      return true;
+      final response = await _dioClient.get('/health');
+      return ServerStatus(
+        isReachable: true,
+        message: response.data['message'],
+      );
     } catch (e) {
-      return false;
+      return ServerStatus(
+        isReachable: false,
+        error: e.toString(),
+      );
     }
+  }
+
+  @override
+  Future<String> refreshToken() async {
+    final response = await _dioClient.post('/auth/refresh');
+    return response.data['token'];
+  }
+
+  @override
+  Future<String> getSpotifyAuthUrl() async {
+    final response = await _dioClient.get('/auth/spotify/url');
+    return response.data['auth_url'];
+  }
+
+  @override
+  Future<String> getYTMusicAuthUrl() async {
+    final response = await _dioClient.get('/auth/ytmusic/url');
+    return response.data['auth_url'];
+  }
+
+  @override
+  Future<String> getLastFMAuthUrl() async {
+    final response = await _dioClient.get('/auth/lastfm/url');
+    return response.data['auth_url'];
+  }
+
+  @override
+  Future<String> getMALAuthUrl() async {
+    final response = await _dioClient.get('/auth/mal/url');
+    return response.data['auth_url'];
+  }
+
+  @override
+  Future<void> connectSpotify(String code) async {
+    await _dioClient.post('/auth/spotify/connect', data: {
+      'code': code,
+    });
+  }
+
+  @override
+  Future<void> connectYTMusic(String code) async {
+    await _dioClient.post('/auth/ytmusic/connect', data: {
+      'code': code,
+    });
+  }
+
+  @override
+  Future<void> connectLastFM(String code) async {
+    await _dioClient.post('/auth/lastfm/connect', data: {
+      'code': code,
+    });
+  }
+
+  @override
+  Future<void> connectMAL(String code) async {
+    await _dioClient.post('/auth/mal/connect', data: {
+      'code': code,
+    });
   }
 
   @override
@@ -58,38 +123,6 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<List<Map<String, dynamic>>> getConnectedServices() async {
     final response = await _dioClient.get('/auth/services');
     return List<Map<String, dynamic>>.from(response.data);
-  }
-
-  @override
-  Future<String> connectSpotify(String code) async {
-    final response = await _dioClient.post('/auth/spotify/connect', data: {
-      'code': code,
-    });
-    return response.data['auth_url'];
-  }
-
-  @override
-  Future<String> connectYTMusic(String code) async {
-    final response = await _dioClient.post('/auth/ytmusic/connect', data: {
-      'code': code,
-    });
-    return response.data['auth_url'];
-  }
-
-  @override
-  Future<String> connectLastFM(String code) async {
-    final response = await _dioClient.post('/auth/lastfm/connect', data: {
-      'code': code,
-    });
-    return response.data['auth_url'];
-  }
-
-  @override
-  Future<String> connectMAL(String code) async {
-    final response = await _dioClient.post('/auth/mal/connect', data: {
-      'code': code,
-    });
-    return response.data['auth_url'];
   }
 
   @override

@@ -38,7 +38,7 @@ class _ChatScreenState extends State<ChatScreen> {
       context.read<ChatScreenBloc>().add(
             ChatScreenMessageSent(
               userId: widget.userId,
-              message: message,
+              content: message,
             ),
           );
       _messageController.clear();
@@ -102,72 +102,62 @@ class _ChatScreenState extends State<ChatScreen> {
           }
         },
         builder: (context, state) {
-          if (state is ChatScreenInitial || state is ChatScreenLoading) {
-            return const LoadingIndicator();
-          }
-
-          if (state is ChatScreenLoaded) {
+          if (state is ChatScreenLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is ChatScreenLoaded) {
             return Column(
               children: [
                 Expanded(
                   child: ListView.builder(
-                    reverse: true,
                     itemCount: state.messages.length,
                     itemBuilder: (context, index) {
-                      final message =
-                          state.messages[state.messages.length - 1 - index];
-                      return OutlinedMessageBubble(
-                        message: message.content,
-                        isUser: message.senderUsername != widget.userId,
-                        timestamp: message.createdAt,
+                      final message = state.messages[index];
+                      return ListTile(
+                        title: Text(message.content),
+                        subtitle: Text(message.senderUsername),
                       );
                     },
                   ),
                 ),
+                if (state.isTyping)
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('Typing...'),
+                  ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     children: [
                       Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(
-                                color: Theme.of(context).primaryColor),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: TextField(
-                            controller: _messageController,
-                            onChanged: (_) => _startTyping(),
-                            onSubmitted: (_) => _sendMessage(),
-                            decoration: const InputDecoration(
-                              hintText: 'Type a message',
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 10),
-                              border: InputBorder.none,
-                            ),
+                        child: TextField(
+                          controller: _messageController,
+                          decoration: const InputDecoration(
+                            hintText: 'Type a message...',
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      OutlinedButton(
-                        onPressed: _sendMessage,
-                        style: OutlinedButton.styleFrom(
-                          shape: const CircleBorder(),
-                          side:
-                              BorderSide(color: Theme.of(context).primaryColor),
-                        ),
-                        child: const Icon(Icons.send),
+                      IconButton(
+                        icon: const Icon(Icons.send),
+                        onPressed: () {
+                          if (_messageController.text.isNotEmpty) {
+                            context.read<ChatScreenBloc>().add(
+                                  ChatScreenMessageSent(
+                                    userId: widget.userId,
+                                    content: _messageController.text,
+                                  ),
+                                );
+                            _messageController.clear();
+                          }
+                        },
                       ),
                     ],
                   ),
                 ),
               ],
             );
+          } else {
+            return const Center(child: Text('Something went wrong'));
           }
-
-          return const Center(
-            child: Text('Something went wrong'),
-          );
         },
       ),
     );

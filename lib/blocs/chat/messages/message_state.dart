@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../models/message.dart';
+import '../../../domain/models/message.dart';
 
 abstract class MessageState extends Equatable {
   const MessageState();
@@ -12,19 +12,10 @@ class MessageInitial extends MessageState {}
 
 class MessageLoading extends MessageState {}
 
-class MessageFailure extends MessageState {
-  final String error;
-
-  const MessageFailure(this.error);
-
-  @override
-  List<Object> get props => [error];
-}
-
-class ChannelMessagesLoaded extends MessageState {
+class MessagesLoaded extends MessageState {
   final List<Message> messages;
 
-  const ChannelMessagesLoaded(this.messages);
+  const MessagesLoaded(this.messages);
 
   @override
   List<Object> get props => [messages];
@@ -40,6 +31,15 @@ class MessageSentSuccess extends MessageState {
 }
 
 class MessageDeletedSuccess extends MessageState {}
+
+class MessageFailure extends MessageState {
+  final String error;
+
+  const MessageFailure(this.error);
+
+  @override
+  List<Object> get props => [error];
+}
 
 class DirectMessagesLoaded extends MessageState {
   final List<Message> messages;

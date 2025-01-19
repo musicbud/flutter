@@ -4,27 +4,14 @@ abstract class InvitationEvent extends Equatable {
   const InvitationEvent();
 
   @override
-  List<Object?> get props => [];
+  List<Object> get props => [];
 }
 
-class ChannelInvitationsSent extends InvitationEvent {
-  final int channelId;
-  final String username;
+class InvitationAccepted extends InvitationEvent {
+  final String channelId;
+  final String userId;
 
-  const ChannelInvitationsSent({
-    required this.channelId,
-    required this.username,
-  });
-
-  @override
-  List<Object> get props => [channelId, username];
-}
-
-class ChannelInvitationsAccepted extends InvitationEvent {
-  final int channelId;
-  final int userId;
-
-  const ChannelInvitationsAccepted({
+  const InvitationAccepted({
     required this.channelId,
     required this.userId,
   });
@@ -33,11 +20,11 @@ class ChannelInvitationsAccepted extends InvitationEvent {
   List<Object> get props => [channelId, userId];
 }
 
-class ChannelInvitationsRejected extends InvitationEvent {
-  final int channelId;
-  final int userId;
+class InvitationRejected extends InvitationEvent {
+  final String channelId;
+  final String userId;
 
-  const ChannelInvitationsRejected({
+  const InvitationRejected({
     required this.channelId,
     required this.userId,
   });
@@ -46,19 +33,19 @@ class ChannelInvitationsRejected extends InvitationEvent {
   List<Object> get props => [channelId, userId];
 }
 
-class ChannelInvitationsListRequested extends InvitationEvent {
-  final int channelId;
+class ChannelInvitationsRequested extends InvitationEvent {
+  final String channelId;
 
-  const ChannelInvitationsListRequested(this.channelId);
+  const ChannelInvitationsRequested(this.channelId);
 
   @override
   List<Object> get props => [channelId];
 }
 
-class UserInvitationsListRequested extends InvitationEvent {
-  final int userId;
+class UserInvitationsRequested extends InvitationEvent {
+  final String userId;
 
-  const UserInvitationsListRequested(this.userId);
+  const UserInvitationsRequested(this.userId);
 
   @override
   List<Object> get props => [userId];

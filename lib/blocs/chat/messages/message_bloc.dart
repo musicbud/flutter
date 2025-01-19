@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/repositories/chat_repository.dart';
-import '../../../models/message.dart';
+import '../../../domain/models/message.dart';
 import 'message_event.dart';
 import 'message_state.dart';
 
@@ -13,8 +13,8 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
     on<ChannelMessagesRequested>(_onChannelMessagesRequested);
     on<MessageSent>(_onMessageSent);
     on<MessageDeleted>(_onMessageDeleted);
-    on<DirectMessagesRequested>(_onDirectMessagesRequested);
-    on<DirectMessageSent>(_onDirectMessageSent);
+    on<UserMessagesRequested>(_onUserMessagesRequested);
+    on<UserMessageSent>(_onUserMessageSent);
   }
 
   Future<void> _onChannelMessagesRequested(
@@ -23,9 +23,12 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
   ) async {
     emit(MessageLoading());
     try {
-      final messages =
-          await _chatRepository.getChannelMessages(event.channelId);
-      emit(ChannelMessagesLoaded(messages));
+      final messages = await _chatRepository.getChannelMessages(
+        event.channelId.toString(),
+        limit: event.limit,
+        before: event.before,
+      );
+      emit(MessagesLoaded(messages));
     } catch (e) {
       emit(MessageFailure(e.toString()));
     }
@@ -38,12 +41,10 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
     emit(MessageLoading());
     try {
       final message = await _chatRepository.sendChannelMessage(
-        event.channelId,
-        event.senderUsername,
+        event.channelId.toString(),
         event.content,
       );
-      emit(MessageSentSuccess(
-          Message.fromJson(Map<String, dynamic>.from(message))));
+      emit(MessageSentSuccess(message));
     } catch (e) {
       emit(MessageFailure(e.toString()));
     }
@@ -55,45 +56,44 @@ class MessageBloc extends Bloc<MessageEvent, MessageState> {
   ) async {
     emit(MessageLoading());
     try {
-      await _chatRepository.deleteMessage(event.channelId, event.messageId);
+      await _chatRepository.deleteMessage(
+        event.channelId.toString(),
+        event.messageId.toString(),
+      );
       emit(MessageDeletedSuccess());
     } catch (e) {
       emit(MessageFailure(e.toString()));
     }
   }
 
-  Future<void> _onDirectMessagesRequested(
-    DirectMessagesRequested event,
+  Future<void> _onUserMessagesRequested(
+    UserMessagesRequested event,
     Emitter<MessageState> emit,
   ) async {
     emit(MessageLoading());
     try {
       final messages = await _chatRepository.getUserMessages(
-        event.currentUsername,
-        event.otherUsername,
+        event.userId,
+        limit: event.limit,
+        before: event.before,
       );
-      final messagesList = (messages['messages'] as List)
-          .map((m) => Message.fromJson(Map<String, dynamic>.from(m)))
-          .toList();
-      emit(DirectMessagesLoaded(messagesList));
+      emit(MessagesLoaded(messages));
     } catch (e) {
       emit(MessageFailure(e.toString()));
     }
   }
 
-  Future<void> _onDirectMessageSent(
-    DirectMessageSent event,
+  Future<void> _onUserMessageSent(
+    UserMessageSent event,
     Emitter<MessageState> emit,
   ) async {
     emit(MessageLoading());
     try {
       final message = await _chatRepository.sendUserMessage(
-        event.senderUsername,
-        event.recipientUsername,
+        event.userId,
         event.content,
       );
-      emit(DirectMessageSentSuccess(
-          Message.fromJson(Map<String, dynamic>.from(message))));
+      emit(MessageSentSuccess(message));
     } catch (e) {
       emit(MessageFailure(e.toString()));
     }

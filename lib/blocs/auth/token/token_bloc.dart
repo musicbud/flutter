@@ -18,8 +18,8 @@ class TokenBloc extends Bloc<TokenEvent, TokenState> {
   ) async {
     emit(TokenRefreshing());
     try {
-      final data = await _authRepository.refreshToken(event.refreshToken);
-      emit(TokenRefreshSuccess(data));
+      final token = await _authRepository.refreshToken();
+      emit(TokenRefreshSuccess({'token': token}));
     } catch (e) {
       emit(TokenRefreshFailure(e.toString()));
     }

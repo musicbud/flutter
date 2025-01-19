@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/error/exceptions.dart';
-import '../../../../models/user_profile.dart';
+import '../../../../domain/models/user_profile.dart';
 import '../../../../models/track.dart';
 import '../../../../models/artist.dart';
 import '../../../../models/album.dart';

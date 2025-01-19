@@ -1,26 +1,40 @@
-class UserProfile {
+import 'package:equatable/equatable.dart';
+
+/// A model class representing a user's profile
+class UserProfile extends Equatable {
   final String id;
   final String username;
   final String? email;
   final String? avatarUrl;
   final String? bio;
-  final List<String>? interests;
-  final Map<String, dynamic>? preferences;
+  final String? location;
+  final int? followersCount;
+  final int? followingCount;
+  final bool isFollowing;
+  final List<String> interests;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final bool isOnline;
+  final Map<String, bool> connectedServices;
 
-  UserProfile({
+  const UserProfile({
     required this.id,
     required this.username,
     this.email,
     this.avatarUrl,
     this.bio,
-    this.interests,
-    this.preferences,
+    this.location,
+    this.followersCount,
+    this.followingCount,
+    this.isFollowing = false,
+    this.interests = const [],
     required this.createdAt,
     required this.updatedAt,
+    this.isOnline = false,
+    this.connectedServices = const {},
   });
 
+  /// Creates a [UserProfile] from a JSON map
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     return UserProfile(
       id: json['id'] as String,
@@ -28,39 +42,58 @@ class UserProfile {
       email: json['email'] as String?,
       avatarUrl: json['avatar_url'] as String?,
       bio: json['bio'] as String?,
+      location: json['location'] as String?,
+      followersCount: json['followers_count'] as int?,
+      followingCount: json['following_count'] as int?,
+      isFollowing: json['is_following'] as bool? ?? false,
       interests: (json['interests'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      preferences: json['preferences'] as Map<String, dynamic>?,
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
       createdAt: DateTime.parse(json['created_at'] as String),
       updatedAt: DateTime.parse(json['updated_at'] as String),
+      isOnline: json['is_online'] as bool? ?? false,
+      connectedServices:
+          Map<String, bool>.from(json['connected_services'] as Map? ?? {}),
     );
   }
 
+  /// Converts this [UserProfile] to a JSON map
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'username': username,
-      if (email != null) 'email': email,
-      if (avatarUrl != null) 'avatar_url': avatarUrl,
-      if (bio != null) 'bio': bio,
-      if (interests != null) 'interests': interests,
-      if (preferences != null) 'preferences': preferences,
+      'email': email,
+      'avatar_url': avatarUrl,
+      'bio': bio,
+      'location': location,
+      'followers_count': followersCount,
+      'following_count': followingCount,
+      'is_following': isFollowing,
+      'interests': interests,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
+      'is_online': isOnline,
+      'connected_services': connectedServices,
     };
   }
 
+  /// Creates a copy of this [UserProfile] with the given fields replaced with new values
   UserProfile copyWith({
     String? id,
     String? username,
     String? email,
     String? avatarUrl,
     String? bio,
+    String? location,
+    int? followersCount,
+    int? followingCount,
+    bool? isFollowing,
     List<String>? interests,
-    Map<String, dynamic>? preferences,
     DateTime? createdAt,
     DateTime? updatedAt,
+    bool? isOnline,
+    Map<String, bool>? connectedServices,
   }) {
     return UserProfile(
       id: id ?? this.id,
@@ -68,10 +101,33 @@ class UserProfile {
       email: email ?? this.email,
       avatarUrl: avatarUrl ?? this.avatarUrl,
       bio: bio ?? this.bio,
+      location: location ?? this.location,
+      followersCount: followersCount ?? this.followersCount,
+      followingCount: followingCount ?? this.followingCount,
+      isFollowing: isFollowing ?? this.isFollowing,
       interests: interests ?? this.interests,
-      preferences: preferences ?? this.preferences,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      isOnline: isOnline ?? this.isOnline,
+      connectedServices: connectedServices ?? this.connectedServices,
     );
   }
+
+  @override
+  List<Object?> get props => [
+        id,
+        username,
+        email,
+        avatarUrl,
+        bio,
+        location,
+        followersCount,
+        followingCount,
+        isFollowing,
+        interests,
+        createdAt,
+        updatedAt,
+        isOnline,
+        connectedServices,
+      ];
 }

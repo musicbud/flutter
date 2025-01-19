@@ -1,233 +1,93 @@
-import 'package:dio/dio.dart';
-import '../../../../core/error/exceptions.dart';
-import '../../../../models/movie.dart';
-import '../../../../models/track.dart';
-import '../../../../models/artist.dart';
-import '../../../../models/album.dart';
-import '../../../../models/anime.dart';
-import '../../../../models/manga.dart';
-import '../../../network/dio_client.dart';
+import '../../../../domain/models/common_track.dart';
+import '../../../../domain/models/spotify_device.dart';
+import '../../../../domain/models/common_artist.dart';
+import '../../../../domain/models/common_genre.dart';
+import '../../../../domain/models/common_album.dart';
+import '../../../../domain/models/common_anime.dart';
+import '../../../../domain/models/common_manga.dart';
 
+/// Interface for accessing content-related data from remote sources.
+/// This interface defines methods for interacting with content data from remote APIs.
 abstract class ContentRemoteDataSource {
-  // Home page
-  Future<Map<String, dynamic>> getHomePageData();
+  /// Retrieves a list of recently played tracks from the remote source.
+  ///
+  /// Returns a [Future] that completes with a list of [CommonTrack] objects.
+  Future<List<CommonTrack>> getPlayedTracks();
 
-  // Popular content
-  Future<List<Movie>> getPopularMovies({int limit = 20});
-  Future<List<Track>> getPopularTracks({int limit = 20});
-  Future<List<Artist>> getPopularArtists({int limit = 20});
-  Future<List<Album>> getPopularAlbums({int limit = 20});
-  Future<List<Anime>> getPopularAnime({int limit = 20});
-  Future<List<Manga>> getPopularManga({int limit = 20});
+  /// Retrieves a list of available Spotify devices from the remote source.
+  ///
+  /// Returns a [Future] that completes with a list of [SpotifyDevice] objects.
+  Future<List<SpotifyDevice>> getSpotifyDevices();
 
-  // Like/Unlike operations
-  Future<void> likeItem(String itemType, String itemId);
-  Future<void> unlikeItem(String itemType, String itemId);
+  /// Controls playback on a specific Spotify device.
+  ///
+  /// [command] can be 'play', 'pause', 'next', or 'previous'
+  /// [deviceId] is the ID of the target Spotify device
+  Future<void> controlSpotifyPlayback(String command, String deviceId);
 
-  // Playback operations
-  Future<List<String>> getSpotifyDevices();
-  Future<void> playTrack(String trackId, {String? deviceId});
-  Future<void> playTrackWithLocation(
+  /// Sets the volume for a specific Spotify device.
+  ///
+  /// [deviceId] is the ID of the target Spotify device
+  /// [volume] is the target volume level (0-100)
+  Future<void> setSpotifyVolume(String deviceId, int volume);
+
+  /// Saves the location where a track was played.
+  ///
+  /// [trackId] is the ID of the track
+  /// [latitude] and [longitude] represent the geographic location
+  Future<void> saveTrackLocation(
       String trackId, double latitude, double longitude);
-  Future<void> savePlayedTrack(
-      String trackId, double latitude, double longitude);
-  Future<List<Track>> getPlayedTracksWithLocation();
-  Future<List<Track>> getCurrentlyPlayedTracks();
-}
 
-class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
-  final Dio _dio;
+  /// Plays a track on a specific device
+  Future<void> playTrack(String trackId, String deviceId);
 
-  ContentRemoteDataSourceImpl() : _dio = DioClient().dio;
-
-  @override
-  Future<Map<String, dynamic>> getHomePageData() async {
-    try {
-      final response = await _dio.get('/content/home');
-      return response.data;
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to get home page data');
-    }
-  }
-
-  @override
-  Future<List<Movie>> getPopularMovies({int limit = 20}) async {
-    try {
-      final response = await _dio
-          .get('/content/popular/movies', queryParameters: {'limit': limit});
-      final List<dynamic> data = response.data;
-      return data.map((json) => Movie.fromJson(json)).toList();
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to get popular movies');
-    }
-  }
-
-  @override
-  Future<List<Track>> getPopularTracks({int limit = 20}) async {
-    try {
-      final response = await _dio
-          .get('/content/popular/tracks', queryParameters: {'limit': limit});
-      final List<dynamic> data = response.data;
-      return data.map((json) => Track.fromJson(json)).toList();
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to get popular tracks');
-    }
-  }
-
-  @override
-  Future<List<Artist>> getPopularArtists({int limit = 20}) async {
-    try {
-      final response = await _dio
-          .get('/content/popular/artists', queryParameters: {'limit': limit});
-      final List<dynamic> data = response.data;
-      return data.map((json) => Artist.fromJson(json)).toList();
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to get popular artists');
-    }
-  }
-
-  @override
-  Future<List<Album>> getPopularAlbums({int limit = 20}) async {
-    try {
-      final response = await _dio
-          .get('/content/popular/albums', queryParameters: {'limit': limit});
-      final List<dynamic> data = response.data;
-      return data.map((json) => Album.fromJson(json)).toList();
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to get popular albums');
-    }
-  }
-
-  @override
-  Future<List<Anime>> getPopularAnime({int limit = 20}) async {
-    try {
-      final response = await _dio
-          .get('/content/popular/anime', queryParameters: {'limit': limit});
-      final List<dynamic> data = response.data;
-      return data.map((json) => Anime.fromJson(json)).toList();
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to get popular anime');
-    }
-  }
-
-  @override
-  Future<List<Manga>> getPopularManga({int limit = 20}) async {
-    try {
-      final response = await _dio
-          .get('/content/popular/manga', queryParameters: {'limit': limit});
-      final List<dynamic> data = response.data;
-      return data.map((json) => Manga.fromJson(json)).toList();
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to get popular manga');
-    }
-  }
-
-  @override
-  Future<void> likeItem(String itemType, String itemId) async {
-    try {
-      await _dio.post('/content/like', data: {
-        'type': itemType,
-        'id': itemId,
-      });
-    } on DioException catch (e) {
-      throw ServerException(message: e.message ?? 'Failed to like item');
-    }
-  }
-
-  @override
-  Future<void> unlikeItem(String itemType, String itemId) async {
-    try {
-      await _dio.post('/content/unlike', data: {
-        'type': itemType,
-        'id': itemId,
-      });
-    } on DioException catch (e) {
-      throw ServerException(message: e.message ?? 'Failed to unlike item');
-    }
-  }
-
-  @override
-  Future<List<String>> getSpotifyDevices() async {
-    try {
-      final response = await _dio.get('/content/spotify/devices');
-      final List<dynamic> data = response.data;
-      return data.map((json) => json['id'] as String).toList();
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to get Spotify devices');
-    }
-  }
-
-  @override
-  Future<void> playTrack(String trackId, {String? deviceId}) async {
-    try {
-      await _dio.post('/content/spotify/play', data: {
-        'track_id': trackId,
-        if (deviceId != null) 'device_id': deviceId,
-      });
-    } on DioException catch (e) {
-      throw ServerException(message: e.message ?? 'Failed to play track');
-    }
-  }
-
-  @override
+  /// Plays a track on a specific device with location data
   Future<void> playTrackWithLocation(
-      String trackId, double latitude, double longitude) async {
-    try {
-      await _dio.post('/content/play-track-with-location', data: {
-        'track_id': trackId,
-        'latitude': latitude,
-        'longitude': longitude,
-      });
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to play track with location');
-    }
-  }
+      String trackId, String deviceId, double latitude, double longitude);
 
-  @override
-  Future<void> savePlayedTrack(
-      String trackId, double latitude, double longitude) async {
-    try {
-      await _dio.post('/content/save-played-track', data: {
-        'track_id': trackId,
-        'latitude': latitude,
-        'longitude': longitude,
-      });
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to save played track');
-    }
-  }
+  /// Saves a track as played
+  Future<void> savePlayedTrack(String trackId);
 
-  @override
-  Future<List<Track>> getPlayedTracksWithLocation() async {
-    try {
-      final response = await _dio.get('/content/played-tracks-with-location');
-      final List<dynamic> data = response.data;
-      return data.map((json) => Track.fromJson(json)).toList();
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to get played tracks with location');
-    }
-  }
+  // Top items methods
+  Future<List<CommonTrack>> getTopTracks();
+  Future<List<CommonArtist>> getTopArtists();
+  Future<List<CommonGenre>> getTopGenres();
+  Future<List<CommonAnime>> getTopAnime();
+  Future<List<CommonManga>> getTopManga();
 
-  @override
-  Future<List<Track>> getCurrentlyPlayedTracks() async {
-    try {
-      final response = await _dio.get('/content/currently-played-tracks');
-      final List<dynamic> data = response.data;
-      return data.map((json) => Track.fromJson(json)).toList();
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to get currently played tracks');
-    }
-  }
+  // Liked items methods
+  Future<List<CommonTrack>> getLikedTracks();
+  Future<List<CommonArtist>> getLikedArtists();
+  Future<List<CommonAlbum>> getLikedAlbums();
+  Future<List<CommonGenre>> getLikedGenres();
+
+  // Like/Unlike methods
+  Future<void> likeTrack(String trackId);
+  Future<void> unlikeTrack(String trackId);
+  Future<void> likeArtist(String artistId);
+  Future<void> unlikeArtist(String artistId);
+  Future<void> likeAlbum(String albumId);
+  Future<void> unlikeAlbum(String albumId);
+  Future<void> likeGenre(String genreId);
+  Future<void> unlikeGenre(String genreId);
+  Future<void> likeAnime(String animeId);
+  Future<void> unlikeAnime(String animeId);
+  Future<void> likeManga(String mangaId);
+  Future<void> unlikeManga(String mangaId);
+
+  // Search methods
+  Future<List<CommonTrack>> searchTracks(String query);
+  Future<List<CommonArtist>> searchArtists(String query);
+  Future<List<CommonAlbum>> searchAlbums(String query);
+  Future<List<CommonGenre>> searchGenres(String query);
+  Future<List<CommonAnime>> searchAnime(String query);
+  Future<List<CommonManga>> searchManga(String query);
+
+  // Details methods
+  Future<CommonTrack> getTrackDetails(String trackId);
+  Future<CommonArtist> getArtistDetails(String artistId);
+  Future<CommonAlbum> getAlbumDetails(String albumId);
+  Future<CommonGenre> getGenreDetails(String genreId);
+  Future<CommonAnime> getAnimeDetails(String animeId);
+  Future<CommonManga> getMangaDetails(String mangaId);
 }

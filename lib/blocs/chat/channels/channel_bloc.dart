@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/repositories/chat_repository.dart';
-import '../../../models/channel.dart';
+import '../../../domain/models/channel.dart';
 import 'channel_event.dart';
 import 'channel_state.dart';
 
@@ -24,7 +24,7 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
   ) async {
     emit(ChannelLoading());
     try {
-      final channels = await _chatRepository.getChannelList();
+      final channels = await _chatRepository.getChannels();
       emit(ChannelListLoaded(channels));
     } catch (e) {
       emit(ChannelFailure(e.toString()));
@@ -37,9 +37,11 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
   ) async {
     emit(ChannelLoading());
     try {
-      final channel = await _chatRepository.createChannel(event.channelData);
-      emit(ChannelCreatedSuccess(
-          Channel.fromJson(Map<String, dynamic>.from(channel))));
+      final channel = await _chatRepository.createChannel(
+        event.channelData['name'],
+        event.channelData['description'],
+      );
+      emit(ChannelCreatedSuccess(channel));
     } catch (e) {
       emit(ChannelFailure(e.toString()));
     }
@@ -51,7 +53,7 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
   ) async {
     emit(ChannelLoading());
     try {
-      await _chatRepository.joinChannel(event.channelId);
+      await _chatRepository.joinChannel(event.channelId.toString());
       emit(ChannelJoinedSuccess());
     } catch (e) {
       emit(ChannelFailure(e.toString()));
@@ -64,7 +66,7 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
   ) async {
     emit(ChannelLoading());
     try {
-      await _chatRepository.requestJoinChannel(event.channelId);
+      await _chatRepository.joinChannel(event.channelId.toString());
       emit(ChannelJoinRequestedSuccess());
     } catch (e) {
       emit(ChannelFailure(e.toString()));
@@ -77,8 +79,9 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
   ) async {
     emit(ChannelLoading());
     try {
-      final details = await _chatRepository.getChannelDetails(event.channelId);
-      emit(ChannelDetailsLoaded(details));
+      final channel =
+          await _chatRepository.getChannel(event.channelId.toString());
+      emit(ChannelDetailsLoaded(channel));
     } catch (e) {
       emit(ChannelFailure(e.toString()));
     }
@@ -90,9 +93,9 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
   ) async {
     emit(ChannelLoading());
     try {
-      final dashboard =
-          await _chatRepository.getChannelDashboardData(event.channelId);
-      emit(ChannelDashboardLoaded(dashboard));
+      final statistics = await _chatRepository
+          .getChannelStatistics(event.channelId.toString());
+      emit(ChannelDashboardLoaded(statistics));
     } catch (e) {
       emit(ChannelFailure(e.toString()));
     }

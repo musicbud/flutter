@@ -1,51 +1,46 @@
 import 'package:dio/dio.dart';
 
+/// A wrapper around [Dio] that provides consistent error handling and configuration
 class DioClient {
   final Dio _dio;
-  final String baseUrl;
 
   DioClient({required String baseUrl})
-      : baseUrl = baseUrl,
-        _dio = Dio(BaseOptions(
-          baseUrl: baseUrl,
-          connectTimeout: const Duration(seconds: 5),
-          receiveTimeout: const Duration(seconds: 3),
-        ));
+      : _dio = Dio(BaseOptions(baseUrl: baseUrl));
 
-  Future<Response> get(String path,
+  /// Get the underlying Dio instance
+  Dio get dio => _dio;
+
+  Future<Response<dynamic>> get(String path,
       {Map<String, dynamic>? queryParameters}) async {
-    try {
-      final response = await _dio.get(path, queryParameters: queryParameters);
-      return response;
-    } catch (e) {
-      rethrow;
-    }
+    return await _dio.get(path, queryParameters: queryParameters);
   }
 
-  Future<Response> post(String path, {dynamic data}) async {
-    try {
-      final response = await _dio.post(path, data: data);
-      return response;
-    } catch (e) {
-      rethrow;
-    }
+  Future<Response<dynamic>> post(String path,
+      {Map<String, dynamic>? data}) async {
+    return await _dio.post(path, data: data);
   }
 
-  Future<Response> put(String path, {dynamic data}) async {
-    try {
-      final response = await _dio.put(path, data: data);
-      return response;
-    } catch (e) {
-      rethrow;
-    }
+  Future<Response<dynamic>> put(String path,
+      {Map<String, dynamic>? data}) async {
+    return await _dio.put(path, data: data);
   }
 
-  Future<Response> delete(String path) async {
-    try {
-      final response = await _dio.delete(path);
-      return response;
-    } catch (e) {
-      rethrow;
-    }
+  Future<Response<dynamic>> delete(String path) async {
+    return await _dio.delete(path);
+  }
+
+  /// Adds an interceptor to the Dio instance
+  void addInterceptor(Interceptor interceptor) {
+    _dio.interceptors.add(interceptor);
+  }
+
+  /// Updates the base URL of the Dio instance
+  void updateBaseUrl(String baseUrl) {
+    _dio.options.baseUrl = baseUrl;
+  }
+
+  /// Updates the headers of the Dio instance
+  void updateHeaders(Map<String, dynamic> headers) {
+    _dio.options.headers.addAll(headers);
   }
 }

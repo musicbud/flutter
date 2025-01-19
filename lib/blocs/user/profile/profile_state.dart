@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../models/user_profile.dart';
+import '../../../domain/models/user_profile.dart';
 import '../../../models/track.dart';
 import '../../../models/artist.dart';
 import '../../../models/album.dart';

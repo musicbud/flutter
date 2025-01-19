@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/models/bud_match.dart';
-import 'package:musicbud_flutter/presentation/pages/bud_common_items_page.dart';
+import '../../domain/models/bud_match.dart';
+import '../pages/bud_common_items_page.dart';
 
 class BudMatchListItem extends StatelessWidget {
   final BudMatch budMatch;
@@ -10,16 +10,24 @@ class BudMatchListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(budMatch.bud.username),
-      subtitle: Text('Similarity: ${budMatch.similarityScore.toStringAsFixed(2)}'),
+      leading: budMatch.avatarUrl != null
+          ? CircleAvatar(
+              backgroundImage: NetworkImage(budMatch.avatarUrl!),
+            )
+          : const CircleAvatar(
+              child: Icon(Icons.person),
+            ),
+      title: Text(budMatch.username),
+      subtitle:
+          Text('Similarity: ${budMatch.similarityScore.toStringAsFixed(2)}'),
       onTap: () {
-        if (budMatch.bud.uid.isNotEmpty) {
+        if (budMatch.id.isNotEmpty) {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => BudCommonItemsPage(
-                budId: budMatch.bud.uid,
-                budName: budMatch.bud.username,
+                budId: budMatch.id,
+                budName: budMatch.username,
               ),
             ),
           );
