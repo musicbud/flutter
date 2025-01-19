@@ -48,13 +48,10 @@ class ChatHomeBloc extends Bloc<ChatHomeEvent, ChatHomeState> {
       emit(ChatHomeLoading());
 
       final userProfile = await _profileRepository.getMyProfile();
-      final isAuthenticated = userProfile != null;
-      final username = userProfile?.username ?? '';
-
       emit(ChatHomeLoaded(
         currentTabIndex: tabIndex,
-        isAuthenticated: isAuthenticated,
-        username: username,
+        isAuthenticated: true,
+        username: userProfile.username,
       ));
     } catch (error) {
       emit(ChatHomeFailure(error.toString()));

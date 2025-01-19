@@ -14,10 +14,10 @@ class ChannelStatisticsPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ChannelStatisticsPageState createState() => _ChannelStatisticsPageState();
+  ChannelStatisticsPageState createState() => ChannelStatisticsPageState();
 }
 
-class _ChannelStatisticsPageState extends State<ChannelStatisticsPage> {
+class ChannelStatisticsPageState extends State<ChannelStatisticsPage> {
   @override
   void initState() {
     super.initState();

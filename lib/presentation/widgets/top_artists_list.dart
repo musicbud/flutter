@@ -8,10 +8,10 @@ class TopArtistsList extends StatefulWidget {
   const TopArtistsList({Key? key, required this.artists}) : super(key: key);
 
   @override
-  _TopArtistsListState createState() => _TopArtistsListState();
+  TopArtistsListState createState() => TopArtistsListState();
 }
 
-class _TopArtistsListState extends State<TopArtistsList> {
+class TopArtistsListState extends State<TopArtistsList> {
   final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
 

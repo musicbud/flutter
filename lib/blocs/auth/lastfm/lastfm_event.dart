@@ -1,21 +1,25 @@
 import 'package:equatable/equatable.dart';
 
-abstract class LastFMEvent extends Equatable {
-  const LastFMEvent();
+abstract class LastFmEvent extends Equatable {
+  const LastFmEvent();
 
   @override
   List<Object?> get props => [];
 }
 
-class LastFMAuthUrlRequested extends LastFMEvent {}
-
-class LastFMConnectRequested extends LastFMEvent {
-  final String code;
-
-  const LastFMConnectRequested(this.code);
-
-  @override
-  List<Object> get props => [code];
+class LastFmAuthUrlRequested extends LastFmEvent {
+  const LastFmAuthUrlRequested();
 }
 
-class LastFMDisconnectRequested extends LastFMEvent {}
+class LastFmConnectRequested extends LastFmEvent {
+  final String code;
+
+  const LastFmConnectRequested(this.code);
+
+  @override
+  List<Object?> get props => [code];
+}
+
+class LastFmDisconnectRequested extends LastFmEvent {
+  const LastFmDisconnectRequested();
+}

@@ -24,6 +24,8 @@ dependencies:
   dartz: ^0.10.1
   shelf: ^1.4.1
   shelf_proxy: ^1.0.4
+  url_launcher: ^6.2.5
+  logging: ^1.2.0
 
 dev_dependencies:
   flutter_test:

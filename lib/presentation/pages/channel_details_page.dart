@@ -17,10 +17,10 @@ class ChannelDetailsPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ChannelDetailsPageState createState() => _ChannelDetailsPageState();
+  ChannelDetailsPageState createState() => ChannelDetailsPageState();
 }
 
-class _ChannelDetailsPageState extends State<ChannelDetailsPage> {
+class ChannelDetailsPageState extends State<ChannelDetailsPage> {
   bool isAdmin = false;
   bool isModerator = false;
   bool isMember = false;

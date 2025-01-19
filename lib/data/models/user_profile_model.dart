@@ -25,6 +25,8 @@ class UserProfileModel extends UserProfile {
     );
   }
 
+  /// Converts this [UserProfileModel] to a JSON map
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,

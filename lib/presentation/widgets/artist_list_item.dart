@@ -16,15 +16,19 @@ class ArtistListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: onTap,
       leading: artist.imageUrls?.isNotEmpty == true
           ? CircleAvatar(
               backgroundImage: NetworkImage(artist.imageUrls!.first),
               radius: 25,
             )
           : const CircleAvatar(
-              child: Icon(Icons.person),
               radius: 25,
+              child: Icon(Icons.person),
             ),
+      trailing: artist.isLiked
+          ? const Icon(Icons.favorite, color: Colors.red)
+          : const Icon(Icons.favorite_border),
       title: Text(
         artist.name,
         maxLines: 1,
@@ -37,10 +41,6 @@ class ArtistListItem extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             )
           : null,
-      trailing: artist.isLiked
-          ? const Icon(Icons.favorite, color: Colors.red)
-          : const Icon(Icons.favorite_border),
-      onTap: onTap,
       onLongPress: onLongPress,
     );
   }

@@ -25,6 +25,8 @@ class BudMatchModel extends BudMatch {
     );
   }
 
+  /// Converts this [BudMatchModel] to a JSON map
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,

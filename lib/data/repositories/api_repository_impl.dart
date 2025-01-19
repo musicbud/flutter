@@ -5,9 +5,8 @@ class ApiRepositoryImpl implements ApiRepository {
   final Dio _dio;
   final String baseUrl;
 
-  ApiRepositoryImpl({required String baseUrl})
-      : baseUrl = baseUrl,
-        _dio = Dio(BaseOptions(baseUrl: baseUrl));
+  ApiRepositoryImpl({required this.baseUrl})
+      : _dio = Dio(BaseOptions(baseUrl: baseUrl));
 
   @override
   Future<Map<String, dynamic>> getUserProfile(String userId) async {

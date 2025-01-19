@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
-import '../../services/api_service.dart';
 
 class TopGenresHorizontalList extends StatefulWidget {
-  final ApiService apiService;
+  final List<String> initialGenres;
+  final Future<List<String>> Function(int page) loadMoreGenres;
 
   const TopGenresHorizontalList({
     Key? key,
-    required this.apiService,
+    required this.initialGenres,
+    required this.loadMoreGenres,
   }) : super(key: key);
 
   @override
-  _TopGenresHorizontalListState createState() =>
-      _TopGenresHorizontalListState();
+  TopGenresHorizontalListState createState() => TopGenresHorizontalListState();
 }
 
-class _TopGenresHorizontalListState extends State<TopGenresHorizontalList> {
-  List<String> _genres = [];
+class TopGenresHorizontalListState extends State<TopGenresHorizontalList> {
+  late List<String> _genres;
   int _currentPage = 1;
   bool _isLoading = false;
   final ScrollController _scrollController = ScrollController();
@@ -23,32 +23,13 @@ class _TopGenresHorizontalListState extends State<TopGenresHorizontalList> {
   @override
   void initState() {
     super.initState();
-    _loadInitialGenres();
+    _genres = widget.initialGenres;
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
-  }
-
-  Future<void> _loadInitialGenres() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final genres = await widget.apiService.getTopGenres(page: 1);
-      setState(() {
-        _genres = genres;
-        _isLoading = false;
-      });
-    } catch (e) {
-      debugPrint('Error loading initial genres: $e');
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
 
   Future<void> _loadMore() async {
@@ -58,18 +39,29 @@ class _TopGenresHorizontalListState extends State<TopGenresHorizontalList> {
     });
 
     try {
-      final newGenres =
-          await widget.apiService.getTopGenres(page: _currentPage + 1);
+      final newGenres = await widget.loadMoreGenres(_currentPage + 1);
       if (newGenres.isNotEmpty) {
         setState(() {
           _genres.addAll(newGenres);
           _currentPage++;
         });
       } else {
-        debugPrint('No more genres to load');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('No more genres to load'),
+            ),
+          );
+        }
       }
     } catch (e) {
-      debugPrint('Error loading more genres: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error loading genres: $e'),
+          ),
+        );
+      }
     } finally {
       setState(() {
         _isLoading = false;
@@ -84,7 +76,7 @@ class _TopGenresHorizontalListState extends State<TopGenresHorizontalList> {
     }
 
     return SizedBox(
-      height: 50, // Adjust this value as needed
+      height: 50,
       child: ListView.builder(
         controller: _scrollController,
         scrollDirection: Axis.horizontal,

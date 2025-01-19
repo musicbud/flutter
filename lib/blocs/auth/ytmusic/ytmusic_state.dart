@@ -1,34 +1,42 @@
 import 'package:equatable/equatable.dart';
 
-abstract class YTMusicState extends Equatable {
-  const YTMusicState();
+abstract class YtMusicState extends Equatable {
+  const YtMusicState();
 
   @override
   List<Object?> get props => [];
 }
 
-class YTMusicInitial extends YTMusicState {}
-
-class YTMusicLoading extends YTMusicState {}
-
-class YTMusicAuthUrlLoaded extends YTMusicState {
-  final String url;
-
-  const YTMusicAuthUrlLoaded(this.url);
-
-  @override
-  List<Object> get props => [url];
+class YtMusicInitial extends YtMusicState {
+  const YtMusicInitial();
 }
 
-class YTMusicConnected extends YTMusicState {}
+class YtMusicLoading extends YtMusicState {
+  const YtMusicLoading();
+}
 
-class YTMusicDisconnected extends YTMusicState {}
+class YtMusicAuthUrlLoaded extends YtMusicState {
+  final String url;
 
-class YTMusicFailure extends YTMusicState {
-  final String error;
-
-  const YTMusicFailure(this.error);
+  const YtMusicAuthUrlLoaded(this.url);
 
   @override
-  List<Object> get props => [error];
+  List<Object?> get props => [url];
+}
+
+class YtMusicConnected extends YtMusicState {
+  const YtMusicConnected();
+}
+
+class YtMusicDisconnected extends YtMusicState {
+  const YtMusicDisconnected();
+}
+
+class YtMusicFailure extends YtMusicState {
+  final String message;
+
+  const YtMusicFailure(this.message);
+
+  @override
+  List<Object?> get props => [message];
 }

@@ -19,6 +19,8 @@ class BudResponseModel extends BudResponse {
     );
   }
 
+  /// Converts this [BudResponseModel] to a JSON map
+  @override
   Map<String, dynamic> toJson() {
     return {
       'id': id,

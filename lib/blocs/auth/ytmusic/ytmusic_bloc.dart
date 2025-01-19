@@ -3,53 +3,53 @@ import '../../../domain/repositories/auth_repository.dart';
 import 'ytmusic_event.dart';
 import 'ytmusic_state.dart';
 
-class YTMusicBloc extends Bloc<YTMusicEvent, YTMusicState> {
+class YtMusicBloc extends Bloc<YtMusicEvent, YtMusicState> {
   final AuthRepository _authRepository;
 
-  YTMusicBloc({required AuthRepository authRepository})
+  YtMusicBloc({required AuthRepository authRepository})
       : _authRepository = authRepository,
-        super(YTMusicInitial()) {
-    on<YTMusicAuthUrlRequested>(_onAuthUrlRequested);
-    on<YTMusicConnectRequested>(_onConnectRequested);
-    on<YTMusicDisconnectRequested>(_onDisconnectRequested);
+        super(const YtMusicInitial()) {
+    on<YtMusicAuthUrlRequested>(_onYtMusicAuthUrlRequested);
+    on<YtMusicConnectRequested>(_onYtMusicConnectRequested);
+    on<YtMusicDisconnectRequested>(_onYtMusicDisconnectRequested);
   }
 
-  Future<void> _onAuthUrlRequested(
-    YTMusicAuthUrlRequested event,
-    Emitter<YTMusicState> emit,
+  Future<void> _onYtMusicAuthUrlRequested(
+    YtMusicAuthUrlRequested event,
+    Emitter<YtMusicState> emit,
   ) async {
-    emit(YTMusicLoading());
+    emit(const YtMusicLoading());
     try {
       final url = await _authRepository.getYTMusicAuthUrl();
-      emit(YTMusicAuthUrlLoaded(url));
+      emit(YtMusicAuthUrlLoaded(url));
     } catch (e) {
-      emit(YTMusicFailure(e.toString()));
+      emit(YtMusicFailure(e.toString()));
     }
   }
 
-  Future<void> _onConnectRequested(
-    YTMusicConnectRequested event,
-    Emitter<YTMusicState> emit,
+  Future<void> _onYtMusicConnectRequested(
+    YtMusicConnectRequested event,
+    Emitter<YtMusicState> emit,
   ) async {
-    emit(YTMusicLoading());
+    emit(const YtMusicLoading());
     try {
       await _authRepository.connectYTMusic(event.code);
-      emit(YTMusicConnected());
+      emit(const YtMusicConnected());
     } catch (e) {
-      emit(YTMusicFailure(e.toString()));
+      emit(YtMusicFailure(e.toString()));
     }
   }
 
-  Future<void> _onDisconnectRequested(
-    YTMusicDisconnectRequested event,
-    Emitter<YTMusicState> emit,
+  Future<void> _onYtMusicDisconnectRequested(
+    YtMusicDisconnectRequested event,
+    Emitter<YtMusicState> emit,
   ) async {
-    emit(YTMusicLoading());
+    emit(const YtMusicLoading());
     try {
       await _authRepository.disconnectYTMusic();
-      emit(YTMusicDisconnected());
+      emit(const YtMusicDisconnected());
     } catch (e) {
-      emit(YTMusicFailure(e.toString()));
+      emit(YtMusicFailure(e.toString()));
     }
   }
 }

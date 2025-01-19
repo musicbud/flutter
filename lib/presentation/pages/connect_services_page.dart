@@ -16,16 +16,15 @@ import 'spotify_connect_page.dart';
 import 'ytmusic_connect_page.dart';
 import 'lastfm_connect_page.dart';
 import 'mal_connect_page.dart';
-import 'package:musicbud_flutter/services/api_service.dart';
 
 class ConnectServicesPage extends StatefulWidget {
   const ConnectServicesPage({Key? key}) : super(key: key);
 
   @override
-  _ConnectServicesPageState createState() => _ConnectServicesPageState();
+  ConnectServicesPageState createState() => ConnectServicesPageState();
 }
 
-class _ConnectServicesPageState extends State<ConnectServicesPage> {
+class ConnectServicesPageState extends State<ConnectServicesPage> {
   @override
   void initState() {
     super.initState();
@@ -70,11 +69,11 @@ class _ConnectServicesPageState extends State<ConnectServicesPage> {
         final state = context.watch<SpotifyBloc>().state;
         return state is SpotifyConnected;
       case 'ytmusic':
-        final state = context.watch<YTMusicBloc>().state;
-        return state is YTMusicConnected;
+        final state = context.watch<YtMusicBloc>().state;
+        return state is YtMusicConnected;
       case 'lastfm':
-        final state = context.watch<LastFMBloc>().state;
-        return state is LastFMConnected;
+        final state = context.watch<LastFmBloc>().state;
+        return state is LastFmConnected;
       case 'mal':
         final state = context.watch<MALBloc>().state;
         return state is MALConnected;
@@ -160,7 +159,7 @@ class _ConnectServicesPageState extends State<ConnectServicesPage> {
                 () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const MalConnectPage(),
+                    builder: (context) => const MALConnectPage(),
                   ),
                 ),
                 _isServiceConnected('mal', context),

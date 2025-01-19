@@ -1,21 +1,25 @@
 import 'package:equatable/equatable.dart';
 
-abstract class YTMusicEvent extends Equatable {
-  const YTMusicEvent();
+abstract class YtMusicEvent extends Equatable {
+  const YtMusicEvent();
 
   @override
   List<Object?> get props => [];
 }
 
-class YTMusicAuthUrlRequested extends YTMusicEvent {}
-
-class YTMusicConnectRequested extends YTMusicEvent {
-  final String code;
-
-  const YTMusicConnectRequested(this.code);
-
-  @override
-  List<Object> get props => [code];
+class YtMusicAuthUrlRequested extends YtMusicEvent {
+  const YtMusicAuthUrlRequested();
 }
 
-class YTMusicDisconnectRequested extends YTMusicEvent {}
+class YtMusicConnectRequested extends YtMusicEvent {
+  final String code;
+
+  const YtMusicConnectRequested(this.code);
+
+  @override
+  List<Object?> get props => [code];
+}
+
+class YtMusicDisconnectRequested extends YtMusicEvent {
+  const YtMusicDisconnectRequested();
+}

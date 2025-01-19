@@ -5,37 +5,36 @@ import '../pages/bud_common_items_page.dart';
 class BudMatchListItem extends StatelessWidget {
   final BudMatch budMatch;
 
-  const BudMatchListItem({Key? key, required this.budMatch}) : super(key: key);
+  const BudMatchListItem({
+    Key? key,
+    required this.budMatch,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: budMatch.avatarUrl != null
-          ? CircleAvatar(
-              backgroundImage: NetworkImage(budMatch.avatarUrl!),
-            )
-          : const CircleAvatar(
-              child: Icon(Icons.person),
-            ),
+      leading: CircleAvatar(
+        backgroundImage: budMatch.avatarUrl != null
+            ? NetworkImage(budMatch.avatarUrl!)
+            : null,
+        child: budMatch.avatarUrl == null ? const Icon(Icons.person) : null,
+      ),
       title: Text(budMatch.username),
-      subtitle: Text('Match Score: ${budMatch.matchScore.toStringAsFixed(2)}'),
-      onTap: () {
-        if (budMatch.id.isNotEmpty) {
+      subtitle: Text('${budMatch.matchScore}% match'),
+      trailing: IconButton(
+        icon: const Icon(Icons.arrow_forward),
+        onPressed: () {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => BudCommonItemsPage(
-                budId: budMatch.id,
-                budName: budMatch.username,
+                userId: budMatch.userId,
+                username: budMatch.username,
               ),
             ),
           );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Unable to view this bud\'s profile')),
-          );
-        }
-      },
+        },
+      ),
     );
   }
 }

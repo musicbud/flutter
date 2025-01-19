@@ -13,7 +13,7 @@ class LikesBloc extends Bloc<LikesEvent, LikesState> {
     required AuthRepository authRepository,
   })  : _contentRepository = contentRepository,
         _authRepository = authRepository,
-        super(LikesInitial()) {
+        super(const LikesInitial()) {
     on<LikesUpdateRequested>(_onLikesUpdateRequested);
     on<SpotifyConnectionRequested>(_onSpotifyConnectionRequested);
     on<LikesUpdateCancelled>(_onLikesUpdateCancelled);

@@ -16,15 +16,19 @@ class TrackListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: onTap,
       leading: track.imageUrl != null
           ? CircleAvatar(
               backgroundImage: NetworkImage(track.imageUrl!),
               radius: 25,
             )
           : const CircleAvatar(
-              child: Icon(Icons.music_note),
               radius: 25,
+              child: Icon(Icons.music_note),
             ),
+      trailing: track.isLiked
+          ? const Icon(Icons.favorite, color: Colors.red)
+          : const Icon(Icons.favorite_border),
       title: Text(
         track.title,
         maxLines: 1,
@@ -35,10 +39,6 @@ class TrackListItem extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      trailing: track.isLiked
-          ? const Icon(Icons.favorite, color: Colors.red)
-          : const Icon(Icons.favorite_border),
-      onTap: onTap,
       onLongPress: onLongPress,
     );
   }

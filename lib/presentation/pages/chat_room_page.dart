@@ -16,10 +16,10 @@ class ChatRoomPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ChatRoomPageState createState() => _ChatRoomPageState();
+  ChatRoomPageState createState() => ChatRoomPageState();
 }
 
-class _ChatRoomPageState extends State<ChatRoomPage> {
+class ChatRoomPageState extends State<ChatRoomPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 

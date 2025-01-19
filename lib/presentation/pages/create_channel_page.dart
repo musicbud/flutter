@@ -10,10 +10,10 @@ class CreateChannelPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _CreateChannelPageState createState() => _CreateChannelPageState();
+  CreateChannelPageState createState() => CreateChannelPageState();
 }
 
-class _CreateChannelPageState extends State<CreateChannelPage> {
+class CreateChannelPageState extends State<CreateChannelPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();

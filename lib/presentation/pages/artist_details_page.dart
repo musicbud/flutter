@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/models/common_artist.dart';
 import '../../blocs/artist/artist_bloc.dart';
 import '../../blocs/artist/artist_event.dart';
 import '../../blocs/artist/artist_state.dart';

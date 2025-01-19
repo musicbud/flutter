@@ -4,9 +4,8 @@ class ApiService {
   final Dio _dio;
   final String baseUrl;
 
-  ApiService({required String baseUrl})
-      : baseUrl = baseUrl,
-        _dio = Dio(BaseOptions(baseUrl: baseUrl));
+  ApiService({required this.baseUrl})
+      : _dio = Dio(BaseOptions(baseUrl: baseUrl));
 
   Future<Map<String, dynamic>> getUserProfile(String userId) async {
     try {

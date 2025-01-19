@@ -8,9 +8,13 @@ abstract class TopTracksState extends Equatable {
   List<Object?> get props => [];
 }
 
-class TopTracksInitial extends TopTracksState {}
+class TopTracksInitial extends TopTracksState {
+  const TopTracksInitial();
+}
 
-class TopTracksLoading extends TopTracksState {}
+class TopTracksLoading extends TopTracksState {
+  const TopTracksLoading();
+}
 
 class TopTracksLoadingMore extends TopTracksState {
   final List<CommonTrack> currentTracks;
@@ -57,7 +61,9 @@ class TopTrackLikeStatusChanged extends TopTracksState {
   List<Object> get props => [isLiked];
 }
 
-class TopTrackPlaybackStarted extends TopTracksState {}
+class TopTrackPlaybackStarted extends TopTracksState {
+  const TopTrackPlaybackStarted();
+}
 
 class TopTracksFailure extends TopTracksState {
   final String error;

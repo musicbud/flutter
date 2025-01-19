@@ -14,10 +14,10 @@ class UserListPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _UserListPageState createState() => _UserListPageState();
+  UserListPageState createState() => UserListPageState();
 }
 
-class _UserListPageState extends State<UserListPage> {
+class UserListPageState extends State<UserListPage> {
   @override
   void initState() {
     super.initState();

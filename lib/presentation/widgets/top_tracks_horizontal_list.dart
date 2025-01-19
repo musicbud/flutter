@@ -12,14 +12,15 @@ class TopTracksHorizontalList extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _TopTracksHorizontalListState createState() =>
-      _TopTracksHorizontalListState();
+  TopTracksHorizontalListState createState() => TopTracksHorizontalListState();
 }
 
-class _TopTracksHorizontalListState extends State<TopTracksHorizontalList> {
+class TopTracksHorizontalListState extends State<TopTracksHorizontalList> {
   late List<Track> _tracks;
   int _currentPage = 1;
   bool _isLoading = false;
+  bool _hasReachedEnd = false;
+  final int _pageSize = 10;
 
   @override
   void initState() {
@@ -28,23 +29,31 @@ class _TopTracksHorizontalListState extends State<TopTracksHorizontalList> {
   }
 
   Future<void> _loadMoreTracks() async {
-    if (_isLoading) return;
-    setState(() {
-      _isLoading = true;
-    });
+    if (!_isLoading && !_hasReachedEnd) {
+      setState(() {
+        _isLoading = true;
+      });
 
-    try {
-      final newTracks = await widget.loadMoreTracks(_currentPage + 1);
-      setState(() {
-        _tracks.addAll(newTracks);
-        _currentPage++;
-        _isLoading = false;
-      });
-    } catch (e) {
-      debugPrint('Error loading more tracks: $e');
-      setState(() {
-        _isLoading = false;
-      });
+      final scaffoldMessenger = ScaffoldMessenger.of(context);
+      try {
+        final newTracks = await widget.loadMoreTracks(_currentPage + 1);
+
+        setState(() {
+          _tracks.addAll(newTracks);
+          _currentPage++;
+          _hasReachedEnd = newTracks.length < _pageSize;
+          _isLoading = false;
+        });
+      } catch (e) {
+        scaffoldMessenger.showSnackBar(
+          SnackBar(
+            content: Text('Error loading tracks: $e'),
+          ),
+        );
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 

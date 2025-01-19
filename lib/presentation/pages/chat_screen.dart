@@ -58,7 +58,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Chat'),
+        title: const Text('Chat'),
       ),
       body: BlocConsumer<ChatBloc, ChatState>(
         listener: (context, state) {
@@ -128,6 +128,8 @@ class OutlinedMessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final timeString =
+        '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}';
     return Align(
       alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
@@ -136,8 +138,7 @@ class OutlinedMessageBubble extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border.all(color: Theme.of(context).primaryColor),
           borderRadius: BorderRadius.circular(12),
-          color:
-              isUser ? Theme.of(context).primaryColor.withOpacity(0.1) : null,
+          color: Colors.grey.withAlpha(128),
         ),
         child: Column(
           crossAxisAlignment:
@@ -145,7 +146,7 @@ class OutlinedMessageBubble extends StatelessWidget {
           children: [
             Text(message),
             Text(
-              '${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}',
+              timeString,
               style: TextStyle(
                 fontSize: 10,
                 color: Theme.of(context).textTheme.bodySmall?.color,

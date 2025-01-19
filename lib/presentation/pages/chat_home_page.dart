@@ -6,7 +6,6 @@ import '../../blocs/chat_home/chat_home_state.dart';
 import '../widgets/loading_indicator.dart';
 import 'channel_list_page.dart';
 import 'user_list_page.dart';
-import 'login_page.dart';
 
 class ChatHomePage extends StatefulWidget {
   final String currentUsername;
@@ -17,10 +16,10 @@ class ChatHomePage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ChatHomePageState createState() => _ChatHomePageState();
+  ChatHomePageState createState() => ChatHomePageState();
 }
 
-class _ChatHomePageState extends State<ChatHomePage> {
+class ChatHomePageState extends State<ChatHomePage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ChatHomeBloc, ChatHomeState>(

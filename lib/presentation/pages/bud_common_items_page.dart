@@ -10,17 +10,17 @@ import '../../presentation/widgets/genre_list_item.dart';
 import '../../presentation/widgets/loading_indicator.dart';
 
 class BudCommonItemsPage extends StatefulWidget {
-  final String budId;
-  final String budName;
+  final String userId;
+  final String username;
 
   const BudCommonItemsPage({
     Key? key,
-    required this.budId,
-    required this.budName,
+    required this.userId,
+    required this.username,
   }) : super(key: key);
 
   @override
-  _BudCommonItemsPageState createState() => _BudCommonItemsPageState();
+  State<BudCommonItemsPage> createState() => _BudCommonItemsPageState();
 }
 
 class _BudCommonItemsPageState extends State<BudCommonItemsPage> {
@@ -33,7 +33,7 @@ class _BudCommonItemsPageState extends State<BudCommonItemsPage> {
   void _loadCommonItems() {
     context
         .read<BudCommonItemsBloc>()
-        .add(BudCommonItemsRequested(widget.budId));
+        .add(BudCommonItemsRequested(widget.userId));
   }
 
   void _showErrorSnackBar(String message) {
@@ -46,14 +46,14 @@ class _BudCommonItemsPageState extends State<BudCommonItemsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Common Items with ${widget.budName}'),
+        title: Text('Common Items with ${widget.username}'),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
               context
                   .read<BudCommonItemsBloc>()
-                  .add(BudCommonItemsRefreshRequested(widget.budId));
+                  .add(BudCommonItemsRefreshRequested(widget.userId));
             },
           ),
         ],
@@ -79,7 +79,7 @@ class _BudCommonItemsPageState extends State<BudCommonItemsPage> {
               onRefresh: () async {
                 context
                     .read<BudCommonItemsBloc>()
-                    .add(BudCommonItemsRefreshRequested(widget.budId));
+                    .add(BudCommonItemsRefreshRequested(widget.userId));
               },
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),

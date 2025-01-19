@@ -73,9 +73,9 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
         listener: (context, state) {
           if (state is TrackFailure) {
             _showErrorSnackBar(state.error);
-          } else if (state is TrackPlayStarted) {
+          } else if (state is TrackPlaybackStarted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Track started playing')),
+              const SnackBar(content: Text('Track playback started')),
             );
           }
         },

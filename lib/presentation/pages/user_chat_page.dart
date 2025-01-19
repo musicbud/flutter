@@ -15,10 +15,10 @@ class UserChatPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _UserChatPageState createState() => _UserChatPageState();
+  UserChatPageState createState() => UserChatPageState();
 }
 
-class _UserChatPageState extends State<UserChatPage> {
+class UserChatPageState extends State<UserChatPage> {
   final TextEditingController _messageController = TextEditingController();
 
   @override

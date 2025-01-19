@@ -4,8 +4,6 @@ import '../../domain/repositories/bud_repository.dart';
 import 'track_event.dart';
 import 'track_state.dart';
 
-class TrackPlaybackStarted extends TrackState {}
-
 class TrackBloc extends Bloc<TrackEvent, TrackState> {
   final ContentRepository _contentRepository;
   final BudRepository _budRepository;
@@ -15,7 +13,7 @@ class TrackBloc extends Bloc<TrackEvent, TrackState> {
     required BudRepository budRepository,
   })  : _contentRepository = contentRepository,
         _budRepository = budRepository,
-        super(TrackInitial()) {
+        super(const TrackInitial()) {
     on<TrackBudsRequested>(_onTrackBudsRequested);
     on<TrackLikeToggled>(_onTrackLikeToggled);
     on<TrackPlayRequested>(_onTrackPlayRequested);
@@ -25,7 +23,7 @@ class TrackBloc extends Bloc<TrackEvent, TrackState> {
     TrackBudsRequested event,
     Emitter<TrackState> emit,
   ) async {
-    emit(TrackLoading());
+    emit(const TrackLoading());
     try {
       final buds = await _budRepository.getBudsByTrack(event.trackId);
       emit(TrackBudsLoaded(buds));
@@ -55,7 +53,7 @@ class TrackBloc extends Bloc<TrackEvent, TrackState> {
     try {
       if (event.deviceId != null) {
         await _contentRepository.playTrack(event.trackId, event.deviceId!);
-        emit(TrackPlaybackStarted());
+        emit(const TrackPlaybackStarted());
       } else {
         emit(const TrackFailure('No device ID provided'));
       }

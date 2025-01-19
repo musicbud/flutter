@@ -1,124 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
-import 'package:musicbud_flutter/data/data_sources/remote/auth_remote_data_source.dart';
-import 'package:musicbud_flutter/data/repositories/auth_repository_impl.dart';
-import 'package:musicbud_flutter/domain/repositories/auth_repository.dart';
-import 'package:musicbud_flutter/data/network/dio_client.dart';
+import 'package:http/http.dart' as http;
+import 'blocs/auth/auth_bloc.dart';
+import 'blocs/user/user_bloc.dart';
+import 'blocs/chat/chat_bloc.dart';
+import 'data/repositories/auth_repository_impl.dart';
+import 'data/repositories/user_repository_impl.dart';
+import 'data/repositories/chat_repository_impl.dart';
+import 'data/data_sources/remote/user_remote_data_source.dart';
+import 'data/network/dio_client.dart';
+import 'domain/repositories/auth_repository.dart';
+import 'domain/repositories/user_repository.dart';
+import 'domain/repositories/chat_repository.dart';
 import 'app.dart';
-import 'package:musicbud_flutter/blocs/auth/login/login_bloc.dart';
-import 'package:musicbud_flutter/blocs/auth/register/register_bloc.dart';
-import 'package:musicbud_flutter/blocs/auth/spotify/spotify_bloc.dart';
-import 'package:musicbud_flutter/blocs/auth/ytmusic/ytmusic_bloc.dart';
-import 'package:musicbud_flutter/blocs/auth/mal/mal_bloc.dart';
-import 'package:musicbud_flutter/blocs/auth/lastfm/lastfm_bloc.dart';
-import 'package:musicbud_flutter/services/chat_service.dart';
-import 'package:musicbud_flutter/services/api_service.dart';
-import 'package:musicbud_flutter/presentation/pages/login_page.dart';
-import 'package:musicbud_flutter/presentation/pages/home_page.dart';
-import 'package:musicbud_flutter/presentation/pages/signup_page.dart';
-import 'package:musicbud_flutter/presentation/pages/connect_services_page.dart';
-import 'package:musicbud_flutter/presentation/pages/spotify_connect_page.dart';
-import 'package:musicbud_flutter/presentation/pages/ytmusic_connect_page.dart';
-import 'package:musicbud_flutter/presentation/pages/mal_connect_page.dart';
-import 'package:musicbud_flutter/presentation/pages/lastfm_connect_page.dart';
-import 'package:musicbud_flutter/domain/repositories/api_repository.dart';
-import 'package:musicbud_flutter/data/repositories/api_repository_impl.dart';
-import 'package:musicbud_flutter/domain/repositories/chat_repository.dart';
-import 'package:musicbud_flutter/data/repositories/chat_repository_impl.dart';
-import 'package:musicbud_flutter/blocs/user/user_bloc.dart';
-import 'package:musicbud_flutter/blocs/chat/chat_bloc.dart';
 
 void main() {
-  setupDependencies();
-}
-
-void setupDependencies() {
-  final getIt = GetIt.instance;
-
-  // Network
   const baseUrl =
       'https://api.musicbud.com'; // Replace with your actual API URL
-  getIt.registerLazySingleton(() => DioClient(baseUrl: baseUrl));
+  final client = http.Client();
+  const token = ''; // Replace with actual token handling
 
-  // Repositories
-  getIt.registerLazySingleton<AuthRepository>(
-    () => AuthRepositoryImpl(dioClient: getIt<DioClient>()),
+  // Initialize network client
+  final dioClient = DioClient(baseUrl: baseUrl);
+
+  // Initialize data sources
+  final userRemoteDataSource = UserRemoteDataSourceImpl(
+    client: client,
+    token: token,
   );
-  getIt.registerLazySingleton<ApiRepository>(
-    () => ApiRepositoryImpl(baseUrl: baseUrl),
-  );
-  getIt.registerLazySingleton<ChatRepository>(
-    () => ChatRepositoryImpl(baseUrl: baseUrl),
-  );
 
-  // Run the app
-  runApp(MusicBudApp(
-    authRepository: getIt<AuthRepository>(),
-    apiRepository: getIt<ApiRepository>(),
-    chatRepository: getIt<ChatRepository>(),
-  ));
-}
+  // Initialize repositories
+  final AuthRepository authRepository =
+      AuthRepositoryImpl(dioClient: dioClient);
+  final UserRepository userRepository =
+      UserRepositoryImpl(remoteDataSource: userRemoteDataSource);
+  final ChatRepository chatRepository = ChatRepositoryImpl(baseUrl: baseUrl);
 
-class MusicBudApp extends StatelessWidget {
-  final AuthRepository authRepository;
-  final ApiRepository apiRepository;
-  final ChatRepository chatRepository;
-
-  const MusicBudApp({
-    Key? key,
-    required this.authRepository,
-    required this.apiRepository,
-    required this.chatRepository,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MultiBlocProvider(
+  runApp(
+    MultiBlocProvider(
       providers: [
-        BlocProvider<LoginBloc>(
-          create: (context) => LoginBloc(authRepository: authRepository),
-        ),
-        BlocProvider<RegisterBloc>(
-          create: (context) => RegisterBloc(authRepository: authRepository),
-        ),
-        BlocProvider<SpotifyBloc>(
-          create: (context) => SpotifyBloc(authRepository: authRepository),
-        ),
-        BlocProvider<YTMusicBloc>(
-          create: (context) => YTMusicBloc(authRepository: authRepository),
-        ),
-        BlocProvider<MALBloc>(
-          create: (context) => MALBloc(authRepository: authRepository),
-        ),
-        BlocProvider<LastFMBloc>(
-          create: (context) => LastFMBloc(authRepository: authRepository),
+        BlocProvider<AuthBloc>(
+          create: (context) => AuthBloc(authRepository: authRepository),
         ),
         BlocProvider<UserBloc>(
-          create: (context) => UserBloc(apiRepository: apiRepository),
+          create: (context) => UserBloc(userRepository: userRepository),
         ),
         BlocProvider<ChatBloc>(
           create: (context) => ChatBloc(chatRepository: chatRepository),
         ),
       ],
-      child: MaterialApp(
-        title: 'MusicBud',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          useMaterial3: true,
-        ),
-        initialRoute: '/login',
-        routes: {
-          '/home': (context) => const HomePage(),
-          '/login': (context) => const LoginPage(),
-          '/signup': (context) => const SignUpPage(),
-          '/connect_services': (context) => const ConnectServicesPage(),
-          '/connect/spotify': (context) => const SpotifyConnectPage(),
-          '/connect/ytmusic': (context) => const YtMusicConnectPage(),
-          '/connect/mal': (context) => const MalConnectPage(),
-          '/connect/lastfm': (context) => const LastFmConnectPage(),
-        },
-      ),
-    );
-  }
+      child: const App(),
+    ),
+  );
 }

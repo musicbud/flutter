@@ -137,7 +137,8 @@ class _StoriesPageState extends State<StoriesPage> {
                 },
               ),
             ),
-          ButtonBar(
+          OverflowBar(
+            spacing: 8,
             children: [
               IconButton(
                 icon: Icon(

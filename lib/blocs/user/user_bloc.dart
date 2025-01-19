@@ -1,12 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/user_repository.dart';
-import '../../domain/models/user_profile.dart';
-import '../../models/track.dart';
-import '../../models/artist.dart';
-import '../../models/album.dart';
-import '../../models/genre.dart';
-import '../../models/anime.dart';
-import '../../models/manga.dart';
 import 'user_event.dart';
 import 'user_state.dart';
 
@@ -32,11 +25,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     try {
       emit(UserLoading());
       final profile = await _userRepository.getMyProfile();
-      if (profile != null) {
-        emit(ProfileLoaded(profile));
-      } else {
-        emit(const UserError('Failed to load profile'));
-      }
+      emit(ProfileLoaded(profile));
     } catch (error) {
       emit(UserError(error.toString()));
     }
@@ -49,11 +38,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     try {
       emit(UserLoading());
       final profile = await _userRepository.getBudProfile(event.username);
-      if (profile != null) {
-        emit(ProfileLoaded(profile));
-      } else {
-        emit(const UserError('Failed to load bud profile'));
-      }
+      emit(ProfileLoaded(profile));
     } catch (e) {
       emit(UserError(e.toString()));
     }

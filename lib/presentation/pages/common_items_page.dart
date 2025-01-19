@@ -55,14 +55,6 @@ class _CommonItemsPageState<T> extends State<CommonItemsPage<T>> {
     }
   }
 
-  void _onSearchChanged(String query) {
-    if (query.isEmpty) {
-      _bloc.add(CommonItemsRefreshRequested());
-    } else {
-      _bloc.add(CommonItemsSearchRequested(query));
-    }
-  }
-
   void _showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message)),

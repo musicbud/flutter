@@ -349,16 +349,16 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     SendMessage event,
     Emitter<ChatState> emit,
   ) async {
+    emit(ChatLoading());
     try {
-      emit(ChatLoading());
       await _chatRepository.sendMessage(
         channelId: event.channelId,
         message: event.message,
         userId: event.userId,
       );
       emit(MessageSent());
-    } catch (error) {
-      emit(ChatError(error.toString()));
+    } catch (e) {
+      emit(ChatError(e.toString()));
     }
   }
 
@@ -404,7 +404,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     Emitter<ChatState> emit,
   ) async {
     try {
-      final message = await _chatRepository.sendUserMessage(
+      await _chatRepository.sendUserMessage(
         event.userId,
         event.message,
       );

@@ -14,10 +14,10 @@ class ChatListPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ChatListPageState createState() => _ChatListPageState();
+  ChatListPageState createState() => ChatListPageState();
 }
 
-class _ChatListPageState extends State<ChatListPage> {
+class ChatListPageState extends State<ChatListPage> {
   @override
   void initState() {
     super.initState();

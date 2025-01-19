@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:musicbud_flutter/blocs/bud/bud_bloc.dart';
-import 'package:musicbud_flutter/blocs/bud/bud_event.dart';
-import 'package:musicbud_flutter/blocs/bud/bud_state.dart';
-import 'package:musicbud_flutter/models/bud.dart';
-import 'package:musicbud_flutter/presentation/widgets/bud_match_list_item.dart';
+import '../../blocs/bud/bud_bloc.dart';
+import '../../blocs/bud/bud_event.dart';
+import '../../blocs/bud/bud_state.dart';
+import '../widgets/bud_match_list_item.dart';
 import 'package:musicbud_flutter/utils/string_extensions.dart';
 
 class BudsPage extends StatefulWidget {
@@ -13,10 +12,10 @@ class BudsPage extends StatefulWidget {
   const BudsPage({Key? key, this.initialCategoryIndex = 0}) : super(key: key);
 
   @override
-  _BudsPageState createState() => _BudsPageState();
+  BudsPageState createState() => BudsPageState();
 }
 
-class _BudsPageState extends State<BudsPage>
+class BudsPageState extends State<BudsPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final List<String> _categories = [

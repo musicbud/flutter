@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/models/common_genre.dart';
 import '../../blocs/genre/genre_bloc.dart';
 import '../../blocs/genre/genre_event.dart';
 import '../../blocs/genre/genre_state.dart';

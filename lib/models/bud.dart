@@ -1,4 +1,6 @@
-class Bud {
+import 'package:equatable/equatable.dart';
+
+class Bud extends Equatable {
   final String id;
   final String username;
   final String? email;
@@ -31,7 +33,7 @@ class Bud {
     required this.matchScore,
     this.commonInterests = const [],
     DateTime? matchedAt,
-  }) : this.matchedAt = matchedAt ?? DateTime.now();
+  }) : matchedAt = matchedAt ?? DateTime.now();
 
   factory Bud.fromJson(Map<String, dynamic> json) {
     return Bud(
@@ -77,4 +79,22 @@ class Bud {
       'matched_at': matchedAt.toIso8601String(),
     };
   }
+
+  @override
+  List<Object?> get props => [
+        id,
+        username,
+        avatarUrl,
+        bio,
+        displayName,
+        isActive,
+        isAuthenticated,
+        accessToken,
+        refreshToken,
+        accessTokenExpiresAt,
+        refreshTokenExpiresAt,
+        matchScore,
+        commonInterests,
+        matchedAt,
+      ];
 }

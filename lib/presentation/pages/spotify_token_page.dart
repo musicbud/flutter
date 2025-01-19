@@ -15,16 +15,16 @@ class _SpotifyCallbackPageState extends State<SpotifyCallbackPage> {
   @override
   void initState() {
     super.initState();
-    _handleSpotifyToken();
-  }
-
-  void _handleSpotifyToken() {
     final uri = Uri.base;
-    final code = uri.queryParameters['code'];
-    if (code != null) {
-      context.read<SpotifyAuthBloc>().add(SpotifyAuthCodeReceived(code));
-    } else {
-      print('Error: No authorization code found in the callback URI');
+    final params = uri.queryParameters;
+    if (params.containsKey('code')) {
+      context
+          .read<SpotifyAuthBloc>()
+          .add(SpotifyAuthCodeReceived(params['code']!));
+    } else if (params.containsKey('error')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Authentication failed: ${params['error']}')),
+      );
       Navigator.of(context).pushReplacementNamed('/connect_services');
     }
   }

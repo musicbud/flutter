@@ -34,14 +34,14 @@ class App extends StatelessWidget {
         BlocProvider<SpotifyBloc>(
           create: (context) => SpotifyBloc(authRepository: authRepository),
         ),
-        BlocProvider<YTMusicBloc>(
-          create: (context) => YTMusicBloc(authRepository: authRepository),
+        BlocProvider<YtMusicBloc>(
+          create: (context) => YtMusicBloc(authRepository: authRepository),
         ),
         BlocProvider<MALBloc>(
           create: (context) => MALBloc(authRepository: authRepository),
         ),
-        BlocProvider<LastFMBloc>(
-          create: (context) => LastFMBloc(authRepository: authRepository),
+        BlocProvider<LastFmBloc>(
+          create: (context) => LastFmBloc(authRepository: authRepository),
         ),
       ],
       child: MaterialApp(

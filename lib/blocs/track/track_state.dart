@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/models/common_track.dart';
+// import '../../domain/models/common_track.dart';
 import '../../domain/models/bud_match.dart';
 
 abstract class TrackState extends Equatable {
@@ -9,7 +9,9 @@ abstract class TrackState extends Equatable {
   List<Object?> get props => [];
 }
 
-class TrackInitial extends TrackState {}
+class TrackInitial extends TrackState {
+  const TrackInitial();
+}
 
 class TrackLoading extends TrackState {
   const TrackLoading();
@@ -26,6 +28,9 @@ class TrackBudsLoaded extends TrackState {
 
 class TrackPlaybackStarted extends TrackState {
   const TrackPlaybackStarted();
+
+  @override
+  List<Object> get props => [];
 }
 
 class TrackLikeStatusChanged extends TrackState {

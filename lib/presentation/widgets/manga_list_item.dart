@@ -16,15 +16,19 @@ class MangaListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: onTap,
       leading: manga.imageUrl != null
           ? CircleAvatar(
               backgroundImage: NetworkImage(manga.imageUrl!),
               radius: 25,
             )
           : const CircleAvatar(
-              child: Icon(Icons.book),
               radius: 25,
+              child: Icon(Icons.book),
             ),
+      trailing: manga.isLiked
+          ? const Icon(Icons.favorite, color: Colors.red)
+          : const Icon(Icons.favorite_border),
       title: Text(
         manga.title,
         maxLines: 1,
@@ -37,10 +41,6 @@ class MangaListItem extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             )
           : null,
-      trailing: manga.isLiked
-          ? const Icon(Icons.favorite, color: Colors.red)
-          : const Icon(Icons.favorite_border),
-      onTap: onTap,
       onLongPress: onLongPress,
     );
   }

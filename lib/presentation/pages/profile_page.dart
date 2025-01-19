@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../blocs/profile/profile_bloc.dart';
+import '../../blocs/profile/profile_event.dart';
+import '../../blocs/profile/profile_state.dart';
+import '../widgets/error_message.dart';
 import '../../domain/models/common_track.dart';
 import '../../domain/models/common_artist.dart';
 import '../../domain/models/common_genre.dart';
@@ -8,10 +12,6 @@ import '../../domain/models/common_album.dart';
 import '../../domain/models/common_anime.dart';
 import '../../domain/models/common_manga.dart';
 import '../../domain/models/content_service.dart';
-import '../../domain/models/user_profile.dart';
-import '../../blocs/profile/profile_bloc.dart';
-import '../../blocs/profile/profile_event.dart';
-import '../../blocs/profile/profile_state.dart';
 import '../pages/login_page.dart';
 import '../widgets/track_list_item.dart';
 import '../widgets/artist_list_item.dart';
@@ -20,13 +20,12 @@ import '../widgets/album_list_item.dart';
 import '../widgets/anime_list_item.dart';
 import '../widgets/manga_list_item.dart';
 import '../widgets/bud_match_list_item.dart';
-import '../widgets/loading_indicator.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
@@ -250,14 +249,22 @@ class _ProfilePageState extends State<ProfilePage> {
                 if (servicesState is ProfileConnectedServicesLoaded) {
                   return _buildConnectedServices(servicesState.services);
                 }
-                return _buildConnectedServices([]);
+                return const SizedBox.shrink();
               },
             ),
           ],
         ),
       );
+    } else if (state is ProfileFailure) {
+      return ErrorMessage(message: state.error);
+    } else if (state is ProfileLogoutSuccess) {
+      return const LoginPage();
+    } else if (state is ProfileLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (state is ProfileAuthenticationStatus && !state.isAuthenticated) {
+      return const LoginPage();
     }
-    return const Center(child: Text('Failed to load profile'));
+    return const Center(child: CircularProgressIndicator());
   }
 
   Widget _buildTopItemsTab(ProfileState state) {
@@ -266,18 +273,11 @@ class _ProfilePageState extends State<ProfilePage> {
         itemCount: state.items.length,
         itemBuilder: (context, index) {
           final item = state.items[index];
-          if (item is CommonTrack) {
-            return TrackListItem(track: item);
-          } else if (item is CommonArtist) {
-            return ArtistListItem(artist: item);
-          } else if (item is CommonGenre) {
-            return GenreListItem(genre: item);
-          }
-          return const ListTile(title: Text('Unknown item type'));
+          return _buildItemWidget(item, state.category);
         },
       );
     }
-    return const Center(child: Text('No top items available'));
+    return const Center(child: CircularProgressIndicator());
   }
 
   Widget _buildLikedItemsTab(ProfileState state) {
@@ -286,24 +286,11 @@ class _ProfilePageState extends State<ProfilePage> {
         itemCount: state.items.length,
         itemBuilder: (context, index) {
           final item = state.items[index];
-          if (item is CommonTrack) {
-            return TrackListItem(track: item);
-          } else if (item is CommonArtist) {
-            return ArtistListItem(artist: item);
-          } else if (item is CommonGenre) {
-            return GenreListItem(genre: item);
-          } else if (item is CommonAlbum) {
-            return AlbumListItem(album: item);
-          } else if (item is CommonAnime) {
-            return AnimeListItem(anime: item);
-          } else if (item is CommonManga) {
-            return MangaListItem(manga: item);
-          }
-          return const ListTile(title: Text('Unknown item type'));
+          return _buildItemWidget(item, state.category);
         },
       );
     }
-    return const Center(child: Text('No liked items available'));
+    return const Center(child: CircularProgressIndicator());
   }
 
   Widget _buildBudsTab(ProfileState state) {
@@ -311,11 +298,29 @@ class _ProfilePageState extends State<ProfilePage> {
       return ListView.builder(
         itemCount: state.buds.length,
         itemBuilder: (context, index) {
-          return BudMatchListItem(budMatch: state.buds[index]);
+          final bud = state.buds[index];
+          return BudMatchListItem(budMatch: bud);
         },
       );
     }
-    return const Center(child: Text('No buds available'));
+    return const Center(child: CircularProgressIndicator());
+  }
+
+  Widget _buildItemWidget(dynamic item, String category) {
+    if (item is CommonTrack) {
+      return TrackListItem(track: item);
+    } else if (item is CommonArtist) {
+      return ArtistListItem(artist: item);
+    } else if (item is CommonGenre) {
+      return GenreListItem(genre: item);
+    } else if (item is CommonAlbum) {
+      return AlbumListItem(album: item);
+    } else if (item is CommonAnime) {
+      return AnimeListItem(anime: item);
+    } else if (item is CommonManga) {
+      return MangaListItem(manga: item);
+    }
+    return const ListTile(title: Text('Unknown item type'));
   }
 
   Widget _buildStatColumn(String label, String value) {

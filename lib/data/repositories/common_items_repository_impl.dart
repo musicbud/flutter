@@ -8,7 +8,7 @@ import '../../domain/models/common_album.dart';
 import '../../domain/models/common_genre.dart';
 import '../../domain/models/common_anime.dart';
 import '../../domain/models/common_manga.dart';
-import '../../models/categorized_common_items.dart';
+import '../../domain/models/categorized_common_items.dart';
 import '../data_sources/remote/common_items_remote_data_source.dart';
 
 class CommonItemsRepositoryImpl implements CommonItemsRepository {

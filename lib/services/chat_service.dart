@@ -4,9 +4,8 @@ class ChatService {
   final Dio _dio;
   final String baseUrl;
 
-  ChatService({required String baseUrl})
-      : baseUrl = baseUrl,
-        _dio = Dio(BaseOptions(baseUrl: baseUrl));
+  ChatService({required this.baseUrl})
+      : _dio = Dio(BaseOptions(baseUrl: baseUrl));
 
   Future<void> sendMessage({
     required String channelId,

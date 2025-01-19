@@ -16,15 +16,19 @@ class AlbumListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: album.imageUrls?.isNotEmpty == true
+      onTap: onTap,
+      leading: album.imageUrl != null
           ? CircleAvatar(
-              backgroundImage: NetworkImage(album.imageUrls!.first),
+              backgroundImage: NetworkImage(album.imageUrl!),
               radius: 25,
             )
           : const CircleAvatar(
-              child: Icon(Icons.album),
               radius: 25,
+              child: Icon(Icons.album),
             ),
+      trailing: album.isLiked
+          ? const Icon(Icons.favorite, color: Colors.red)
+          : const Icon(Icons.favorite_border),
       title: Text(
         album.name,
         maxLines: 1,
@@ -35,10 +39,6 @@ class AlbumListItem extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
-      trailing: album.isLiked
-          ? const Icon(Icons.favorite, color: Colors.red)
-          : const Icon(Icons.favorite_border),
-      onTap: onTap,
       onLongPress: onLongPress,
     );
   }

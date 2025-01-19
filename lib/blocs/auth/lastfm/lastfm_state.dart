@@ -1,34 +1,42 @@
 import 'package:equatable/equatable.dart';
 
-abstract class LastFMState extends Equatable {
-  const LastFMState();
+abstract class LastFmState extends Equatable {
+  const LastFmState();
 
   @override
   List<Object?> get props => [];
 }
 
-class LastFMInitial extends LastFMState {}
-
-class LastFMLoading extends LastFMState {}
-
-class LastFMAuthUrlLoaded extends LastFMState {
-  final String url;
-
-  const LastFMAuthUrlLoaded(this.url);
-
-  @override
-  List<Object> get props => [url];
+class LastFmInitial extends LastFmState {
+  const LastFmInitial();
 }
 
-class LastFMConnected extends LastFMState {}
+class LastFmLoading extends LastFmState {
+  const LastFmLoading();
+}
 
-class LastFMDisconnected extends LastFMState {}
+class LastFmAuthUrlLoaded extends LastFmState {
+  final String url;
 
-class LastFMFailure extends LastFMState {
-  final String error;
-
-  const LastFMFailure(this.error);
+  const LastFmAuthUrlLoaded(this.url);
 
   @override
-  List<Object> get props => [error];
+  List<Object?> get props => [url];
+}
+
+class LastFmConnected extends LastFmState {
+  const LastFmConnected();
+}
+
+class LastFmDisconnected extends LastFmState {
+  const LastFmDisconnected();
+}
+
+class LastFmFailure extends LastFmState {
+  final String message;
+
+  const LastFmFailure(this.message);
+
+  @override
+  List<Object?> get props => [message];
 }

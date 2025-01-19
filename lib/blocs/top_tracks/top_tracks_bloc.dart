@@ -11,7 +11,7 @@ class TopTracksBloc extends Bloc<TopTracksEvent, TopTracksState> {
   TopTracksBloc({
     required ContentRepository contentRepository,
   })  : _contentRepository = contentRepository,
-        super(TopTracksInitial()) {
+        super(const TopTracksInitial()) {
     on<TopTracksRequested>(_onTopTracksRequested);
     on<TopTracksLoadMoreRequested>(_onTopTracksLoadMoreRequested);
     on<TopTracksRefreshRequested>(_onTopTracksRefreshRequested);
@@ -23,7 +23,7 @@ class TopTracksBloc extends Bloc<TopTracksEvent, TopTracksState> {
     TopTracksRequested event,
     Emitter<TopTracksState> emit,
   ) async {
-    emit(TopTracksLoading());
+    emit(const TopTracksLoading());
     try {
       final tracks = await _contentRepository.getTopTracks();
       final hasReachedEnd = tracks.length < _pageSize;
@@ -116,13 +116,13 @@ class TopTracksBloc extends Bloc<TopTracksEvent, TopTracksState> {
     try {
       if (event.deviceId != null) {
         await _contentRepository.playTrack(event.trackId, event.deviceId!);
-        emit(TopTrackPlaybackStarted());
+        emit(const TopTrackPlaybackStarted());
 
         if (state is TopTracksLoaded) {
           emit(state);
         }
       } else {
-        emit(TopTracksFailure('No device ID provided'));
+        emit(const TopTracksFailure('No device ID provided'));
       }
     } catch (e) {
       emit(TopTracksFailure(e.toString()));

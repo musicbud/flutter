@@ -17,6 +17,8 @@ class BudStatusModel extends BudStatus {
     );
   }
 
+  /// Converts this [BudStatusModel] to a JSON map
+  @override
   Map<String, dynamic> toJson() {
     return {
       'user_id': userId,

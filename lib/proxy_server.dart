@@ -1,25 +1,22 @@
 import 'package:shelf/shelf.dart' as shelf;
-import 'package:shelf/shelf_io.dart' as io;
 import 'package:shelf_proxy/shelf_proxy.dart';
+import 'package:shelf/shelf_io.dart' as io;
+import 'package:logging/logging.dart';
+
+final _logger = Logger('ProxyServer');
+const _proxyPort = 8080;
+const _targetUrl = 'http://localhost:3000';
 
 Future<void> startProxyServer() async {
-  final targetUrl = 'http://84.235.170.234';
-  final proxyHandlerFunc = proxyHandler(targetUrl);
+  Logger.root.level = Level.INFO;
+  Logger.root.onRecord.listen((record) {
+    _logger.info('${record.level.name}: ${record.time}: ${record.message}');
+  });
 
   final handler = const shelf.Pipeline()
       .addMiddleware(shelf.logRequests())
-      .addMiddleware((innerHandler) {
-    return (request) async {
-      final updatedRequest = request.change(headers: {
-        ...request.headers,
-        'Origin': targetUrl,
-        'Cookie': 'musicbud_sessionid=8jnl9l28o3egdc25ezykc3v5may4o74i',
-      });
-      return await innerHandler(updatedRequest);
-    };
-  })
-      .addHandler((request) => proxyHandlerFunc(request));
+      .addHandler(proxyHandler(_targetUrl));
 
-  final server = await io.serve(handler, 'localhost', 8080);
-  print('Proxy server listening on port ${server.port}');
+  final server = await io.serve(handler, 'localhost', _proxyPort);
+  _logger.info('Proxy server running on localhost:${server.port}');
 }

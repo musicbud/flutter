@@ -18,10 +18,10 @@ class ChannelChatPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ChannelChatPageState createState() => _ChannelChatPageState();
+  ChannelChatPageState createState() => ChannelChatPageState();
 }
 
-class _ChannelChatPageState extends State<ChannelChatPage> {
+class ChannelChatPageState extends State<ChannelChatPage> {
   final TextEditingController _messageController = TextEditingController();
   bool _isAdminOrModerator = false;
 

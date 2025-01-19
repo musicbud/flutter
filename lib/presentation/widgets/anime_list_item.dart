@@ -16,15 +16,19 @@ class AnimeListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: onTap,
       leading: anime.imageUrl != null
           ? CircleAvatar(
               backgroundImage: NetworkImage(anime.imageUrl!),
               radius: 25,
             )
           : const CircleAvatar(
-              child: Icon(Icons.movie),
               radius: 25,
+              child: Icon(Icons.movie),
             ),
+      trailing: anime.isLiked
+          ? const Icon(Icons.favorite, color: Colors.red)
+          : const Icon(Icons.favorite_border),
       title: Text(
         anime.title,
         maxLines: 1,
@@ -37,10 +41,6 @@ class AnimeListItem extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             )
           : null,
-      trailing: anime.isLiked
-          ? const Icon(Icons.favorite, color: Colors.red)
-          : const Icon(Icons.favorite_border),
-      onTap: onTap,
       onLongPress: onLongPress,
     );
   }
