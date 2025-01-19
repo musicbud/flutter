@@ -64,8 +64,8 @@ class _UserChatPageState extends State<UserChatPage> {
       listener: (context, state) {
         if (state is ChatUserMessageSentSuccess) {
           _fetchMessages(); // Refresh messages after sending
-        } else if (state is ChatFailure) {
-          _showSnackBar('Error: ${state.error}');
+        } else if (state is ChatError) {
+          _showSnackBar('Error: ${state.message}');
         }
       },
       builder: (context, state) {
@@ -123,8 +123,8 @@ class _UserChatPageState extends State<UserChatPage> {
       );
     }
 
-    if (state is ChatFailure) {
-      return Center(child: Text('Error: ${state.error}'));
+    if (state is ChatError) {
+      return Center(child: Text('Error: ${state.message}'));
     }
 
     return const Center(child: Text('No messages available'));

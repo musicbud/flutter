@@ -28,7 +28,7 @@ class ChannelJoined extends ChannelEvent {
 }
 
 class ChannelJoinRequested extends ChannelEvent {
-  final int channelId;
+  final String channelId;
 
   const ChannelJoinRequested(this.channelId);
 
@@ -37,7 +37,7 @@ class ChannelJoinRequested extends ChannelEvent {
 }
 
 class ChannelDetailsRequested extends ChannelEvent {
-  final int channelId;
+  final String channelId;
 
   const ChannelDetailsRequested(this.channelId);
 
@@ -46,9 +46,18 @@ class ChannelDetailsRequested extends ChannelEvent {
 }
 
 class ChannelDashboardRequested extends ChannelEvent {
-  final int channelId;
+  final String channelId;
 
   const ChannelDashboardRequested(this.channelId);
+
+  @override
+  List<Object> get props => [channelId];
+}
+
+class ChannelLeft extends ChannelEvent {
+  final String channelId;
+
+  const ChannelLeft(this.channelId);
 
   @override
   List<Object> get props => [channelId];

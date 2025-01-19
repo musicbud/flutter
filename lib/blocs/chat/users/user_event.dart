@@ -8,7 +8,7 @@ abstract class ChatUserEvent extends Equatable {
 }
 
 class ChannelUsersRequested extends ChatUserEvent {
-  final int channelId;
+  final String channelId;
 
   const ChannelUsersRequested(this.channelId);
 
@@ -17,7 +17,7 @@ class ChannelUsersRequested extends ChatUserEvent {
 }
 
 class ChannelRolesChecked extends ChatUserEvent {
-  final int channelId;
+  final String channelId;
 
   const ChannelRolesChecked(this.channelId);
 
@@ -26,7 +26,7 @@ class ChannelRolesChecked extends ChatUserEvent {
 }
 
 class ChannelInvitationsRequested extends ChatUserEvent {
-  final int channelId;
+  final String channelId;
 
   const ChannelInvitationsRequested(this.channelId);
 
@@ -35,7 +35,7 @@ class ChannelInvitationsRequested extends ChatUserEvent {
 }
 
 class ChannelBlockedUsersRequested extends ChatUserEvent {
-  final int channelId;
+  final String channelId;
 
   const ChannelBlockedUsersRequested(this.channelId);
 
@@ -44,7 +44,7 @@ class ChannelBlockedUsersRequested extends ChatUserEvent {
 }
 
 class UserInvitationsRequested extends ChatUserEvent {
-  final int userId;
+  final String userId;
 
   const UserInvitationsRequested(this.userId);
 
@@ -53,9 +53,9 @@ class UserInvitationsRequested extends ChatUserEvent {
 }
 
 class AdminActionPerformed extends ChatUserEvent {
-  final int channelId;
+  final String channelId;
   final String action;
-  final int userId;
+  final String userId;
 
   const AdminActionPerformed({
     required this.channelId,
@@ -65,4 +65,65 @@ class AdminActionPerformed extends ChatUserEvent {
 
   @override
   List<Object> get props => [channelId, action, userId];
+}
+
+class UserListRequested extends ChatUserEvent {
+  final String channelId;
+
+  const UserListRequested(this.channelId);
+
+  @override
+  List<Object> get props => [channelId];
+}
+
+class UserAdded extends ChatUserEvent {
+  final String channelId;
+  final String username;
+
+  const UserAdded({
+    required this.channelId,
+    required this.username,
+  });
+
+  @override
+  List<Object> get props => [channelId, username];
+}
+
+class UserRemoved extends ChatUserEvent {
+  final String channelId;
+  final String userId;
+
+  const UserRemoved({
+    required this.channelId,
+    required this.userId,
+  });
+
+  @override
+  List<Object> get props => [channelId, userId];
+}
+
+class UserBlocked extends ChatUserEvent {
+  final String channelId;
+  final String userId;
+
+  const UserBlocked({
+    required this.channelId,
+    required this.userId,
+  });
+
+  @override
+  List<Object> get props => [channelId, userId];
+}
+
+class UserUnblocked extends ChatUserEvent {
+  final String channelId;
+  final String userId;
+
+  const UserUnblocked({
+    required this.channelId,
+    required this.userId,
+  });
+
+  @override
+  List<Object> get props => [channelId, userId];
 }

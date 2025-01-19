@@ -22,6 +22,13 @@ abstract class ContentRepository {
       String trackId, String deviceId, double latitude, double longitude);
   Future<void> savePlayedTrack(String trackId);
 
+  // Popular items methods
+  Future<List<CommonTrack>> getPopularTracks();
+  Future<List<CommonArtist>> getPopularArtists();
+  Future<List<CommonAlbum>> getPopularAlbums();
+  Future<List<CommonAnime>> getPopularAnime();
+  Future<List<CommonManga>> getPopularManga();
+
   // Top items methods
   Future<List<CommonTrack>> getTopTracks();
   Future<List<CommonArtist>> getTopArtists();
@@ -68,4 +75,15 @@ abstract class ContentRepository {
   // Category methods
   Future<List<dynamic>> getTopItems(String category);
   Future<List<dynamic>> getLikedItems(String category);
+
+  // Toggle methods
+  Future<void> toggleTrackLike(String trackId);
+  Future<void> toggleArtistLike(String artistId);
+  Future<void> toggleAlbumLike(String albumId);
+  Future<void> toggleGenreLike(String genreId);
+  Future<void> toggleAnimeLike(String animeId);
+  Future<void> toggleMangaLike(String mangaId);
+
+  // Update methods
+  Future<void> updateLikes();
 }

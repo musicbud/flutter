@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:musicbud_flutter/blocs/user/user_bloc.dart';
-import 'package:musicbud_flutter/domain/models/user_profile.dart';
-import 'package:musicbud_flutter/presentation/pages/spotify_control_page.dart';
-import 'package:musicbud_flutter/presentation/pages/profile_page.dart';
-import 'package:musicbud_flutter/presentation/pages/chat_home_page.dart';
-import 'package:musicbud_flutter/presentation/pages/connect_services_page.dart';
-import 'package:musicbud_flutter/presentation/pages/login_page.dart';
+import '../../blocs/user/user_bloc.dart';
+import '../../blocs/user/user_state.dart';
+import '../../blocs/user/user_event.dart';
+import '../../domain/models/user_profile.dart';
+import 'spotify_control_page.dart';
+import 'profile_page.dart';
+import 'chat_home_page.dart';
+import 'connect_services_page.dart';
+import 'login_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
@@ -33,7 +35,6 @@ class _HomePageState extends State<HomePage> {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
         if (state is UserError) {
-          // If there's an error, navigate to login page
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => const LoginPage(),
@@ -88,23 +89,22 @@ class _HomePageState extends State<HomePage> {
                 ],
                 const SizedBox(height: 20),
                 ElevatedButton(
+                  onPressed: _userProfile != null
+                      ? () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ChatHomePage(
+                                currentUsername: _userProfile!.username,
+                              ),
+                            ),
+                          );
+                        }
+                      : null,
                   child: const Text('Go to Chat'),
-                  onPressed: () {
-                    if (_userProfile != null) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ChatHomePage(
-                            currentUsername: _userProfile!.username,
-                          ),
-                        ),
-                      );
-                    }
-                  },
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  child: const Text('Spotify Control'),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -113,10 +113,10 @@ class _HomePageState extends State<HomePage> {
                       ),
                     );
                   },
+                  child: const Text('Spotify Control'),
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  child: const Text('Connect Services'),
                   onPressed: () {
                     Navigator.push(
                       context,
@@ -125,6 +125,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     );
                   },
+                  child: const Text('Connect Services'),
                 ),
               ],
             ),

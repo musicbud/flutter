@@ -8,9 +8,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class YtMusicConnectPage extends StatefulWidget {
-  const YtMusicConnectPage({
-    Key? key,
-  }) : super(key: key);
+  const YtMusicConnectPage({Key? key}) : super(key: key);
 
   @override
   _YtMusicConnectPageState createState() => _YtMusicConnectPageState();

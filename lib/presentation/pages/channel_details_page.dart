@@ -7,11 +7,13 @@ import 'package:musicbud_flutter/presentation/pages/chat_room_page.dart';
 import 'package:musicbud_flutter/presentation/pages/channel_dashboard_page.dart';
 
 class ChannelDetailsPage extends StatefulWidget {
-  final int channelId;
+  final String channelId;
+  final String currentUsername;
 
   const ChannelDetailsPage({
     Key? key,
     required this.channelId,
+    required this.currentUsername,
   }) : super(key: key);
 
   @override
@@ -50,6 +52,7 @@ class _ChannelDetailsPageState extends State<ChannelDetailsPage> {
       MaterialPageRoute(
         builder: (context) => ChatRoomPage(
           channelId: widget.channelId,
+          currentUsername: widget.currentUsername,
         ),
       ),
     );
@@ -78,8 +81,8 @@ class _ChannelDetailsPageState extends State<ChannelDetailsPage> {
           });
         } else if (state is ChatChannelJoinRequestedSuccess) {
           _showSnackBar('Join request sent successfully');
-        } else if (state is ChatFailure) {
-          _showSnackBar('Error: ${state.error}');
+        } else if (state is ChatError) {
+          _showSnackBar('Error: ${state.message}');
         }
       },
       builder: (context, state) {
@@ -92,47 +95,52 @@ class _ChannelDetailsPageState extends State<ChannelDetailsPage> {
         final details =
             state is ChatChannelDetailsLoaded ? state.details : null;
 
+        if (details == null) {
+          return Scaffold(
+            appBar: AppBar(title: const Text('Channel Details')),
+            body: const Center(child: Text('Failed to load details')),
+          );
+        }
+
         return Scaffold(
           appBar: AppBar(title: const Text('Channel Details')),
-          body: details == null
-              ? const Center(child: Text('Failed to load details'))
-              : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Details for Channel ${widget.channelId}',
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 16),
-                      Text('Name: ${details['name']}'),
-                      Text('Description: ${details['description']}'),
-                      const SizedBox(height: 16),
-                      if (isMember) ...[
-                        const Text('You are a member of this channel.'),
-                        if (isAdmin)
-                          const Text('You are an admin of this channel.')
-                        else if (isModerator)
-                          const Text('You are a moderator of this channel.'),
-                        ElevatedButton(
-                          onPressed: _enterChatRoom,
-                          child: const Text('Enter Chat'),
-                        ),
-                        if (isAdmin)
-                          ElevatedButton(
-                            onPressed: _navigateToDashboard,
-                            child: const Text('Dashboard'),
-                          ),
-                      ] else ...[
-                        const Text('You are not a member of this channel.'),
-                        ElevatedButton(
-                          onPressed: _requestJoinChannel,
-                          child: const Text('Request to Join'),
-                        ),
-                      ],
-                    ],
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Details for Channel ${widget.channelId}',
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 16),
+                Text('Name: ${details.channel.name}'),
+                Text('Description: ${details.channel.description}'),
+                const SizedBox(height: 16),
+                if (isMember) ...[
+                  const Text('You are a member of this channel.'),
+                  if (isAdmin)
+                    const Text('You are an admin of this channel.')
+                  else if (isModerator)
+                    const Text('You are a moderator of this channel.'),
+                  ElevatedButton(
+                    onPressed: _enterChatRoom,
+                    child: const Text('Enter Chat'),
                   ),
-                ),
+                  if (isAdmin)
+                    ElevatedButton(
+                      onPressed: _navigateToDashboard,
+                      child: const Text('Dashboard'),
+                    ),
+                ] else ...[
+                  const Text('You are not a member of this channel.'),
+                  ElevatedButton(
+                    onPressed: _requestJoinChannel,
+                    child: const Text('Request to Join'),
+                  ),
+                ],
+              ],
+            ),
+          ),
         );
       },
     );

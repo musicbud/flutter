@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/story_repository.dart';
-import '../../models/story.dart';
 import 'story_event.dart';
 import 'story_state.dart';
 

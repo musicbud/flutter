@@ -90,24 +90,27 @@ class ServicesBloc extends Bloc<ServicesEvent, ServicesState> {
   ) async {
     emit(ServicesLoading());
     try {
-      Map<String, dynamic> data;
       switch (event.service) {
         case 'spotify':
-          data = await _authRepository.disconnectSpotify();
+          await _authRepository.disconnectSpotify();
           break;
         case 'ytmusic':
-          data = await _authRepository.disconnectYTMusic();
+          await _authRepository.disconnectYTMusic();
           break;
         case 'lastfm':
-          data = await _authRepository.disconnectLastFM();
+          await _authRepository.disconnectLastFM();
           break;
         case 'mal':
-          data = await _authRepository.disconnectMAL();
+          await _authRepository.disconnectMAL();
           break;
         default:
           throw Exception('Unsupported service: ${event.service}');
       }
-      emit(ServiceDisconnected(service: event.service, data: data));
+      emit(ServiceDisconnected(event.service));
+
+      // Reload services status after disconnection
+      final services = await _authRepository.getConnectedServices();
+      emit(ServicesStatusLoaded(services));
     } catch (e) {
       emit(ServicesFailure(e.toString()));
     }

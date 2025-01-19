@@ -4,7 +4,6 @@ import '../../../../domain/models/bud_match.dart';
 import '../../../../domain/models/common_track.dart';
 import '../../../../domain/models/common_artist.dart';
 import '../../../../domain/models/common_genre.dart';
-import '../../../../models/bud.dart';
 import '../../../network/dio_client.dart';
 import 'bud_remote_data_source.dart';
 

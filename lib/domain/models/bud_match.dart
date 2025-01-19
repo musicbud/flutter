@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'bud.dart';
 
 /// A model class representing a match with another user (bud) based on common interests
 class BudMatch extends Equatable {
@@ -8,9 +7,9 @@ class BudMatch extends Equatable {
   final String username;
   final String? avatarUrl;
   final double matchScore;
-  final double similarityScore;
-  final List<String> commonInterests;
-  final DateTime matchedAt;
+  final int commonArtists;
+  final int commonTracks;
+  final int commonGenres;
 
   const BudMatch({
     required this.id,
@@ -18,24 +17,10 @@ class BudMatch extends Equatable {
     required this.username,
     this.avatarUrl,
     required this.matchScore,
-    required this.similarityScore,
-    required this.commonInterests,
-    required this.matchedAt,
+    required this.commonArtists,
+    required this.commonTracks,
+    required this.commonGenres,
   });
-
-  /// Creates a [BudMatch] from a [Bud] instance
-  factory BudMatch.fromBud(Bud bud) {
-    return BudMatch(
-      id: bud.id,
-      userId: bud.id,
-      username: bud.username,
-      avatarUrl: bud.avatarUrl,
-      matchScore: bud.matchScore,
-      similarityScore: bud.matchScore,
-      commonInterests: bud.commonInterests,
-      matchedAt: bud.matchedAt,
-    );
-  }
 
   /// Creates a [BudMatch] from a JSON map
   factory BudMatch.fromJson(Map<String, dynamic> json) {
@@ -45,11 +30,9 @@ class BudMatch extends Equatable {
       username: json['username'] as String,
       avatarUrl: json['avatar_url'] as String?,
       matchScore: (json['match_score'] as num).toDouble(),
-      similarityScore: (json['similarity_score'] as num).toDouble(),
-      commonInterests: (json['common_interests'] as List<dynamic>)
-          .map((e) => e as String)
-          .toList(),
-      matchedAt: DateTime.parse(json['matched_at'] as String),
+      commonArtists: json['common_artists'] as int,
+      commonTracks: json['common_tracks'] as int,
+      commonGenres: json['common_genres'] as int,
     );
   }
 
@@ -61,9 +44,9 @@ class BudMatch extends Equatable {
       'username': username,
       'avatar_url': avatarUrl,
       'match_score': matchScore,
-      'similarity_score': similarityScore,
-      'common_interests': commonInterests,
-      'matched_at': matchedAt.toIso8601String(),
+      'common_artists': commonArtists,
+      'common_tracks': commonTracks,
+      'common_genres': commonGenres,
     };
   }
 
@@ -74,8 +57,8 @@ class BudMatch extends Equatable {
         username,
         avatarUrl,
         matchScore,
-        similarityScore,
-        commonInterests,
-        matchedAt
+        commonArtists,
+        commonTracks,
+        commonGenres,
       ];
 }

@@ -49,7 +49,7 @@ class SpotifyControlBloc
     events.SpotifyPlaybackControlRequested event,
     Emitter<states.SpotifyControlState> emit,
   ) async {
-    if (event.deviceId == null || event.deviceId!.isEmpty) {
+    if (event.deviceId.isEmpty) {
       emit(states.SpotifyControlFailure(error: 'No device selected'));
       return;
     }
@@ -57,7 +57,7 @@ class SpotifyControlBloc
     try {
       emit(states.SpotifyControlLoading());
       await _contentRepository.controlSpotifyPlayback(
-          event.command, event.deviceId!);
+          event.command, event.deviceId);
       emit(states.SpotifyPlaybackStateChanged(
           isPlaying: event.command == 'play'));
     } catch (e) {
@@ -69,14 +69,14 @@ class SpotifyControlBloc
     events.SpotifyVolumeChangeRequested event,
     Emitter<states.SpotifyControlState> emit,
   ) async {
-    if (event.deviceId == null || event.deviceId!.isEmpty) {
+    if (event.deviceId.isEmpty) {
       emit(states.SpotifyControlFailure(error: 'No device selected'));
       return;
     }
 
     try {
       emit(states.SpotifyControlLoading());
-      await _contentRepository.setSpotifyVolume(event.deviceId!, event.volume);
+      await _contentRepository.setSpotifyVolume(event.deviceId, event.volume);
       emit(states.SpotifyVolumeStateChanged(volume: event.volume));
     } catch (e) {
       emit(states.SpotifyControlFailure(error: e.toString()));

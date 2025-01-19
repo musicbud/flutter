@@ -2,6 +2,7 @@ import '../models/bud_match.dart';
 import '../models/common_track.dart';
 import '../models/common_artist.dart';
 import '../models/common_genre.dart';
+import '../models/common_album.dart';
 import '../../models/bud.dart';
 
 /// Repository interface for managing bud-related operations.

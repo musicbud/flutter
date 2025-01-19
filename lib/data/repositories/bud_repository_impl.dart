@@ -3,7 +3,6 @@ import '../../domain/models/common_track.dart';
 import '../../domain/models/common_artist.dart';
 import '../../domain/models/common_genre.dart';
 import '../../domain/repositories/bud_repository.dart';
-import '../../models/bud.dart';
 import '../data_sources/remote/reference/bud_remote_data_source.dart';
 
 /// Implementation of the BudRepository interface.

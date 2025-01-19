@@ -4,27 +4,30 @@ import '../../../network/dio_client.dart';
 
 abstract class ChatRemoteDataSource {
   Future<Map<String, dynamic>> login(String username, String password);
-  Future<Map<String, dynamic>> getChannelUsers(int channelId);
-  Future<Map<String, dynamic>> removeAdmin(int channelId, int userId);
-  Future<Map<String, dynamic>> addChannelMember(int channelId, String username);
-  Future<bool> isUserAdmin(int channelId);
-  Future<Map<String, bool>> checkChannelRoles(int channelId);
-  Future<Map<String, dynamic>> getChannelDashboardData(int channelId);
-  Future<bool> isChannelAdmin(int channelId);
-  Future<bool> isChannelMember(int channelId);
-  Future<bool> isChannelModerator(int channelId);
-  Future<Map<String, dynamic>> removeChannelMember(int channelId, int userId);
-  Future<Map<String, dynamic>> makeAdmin(int channelId, int userId);
-  Future<Map<String, dynamic>> addModerator(int channelId, int userId);
-  Future<Map<String, dynamic>> removeModerator(int channelId, int userId);
-  Future<Map<String, dynamic>> acceptUser(int channelId, int userId);
-  Future<Map<String, dynamic>> kickUser(int channelId, int userId);
-  Future<Map<String, dynamic>> blockUser(int channelId, int userId);
-  Future<Map<String, dynamic>> unblockUser(int channelId, int userId);
-  Future<Map<String, dynamic>> deleteMessage(int channelId, int messageId);
-  Future<List<Map<String, dynamic>>> getChannelInvitations(int channelId);
-  Future<List<Map<String, dynamic>>> getChannelBlockedUsers(int channelId);
-  Future<List<Map<String, dynamic>>> getUserInvitations(int userId);
+  Future<Map<String, dynamic>> getChannelUsers(String channelId);
+  Future<Map<String, dynamic>> removeAdmin(String channelId, String userId);
+  Future<Map<String, dynamic>> addChannelMember(
+      String channelId, String username);
+  Future<bool> isUserAdmin(String channelId);
+  Future<Map<String, bool>> checkChannelRoles(String channelId);
+  Future<Map<String, dynamic>> getChannelDashboardData(String channelId);
+  Future<bool> isChannelAdmin(String channelId);
+  Future<bool> isChannelMember(String channelId);
+  Future<bool> isChannelModerator(String channelId);
+  Future<Map<String, dynamic>> removeChannelMember(
+      String channelId, String userId);
+  Future<Map<String, dynamic>> makeAdmin(String channelId, String userId);
+  Future<Map<String, dynamic>> addModerator(String channelId, String userId);
+  Future<Map<String, dynamic>> removeModerator(String channelId, String userId);
+  Future<Map<String, dynamic>> acceptUser(String channelId, String userId);
+  Future<Map<String, dynamic>> kickUser(String channelId, String userId);
+  Future<Map<String, dynamic>> blockUser(String channelId, String userId);
+  Future<Map<String, dynamic>> unblockUser(String channelId, String userId);
+  Future<Map<String, dynamic>> deleteMessage(
+      String channelId, String messageId);
+  Future<List<Map<String, dynamic>>> getChannelInvitations(String channelId);
+  Future<List<Map<String, dynamic>>> getChannelBlockedUsers(String channelId);
+  Future<List<Map<String, dynamic>>> getUserInvitations(String userId);
   Future<List<Map<String, dynamic>>> getChannelList();
   Future<Map<String, dynamic>> joinChannel(String channelId);
   Future<List<Map<String, dynamic>>> getUsers();
@@ -33,20 +36,21 @@ abstract class ChatRemoteDataSource {
       String currentUsername, String otherUsername);
   Future<Map<String, dynamic>> sendUserMessage(
       String senderUsername, String recipientUsername, String content);
-  Future<Map<String, dynamic>> getChannelMessages(int channelId);
+  Future<Map<String, dynamic>> getChannelMessages(String channelId);
   Future<Map<String, dynamic>> sendMessage(Map<String, dynamic> messageData);
   Future<Map<String, dynamic>> sendChannelMessage(
-      int channelId, String senderUsername, String content);
+      String channelId, String senderUsername, String content);
   Future<Map<String, dynamic>> performAdminAction(
-      int channelId, String action, int userId);
-  Future<Map<String, dynamic>> getChannelDetails(int channelId);
-  Future<Map<String, dynamic>> requestJoinChannel(int channelId);
+      String channelId, String action, String userId);
+  Future<Map<String, dynamic>> getChannelDetails(String channelId);
+  Future<Map<String, dynamic>> requestJoinChannel(String channelId);
 }
 
 class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   final Dio _dio;
+  static const String _baseUrl = 'https://api.musicbud.com';
 
-  ChatRemoteDataSourceImpl() : _dio = DioClient().dio;
+  ChatRemoteDataSourceImpl() : _dio = DioClient(baseUrl: _baseUrl).dio;
 
   @override
   Future<Map<String, dynamic>> login(String username, String password) async {
@@ -60,7 +64,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> getChannelUsers(int channelId) async {
+  Future<Map<String, dynamic>> getChannelUsers(String channelId) async {
     try {
       final response = await _dio.get('/chat/get_channel_users/$channelId/');
       return response.data;
@@ -71,7 +75,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> removeAdmin(int channelId, int userId) async {
+  Future<Map<String, dynamic>> removeAdmin(
+      String channelId, String userId) async {
     try {
       final response =
           await _dio.post('/chat/channel/$channelId/remove_admin/$userId/');
@@ -83,7 +88,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   @override
   Future<Map<String, dynamic>> addChannelMember(
-      int channelId, String username) async {
+      String channelId, String username) async {
     try {
       final response = await _dio.post('/chat/add_channel_member/$channelId/',
           data: {'username': username});
@@ -95,7 +100,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<bool> isUserAdmin(int channelId) async {
+  Future<bool> isUserAdmin(String channelId) async {
     try {
       final response = await _dio.get('/chat/channel/$channelId/is_admin/');
       return response.data['is_admin'] ?? false;
@@ -106,7 +111,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<Map<String, bool>> checkChannelRoles(int channelId) async {
+  Future<Map<String, bool>> checkChannelRoles(String channelId) async {
     try {
       final response = await _dio.get('/chat/channel/$channelId/check_roles/');
       return {
@@ -121,7 +126,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> getChannelDashboardData(int channelId) async {
+  Future<Map<String, dynamic>> getChannelDashboardData(String channelId) async {
     try {
       final response =
           await _dio.get('/chat/channel/$channelId/dashboard_data/');
@@ -133,7 +138,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<bool> isChannelAdmin(int channelId) async {
+  Future<bool> isChannelAdmin(String channelId) async {
     try {
       final response = await _dio.get('/chat/channel/$channelId/is_admin/');
       return response.data['is_admin'] ?? false;
@@ -144,7 +149,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<bool> isChannelMember(int channelId) async {
+  Future<bool> isChannelMember(String channelId) async {
     try {
       final response = await _dio.get('/chat/channel/$channelId/is_member/');
       return response.data['is_member'] ?? false;
@@ -155,7 +160,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<bool> isChannelModerator(int channelId) async {
+  Future<bool> isChannelModerator(String channelId) async {
     try {
       final response = await _dio.get('/chat/channel/$channelId/is_moderator/');
       return response.data['is_moderator'] ?? false;
@@ -167,7 +172,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   @override
   Future<Map<String, dynamic>> removeChannelMember(
-      int channelId, int userId) async {
+      String channelId, String userId) async {
     try {
       final response =
           await _dio.post('/chat/channel/$channelId/remove_member/$userId/');
@@ -179,7 +184,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> makeAdmin(int channelId, int userId) async {
+  Future<Map<String, dynamic>> makeAdmin(
+      String channelId, String userId) async {
     try {
       final response =
           await _dio.post('/chat/channel/$channelId/make_admin/$userId/');
@@ -190,7 +196,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> addModerator(int channelId, int userId) async {
+  Future<Map<String, dynamic>> addModerator(
+      String channelId, String userId) async {
     try {
       final response =
           await _dio.post('/chat/channel/$channelId/add_moderator/$userId/');
@@ -202,7 +209,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   @override
   Future<Map<String, dynamic>> removeModerator(
-      int channelId, int userId) async {
+      String channelId, String userId) async {
     try {
       final response =
           await _dio.post('/chat/channel/$channelId/remove_moderator/$userId/');
@@ -213,7 +220,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> acceptUser(int channelId, int userId) async {
+  Future<Map<String, dynamic>> acceptUser(
+      String channelId, String userId) async {
     try {
       final response =
           await _dio.post('/chat/channel/$channelId/accept_user/$userId/');
@@ -224,7 +232,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> kickUser(int channelId, int userId) async {
+  Future<Map<String, dynamic>> kickUser(String channelId, String userId) async {
     try {
       final response =
           await _dio.post('/chat/channel/$channelId/kick/$userId/');
@@ -235,7 +243,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> blockUser(int channelId, int userId) async {
+  Future<Map<String, dynamic>> blockUser(
+      String channelId, String userId) async {
     try {
       final response =
           await _dio.post('/chat/channel/$channelId/block/$userId/');
@@ -246,7 +255,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> unblockUser(int channelId, int userId) async {
+  Future<Map<String, dynamic>> unblockUser(
+      String channelId, String userId) async {
     try {
       final response =
           await _dio.post('/chat/channel/$channelId/unblock/$userId/');
@@ -258,7 +268,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   @override
   Future<Map<String, dynamic>> deleteMessage(
-      int channelId, int messageId) async {
+      String channelId, String messageId) async {
     try {
       final response = await _dio
           .delete('/chat/channel/$channelId/delete_message/$messageId/');
@@ -270,7 +280,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   @override
   Future<List<Map<String, dynamic>>> getChannelInvitations(
-      int channelId) async {
+      String channelId) async {
     try {
       final response =
           await _dio.get('/chat/get_channel_invitations/$channelId/');
@@ -283,7 +293,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   @override
   Future<List<Map<String, dynamic>>> getChannelBlockedUsers(
-      int channelId) async {
+      String channelId) async {
     try {
       final response =
           await _dio.get('/chat/get_channel_blocked_users/$channelId/');
@@ -295,7 +305,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getUserInvitations(int userId) async {
+  Future<List<Map<String, dynamic>>> getUserInvitations(String userId) async {
     try {
       final response = await _dio.get('/chat/get_user_invitations/$userId/');
       return List<Map<String, dynamic>>.from(response.data);
@@ -385,7 +395,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> getChannelMessages(int channelId) async {
+  Future<Map<String, dynamic>> getChannelMessages(String channelId) async {
     try {
       final response = await _dio.get('/api/channels/$channelId/messages');
       return response.data;
@@ -409,7 +419,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   @override
   Future<Map<String, dynamic>> sendChannelMessage(
-      int channelId, String senderUsername, String content) async {
+      String channelId, String senderUsername, String content) async {
     try {
       final response = await _dio.post('/chat/send_message/', data: {
         'recipient_type': 'channel',
@@ -426,7 +436,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   @override
   Future<Map<String, dynamic>> performAdminAction(
-      int channelId, String action, int userId) async {
+      String channelId, String action, String userId) async {
     try {
       final response =
           await _dio.post('/chat/channel/$channelId/admin_action/', data: {
@@ -441,7 +451,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> getChannelDetails(int channelId) async {
+  Future<Map<String, dynamic>> getChannelDetails(String channelId) async {
     try {
       final response = await _dio.get('/api/channels/$channelId');
       return response.data;
@@ -452,7 +462,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> requestJoinChannel(int channelId) async {
+  Future<Map<String, dynamic>> requestJoinChannel(String channelId) async {
     try {
       final response = await _dio.post('/api/channels/$channelId/join');
       return response.data;

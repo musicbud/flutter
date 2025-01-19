@@ -5,6 +5,7 @@ import '../../domain/models/common_album.dart';
 import '../../domain/models/common_genre.dart';
 import '../../domain/models/common_anime.dart';
 import '../../domain/models/common_manga.dart';
+import '../../domain/models/categorized_common_items.dart';
 
 abstract class ContentState extends Equatable {
   const ContentState();
@@ -21,60 +22,87 @@ class ContentLoaded extends ContentState {
   final List<CommonTrack> topTracks;
   final List<CommonArtist> topArtists;
   final List<CommonGenre> topGenres;
-  final List<CommonAlbum> topAlbums;
+  final List<CommonAlbum>? likedAlbums;
+  final List<CommonTrack>? likedTracks;
+  final List<CommonArtist>? likedArtists;
+  final List<CommonGenre>? likedGenres;
+  final List<CommonTrack>? playedTracks;
   final List<CommonAnime> topAnime;
   final List<CommonManga> topManga;
-  final List<CommonTrack> playedTracks;
+  final CategorizedCommonItems? categorizedItems;
 
   const ContentLoaded({
-    this.topTracks = const [],
-    this.topArtists = const [],
-    this.topGenres = const [],
-    this.topAlbums = const [],
-    this.topAnime = const [],
-    this.topManga = const [],
-    this.playedTracks = const [],
+    required this.topTracks,
+    required this.topArtists,
+    required this.topGenres,
+    this.likedAlbums,
+    this.likedTracks,
+    this.likedArtists,
+    this.likedGenres,
+    this.playedTracks,
+    required this.topAnime,
+    required this.topManga,
+    this.categorizedItems,
   });
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         topTracks,
         topArtists,
         topGenres,
-        topAlbums,
+        likedAlbums,
+        likedTracks,
+        likedArtists,
+        likedGenres,
+        playedTracks,
         topAnime,
         topManga,
-        playedTracks,
+        categorizedItems,
       ];
 
   ContentLoaded copyWith({
     List<CommonTrack>? topTracks,
     List<CommonArtist>? topArtists,
     List<CommonGenre>? topGenres,
-    List<CommonAlbum>? topAlbums,
+    List<CommonAlbum>? likedAlbums,
+    List<CommonTrack>? likedTracks,
+    List<CommonArtist>? likedArtists,
+    List<CommonGenre>? likedGenres,
+    List<CommonTrack>? playedTracks,
     List<CommonAnime>? topAnime,
     List<CommonManga>? topManga,
-    List<CommonTrack>? playedTracks,
+    CategorizedCommonItems? categorizedItems,
   }) {
     return ContentLoaded(
       topTracks: topTracks ?? this.topTracks,
       topArtists: topArtists ?? this.topArtists,
       topGenres: topGenres ?? this.topGenres,
-      topAlbums: topAlbums ?? this.topAlbums,
+      likedAlbums: likedAlbums ?? this.likedAlbums,
+      likedTracks: likedTracks ?? this.likedTracks,
+      likedArtists: likedArtists ?? this.likedArtists,
+      likedGenres: likedGenres ?? this.likedGenres,
+      playedTracks: playedTracks ?? this.playedTracks,
       topAnime: topAnime ?? this.topAnime,
       topManga: topManga ?? this.topManga,
-      playedTracks: playedTracks ?? this.playedTracks,
+      categorizedItems: categorizedItems ?? this.categorizedItems,
     );
   }
 }
 
-class ContentFailure extends ContentState {
-  final String error;
+class ContentError extends ContentState {
+  final String message;
 
-  const ContentFailure(this.error);
+  const ContentError(this.message);
 
   @override
-  List<Object> get props => [error];
+  List<Object?> get props => [message];
+}
+
+class ContentSuccess extends ContentState {
+  const ContentSuccess();
+
+  @override
+  List<Object?> get props => [];
 }
 
 class ContentLikeStatusChanged extends ContentState {

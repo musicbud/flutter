@@ -1,18 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/repositories/auth_repository.dart';
 import '../../domain/repositories/profile_repository.dart';
 import 'chat_home_event.dart';
 import 'chat_home_state.dart';
 
 class ChatHomeBloc extends Bloc<ChatHomeEvent, ChatHomeState> {
-  final AuthRepository _authRepository;
   final ProfileRepository _profileRepository;
 
   ChatHomeBloc({
-    required AuthRepository authRepository,
     required ProfileRepository profileRepository,
-  })  : _authRepository = authRepository,
-        _profileRepository = profileRepository,
+  })  : _profileRepository = profileRepository,
         super(ChatHomeInitial()) {
     on<ChatHomeInitialized>(_onChatHomeInitialized);
     on<ChatHomeTabChanged>(_onChatHomeTabChanged);
@@ -53,7 +49,7 @@ class ChatHomeBloc extends Bloc<ChatHomeEvent, ChatHomeState> {
 
       final userProfile = await _profileRepository.getMyProfile();
       final isAuthenticated = userProfile != null;
-      final username = userProfile?['username'] as String? ?? '';
+      final username = userProfile?.username ?? '';
 
       emit(ChatHomeLoaded(
         currentTabIndex: tabIndex,

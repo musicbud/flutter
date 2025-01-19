@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/models/track.dart';
+import '../../domain/models/track.dart';
 
 class TopTracksHorizontalList extends StatefulWidget {
   final List<Track> initialTracks;
@@ -12,7 +12,8 @@ class TopTracksHorizontalList extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _TopTracksHorizontalListState createState() => _TopTracksHorizontalListState();
+  _TopTracksHorizontalListState createState() =>
+      _TopTracksHorizontalListState();
 }
 
 class _TopTracksHorizontalListState extends State<TopTracksHorizontalList> {
@@ -40,7 +41,7 @@ class _TopTracksHorizontalListState extends State<TopTracksHorizontalList> {
         _isLoading = false;
       });
     } catch (e) {
-      print('Error loading more tracks: $e');
+      debugPrint('Error loading more tracks: $e');
       setState(() {
         _isLoading = false;
       });
@@ -62,18 +63,25 @@ class _TopTracksHorizontalListState extends State<TopTracksHorizontalList> {
                 );
         }
         final track = _tracks[index];
-        return Container(
+        return SizedBox(
           width: 150,
           child: Column(
             children: [
-              Image.network(
-                track.imageUrl ?? 'https://example.com/default_image.png',
-                width: 100,
-                height: 100,
-                fit: BoxFit.cover,
-              ),
+              track.imageUrl != null
+                  ? Image.network(
+                      track.imageUrl!,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    )
+                  : Container(
+                      width: 100,
+                      height: 100,
+                      color: Colors.grey[300],
+                      child: const Icon(Icons.music_note),
+                    ),
               Text(track.name),
-              Text(track.artist),
+              Text(track.artistName ?? 'Unknown Artist'),
             ],
           ),
         );

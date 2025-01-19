@@ -8,9 +8,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class LastFmConnectPage extends StatefulWidget {
-  const LastFmConnectPage({
-    Key? key,
-  }) : super(key: key);
+  const LastFmConnectPage({Key? key}) : super(key: key);
 
   @override
   _LastFmConnectPageState createState() => _LastFmConnectPageState();

@@ -16,12 +16,13 @@ import 'spotify_connect_page.dart';
 import 'ytmusic_connect_page.dart';
 import 'lastfm_connect_page.dart';
 import 'mal_connect_page.dart';
+import 'package:musicbud_flutter/services/api_service.dart';
 
 class ConnectServicesPage extends StatefulWidget {
-  const ConnectServicesPage({super.key});
+  const ConnectServicesPage({Key? key}) : super(key: key);
 
   @override
-  State<ConnectServicesPage> createState() => _ConnectServicesPageState();
+  _ConnectServicesPageState createState() => _ConnectServicesPageState();
 }
 
 class _ConnectServicesPageState extends State<ConnectServicesPage> {

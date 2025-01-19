@@ -104,7 +104,7 @@ class _PlayedTracksMapPageState extends State<PlayedTracksMapPage> {
               ),
               const SizedBox(height: 4),
               Text(
-                track.artistName,
+                track.artistName ?? 'Unknown Artist',
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               if (track.albumName != null) ...[

@@ -23,23 +23,18 @@ class LikesBloc extends Bloc<LikesEvent, LikesState> {
     LikesUpdateRequested event,
     Emitter<LikesState> emit,
   ) async {
-    emit(LikesUpdating());
+    emit(const LikesUpdating());
     try {
-      final result = await _contentRepository.updateLikes(event.channelId);
-      if (result['status'] == 'success') {
-        emit(LikesUpdateSuccess(
-            result['message'] ?? 'Likes updated successfully!'));
-      } else {
-        final message = result['message'] ?? 'Failed to update likes';
-        final needsSpotifyConnection =
-            message.contains('No Spotify account found');
-        emit(LikesUpdateFailure(
-          error: message,
-          needsSpotifyConnection: needsSpotifyConnection,
-        ));
-      }
+      await _contentRepository.updateLikes();
+      emit(const LikesUpdateSuccess('Likes updated successfully!'));
     } catch (e) {
-      emit(LikesUpdateFailure(error: e.toString()));
+      final message = e.toString();
+      final needsSpotifyConnection =
+          message.contains('No Spotify account found');
+      emit(LikesUpdateFailure(
+        error: message,
+        needsSpotifyConnection: needsSpotifyConnection,
+      ));
     }
   }
 
@@ -48,12 +43,12 @@ class LikesBloc extends Bloc<LikesEvent, LikesState> {
     Emitter<LikesState> emit,
   ) async {
     try {
-      final authUrl = await _authRepository.getSpotifyAuthUrl();
-      // Handle Spotify auth URL - this might need to be handled differently
-      // depending on your app's navigation/routing setup
+      await _authRepository.getSpotifyAuthUrl();
+      emit(const LikesUpdateSuccess('Please connect your Spotify account'));
     } catch (e) {
       emit(LikesUpdateFailure(
-          error: 'Failed to get Spotify auth URL: ${e.toString()}'));
+        error: 'Failed to get Spotify auth URL: ${e.toString()}',
+      ));
     }
   }
 
@@ -61,6 +56,6 @@ class LikesBloc extends Bloc<LikesEvent, LikesState> {
     LikesUpdateCancelled event,
     Emitter<LikesState> emit,
   ) {
-    emit(LikesInitial());
+    emit(const LikesInitial());
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/repositories/chat_repository.dart';
-import '../../../domain/models/message.dart';
 import 'message_event.dart';
 import 'message_state.dart';
 

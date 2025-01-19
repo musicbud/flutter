@@ -12,6 +12,12 @@ class ProfileRepositoryImpl implements ProfileRepository {
       : _dioClient = dioClient;
 
   @override
+  Future<UserProfile> getMyProfile() async {
+    final response = await _dioClient.get('/profile/me');
+    return UserProfile.fromJson(response.data);
+  }
+
+  @override
   Future<UserProfile> getUserProfile() async {
     final response = await _dioClient.get('/profile');
     return UserProfile.fromJson(response.data);

@@ -3,9 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:musicbud_flutter/blocs/chat/chat_bloc.dart';
 import 'package:musicbud_flutter/blocs/chat/chat_event.dart';
 import 'package:musicbud_flutter/blocs/chat/chat_state.dart';
+import 'package:musicbud_flutter/domain/models/channel_dashboard.dart';
 
 class ChannelDashboardPage extends StatefulWidget {
-  final int channelId;
+  final String channelId;
 
   const ChannelDashboardPage({
     Key? key,
@@ -29,7 +30,7 @@ class _ChannelDashboardPageState extends State<ChannelDashboardPage> {
         .add(ChatChannelDashboardRequested(widget.channelId));
   }
 
-  void _performAdminAction(String action, int userId) {
+  void _performAdminAction(String action, String userId) {
     context.read<ChatBloc>().add(ChatAdminActionPerformed(
           channelId: widget.channelId,
           action: action,
@@ -50,8 +51,8 @@ class _ChannelDashboardPageState extends State<ChannelDashboardPage> {
         if (state is ChatAdminActionSuccess) {
           _showSnackBar('Action completed successfully');
           _fetchDashboardData(); // Refresh data after successful action
-        } else if (state is ChatFailure) {
-          _showSnackBar('Error: ${state.error}');
+        } else if (state is ChatError) {
+          _showSnackBar('Error: ${state.message}');
         }
       },
       builder: (context, state) {
@@ -77,18 +78,18 @@ class _ChannelDashboardPageState extends State<ChannelDashboardPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Channel Name: ${dashboardData['channel_name']}',
+                          'Channel Statistics',
                           style: Theme.of(context).textTheme.titleLarge,
                         ),
                         const SizedBox(height: 16),
                         Text(
-                            'Total Members: ${dashboardData['members']?.length ?? 0}'),
+                            'Total Members: ${dashboardData.userStats['total']}'),
                         const SizedBox(height: 8),
                         Text(
-                            'Total Messages: ${dashboardData['messages']?.length ?? 0}'),
+                            'Total Messages: ${dashboardData.messageStats['total']}'),
                         const SizedBox(height: 16),
                         Text(
-                          'Members:',
+                          'Active Members:',
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         ..._buildMembersList(dashboardData),
@@ -101,30 +102,21 @@ class _ChannelDashboardPageState extends State<ChannelDashboardPage> {
     );
   }
 
-  List<Widget> _buildMembersList(Map<String, dynamic> dashboardData) {
-    final List<dynamic> members = dashboardData['members'] ?? [];
-    final List<dynamic> admins = dashboardData['admins'] ?? [];
-    final List<dynamic> moderators = dashboardData['moderators'] ?? [];
-
-    return members.map((member) {
-      String role = 'Member';
-      if (admins.any((admin) => admin['id'] == member['id'])) {
-        role = 'Admin';
-      } else if (moderators.any((mod) => mod['id'] == member['id'])) {
-        role = 'Moderator';
-      }
+  List<Widget> _buildMembersList(ChannelDashboard dashboardData) {
+    return dashboardData.activeUsers.map((user) {
+      String role = user.role;
 
       return Card(
         child: ListTile(
-          title: Text(member['username']),
+          title: Text(user.username),
           subtitle: Text(role),
-          trailing: role != 'Admin'
+          trailing: role != 'admin'
               ? PopupMenuButton<String>(
                   onSelected: (String action) =>
-                      _performAdminAction(action, member['id']),
+                      _performAdminAction(action, user.id),
                   itemBuilder: (BuildContext context) =>
                       <PopupMenuEntry<String>>[
-                    if (role == 'Member')
+                    if (role == 'member')
                       const PopupMenuItem<String>(
                         value: 'add_moderator',
                         child: Text('Promote to Moderator'),

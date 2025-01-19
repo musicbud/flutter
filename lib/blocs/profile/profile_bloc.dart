@@ -5,7 +5,6 @@ import '../../domain/repositories/bud_repository.dart';
 import '../../domain/models/bud_match.dart';
 import 'profile_event.dart';
 import 'profile_state.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final ProfileRepository _profileRepository;

@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
 
 class TopGenresHorizontalList extends StatefulWidget {
-  const TopGenresHorizontalList({Key? key}) : super(key: key);
+  final ApiService apiService;
+
+  const TopGenresHorizontalList({
+    Key? key,
+    required this.apiService,
+  }) : super(key: key);
 
   @override
   _TopGenresHorizontalListState createState() =>
@@ -33,13 +38,13 @@ class _TopGenresHorizontalListState extends State<TopGenresHorizontalList> {
     });
 
     try {
-      final genres = await _apiService.getTopGenres(page: 1);
+      final genres = await widget.apiService.getTopGenres(page: 1);
       setState(() {
         _genres = genres;
         _isLoading = false;
       });
     } catch (e) {
-      print('Error loading initial genres: $e');
+      debugPrint('Error loading initial genres: $e');
       setState(() {
         _isLoading = false;
       });
@@ -53,17 +58,18 @@ class _TopGenresHorizontalListState extends State<TopGenresHorizontalList> {
     });
 
     try {
-      final newGenres = await _apiService.getTopGenres(page: _currentPage + 1);
+      final newGenres =
+          await widget.apiService.getTopGenres(page: _currentPage + 1);
       if (newGenres.isNotEmpty) {
         setState(() {
           _genres.addAll(newGenres);
           _currentPage++;
         });
       } else {
-        print('No more genres to load');
+        debugPrint('No more genres to load');
       }
     } catch (e) {
-      print('Error loading more genres: $e');
+      debugPrint('Error loading more genres: $e');
     } finally {
       setState(() {
         _isLoading = false;

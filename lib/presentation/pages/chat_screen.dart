@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../blocs/chat/screen/chat_screen_bloc.dart';
-import '../../blocs/chat/screen/chat_screen_event.dart';
-import '../../blocs/chat/screen/chat_screen_state.dart';
-import '../widgets/loading_indicator.dart';
+import '../../blocs/chat/chat_bloc.dart';
+import '../../blocs/chat/chat_event.dart';
+import '../../blocs/chat/chat_state.dart';
 
 class ChatScreen extends StatefulWidget {
+  final String channelId;
   final String userId;
 
-  const ChatScreen({super.key, required this.userId});
+  const ChatScreen({
+    super.key,
+    required this.channelId,
+    required this.userId,
+  });
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -16,14 +20,14 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
-  bool _isTyping = false;
 
   @override
   void initState() {
     super.initState();
-    context
-        .read<ChatScreenBloc>()
-        .add(ChatScreenMessagesRequested(widget.userId));
+    context.read<ChatBloc>().add(LoadMessages(
+          channelId: widget.channelId,
+          limit: 50,
+        ));
   }
 
   @override
@@ -35,32 +39,12 @@ class _ChatScreenState extends State<ChatScreen> {
   void _sendMessage() {
     final message = _messageController.text.trim();
     if (message.isNotEmpty) {
-      context.read<ChatScreenBloc>().add(
-            ChatScreenMessageSent(
-              userId: widget.userId,
-              content: message,
-            ),
-          );
+      context.read<ChatBloc>().add(SendMessage(
+            channelId: widget.channelId,
+            message: message,
+            userId: widget.userId,
+          ));
       _messageController.clear();
-      _stopTyping();
-    }
-  }
-
-  void _startTyping() {
-    if (!_isTyping) {
-      setState(() => _isTyping = true);
-      context
-          .read<ChatScreenBloc>()
-          .add(ChatScreenTypingStarted(widget.userId));
-    }
-  }
-
-  void _stopTyping() {
-    if (_isTyping) {
-      setState(() => _isTyping = false);
-      context
-          .read<ChatScreenBloc>()
-          .add(ChatScreenTypingStopped(widget.userId));
     }
   }
 
@@ -74,37 +58,18 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: BlocBuilder<ChatScreenBloc, ChatScreenState>(
-          builder: (context, state) {
-            if (state is ChatScreenLoaded && state.isTyping) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(widget.userId),
-                  const Text(
-                    'typing...',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ],
-              );
-            }
-            return Text('Chat with ${widget.userId}');
-          },
-        ),
+        title: Text('Chat'),
       ),
-      body: BlocConsumer<ChatScreenBloc, ChatScreenState>(
+      body: BlocConsumer<ChatBloc, ChatState>(
         listener: (context, state) {
-          if (state is ChatScreenFailure) {
-            _showErrorSnackBar(state.error);
+          if (state is ChatError) {
+            _showErrorSnackBar(state.message);
           }
         },
         builder: (context, state) {
-          if (state is ChatScreenLoading) {
+          if (state is ChatLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state is ChatScreenLoaded) {
+          } else if (state is MessagesLoaded) {
             return Column(
               children: [
                 Expanded(
@@ -119,11 +84,6 @@ class _ChatScreenState extends State<ChatScreen> {
                     },
                   ),
                 ),
-                if (state.isTyping)
-                  const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('Typing...'),
-                  ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
@@ -138,17 +98,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.send),
-                        onPressed: () {
-                          if (_messageController.text.isNotEmpty) {
-                            context.read<ChatScreenBloc>().add(
-                                  ChatScreenMessageSent(
-                                    userId: widget.userId,
-                                    content: _messageController.text,
-                                  ),
-                                );
-                            _messageController.clear();
-                          }
-                        },
+                        onPressed: _sendMessage,
                       ),
                     ],
                   ),

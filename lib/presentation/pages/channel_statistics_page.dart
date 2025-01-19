@@ -6,7 +6,7 @@ import '../../blocs/channel_statistics/channel_statistics_state.dart';
 import '../widgets/loading_indicator.dart';
 
 class ChannelStatisticsPage extends StatefulWidget {
-  final int channelId;
+  final String channelId;
 
   const ChannelStatisticsPage({
     Key? key,

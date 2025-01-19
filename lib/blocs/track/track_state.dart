@@ -11,7 +11,9 @@ abstract class TrackState extends Equatable {
 
 class TrackInitial extends TrackState {}
 
-class TrackLoading extends TrackState {}
+class TrackLoading extends TrackState {
+  const TrackLoading();
+}
 
 class TrackBudsLoaded extends TrackState {
   final List<BudMatch> buds;
@@ -22,6 +24,10 @@ class TrackBudsLoaded extends TrackState {
   List<Object> get props => [buds];
 }
 
+class TrackPlaybackStarted extends TrackState {
+  const TrackPlaybackStarted();
+}
+
 class TrackLikeStatusChanged extends TrackState {
   final bool isLiked;
 
@@ -29,15 +35,6 @@ class TrackLikeStatusChanged extends TrackState {
 
   @override
   List<Object> get props => [isLiked];
-}
-
-class TrackPlayStarted extends TrackState {
-  final CommonTrack track;
-
-  const TrackPlayStarted(this.track);
-
-  @override
-  List<Object> get props => [track];
 }
 
 class TrackFailure extends TrackState {

@@ -8,9 +8,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class MalConnectPage extends StatefulWidget {
-  const MalConnectPage({
-    Key? key,
-  }) : super(key: key);
+  const MalConnectPage({Key? key}) : super(key: key);
 
   @override
   _MalConnectPageState createState() => _MalConnectPageState();

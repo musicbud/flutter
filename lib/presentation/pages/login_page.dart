@@ -27,10 +27,6 @@ class _LoginPageState extends State<LoginPage> {
     context.read<LoginBloc>().add(LoginConnectivityChecked());
   }
 
-  void _checkServerStatus() {
-    context.read<LoginBloc>().add(LoginServerStatusChecked());
-  }
-
   void _login() {
     if (_formKey.currentState!.validate()) {
       context.read<LoginBloc>().add(LoginSubmitted(

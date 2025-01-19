@@ -54,11 +54,12 @@ class GenreBloc extends Bloc<GenreEvent, GenreState> {
     Emitter<GenreState> emit,
   ) async {
     try {
-      final isLiked = await _contentRepository.toggleGenreLike(event.genreId);
-      emit(GenreLikeStatusChanged(isLiked));
+      await _contentRepository.toggleGenreLike(event.genreId);
       if (state is GenreDetailsLoaded) {
         final currentState = state as GenreDetailsLoaded;
-        final updatedGenre = currentState.genre.copyWith(isLiked: isLiked);
+        final updatedGenre =
+            currentState.genre.copyWith(isLiked: !currentState.genre.isLiked);
+        emit(GenreLikeStatusChanged(!currentState.genre.isLiked));
         emit(GenreDetailsLoaded(genre: updatedGenre, buds: currentState.buds));
       }
     } catch (e) {

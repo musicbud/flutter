@@ -49,8 +49,7 @@ class MusicBloc extends Bloc<MusicEvent, MusicState> {
   ) async {
     try {
       emit(MusicLoading());
-      final tracks =
-          await _contentRepository.getPopularTracks(limit: event.limit);
+      final tracks = await _contentRepository.getPopularTracks();
       emit(PopularTracksLoaded(tracks));
     } catch (error) {
       emit(MusicFailure(error.toString()));
@@ -63,8 +62,7 @@ class MusicBloc extends Bloc<MusicEvent, MusicState> {
   ) async {
     try {
       emit(MusicLoading());
-      final artists =
-          await _contentRepository.getPopularArtists(limit: event.limit);
+      final artists = await _contentRepository.getPopularArtists();
       emit(PopularArtistsLoaded(artists));
     } catch (error) {
       emit(MusicFailure(error.toString()));
@@ -77,8 +75,7 @@ class MusicBloc extends Bloc<MusicEvent, MusicState> {
   ) async {
     try {
       emit(MusicLoading());
-      final albums =
-          await _contentRepository.getPopularAlbums(limit: event.limit);
+      final albums = await _contentRepository.getPopularAlbums();
       emit(PopularAlbumsLoaded(albums));
     } catch (error) {
       emit(MusicFailure(error.toString()));
@@ -286,8 +283,7 @@ class MusicBloc extends Bloc<MusicEvent, MusicState> {
   ) async {
     try {
       emit(MusicLoading());
-      await _contentRepository.playTrack(event.trackId,
-          deviceId: event.deviceId);
+      await _contentRepository.playTrack(event.trackId, event.deviceId);
       emit(TrackPlaySuccess());
     } catch (error) {
       emit(MusicFailure(error.toString()));
@@ -302,6 +298,7 @@ class MusicBloc extends Bloc<MusicEvent, MusicState> {
       emit(MusicLoading());
       await _contentRepository.playTrackWithLocation(
         event.trackId,
+        event.deviceId,
         event.latitude,
         event.longitude,
       );
@@ -317,7 +314,7 @@ class MusicBloc extends Bloc<MusicEvent, MusicState> {
   ) async {
     try {
       emit(MusicLoading());
-      await _contentRepository.savePlayedTrack(
+      await _contentRepository.saveTrackLocation(
         event.trackId,
         event.latitude,
         event.longitude,

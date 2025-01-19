@@ -28,7 +28,9 @@ class _TopArtistsListState extends State<TopArtistsList> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent && !_isLoadingMore) {
+    if (_scrollController.position.pixels ==
+            _scrollController.position.maxScrollExtent &&
+        !_isLoadingMore) {
       _loadMore();
     }
   }
@@ -61,11 +63,14 @@ class _TopArtistsListState extends State<TopArtistsList> {
         final artist = widget.artists[index];
         return ListTile(
           title: Text(artist.name),
-          subtitle: Text(artist.genres.join(', ')),
+          subtitle: artist.genres?.isNotEmpty == true
+              ? Text(artist.genres!.join(', '))
+              : null,
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => TopTracksPage(artistId: artist.id)),
+              MaterialPageRoute(
+                  builder: (context) => TopTracksPage(artistId: artist.id)),
             );
           },
         );

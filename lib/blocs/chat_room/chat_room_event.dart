@@ -8,7 +8,7 @@ abstract class ChatRoomEvent extends Equatable {
 }
 
 class ChatRoomMessagesRequested extends ChatRoomEvent {
-  final int channelId;
+  final String channelId;
 
   const ChatRoomMessagesRequested(this.channelId);
 
@@ -17,7 +17,7 @@ class ChatRoomMessagesRequested extends ChatRoomEvent {
 }
 
 class ChatRoomMessageSent extends ChatRoomEvent {
-  final int channelId;
+  final String channelId;
   final String senderUsername;
   final String content;
 
@@ -32,8 +32,8 @@ class ChatRoomMessageSent extends ChatRoomEvent {
 }
 
 class ChatRoomMessageDeleted extends ChatRoomEvent {
-  final int channelId;
-  final int messageId;
+  final String channelId;
+  final String messageId;
 
   const ChatRoomMessageDeleted({
     required this.channelId,

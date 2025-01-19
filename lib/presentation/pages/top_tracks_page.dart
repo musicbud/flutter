@@ -76,7 +76,7 @@ class _TopTracksPageState extends State<TopTracksPage> {
               child: const Icon(Icons.music_note),
             ),
       title: Text(track.title),
-      subtitle: Text(track.artistName),
+      subtitle: Text(track.artistName ?? 'Unknown Artist'),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

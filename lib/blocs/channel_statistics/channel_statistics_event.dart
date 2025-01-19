@@ -8,7 +8,7 @@ abstract class ChannelStatisticsEvent extends Equatable {
 }
 
 class ChannelStatisticsRequested extends ChannelStatisticsEvent {
-  final int channelId;
+  final String channelId;
 
   const ChannelStatisticsRequested(this.channelId);
 
@@ -17,9 +17,18 @@ class ChannelStatisticsRequested extends ChannelStatisticsEvent {
 }
 
 class ChannelStatisticsRefreshRequested extends ChannelStatisticsEvent {
-  final int channelId;
+  final String channelId;
 
   const ChannelStatisticsRefreshRequested(this.channelId);
+
+  @override
+  List<Object> get props => [channelId];
+}
+
+class ChannelStatisticsRefreshed extends ChannelStatisticsEvent {
+  final String channelId;
+
+  const ChannelStatisticsRefreshed(this.channelId);
 
   @override
   List<Object> get props => [channelId];

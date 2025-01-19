@@ -22,39 +22,54 @@ import 'package:musicbud_flutter/presentation/pages/spotify_connect_page.dart';
 import 'package:musicbud_flutter/presentation/pages/ytmusic_connect_page.dart';
 import 'package:musicbud_flutter/presentation/pages/mal_connect_page.dart';
 import 'package:musicbud_flutter/presentation/pages/lastfm_connect_page.dart';
+import 'package:musicbud_flutter/domain/repositories/api_repository.dart';
+import 'package:musicbud_flutter/data/repositories/api_repository_impl.dart';
+import 'package:musicbud_flutter/domain/repositories/chat_repository.dart';
+import 'package:musicbud_flutter/data/repositories/chat_repository_impl.dart';
+import 'package:musicbud_flutter/blocs/user/user_bloc.dart';
+import 'package:musicbud_flutter/blocs/chat/chat_bloc.dart';
 
 void main() {
   setupDependencies();
-  runApp(const App());
 }
 
 void setupDependencies() {
   final getIt = GetIt.instance;
 
   // Network
-  const baseUrl = 'https://api.musicbud.com'; // Replace with your actual API URL
+  const baseUrl =
+      'https://api.musicbud.com'; // Replace with your actual API URL
   getIt.registerLazySingleton(() => DioClient(baseUrl: baseUrl));
-
-  // Data sources
-  getIt.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(baseUrl: baseUrl),
-  );
 
   // Repositories
   getIt.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(dioClient: getIt<DioClient>()),
   );
+  getIt.registerLazySingleton<ApiRepository>(
+    () => ApiRepositoryImpl(baseUrl: baseUrl),
+  );
+  getIt.registerLazySingleton<ChatRepository>(
+    () => ChatRepositoryImpl(baseUrl: baseUrl),
+  );
+
+  // Run the app
+  runApp(MusicBudApp(
+    authRepository: getIt<AuthRepository>(),
+    apiRepository: getIt<ApiRepository>(),
+    chatRepository: getIt<ChatRepository>(),
+  ));
 }
 
 class MusicBudApp extends StatelessWidget {
-     
   final AuthRepository authRepository;
+  final ApiRepository apiRepository;
+  final ChatRepository chatRepository;
 
   const MusicBudApp({
     Key? key,
-        
-      ,
     required this.authRepository,
+    required this.apiRepository,
+    required this.chatRepository,
   }) : super(key: key);
 
   @override
@@ -79,6 +94,12 @@ class MusicBudApp extends StatelessWidget {
         BlocProvider<LastFMBloc>(
           create: (context) => LastFMBloc(authRepository: authRepository),
         ),
+        BlocProvider<UserBloc>(
+          create: (context) => UserBloc(apiRepository: apiRepository),
+        ),
+        BlocProvider<ChatBloc>(
+          create: (context) => ChatBloc(chatRepository: chatRepository),
+        ),
       ],
       child: MaterialApp(
         title: 'MusicBud',
@@ -88,24 +109,14 @@ class MusicBudApp extends StatelessWidget {
         ),
         initialRoute: '/login',
         routes: {
-          '/home': (context) => HomePage(
-                apiService: apiService,
-                chatService: chatService,
-              ),
-          '/login': (context) => LoginPage(
-                apiService: apiService,
-                chatService: chatService,
-              ),
-          '/signup': (context) => SignUpPage(apiService: apiService),
-          '/connect_services': (context) =>
-              ConnectServicesPage(apiService: apiService),
-          '/connect/spotify': (context) =>
-              SpotifyConnectPage(apiService: apiService),
-          '/connect/ytmusic': (context) =>
-              YtMusicConnectPage(apiService: apiService),
-          '/connect/mal': (context) => MalConnectPage(apiService: apiService),
-          '/connect/lastfm': (context) =>
-              LastFmConnectPage(apiService: apiService),
+          '/home': (context) => const HomePage(),
+          '/login': (context) => const LoginPage(),
+          '/signup': (context) => const SignUpPage(),
+          '/connect_services': (context) => const ConnectServicesPage(),
+          '/connect/spotify': (context) => const SpotifyConnectPage(),
+          '/connect/ytmusic': (context) => const YtMusicConnectPage(),
+          '/connect/mal': (context) => const MalConnectPage(),
+          '/connect/lastfm': (context) => const LastFmConnectPage(),
         },
       ),
     );

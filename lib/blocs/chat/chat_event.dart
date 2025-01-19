@@ -12,7 +12,7 @@ class ChatChannelListRequested extends ChatEvent {}
 class ChatUserListRequested extends ChatEvent {}
 
 class ChatChannelUsersRequested extends ChatEvent {
-  final int channelId;
+  final String channelId;
 
   const ChatChannelUsersRequested(this.channelId);
 
@@ -49,8 +49,8 @@ class ChatMessageSent extends ChatEvent {
 }
 
 class ChatMessageDeleted extends ChatEvent {
-  final int channelId;
-  final int messageId;
+  final String channelId;
+  final String messageId;
 
   const ChatMessageDeleted({
     required this.channelId,
@@ -64,14 +64,16 @@ class ChatMessageDeleted extends ChatEvent {
 class ChatChannelCreated extends ChatEvent {
   final String name;
   final String description;
+  final bool isPrivate;
 
   const ChatChannelCreated({
     required this.name,
     required this.description,
+    this.isPrivate = false,
   });
 
   @override
-  List<Object> get props => [name, description];
+  List<Object> get props => [name, description, isPrivate];
 }
 
 class ChatChannelJoined extends ChatEvent {
@@ -84,7 +86,7 @@ class ChatChannelJoined extends ChatEvent {
 }
 
 class ChatChannelJoinRequested extends ChatEvent {
-  final int channelId;
+  final String channelId;
 
   const ChatChannelJoinRequested(this.channelId);
 
@@ -111,7 +113,7 @@ class ChatChannelDashboardRequested extends ChatEvent {
 }
 
 class ChatChannelRolesChecked extends ChatEvent {
-  final int channelId;
+  final String channelId;
 
   const ChatChannelRolesChecked(this.channelId);
 
@@ -120,9 +122,9 @@ class ChatChannelRolesChecked extends ChatEvent {
 }
 
 class ChatAdminActionPerformed extends ChatEvent {
-  final int channelId;
+  final String channelId;
   final String action;
-  final int userId;
+  final String userId;
 
   const ChatAdminActionPerformed({
     required this.channelId,
@@ -135,7 +137,7 @@ class ChatAdminActionPerformed extends ChatEvent {
 }
 
 class ChatChannelInvitationsRequested extends ChatEvent {
-  final int channelId;
+  final String channelId;
 
   const ChatChannelInvitationsRequested(this.channelId);
 
@@ -144,7 +146,7 @@ class ChatChannelInvitationsRequested extends ChatEvent {
 }
 
 class ChatChannelBlockedUsersRequested extends ChatEvent {
-  final int channelId;
+  final String channelId;
 
   const ChatChannelBlockedUsersRequested(this.channelId);
 
@@ -153,7 +155,7 @@ class ChatChannelBlockedUsersRequested extends ChatEvent {
 }
 
 class ChatUserInvitationsRequested extends ChatEvent {
-  final int userId;
+  final String userId;
 
   const ChatUserInvitationsRequested(this.userId);
 
@@ -209,4 +211,62 @@ class ChatChannelStatisticsRequested extends ChatEvent {
 
   @override
   List<Object> get props => [channelId];
+}
+
+class SendMessage extends ChatEvent {
+  final String channelId;
+  final String message;
+  final String userId;
+
+  const SendMessage({
+    required this.channelId,
+    required this.message,
+    required this.userId,
+  });
+
+  @override
+  List<Object> get props => [channelId, message, userId];
+}
+
+class LoadMessages extends ChatEvent {
+  final String channelId;
+  final int limit;
+  final String? beforeId;
+
+  const LoadMessages({
+    required this.channelId,
+    this.limit = 50,
+    this.beforeId,
+  });
+
+  @override
+  List<Object?> get props => [channelId, limit, beforeId];
+}
+
+class LoadDirectMessages extends ChatEvent {
+  final String userId;
+  final int limit;
+  final String? beforeId;
+
+  const LoadDirectMessages({
+    required this.userId,
+    this.limit = 50,
+    this.beforeId,
+  });
+
+  @override
+  List<Object?> get props => [userId, limit, beforeId];
+}
+
+class SendDirectMessage extends ChatEvent {
+  final String userId;
+  final String message;
+
+  const SendDirectMessage({
+    required this.userId,
+    required this.message,
+  });
+
+  @override
+  List<Object> get props => [userId, message];
 }

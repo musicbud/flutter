@@ -6,7 +6,7 @@ import '../../blocs/chat_room/chat_room_state.dart';
 import '../widgets/loading_indicator.dart';
 
 class ChatRoomPage extends StatefulWidget {
-  final int channelId;
+  final String channelId;
   final String currentUsername;
 
   const ChatRoomPage({
@@ -54,7 +54,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     _messageController.clear();
   }
 
-  void _deleteMessage(int messageId) {
+  void _deleteMessage(String messageId) {
     context.read<ChatRoomBloc>().add(ChatRoomMessageDeleted(
           channelId: widget.channelId,
           messageId: messageId,
@@ -148,8 +148,8 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
                                       ),
                                       if (isCurrentUser)
                                         GestureDetector(
-                                          onTap: () =>
-                                              _deleteMessage(message.id),
+                                          onTap: () => _deleteMessage(
+                                              message.id.toString()),
                                           child: const Padding(
                                             padding: EdgeInsets.only(top: 4.0),
                                             child: Icon(

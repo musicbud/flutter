@@ -301,4 +301,64 @@ class ContentRepositoryImpl implements ContentRepository {
         throw Exception('Invalid category: $category');
     }
   }
+
+  @override
+  Future<List<CommonTrack>> getPopularTracks() async {
+    return await _remoteDataSource.getPopularTracks();
+  }
+
+  @override
+  Future<List<CommonArtist>> getPopularArtists() async {
+    return await _remoteDataSource.getPopularArtists();
+  }
+
+  @override
+  Future<List<CommonAlbum>> getPopularAlbums() async {
+    return await _remoteDataSource.getPopularAlbums();
+  }
+
+  @override
+  Future<List<CommonAnime>> getPopularAnime() async {
+    return await _remoteDataSource.getPopularAnime();
+  }
+
+  @override
+  Future<List<CommonManga>> getPopularManga() async {
+    return await _remoteDataSource.getPopularManga();
+  }
+
+  @override
+  Future<void> toggleTrackLike(String trackId) async {
+    await _remoteDataSource.toggleTrackLike(trackId);
+  }
+
+  @override
+  Future<void> toggleArtistLike(String artistId) async {
+    await _remoteDataSource.toggleArtistLike(artistId);
+  }
+
+  @override
+  Future<void> toggleAlbumLike(String albumId) async {
+    await _remoteDataSource.toggleAlbumLike(albumId);
+  }
+
+  @override
+  Future<void> toggleGenreLike(String genreId) async {
+    await _remoteDataSource.toggleGenreLike(genreId);
+  }
+
+  @override
+  Future<void> toggleAnimeLike(String animeId) async {
+    await _remoteDataSource.toggleAnimeLike(animeId);
+  }
+
+  @override
+  Future<void> toggleMangaLike(String mangaId) async {
+    await _remoteDataSource.toggleMangaLike(mangaId);
+  }
+
+  @override
+  Future<void> updateLikes() async {
+    await _remoteDataSource.updateLikes();
+  }
 }

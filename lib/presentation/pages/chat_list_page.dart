@@ -6,8 +6,11 @@ import 'package:musicbud_flutter/blocs/chat/chat_state.dart';
 import 'package:musicbud_flutter/presentation/pages/channel_details_page.dart';
 
 class ChatListPage extends StatefulWidget {
+  final String currentUsername;
+
   const ChatListPage({
     Key? key,
+    required this.currentUsername,
   }) : super(key: key);
 
   @override
@@ -35,8 +38,8 @@ class _ChatListPageState extends State<ChatListPage> {
   Widget build(BuildContext context) {
     return BlocConsumer<ChatBloc, ChatState>(
       listener: (context, state) {
-        if (state is ChatFailure) {
-          _showSnackBar('Error: ${state.error}');
+        if (state is ChatError) {
+          _showSnackBar('Error: ${state.message}');
         }
       },
       builder: (context, state) {
@@ -72,6 +75,7 @@ class _ChatListPageState extends State<ChatListPage> {
                   MaterialPageRoute(
                     builder: (context) => ChannelDetailsPage(
                       channelId: channel.id,
+                      currentUsername: widget.currentUsername,
                     ),
                   ),
                 );
@@ -80,6 +84,10 @@ class _ChatListPageState extends State<ChatListPage> {
           );
         },
       );
+    }
+
+    if (state is ChatError) {
+      return Center(child: Text('Error: ${state.message}'));
     }
 
     return const Center(child: Text('Failed to load channels'));

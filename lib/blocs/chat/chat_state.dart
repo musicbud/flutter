@@ -19,13 +19,24 @@ class ChatInitial extends ChatState {}
 
 class ChatLoading extends ChatState {}
 
-class ChatFailure extends ChatState {
-  final String error;
+class MessageSent extends ChatState {}
 
-  const ChatFailure(this.error);
+class MessagesLoaded extends ChatState {
+  final List<Message> messages;
+
+  const MessagesLoaded(this.messages);
 
   @override
-  List<Object> get props => [error];
+  List<Object> get props => [messages];
+}
+
+class ChatError extends ChatState {
+  final String message;
+
+  const ChatError(this.message);
+
+  @override
+  List<Object> get props => [message];
 }
 
 class ChatUserListLoaded extends ChatState {

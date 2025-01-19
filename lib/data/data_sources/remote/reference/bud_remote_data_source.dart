@@ -4,7 +4,16 @@ import '../../../../domain/models/bud_match.dart';
 import '../../../../domain/models/common_track.dart';
 import '../../../../domain/models/common_artist.dart';
 import '../../../../domain/models/common_genre.dart';
-import '../../../../models/bud.dart';
+import '../../../../domain/models/common_album.dart';
+import '../../../../domain/models/bud_request.dart';
+import '../../../../domain/models/bud_response.dart';
+import '../../../../domain/models/bud_status.dart';
+import '../../../../domain/models/user_profile.dart';
+import '../../../models/bud_match_model.dart';
+import '../../../models/bud_request_model.dart';
+import '../../../models/bud_response_model.dart';
+import '../../../models/bud_status_model.dart';
+import '../../../models/user_profile_model.dart';
 import '../../../network/dio_client.dart';
 
 /// Remote data source for bud-related operations.
@@ -94,7 +103,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
     try {
       final response = await _dioClient.get('/buds/matches');
       final List<dynamic> data = response.data['data'] ?? response.data;
-      return data.map((json) => BudMatch.fromJson(json)).toList();
+      return data.map((json) => BudMatchModel.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get bud matches');
     }
@@ -191,7 +200,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
     try {
       final response = await _dioClient.get('/buds/liked/artists');
       final List<dynamic> data = response.data['data'] ?? response.data;
-      return data.map((json) => BudMatch.fromJson(json)).toList();
+      return data.map((json) => BudMatchModel.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get buds by liked artists');
@@ -203,7 +212,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
     try {
       final response = await _dioClient.get('/buds/liked/tracks');
       final List<dynamic> data = response.data['data'] ?? response.data;
-      return data.map((json) => BudMatch.fromJson(json)).toList();
+      return data.map((json) => BudMatchModel.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get buds by liked tracks');
@@ -215,7 +224,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
     try {
       final response = await _dioClient.get('/buds/liked/genres');
       final List<dynamic> data = response.data['data'] ?? response.data;
-      return data.map((json) => BudMatch.fromJson(json)).toList();
+      return data.map((json) => BudMatchModel.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get buds by liked genres');
@@ -227,7 +236,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
     try {
       final response = await _dioClient.get('/buds/liked/albums');
       final List<dynamic> data = response.data['data'] ?? response.data;
-      return data.map((json) => BudMatch.fromJson(json)).toList();
+      return data.map((json) => BudMatchModel.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get buds by liked albums');
@@ -239,7 +248,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
     try {
       final response = await _dioClient.get('/buds/played/tracks');
       final List<dynamic> data = response.data['data'] ?? response.data;
-      return data.map((json) => BudMatch.fromJson(json)).toList();
+      return data.map((json) => BudMatchModel.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get buds by played tracks');
@@ -251,7 +260,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
     try {
       final response = await _dioClient.get('/buds/top/artists');
       final List<dynamic> data = response.data['data'] ?? response.data;
-      return data.map((json) => BudMatch.fromJson(json)).toList();
+      return data.map((json) => BudMatchModel.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get buds by top artists');
@@ -263,7 +272,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
     try {
       final response = await _dioClient.get('/buds/top/tracks');
       final List<dynamic> data = response.data['data'] ?? response.data;
-      return data.map((json) => BudMatch.fromJson(json)).toList();
+      return data.map((json) => BudMatchModel.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get buds by top tracks');
@@ -275,7 +284,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
     try {
       final response = await _dioClient.get('/buds/top/genres');
       final List<dynamic> data = response.data['data'] ?? response.data;
-      return data.map((json) => BudMatch.fromJson(json)).toList();
+      return data.map((json) => BudMatchModel.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get buds by top genres');
@@ -287,7 +296,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
     try {
       final response = await _dioClient.get('/buds/top/anime');
       final List<dynamic> data = response.data['data'] ?? response.data;
-      return data.map((json) => BudMatch.fromJson(json)).toList();
+      return data.map((json) => BudMatchModel.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get buds by top anime');
@@ -299,7 +308,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
     try {
       final response = await _dioClient.get('/buds/top/manga');
       final List<dynamic> data = response.data['data'] ?? response.data;
-      return data.map((json) => BudMatch.fromJson(json)).toList();
+      return data.map((json) => BudMatchModel.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get buds by top manga');
@@ -311,7 +320,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
     try {
       final response = await _dioClient.get('/buds/artist/$artistId');
       final List<dynamic> data = response.data['data'] ?? response.data;
-      return data.map((json) => BudMatch.fromJson(json)).toList();
+      return data.map((json) => BudMatchModel.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get buds by artist');
@@ -323,7 +332,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
     try {
       final response = await _dioClient.get('/buds/track/$trackId');
       final List<dynamic> data = response.data['data'] ?? response.data;
-      return data.map((json) => BudMatch.fromJson(json)).toList();
+      return data.map((json) => BudMatchModel.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get buds by track');
@@ -335,7 +344,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
     try {
       final response = await _dioClient.get('/buds/genre/$genreId');
       final List<dynamic> data = response.data['data'] ?? response.data;
-      return data.map((json) => BudMatch.fromJson(json)).toList();
+      return data.map((json) => BudMatchModel.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get buds by genre');
@@ -347,7 +356,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
     try {
       final response = await _dioClient.get('/buds/album/$albumId');
       final List<dynamic> data = response.data['data'] ?? response.data;
-      return data.map((json) => BudMatch.fromJson(json)).toList();
+      return data.map((json) => BudMatchModel.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get buds by album');
@@ -360,7 +369,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
       final response =
           await _dioClient.get('/buds/search', queryParameters: {'q': query});
       final List<dynamic> data = response.data['data'] ?? response.data;
-      return data.map((json) => BudMatch.fromJson(json)).toList();
+      return data.map((json) => BudMatchModel.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to search buds');
     }

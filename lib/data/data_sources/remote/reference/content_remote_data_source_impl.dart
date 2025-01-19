@@ -1,3 +1,5 @@
+import 'package:dio/dio.dart';
+import '../../../../core/error/exceptions.dart';
 import '../../../../domain/models/common_track.dart';
 import '../../../../domain/models/spotify_device.dart';
 import '../../../../domain/models/common_artist.dart';
@@ -496,6 +498,135 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       return CommonManga.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {
       throw Exception('Failed to get manga details: $e');
+    }
+  }
+
+  @override
+  Future<List<CommonTrack>> getPopularTracks() async {
+    try {
+      final response = await _dioClient.get('/tracks/popular');
+      final List<dynamic> data = response.data['data'] ?? response.data;
+      return data.map((json) => CommonTrack.fromJson(json)).toList();
+    } on DioException catch (e) {
+      throw ServerException(
+          message: e.message ?? 'Failed to get popular tracks');
+    }
+  }
+
+  @override
+  Future<List<CommonArtist>> getPopularArtists() async {
+    try {
+      final response = await _dioClient.get('/artists/popular');
+      final List<dynamic> data = response.data['data'] ?? response.data;
+      return data.map((json) => CommonArtist.fromJson(json)).toList();
+    } on DioException catch (e) {
+      throw ServerException(
+          message: e.message ?? 'Failed to get popular artists');
+    }
+  }
+
+  @override
+  Future<List<CommonAlbum>> getPopularAlbums() async {
+    try {
+      final response = await _dioClient.get('/albums/popular');
+      final List<dynamic> data = response.data['data'] ?? response.data;
+      return data.map((json) => CommonAlbum.fromJson(json)).toList();
+    } on DioException catch (e) {
+      throw ServerException(
+          message: e.message ?? 'Failed to get popular albums');
+    }
+  }
+
+  @override
+  Future<List<CommonAnime>> getPopularAnime() async {
+    try {
+      final response = await _dioClient.get('/anime/popular');
+      final List<dynamic> data = response.data['data'] ?? response.data;
+      return data.map((json) => CommonAnime.fromJson(json)).toList();
+    } on DioException catch (e) {
+      throw ServerException(
+          message: e.message ?? 'Failed to get popular anime');
+    }
+  }
+
+  @override
+  Future<List<CommonManga>> getPopularManga() async {
+    try {
+      final response = await _dioClient.get('/manga/popular');
+      final List<dynamic> data = response.data['data'] ?? response.data;
+      return data.map((json) => CommonManga.fromJson(json)).toList();
+    } on DioException catch (e) {
+      throw ServerException(
+          message: e.message ?? 'Failed to get popular manga');
+    }
+  }
+
+  @override
+  Future<void> toggleTrackLike(String trackId) async {
+    try {
+      await _dioClient.post('/tracks/$trackId/toggle-like');
+    } on DioException catch (e) {
+      throw ServerException(
+          message: e.message ?? 'Failed to toggle track like');
+    }
+  }
+
+  @override
+  Future<void> toggleArtistLike(String artistId) async {
+    try {
+      await _dioClient.post('/artists/$artistId/toggle-like');
+    } on DioException catch (e) {
+      throw ServerException(
+          message: e.message ?? 'Failed to toggle artist like');
+    }
+  }
+
+  @override
+  Future<void> toggleAlbumLike(String albumId) async {
+    try {
+      await _dioClient.post('/albums/$albumId/toggle-like');
+    } on DioException catch (e) {
+      throw ServerException(
+          message: e.message ?? 'Failed to toggle album like');
+    }
+  }
+
+  @override
+  Future<void> toggleGenreLike(String genreId) async {
+    try {
+      await _dioClient.post('/genres/$genreId/toggle-like');
+    } on DioException catch (e) {
+      throw ServerException(
+          message: e.message ?? 'Failed to toggle genre like');
+    }
+  }
+
+  @override
+  Future<void> toggleAnimeLike(String animeId) async {
+    try {
+      await _dioClient.post('/anime/$animeId/toggle-like');
+    } on DioException catch (e) {
+      throw ServerException(
+          message: e.message ?? 'Failed to toggle anime like');
+    }
+  }
+
+  @override
+  Future<void> toggleMangaLike(String mangaId) async {
+    try {
+      await _dioClient.post('/manga/$mangaId/toggle-like');
+    } on DioException catch (e) {
+      throw ServerException(
+          message: e.message ?? 'Failed to toggle manga like');
+    }
+  }
+
+  @override
+  Future<void> updateLikes() async {
+    try {
+      await _dioClient.post('/likes/update');
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to update likes');
     }
   }
 }

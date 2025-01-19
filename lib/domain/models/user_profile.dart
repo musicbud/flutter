@@ -7,15 +7,12 @@ class UserProfile extends Equatable {
   final String? email;
   final String? avatarUrl;
   final String? bio;
+  final String? displayName;
   final String? location;
-  final int? followersCount;
-  final int? followingCount;
-  final bool isFollowing;
-  final List<String> interests;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final bool isOnline;
-  final Map<String, bool> connectedServices;
+  final int followersCount;
+  final int followingCount;
+  final bool isActive;
+  final bool? isAuthenticated;
 
   const UserProfile({
     required this.id,
@@ -23,15 +20,12 @@ class UserProfile extends Equatable {
     this.email,
     this.avatarUrl,
     this.bio,
+    this.displayName,
     this.location,
-    this.followersCount,
-    this.followingCount,
-    this.isFollowing = false,
-    this.interests = const [],
-    required this.createdAt,
-    required this.updatedAt,
-    this.isOnline = false,
-    this.connectedServices = const {},
+    this.followersCount = 0,
+    this.followingCount = 0,
+    required this.isActive,
+    this.isAuthenticated,
   });
 
   /// Creates a [UserProfile] from a JSON map
@@ -42,19 +36,12 @@ class UserProfile extends Equatable {
       email: json['email'] as String?,
       avatarUrl: json['avatar_url'] as String?,
       bio: json['bio'] as String?,
+      displayName: json['display_name'] as String?,
       location: json['location'] as String?,
-      followersCount: json['followers_count'] as int?,
-      followingCount: json['following_count'] as int?,
-      isFollowing: json['is_following'] as bool? ?? false,
-      interests: (json['interests'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          [],
-      createdAt: DateTime.parse(json['created_at'] as String),
-      updatedAt: DateTime.parse(json['updated_at'] as String),
-      isOnline: json['is_online'] as bool? ?? false,
-      connectedServices:
-          Map<String, bool>.from(json['connected_services'] as Map? ?? {}),
+      followersCount: json['followers_count'] as int? ?? 0,
+      followingCount: json['following_count'] as int? ?? 0,
+      isActive: json['is_active'] as bool? ?? false,
+      isAuthenticated: json['is_authenticated'] as bool?,
     );
   }
 
@@ -66,15 +53,12 @@ class UserProfile extends Equatable {
       'email': email,
       'avatar_url': avatarUrl,
       'bio': bio,
+      'display_name': displayName,
       'location': location,
       'followers_count': followersCount,
       'following_count': followingCount,
-      'is_following': isFollowing,
-      'interests': interests,
-      'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt.toIso8601String(),
-      'is_online': isOnline,
-      'connected_services': connectedServices,
+      'is_active': isActive,
+      'is_authenticated': isAuthenticated,
     };
   }
 
@@ -85,15 +69,12 @@ class UserProfile extends Equatable {
     String? email,
     String? avatarUrl,
     String? bio,
+    String? displayName,
     String? location,
     int? followersCount,
     int? followingCount,
-    bool? isFollowing,
-    List<String>? interests,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    bool? isOnline,
-    Map<String, bool>? connectedServices,
+    bool? isActive,
+    bool? isAuthenticated,
   }) {
     return UserProfile(
       id: id ?? this.id,
@@ -101,15 +82,12 @@ class UserProfile extends Equatable {
       email: email ?? this.email,
       avatarUrl: avatarUrl ?? this.avatarUrl,
       bio: bio ?? this.bio,
+      displayName: displayName ?? this.displayName,
       location: location ?? this.location,
       followersCount: followersCount ?? this.followersCount,
       followingCount: followingCount ?? this.followingCount,
-      isFollowing: isFollowing ?? this.isFollowing,
-      interests: interests ?? this.interests,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      isOnline: isOnline ?? this.isOnline,
-      connectedServices: connectedServices ?? this.connectedServices,
+      isActive: isActive ?? this.isActive,
+      isAuthenticated: isAuthenticated ?? this.isAuthenticated,
     );
   }
 
@@ -120,14 +98,11 @@ class UserProfile extends Equatable {
         email,
         avatarUrl,
         bio,
+        displayName,
         location,
         followersCount,
         followingCount,
-        isFollowing,
-        interests,
-        createdAt,
-        updatedAt,
-        isOnline,
-        connectedServices,
+        isActive,
+        isAuthenticated,
       ];
 }

@@ -7,38 +7,40 @@ abstract class ContentEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class ContentRequested extends ContentEvent {}
+class LoadTopContent extends ContentEvent {}
 
-class ContentRefreshRequested extends ContentEvent {}
+class LoadLikedContent extends ContentEvent {}
 
-class ContentLikeRequested extends ContentEvent {
-  final String id;
+class LoadPlayedTracks extends ContentEvent {}
+
+class LikeItem extends ContentEvent {
   final String type;
+  final String id;
 
-  const ContentLikeRequested({required this.id, required this.type});
+  const LikeItem({required this.type, required this.id});
 
   @override
-  List<Object> get props => [id, type];
+  List<Object?> get props => [type, id];
 }
 
-class ContentUnlikeRequested extends ContentEvent {
-  final String id;
+class UnlikeItem extends ContentEvent {
   final String type;
+  final String id;
 
-  const ContentUnlikeRequested({required this.id, required this.type});
+  const UnlikeItem({required this.type, required this.id});
 
   @override
-  List<Object> get props => [id, type];
+  List<Object?> get props => [type, id];
 }
 
-class ContentSearchRequested extends ContentEvent {
+class SearchContent extends ContentEvent {
   final String query;
   final String type;
 
-  const ContentSearchRequested({required this.query, required this.type});
+  const SearchContent({required this.query, required this.type});
 
   @override
-  List<Object> get props => [query, type];
+  List<Object?> get props => [query, type];
 }
 
 class ContentPlayRequested extends ContentEvent {

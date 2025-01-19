@@ -34,8 +34,7 @@ class AnimeMangaBloc extends Bloc<AnimeMangaEvent, AnimeMangaState> {
   ) async {
     try {
       emit(AnimeMangaLoading());
-      final anime =
-          await _contentRepository.getPopularAnime(limit: event.limit);
+      final anime = await _contentRepository.getPopularAnime();
       emit(PopularAnimeLoaded(anime));
     } catch (error) {
       emit(AnimeMangaFailure(error.toString()));
@@ -48,8 +47,7 @@ class AnimeMangaBloc extends Bloc<AnimeMangaEvent, AnimeMangaState> {
   ) async {
     try {
       emit(AnimeMangaLoading());
-      final manga =
-          await _contentRepository.getPopularManga(limit: event.limit);
+      final manga = await _contentRepository.getPopularManga();
       emit(PopularMangaLoaded(manga));
     } catch (error) {
       emit(AnimeMangaFailure(error.toString()));

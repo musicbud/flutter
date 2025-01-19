@@ -1,5 +1,4 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:equatable/equatable.dart';
 import '../../domain/repositories/user_repository.dart';
 import '../../domain/models/user_profile.dart';
 import '../../models/track.dart';
@@ -8,141 +7,9 @@ import '../../models/album.dart';
 import '../../models/genre.dart';
 import '../../models/anime.dart';
 import '../../models/manga.dart';
+import 'user_event.dart';
+import 'user_state.dart';
 
-// Events
-abstract class UserEvent extends Equatable {
-  const UserEvent();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class LoadMyProfile extends UserEvent {}
-
-class LoadBudProfile extends UserEvent {
-  final String username;
-
-  const LoadBudProfile(this.username);
-
-  @override
-  List<Object?> get props => [username];
-}
-
-class UpdateMyProfile extends UserEvent {
-  final UserProfile profile;
-
-  const UpdateMyProfile(this.profile);
-
-  @override
-  List<Object?> get props => [profile];
-}
-
-class LoadLikedItems extends UserEvent {}
-
-class LoadTopItems extends UserEvent {}
-
-class SaveLocation extends UserEvent {
-  final double latitude;
-  final double longitude;
-
-  const SaveLocation({
-    required this.latitude,
-    required this.longitude,
-  });
-
-  @override
-  List<Object?> get props => [latitude, longitude];
-}
-
-class LoadPlayedTracks extends UserEvent {}
-
-// States
-abstract class UserState extends Equatable {
-  const UserState();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class UserInitial extends UserState {}
-
-class UserLoading extends UserState {}
-
-class ProfileLoaded extends UserState {
-  final UserProfile profile;
-
-  const ProfileLoaded(this.profile);
-
-  @override
-  List<Object?> get props => [profile];
-}
-
-class LikedItemsLoaded extends UserState {
-  final List<Artist> likedArtists;
-  final List<Track> likedTracks;
-  final List<Album> likedAlbums;
-  final List<Genre> likedGenres;
-
-  const LikedItemsLoaded({
-    required this.likedArtists,
-    required this.likedTracks,
-    required this.likedAlbums,
-    required this.likedGenres,
-  });
-
-  @override
-  List<Object?> get props => [
-        likedArtists,
-        likedTracks,
-        likedAlbums,
-        likedGenres,
-      ];
-}
-
-class TopItemsLoaded extends UserState {
-  final List<Artist> topArtists;
-  final List<Track> topTracks;
-  final List<Genre> topGenres;
-  final List<Anime> topAnime;
-  final List<Manga> topManga;
-
-  const TopItemsLoaded({
-    required this.topArtists,
-    required this.topTracks,
-    required this.topGenres,
-    required this.topAnime,
-    required this.topManga,
-  });
-
-  @override
-  List<Object?> get props => [
-        topArtists,
-        topTracks,
-        topGenres,
-        topAnime,
-        topManga,
-      ];
-}
-
-class PlayedTracksLoaded extends UserState {
-  final List<Track> playedTracks;
-
-  const PlayedTracksLoaded(this.playedTracks);
-
-  @override
-  List<Object?> get props => [playedTracks];
-}
-
-class UserError extends UserState {
-  final String message;
-
-  const UserError(this.message);
-
-  @override
-  List<Object?> get props => [message];
-}
-
-// Bloc
 class UserBloc extends Bloc<UserEvent, UserState> {
   final UserRepository _userRepository;
 
@@ -165,9 +32,13 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     try {
       emit(UserLoading());
       final profile = await _userRepository.getMyProfile();
-      emit(ProfileLoaded(profile));
-    } catch (e) {
-      emit(UserError(e.toString()));
+      if (profile != null) {
+        emit(ProfileLoaded(profile));
+      } else {
+        emit(const UserError('Failed to load profile'));
+      }
+    } catch (error) {
+      emit(UserError(error.toString()));
     }
   }
 
@@ -178,7 +49,11 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     try {
       emit(UserLoading());
       final profile = await _userRepository.getBudProfile(event.username);
-      emit(ProfileLoaded(profile));
+      if (profile != null) {
+        emit(ProfileLoaded(profile));
+      } else {
+        emit(const UserError('Failed to load bud profile'));
+      }
     } catch (e) {
       emit(UserError(e.toString()));
     }

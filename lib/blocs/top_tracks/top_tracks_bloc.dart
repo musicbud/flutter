@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/content_repository.dart';
+import '../../domain/models/common_track.dart';
 import 'top_tracks_event.dart';
 import 'top_tracks_state.dart';
 
@@ -113,13 +114,15 @@ class TopTracksBloc extends Bloc<TopTracksEvent, TopTracksState> {
     Emitter<TopTracksState> emit,
   ) async {
     try {
-      await _contentRepository.playTrack(event.trackId,
-          deviceId: event.deviceId);
-      emit(TopTrackPlaybackStarted());
+      if (event.deviceId != null) {
+        await _contentRepository.playTrack(event.trackId, event.deviceId!);
+        emit(TopTrackPlaybackStarted());
 
-      // Revert back to the previous state after emitting playback started
-      if (state is TopTracksLoaded) {
-        emit(state);
+        if (state is TopTracksLoaded) {
+          emit(state);
+        }
+      } else {
+        emit(TopTracksFailure('No device ID provided'));
       }
     } catch (e) {
       emit(TopTracksFailure(e.toString()));

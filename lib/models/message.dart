@@ -1,6 +1,6 @@
 class Message {
   final int id;
-  final int channelId;
+  final String channelId;
   final String content;
   final String senderUsername;
   final String? senderDisplayName;
@@ -24,7 +24,7 @@ class Message {
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
       id: json['id'] as int,
-      channelId: json['channel_id'] as int,
+      channelId: json['channel_id'] as String,
       content: json['content'] as String,
       senderUsername: json['sender_username'] as String,
       senderDisplayName: json['sender_display_name'] as String?,

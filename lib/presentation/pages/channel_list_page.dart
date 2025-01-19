@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:musicbud_flutter/blocs/chat/chat_bloc.dart';
 import 'package:musicbud_flutter/blocs/chat/chat_event.dart';
 import 'package:musicbud_flutter/blocs/chat/chat_state.dart';
-import 'package:musicbud_flutter/models/channel.dart';
 import 'package:musicbud_flutter/presentation/pages/create_channel_page.dart';
 import 'package:musicbud_flutter/presentation/pages/channel_chat_page.dart';
 
@@ -30,8 +29,8 @@ class _ChannelListPageState extends State<ChannelListPage> {
     context.read<ChatBloc>().add(ChatChannelListRequested());
   }
 
-  void _joinChannel(int channelId) {
-    context.read<ChatBloc>().add(ChatChannelJoined(channelId.toString()));
+  void _joinChannel(String channelId) {
+    context.read<ChatBloc>().add(ChatChannelJoined(channelId));
   }
 
   void _showSnackBar(String message) {
@@ -47,8 +46,8 @@ class _ChannelListPageState extends State<ChannelListPage> {
         if (state is ChatChannelJoinedSuccess) {
           _showSnackBar('Successfully joined channel');
           _fetchChannels(); // Refresh the channel list
-        } else if (state is ChatFailure) {
-          _showSnackBar('Error: ${state.error}');
+        } else if (state is ChatError) {
+          _showSnackBar('Error: ${state.message}');
         }
       },
       builder: (context, state) {
@@ -112,8 +111,8 @@ class _ChannelListPageState extends State<ChannelListPage> {
       );
     }
 
-    if (state is ChatFailure) {
-      return Center(child: Text('Error: ${state.error}'));
+    if (state is ChatError) {
+      return Center(child: Text('Error: ${state.message}'));
     }
 
     return const Center(child: Text('No channels available'));

@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import '../../../domain/models/common_track.dart';
 import '../../../domain/models/common_artist.dart';
 import '../../../domain/models/common_album.dart';
+import '../../../domain/models/spotify_device.dart';
 
 abstract class MusicState extends Equatable {
   const MusicState();
@@ -141,7 +142,7 @@ class AlbumsSearchResultLoaded extends MusicState {
 
 // Playback operations
 class SpotifyDevicesLoaded extends MusicState {
-  final List<String> devices;
+  final List<SpotifyDevice> devices;
 
   const SpotifyDevicesLoaded(this.devices);
 

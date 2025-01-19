@@ -41,8 +41,8 @@ class _UserListPageState extends State<UserListPage> {
   Widget build(BuildContext context) {
     return BlocConsumer<ChatBloc, ChatState>(
       listener: (context, state) {
-        if (state is ChatFailure) {
-          _showSnackBar('Error: ${state.error}');
+        if (state is ChatError) {
+          _showSnackBar('Error: ${state.message}');
         }
       },
       builder: (context, state) {
@@ -86,6 +86,10 @@ class _UserListPageState extends State<UserListPage> {
               );
             },
           );
+        }
+
+        if (state is ChatError) {
+          return Center(child: Text('Error: ${state.message}'));
         }
 
         return const Center(child: Text('No users available'));

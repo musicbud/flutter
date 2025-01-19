@@ -89,7 +89,7 @@ class _TrackDetailsPageState extends State<TrackDetailsPage> {
               children: [
                 ListTile(
                   title: Text(widget.track.title),
-                  subtitle: Text(widget.track.artistName),
+                  subtitle: Text(widget.track.artistName ?? 'Unknown Artist'),
                 ),
                 if (widget.track.albumName != null)
                   ListTile(

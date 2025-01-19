@@ -48,32 +48,78 @@ abstract class ContentRemoteDataSource {
   /// Saves a track as played
   Future<void> savePlayedTrack(String trackId);
 
-  // Top items methods
+  /// Gets a list of liked tracks
+  Future<List<CommonTrack>> getLikedTracks();
+
+  /// Gets a list of liked artists
+  Future<List<CommonArtist>> getLikedArtists();
+
+  /// Gets a list of liked albums
+  Future<List<CommonAlbum>> getLikedAlbums();
+
+  /// Gets a list of liked genres
+  Future<List<CommonGenre>> getLikedGenres();
+
+  /// Likes a track
+  Future<void> likeTrack(String trackId);
+
+  /// Unlikes a track
+  Future<void> unlikeTrack(String trackId);
+
+  /// Likes an artist
+  Future<void> likeArtist(String artistId);
+
+  /// Unlikes an artist
+  Future<void> unlikeArtist(String artistId);
+
+  /// Likes an album
+  Future<void> likeAlbum(String albumId);
+
+  /// Unlikes an album
+  Future<void> unlikeAlbum(String albumId);
+
+  /// Likes a genre
+  Future<void> likeGenre(String genreId);
+
+  /// Unlikes a genre
+  Future<void> unlikeGenre(String genreId);
+
+  /// Likes an anime
+  Future<void> likeAnime(String animeId);
+
+  /// Unlikes an anime
+  Future<void> unlikeAnime(String animeId);
+
+  /// Likes a manga
+  Future<void> likeManga(String mangaId);
+
+  /// Unlikes a manga
+  Future<void> unlikeManga(String mangaId);
+
+  // Popular content methods
+  Future<List<CommonTrack>> getPopularTracks();
+  Future<List<CommonArtist>> getPopularArtists();
+  Future<List<CommonAlbum>> getPopularAlbums();
+  Future<List<CommonAnime>> getPopularAnime();
+  Future<List<CommonManga>> getPopularManga();
+
+  // Top content methods
   Future<List<CommonTrack>> getTopTracks();
   Future<List<CommonArtist>> getTopArtists();
   Future<List<CommonGenre>> getTopGenres();
   Future<List<CommonAnime>> getTopAnime();
   Future<List<CommonManga>> getTopManga();
 
-  // Liked items methods
-  Future<List<CommonTrack>> getLikedTracks();
-  Future<List<CommonArtist>> getLikedArtists();
-  Future<List<CommonAlbum>> getLikedAlbums();
-  Future<List<CommonGenre>> getLikedGenres();
-
   // Like/Unlike methods
-  Future<void> likeTrack(String trackId);
-  Future<void> unlikeTrack(String trackId);
-  Future<void> likeArtist(String artistId);
-  Future<void> unlikeArtist(String artistId);
-  Future<void> likeAlbum(String albumId);
-  Future<void> unlikeAlbum(String albumId);
-  Future<void> likeGenre(String genreId);
-  Future<void> unlikeGenre(String genreId);
-  Future<void> likeAnime(String animeId);
-  Future<void> unlikeAnime(String animeId);
-  Future<void> likeManga(String mangaId);
-  Future<void> unlikeManga(String mangaId);
+  Future<void> toggleTrackLike(String trackId);
+  Future<void> toggleArtistLike(String artistId);
+  Future<void> toggleAlbumLike(String albumId);
+  Future<void> toggleGenreLike(String genreId);
+  Future<void> toggleAnimeLike(String animeId);
+  Future<void> toggleMangaLike(String mangaId);
+
+  // Update methods
+  Future<void> updateLikes();
 
   // Search methods
   Future<List<CommonTrack>> searchTracks(String query);

@@ -5,7 +5,7 @@ import 'package:musicbud_flutter/blocs/chat/chat_event.dart';
 import 'package:musicbud_flutter/blocs/chat/chat_state.dart';
 
 class ChannelAdminPage extends StatefulWidget {
-  final int channelId;
+  final String channelId;
 
   const ChannelAdminPage({
     Key? key,
@@ -41,7 +41,7 @@ class _ChannelAdminPageState extends State<ChannelAdminPage> {
     );
   }
 
-  void _performAdminAction(String action, int userId) {
+  void _performAdminAction(String action, String userId) {
     context.read<ChatBloc>().add(ChatAdminActionPerformed(
           channelId: widget.channelId,
           action: action,
@@ -72,8 +72,8 @@ class _ChannelAdminPageState extends State<ChannelAdminPage> {
         } else if (state is ChatAdminActionSuccess) {
           _fetchData(); // Refresh data after successful action
           _showSnackBar('Action completed successfully');
-        } else if (state is ChatFailure) {
-          _showSnackBar('Error: ${state.error}');
+        } else if (state is ChatError) {
+          _showSnackBar('Error: ${state.message}');
         }
       },
       builder: (context, state) {
@@ -133,7 +133,8 @@ class _ChannelAdminPageState extends State<ChannelAdminPage> {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  if (dashboardData['members'] != null) ...[
+                  if (dashboardData is Map<String, dynamic> &&
+                      dashboardData['members'] != null) ...[
                     const Text(
                       'Members',
                       style: TextStyle(
@@ -147,7 +148,8 @@ class _ChannelAdminPageState extends State<ChannelAdminPage> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: (dashboardData['members'] as List).length,
                       itemBuilder: (context, index) {
-                        final member = dashboardData['members'][index];
+                        final member = (dashboardData['members'] as List)[index]
+                            as Map<String, dynamic>;
                         return Card(
                           child: ListTile(
                             title: Text(member['username'] ?? ''),
@@ -160,7 +162,7 @@ class _ChannelAdminPageState extends State<ChannelAdminPage> {
                                     icon:
                                         const Icon(Icons.admin_panel_settings),
                                     onPressed: () => _performAdminAction(
-                                        'make_admin', member['id']),
+                                        'make_admin', member['id'] as String),
                                     tooltip: 'Make Admin',
                                   ),
                                 ],
@@ -169,7 +171,8 @@ class _ChannelAdminPageState extends State<ChannelAdminPage> {
                                   IconButton(
                                     icon: const Icon(Icons.security),
                                     onPressed: () => _performAdminAction(
-                                        'add_moderator', member['id']),
+                                        'add_moderator',
+                                        member['id'] as String),
                                     tooltip: 'Make Moderator',
                                   ),
                                 ],
@@ -177,7 +180,7 @@ class _ChannelAdminPageState extends State<ChannelAdminPage> {
                                   IconButton(
                                     icon: const Icon(Icons.remove_circle),
                                     onPressed: () => _performAdminAction(
-                                        'remove_user', member['id']),
+                                        'remove_user', member['id'] as String),
                                     tooltip: 'Remove User',
                                   ),
                                 ],

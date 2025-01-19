@@ -5,7 +5,7 @@ import '../../blocs/chats/chats_bloc.dart';
 import '../../blocs/chats/chats_event.dart';
 import '../../blocs/chats/chats_state.dart';
 import '../widgets/loading_indicator.dart';
-import 'chat_screen.dart';
+import 'direct_message_screen.dart';
 
 class ChatsPage extends StatefulWidget {
   const ChatsPage({super.key});
@@ -79,9 +79,9 @@ class _ChatsPageState extends State<ChatsPage> {
                 child: Card(
                   shape: RoundedRectangleBorder(
                     side: BorderSide(
-                      color: chat.isRead
-                          ? Colors.transparent
-                          : Theme.of(context).primaryColor,
+                      color: chat.unreadCount > 0
+                          ? Theme.of(context).primaryColor
+                          : Colors.transparent,
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -96,21 +96,39 @@ class _ChatsPageState extends State<ChatsPage> {
                     ),
                     title: Text(chat.username),
                     subtitle: Text(
-                      chat.lastMessage,
+                      chat.lastMessage ?? 'No messages yet',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    trailing: Text(_formatTimestamp(chat.lastMessageTimestamp)),
+                    trailing: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        if (chat.lastMessageAt != null)
+                          Text(_formatTimestamp(chat.lastMessageAt!)),
+                        if (chat.unreadCount > 0)
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColor,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Text(
+                              chat.unreadCount.toString(),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                     onTap: () {
-                      if (!chat.isRead) {
-                        context
-                            .read<ChatsBloc>()
-                            .add(ChatRead(userId: chat.userId));
-                      }
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ChatScreen(userId: chat.userId),
+                          builder: (context) =>
+                              DirectMessageScreen(userId: chat.userId),
                         ),
                       );
                     },

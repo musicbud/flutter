@@ -9,9 +9,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class SpotifyConnectPage extends StatefulWidget {
-  const SpotifyConnectPage({
-    Key? key,
-  }) : super(key: key);
+  const SpotifyConnectPage({Key? key}) : super(key: key);
 
   @override
   _SpotifyConnectPageState createState() => _SpotifyConnectPageState();

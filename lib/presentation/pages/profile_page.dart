@@ -9,7 +9,6 @@ import '../../domain/models/common_anime.dart';
 import '../../domain/models/common_manga.dart';
 import '../../domain/models/content_service.dart';
 import '../../domain/models/user_profile.dart';
-import '../../domain/models/bud_match.dart';
 import '../../blocs/profile/profile_bloc.dart';
 import '../../blocs/profile/profile_event.dart';
 import '../../blocs/profile/profile_state.dart';
@@ -18,9 +17,9 @@ import '../widgets/track_list_item.dart';
 import '../widgets/artist_list_item.dart';
 import '../widgets/genre_list_item.dart';
 import '../widgets/album_list_item.dart';
-import '../widgets/bud_match_list_item.dart';
 import '../widgets/anime_list_item.dart';
 import '../widgets/manga_list_item.dart';
+import '../widgets/bud_match_list_item.dart';
 import '../widgets/loading_indicator.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -213,7 +212,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 16),
             Text(
-              profile.displayName ?? profile.username,
+              profile.username,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             if (profile.bio != null) ...[

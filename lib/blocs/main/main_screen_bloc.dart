@@ -5,14 +5,12 @@ import 'main_screen_event.dart';
 import 'main_screen_state.dart';
 
 class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
-  final AuthRepository _authRepository;
   final ProfileRepository _profileRepository;
 
   MainScreenBloc({
     required AuthRepository authRepository,
     required ProfileRepository profileRepository,
-  })  : _authRepository = authRepository,
-        _profileRepository = profileRepository,
+  })  : _profileRepository = profileRepository,
         super(MainScreenInitial()) {
     on<MainScreenInitialized>(_onMainScreenInitialized);
     on<MainScreenAuthStatusChecked>(_onMainScreenAuthStatusChecked);
@@ -23,7 +21,15 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     MainScreenInitialized event,
     Emitter<MainScreenState> emit,
   ) async {
-    await _checkAuthStatus(emit);
+    try {
+      final profile = await _profileRepository.getMyProfile();
+      emit(MainScreenAuthenticated(
+        username: profile.username,
+        userProfile: profile.toJson(),
+      ));
+    } catch (error) {
+      emit(MainScreenUnauthenticated());
+    }
   }
 
   Future<void> _onMainScreenAuthStatusChecked(
@@ -46,17 +52,12 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
 
       // Get user profile
       final userProfile = await _profileRepository.getMyProfile();
-
-      if (userProfile != null && userProfile.containsKey('username')) {
-        emit(MainScreenAuthenticated(
-          username: userProfile['username'] as String,
-          userProfile: userProfile,
-        ));
-      } else {
-        emit(MainScreenUnauthenticated());
-      }
+      emit(MainScreenAuthenticated(
+        username: userProfile.username,
+        userProfile: userProfile.toJson(),
+      ));
     } catch (error) {
-      emit(MainScreenFailure(error.toString()));
+      emit(MainScreenUnauthenticated());
     }
   }
 }

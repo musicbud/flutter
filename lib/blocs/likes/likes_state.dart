@@ -7,9 +7,13 @@ abstract class LikesState extends Equatable {
   List<Object?> get props => [];
 }
 
-class LikesInitial extends LikesState {}
+class LikesInitial extends LikesState {
+  const LikesInitial();
+}
 
-class LikesUpdating extends LikesState {}
+class LikesUpdating extends LikesState {
+  const LikesUpdating();
+}
 
 class LikesUpdateSuccess extends LikesState {
   final String message;

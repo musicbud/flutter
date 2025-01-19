@@ -31,7 +31,7 @@ class AlbumListItem extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
       ),
       subtitle: Text(
-        album.artistName,
+        album.artistName ?? 'Unknown Artist',
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),

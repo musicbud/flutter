@@ -1,8 +1,7 @@
 import '../models/chat.dart';
 import '../models/chat_message.dart';
-import '../models/channel.dart';
-import '../models/channel_user.dart';
 import '../models/message.dart';
+import '../models/channel.dart';
 import '../models/user_profile.dart';
 
 abstract class ChatRepository {
@@ -11,15 +10,17 @@ abstract class ChatRepository {
   Future<Chat> getChatByUserId(String userId);
   Future<List<ChatMessage>> getChatMessages(String chatId,
       {int? limit, String? before});
-  Future<ChatMessage> sendMessage(String chatId, String content);
+  Future<ChatMessage> sendDirectMessage(String chatId, String content);
   Future<void> markAsRead(String chatId);
+  Future<void> markChatAsRead(String chatId);
   Future<void> deleteChat(String chatId);
   Future<void> archiveChat(String chatId);
 
   // Channel operations
   Future<List<Channel>> getChannels();
   Future<Channel> getChannel(String channelId);
-  Future<Channel> createChannel(String name, String description);
+  Future<Channel> createChannel(String name, String description,
+      {bool isPrivate = false});
   Future<void> updateChannel(String channelId, String name, String description);
   Future<void> deleteChannel(String channelId);
   Future<List<Message>> getChannelMessages(String channelId,
@@ -57,4 +58,16 @@ abstract class ChatRepository {
   Future<List<Message>> getUserMessages(String userId,
       {int? limit, String? before});
   Future<Message> sendUserMessage(String userId, String content);
+
+  Future<void> sendMessage({
+    required String channelId,
+    required String message,
+    required String userId,
+  });
+
+  Future<List<dynamic>> getMessages({
+    required String channelId,
+    int? limit,
+    String? beforeId,
+  });
 }

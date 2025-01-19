@@ -6,7 +6,7 @@ import 'package:musicbud_flutter/blocs/chat/chat_state.dart';
 import 'package:musicbud_flutter/presentation/pages/channel_admin_page.dart';
 
 class ChannelChatPage extends StatefulWidget {
-  final int channelId;
+  final String channelId;
   final String channelName;
   final String currentUsername;
 
@@ -46,7 +46,6 @@ class _ChannelChatPageState extends State<ChannelChatPage> {
     if (_messageController.text.isNotEmpty) {
       context.read<ChatBloc>().add(ChatMessageSent(
             channelId: widget.channelId,
-            senderUsername: widget.currentUsername,
             content: _messageController.text,
           ));
       _messageController.clear();
@@ -81,8 +80,8 @@ class _ChannelChatPageState extends State<ChannelChatPage> {
             _isAdminOrModerator = state.roles['is_admin'] == true ||
                 state.roles['is_moderator'] == true;
           });
-        } else if (state is ChatFailure) {
-          _showSnackBar('Error: ${state.error}');
+        } else if (state is ChatError) {
+          _showSnackBar('Error: ${state.message}');
         }
       },
       builder: (context, state) {
@@ -142,8 +141,8 @@ class _ChannelChatPageState extends State<ChannelChatPage> {
       );
     }
 
-    if (state is ChatFailure) {
-      return Center(child: Text('Error: ${state.error}'));
+    if (state is ChatError) {
+      return Center(child: Text('Error: ${state.message}'));
     }
 
     return const Center(child: Text('No messages available'));

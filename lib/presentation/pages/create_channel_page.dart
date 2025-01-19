@@ -27,11 +27,11 @@ class _CreateChannelPageState extends State<CreateChannelPage> {
 
   void _createChannel() {
     if (_formKey.currentState!.validate()) {
-      context.read<ChatBloc>().add(ChatChannelCreated({
-            'name': _nameController.text,
-            'description': _descriptionController.text,
-            'is_private': _isPrivate,
-          }));
+      context.read<ChatBloc>().add(ChatChannelCreated(
+            name: _nameController.text,
+            description: _descriptionController.text,
+            isPrivate: _isPrivate,
+          ));
     }
   }
 
@@ -41,8 +41,8 @@ class _CreateChannelPageState extends State<CreateChannelPage> {
       listener: (context, state) {
         if (state is ChatChannelCreatedSuccess) {
           Navigator.pop(context, true);
-        } else if (state is ChatFailure) {
-          _showSnackBar('Error: ${state.error}');
+        } else if (state is ChatError) {
+          _showSnackBar('Error: ${state.message}');
         }
       },
       child: Scaffold(

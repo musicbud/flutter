@@ -77,8 +77,8 @@ class TopArtistsPage extends StatelessWidget {
                               child: const Icon(Icons.person),
                             ),
                       title: Text(artist.name),
-                      subtitle: artist.genres.isNotEmpty
-                          ? Text(artist.genres.join(', '))
+                      subtitle: artist.genres?.isNotEmpty == true
+                          ? Text(artist.genres!.join(', '))
                           : null,
                       trailing: Icon(
                         artist.isLiked ? Icons.favorite : Icons.favorite_border,

@@ -18,8 +18,7 @@ class BudMatchListItem extends StatelessWidget {
               child: Icon(Icons.person),
             ),
       title: Text(budMatch.username),
-      subtitle:
-          Text('Similarity: ${budMatch.similarityScore.toStringAsFixed(2)}'),
+      subtitle: Text('Match Score: ${budMatch.matchScore.toStringAsFixed(2)}'),
       onTap: () {
         if (budMatch.id.isNotEmpty) {
           Navigator.push(
