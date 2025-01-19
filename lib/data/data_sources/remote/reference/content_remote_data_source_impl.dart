@@ -23,7 +23,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonTrack>> getPlayedTracks() async {
     try {
-      final response = await _dioClient.get('/tracks/played');
+      final response = await _dioClient.post('/tracks/played');
       final List<dynamic> data = response.data as List<dynamic>;
       return data
           .map((json) => CommonTrack.fromJson(json as Map<String, dynamic>))
@@ -37,7 +37,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<SpotifyDevice>> getSpotifyDevices() async {
     try {
-      final response = await _dioClient.get('/spotify/devices');
+      final response = await _dioClient.post('/spotify/devices');
       final List<dynamic> data = response.data as List<dynamic>;
       return data
           .map((json) => SpotifyDevice.fromJson(json as Map<String, dynamic>))
@@ -135,7 +135,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonTrack>> getTopTracks() async {
     try {
-      final response = await _dioClient.get('/tracks/top');
+      final response = await _dioClient.post('/tracks/top');
       final List<dynamic> data = response.data as List<dynamic>;
       return data
           .map((json) => CommonTrack.fromJson(json as Map<String, dynamic>))
@@ -148,7 +148,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonArtist>> getTopArtists() async {
     try {
-      final response = await _dioClient.get('/artists/top');
+      final response = await _dioClient.post('/artists/top');
       final List<dynamic> data = response.data as List<dynamic>;
       return data
           .map((json) => CommonArtist.fromJson(json as Map<String, dynamic>))
@@ -161,7 +161,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonGenre>> getTopGenres() async {
     try {
-      final response = await _dioClient.get('/genres/top');
+      final response = await _dioClient.post('/genres/top');
       final List<dynamic> data = response.data as List<dynamic>;
       return data
           .map((json) => CommonGenre.fromJson(json as Map<String, dynamic>))
@@ -174,7 +174,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonAnime>> getTopAnime() async {
     try {
-      final response = await _dioClient.get('/anime/top');
+      final response = await _dioClient.post('/anime/top');
       final List<dynamic> data = response.data as List<dynamic>;
       return data
           .map((json) => CommonAnime.fromJson(json as Map<String, dynamic>))
@@ -187,7 +187,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonManga>> getTopManga() async {
     try {
-      final response = await _dioClient.get('/manga/top');
+      final response = await _dioClient.post('/manga/top');
       final List<dynamic> data = response.data as List<dynamic>;
       return data
           .map((json) => CommonManga.fromJson(json as Map<String, dynamic>))
@@ -200,7 +200,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonTrack>> getLikedTracks() async {
     try {
-      final response = await _dioClient.get('/tracks/liked');
+      final response = await _dioClient.post('/tracks/liked');
       final List<dynamic> data = response.data as List<dynamic>;
       return data
           .map((json) => CommonTrack.fromJson(json as Map<String, dynamic>))
@@ -213,7 +213,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonArtist>> getLikedArtists() async {
     try {
-      final response = await _dioClient.get('/artists/liked');
+      final response = await _dioClient.post('/artists/liked');
       final List<dynamic> data = response.data as List<dynamic>;
       return data
           .map((json) => CommonArtist.fromJson(json as Map<String, dynamic>))
@@ -226,7 +226,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonAlbum>> getLikedAlbums() async {
     try {
-      final response = await _dioClient.get('/albums/liked');
+      final response = await _dioClient.post('/albums/liked');
       final List<dynamic> data = response.data as List<dynamic>;
       return data
           .map((json) => CommonAlbum.fromJson(json as Map<String, dynamic>))
@@ -239,7 +239,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonGenre>> getLikedGenres() async {
     try {
-      final response = await _dioClient.get('/genres/liked');
+      final response = await _dioClient.post('/genres/liked');
       final List<dynamic> data = response.data as List<dynamic>;
       return data
           .map((json) => CommonGenre.fromJson(json as Map<String, dynamic>))
@@ -360,8 +360,10 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonTrack>> searchTracks(String query) async {
     try {
-      final response =
-          await _dioClient.get('/tracks/search', queryParameters: {'q': query});
+      final response = await _dioClient.post(
+        '/tracks/search',
+        data: {'q': query},
+      );
       final List<dynamic> data = response.data as List<dynamic>;
       return data
           .map((json) => CommonTrack.fromJson(json as Map<String, dynamic>))
@@ -374,8 +376,10 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonArtist>> searchArtists(String query) async {
     try {
-      final response = await _dioClient
-          .get('/artists/search', queryParameters: {'q': query});
+      final response = await _dioClient.post(
+        '/artists/search',
+        data: {'q': query},
+      );
       final List<dynamic> data = response.data as List<dynamic>;
       return data
           .map((json) => CommonArtist.fromJson(json as Map<String, dynamic>))
@@ -388,8 +392,10 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonAlbum>> searchAlbums(String query) async {
     try {
-      final response =
-          await _dioClient.get('/albums/search', queryParameters: {'q': query});
+      final response = await _dioClient.post(
+        '/albums/search',
+        data: {'q': query},
+      );
       final List<dynamic> data = response.data as List<dynamic>;
       return data
           .map((json) => CommonAlbum.fromJson(json as Map<String, dynamic>))
@@ -402,8 +408,10 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonGenre>> searchGenres(String query) async {
     try {
-      final response =
-          await _dioClient.get('/genres/search', queryParameters: {'q': query});
+      final response = await _dioClient.post(
+        '/genres/search',
+        data: {'q': query},
+      );
       final List<dynamic> data = response.data as List<dynamic>;
       return data
           .map((json) => CommonGenre.fromJson(json as Map<String, dynamic>))
@@ -416,8 +424,10 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonAnime>> searchAnime(String query) async {
     try {
-      final response =
-          await _dioClient.get('/anime/search', queryParameters: {'q': query});
+      final response = await _dioClient.post(
+        '/anime/search',
+        data: {'q': query},
+      );
       final List<dynamic> data = response.data as List<dynamic>;
       return data
           .map((json) => CommonAnime.fromJson(json as Map<String, dynamic>))
@@ -430,8 +440,10 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonManga>> searchManga(String query) async {
     try {
-      final response =
-          await _dioClient.get('/manga/search', queryParameters: {'q': query});
+      final response = await _dioClient.post(
+        '/manga/search',
+        data: {'q': query},
+      );
       final List<dynamic> data = response.data as List<dynamic>;
       return data
           .map((json) => CommonManga.fromJson(json as Map<String, dynamic>))
@@ -444,7 +456,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<CommonTrack> getTrackDetails(String trackId) async {
     try {
-      final response = await _dioClient.get('/tracks/$trackId');
+      final response = await _dioClient.post('/tracks/$trackId');
       return CommonTrack.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {
       throw Exception('Failed to get track details: $e');
@@ -454,7 +466,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<CommonArtist> getArtistDetails(String artistId) async {
     try {
-      final response = await _dioClient.get('/artists/$artistId');
+      final response = await _dioClient.post('/artists/$artistId');
       return CommonArtist.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {
       throw Exception('Failed to get artist details: $e');
@@ -464,7 +476,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<CommonAlbum> getAlbumDetails(String albumId) async {
     try {
-      final response = await _dioClient.get('/albums/$albumId');
+      final response = await _dioClient.post('/albums/$albumId');
       return CommonAlbum.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {
       throw Exception('Failed to get album details: $e');
@@ -474,7 +486,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<CommonGenre> getGenreDetails(String genreId) async {
     try {
-      final response = await _dioClient.get('/genres/$genreId');
+      final response = await _dioClient.post('/genres/$genreId');
       return CommonGenre.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {
       throw Exception('Failed to get genre details: $e');
@@ -484,7 +496,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<CommonAnime> getAnimeDetails(String animeId) async {
     try {
-      final response = await _dioClient.get('/anime/$animeId');
+      final response = await _dioClient.post('/anime/$animeId');
       return CommonAnime.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {
       throw Exception('Failed to get anime details: $e');
@@ -494,7 +506,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<CommonManga> getMangaDetails(String mangaId) async {
     try {
-      final response = await _dioClient.get('/manga/$mangaId');
+      final response = await _dioClient.post('/manga/$mangaId');
       return CommonManga.fromJson(response.data as Map<String, dynamic>);
     } catch (e) {
       throw Exception('Failed to get manga details: $e');
@@ -504,7 +516,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonTrack>> getPopularTracks() async {
     try {
-      final response = await _dioClient.get('/tracks/popular');
+      final response = await _dioClient.post('/tracks/popular');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonTrack.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -516,7 +528,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonArtist>> getPopularArtists() async {
     try {
-      final response = await _dioClient.get('/artists/popular');
+      final response = await _dioClient.post('/artists/popular');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonArtist.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -528,7 +540,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonAlbum>> getPopularAlbums() async {
     try {
-      final response = await _dioClient.get('/albums/popular');
+      final response = await _dioClient.post('/albums/popular');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonAlbum.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -540,7 +552,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonAnime>> getPopularAnime() async {
     try {
-      final response = await _dioClient.get('/anime/popular');
+      final response = await _dioClient.post('/anime/popular');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonAnime.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -552,7 +564,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<CommonManga>> getPopularManga() async {
     try {
-      final response = await _dioClient.get('/manga/popular');
+      final response = await _dioClient.post('/manga/popular');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonManga.fromJson(json)).toList();
     } on DioException catch (e) {

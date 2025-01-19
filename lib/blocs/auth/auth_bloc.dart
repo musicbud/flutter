@@ -40,14 +40,7 @@ class RegisterRequested extends AuthEvent {
 
 class LogoutRequested extends AuthEvent {}
 
-class TokenRefreshRequested extends AuthEvent {
-  final String refreshToken;
-
-  const TokenRefreshRequested(this.refreshToken);
-
-  @override
-  List<Object?> get props => [refreshToken];
-}
+class TokenRefreshRequested extends AuthEvent {}
 
 class ConnectService extends AuthEvent {
   final String service;
@@ -182,7 +175,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await _authRepository.logout();
       emit(Unauthenticated());
     } catch (e) {
-      emit(AuthError(e.toString()));
+      // Even if logout fails, we should still clear the local state
+      emit(Unauthenticated());
     }
   }
 
@@ -195,7 +189,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final token = await _authRepository.refreshToken();
       emit(Authenticated(token: token));
     } catch (e) {
-      emit(AuthError(e.toString()));
+      // If token refresh fails, user needs to login again
+      emit(Unauthenticated());
     }
   }
 

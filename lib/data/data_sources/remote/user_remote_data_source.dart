@@ -64,8 +64,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<UserProfile> getMyProfile() async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/users/me'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/users/me'),
       headers: _headers,
     );
 
@@ -78,8 +78,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<UserProfile> getBudProfile(String username) async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/users/$username'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/users/$username'),
       headers: _headers,
     );
 
@@ -93,7 +93,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> updateMyProfile(UserProfile profile) async {
     final response = await _client.put(
-      Uri.parse('$_baseUrl/api/users/me'),
+      Uri.parse('$_baseUrl/users/me'),
       headers: _headers,
       body: jsonEncode(profile.toJson()),
     );
@@ -106,7 +106,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> updateMyLikes() async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/api/users/me/likes/update'),
+      Uri.parse('$_baseUrl/users/me/likes/update'),
       headers: _headers,
     );
 
@@ -117,8 +117,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getCurrentlyPlayedTracks() async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/users/me/played/tracks/current'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/users/me/played/tracks/current'),
       headers: _headers,
     );
 
@@ -132,8 +132,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Artist>> getLikedArtists() async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/users/me/liked/artists'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/users/me/liked/artists'),
       headers: _headers,
     );
 
@@ -147,8 +147,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getLikedTracks() async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/users/me/liked/tracks'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/users/me/liked/tracks'),
       headers: _headers,
     );
 
@@ -162,8 +162,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Album>> getLikedAlbums() async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/users/me/liked/albums'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/users/me/liked/albums'),
       headers: _headers,
     );
 
@@ -177,8 +177,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Genre>> getLikedGenres() async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/users/me/liked/genres'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/users/me/liked/genres'),
       headers: _headers,
     );
 
@@ -192,8 +192,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Artist>> getTopArtists() async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/users/me/top/artists'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/users/me/top/artists'),
       headers: _headers,
     );
 
@@ -207,8 +207,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getTopTracks() async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/users/me/top/tracks'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/users/me/top/tracks'),
       headers: _headers,
     );
 
@@ -222,8 +222,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Genre>> getTopGenres() async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/users/me/top/genres'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/users/me/top/genres'),
       headers: _headers,
     );
 
@@ -237,8 +237,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Anime>> getTopAnime() async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/users/me/top/anime'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/users/me/top/anime'),
       headers: _headers,
     );
 
@@ -252,8 +252,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Manga>> getTopManga() async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/users/me/top/manga'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/users/me/top/manga'),
       headers: _headers,
     );
 
@@ -268,7 +268,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> saveLocation(double latitude, double longitude) async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/api/users/me/location'),
+      Uri.parse('$_baseUrl/users/me/location'),
       headers: _headers,
       body: jsonEncode({
         'latitude': latitude,
@@ -283,8 +283,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getPlayedTracks() async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/users/me/played/tracks'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/users/me/played/tracks'),
       headers: _headers,
     );
 
@@ -298,8 +298,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getPlayedTracksWithLocation() async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/users/me/played/tracks/with-location'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/users/me/played/tracks/with-location'),
       headers: _headers,
     );
 
@@ -313,8 +313,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<String> getSpotifyAuthUrl() async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/services/spotify/auth-url'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/services/spotify/auth-url'),
       headers: _headers,
     );
 
@@ -329,7 +329,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> connectSpotify(String code) async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/api/services/spotify/connect'),
+      Uri.parse('$_baseUrl/services/spotify/connect'),
       headers: _headers,
       body: jsonEncode({'code': code}),
     );
@@ -342,7 +342,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> disconnectSpotify() async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/api/services/spotify/disconnect'),
+      Uri.parse('$_baseUrl/services/spotify/disconnect'),
       headers: _headers,
     );
 
@@ -353,8 +353,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<String> getYTMusicAuthUrl() async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/services/ytmusic/auth-url'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/services/ytmusic/auth-url'),
       headers: _headers,
     );
 
@@ -369,7 +369,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> connectYTMusic(String code) async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/api/services/ytmusic/connect'),
+      Uri.parse('$_baseUrl/services/ytmusic/connect'),
       headers: _headers,
       body: jsonEncode({'code': code}),
     );
@@ -382,7 +382,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> disconnectYTMusic() async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/api/services/ytmusic/disconnect'),
+      Uri.parse('$_baseUrl/services/ytmusic/disconnect'),
       headers: _headers,
     );
 
@@ -393,8 +393,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<String> getMALAuthUrl() async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/services/mal/auth-url'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/services/mal/auth-url'),
       headers: _headers,
     );
 
@@ -409,7 +409,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> connectMAL(String code) async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/api/services/mal/connect'),
+      Uri.parse('$_baseUrl/services/mal/connect'),
       headers: _headers,
       body: jsonEncode({'code': code}),
     );
@@ -422,7 +422,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> disconnectMAL() async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/api/services/mal/disconnect'),
+      Uri.parse('$_baseUrl/services/mal/disconnect'),
       headers: _headers,
     );
 
@@ -433,8 +433,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<String> getLastFMAuthUrl() async {
-    final response = await _client.get(
-      Uri.parse('$_baseUrl/api/services/lastfm/auth-url'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/services/lastfm/auth-url'),
       headers: _headers,
     );
 
@@ -449,7 +449,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> connectLastFM(String code) async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/api/services/lastfm/connect'),
+      Uri.parse('$_baseUrl/services/lastfm/connect'),
       headers: _headers,
       body: jsonEncode({'code': code}),
     );
@@ -462,7 +462,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> disconnectLastFM() async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/api/services/lastfm/disconnect'),
+      Uri.parse('$_baseUrl/services/lastfm/disconnect'),
       headers: _headers,
     );
 

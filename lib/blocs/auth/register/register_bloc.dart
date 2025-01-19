@@ -12,7 +12,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       : _authRepository = authRepository,
         super(RegisterInitial()) {
     on<RegisterConnectivityChecked>(_onConnectivityChecked);
-    on<RegisterServerStatusChecked>(_onServerStatusChecked);
+    // on<RegisterServerStatusChecked>(_onServerStatusChecked);
     on<RegisterSubmitted>(_onRegisterSubmitted);
   }
 
@@ -30,22 +30,22 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     }
   }
 
-  Future<void> _onServerStatusChecked(
-    RegisterServerStatusChecked event,
-    Emitter<RegisterState> emit,
-  ) async {
-    emit(RegisterLoading());
-    try {
-      final status = await _authRepository.checkServerStatus();
-      emit(RegisterServerStatus(
-        isReachable: status.isReachable,
-        error: status.error,
-        message: status.message,
-      ));
-    } catch (e) {
-      emit(RegisterFailure(e.toString()));
-    }
-  }
+  // Future<void> _onServerStatusChecked(
+  //   RegisterServerStatusChecked event,
+  //   Emitter<RegisterState> emit,
+  // ) async {
+  //   emit(RegisterLoading());
+  //   try {
+  //     final status = await _authRepository.checkServerStatus();
+  //     emit(RegisterServerStatus(
+  //       isReachable: status.isReachable,
+  //       error: status.error,
+  //       message: status.message,
+  //     ));
+  //   } catch (e) {
+  //     emit(RegisterFailure(e.toString()));
+  //   }
+  // }
 
   Future<void> _onRegisterSubmitted(
     RegisterSubmitted event,

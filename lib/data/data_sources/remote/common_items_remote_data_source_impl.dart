@@ -21,7 +21,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonTrack>> getCommonLikedTracks(String username) async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('$baseUrl/common/liked/tracks/$username'),
     );
 
@@ -35,7 +35,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonArtist>> getCommonLikedArtists(String username) async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('$baseUrl/common/liked/artists/$username'),
     );
 
@@ -49,7 +49,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonAlbum>> getCommonLikedAlbums(String username) async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('$baseUrl/common/liked/albums/$username'),
     );
 
@@ -64,7 +64,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   @override
   Future<List<CommonTrack>> getCommonPlayedTracks(String identifier,
       {int page = 1}) async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('$baseUrl/common/played/tracks/$identifier?page=$page'),
     );
 
@@ -78,7 +78,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonArtist>> getCommonTopArtists(String username) async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('$baseUrl/common/top/artists/$username'),
     );
 
@@ -92,7 +92,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonGenre>> getCommonTopGenres(String username) async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('$baseUrl/common/top/genres/$username'),
     );
 
@@ -106,7 +106,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonAnime>> getCommonTopAnime(String username) async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('$baseUrl/common/top/anime/$username'),
     );
 
@@ -120,7 +120,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonManga>> getCommonTopManga(String username) async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('$baseUrl/common/top/manga/$username'),
     );
 
@@ -134,7 +134,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonTrack>> getCommonTracks(String budUid) async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('$baseUrl/common/tracks/$budUid'),
     );
 
@@ -148,7 +148,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonArtist>> getCommonArtists(String budUid) async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('$baseUrl/common/artists/$budUid'),
     );
 
@@ -162,7 +162,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonGenre>> getCommonGenres(String budUid) async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('$baseUrl/common/genres/$budUid'),
     );
 
@@ -177,7 +177,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   @override
   Future<CategorizedCommonItems> getCategorizedCommonItems(
       String username) async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('$baseUrl/common/items/$username'),
     );
 

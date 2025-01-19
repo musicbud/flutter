@@ -45,7 +45,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<UserProfile> getMyProfile() async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('${ApiConstants.baseUrl}/me/profile'),
       headers: {
         'Authorization': 'Bearer $token',
@@ -62,7 +62,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<UserProfile> getBudProfile(String username) async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('${ApiConstants.baseUrl}/bud/profile?username=$username'),
       headers: {
         'Authorization': 'Bearer $token',
@@ -110,7 +110,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Artist>> getLikedArtists() async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('${ApiConstants.baseUrl}/me/liked/artists'),
       headers: {
         'Authorization': 'Bearer $token',
@@ -128,7 +128,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getLikedTracks() async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('${ApiConstants.baseUrl}/me/liked/tracks'),
       headers: {
         'Authorization': 'Bearer $token',
@@ -146,7 +146,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Album>> getLikedAlbums() async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('${ApiConstants.baseUrl}/me/liked/albums'),
       headers: {
         'Authorization': 'Bearer $token',
@@ -164,7 +164,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Genre>> getLikedGenres() async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('${ApiConstants.baseUrl}/me/liked/genres'),
       headers: {
         'Authorization': 'Bearer $token',
@@ -182,7 +182,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getPlayedTracks() async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('${ApiConstants.baseUrl}/me/played/tracks'),
       headers: {
         'Authorization': 'Bearer $token',
@@ -200,7 +200,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Artist>> getTopArtists() async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('${ApiConstants.baseUrl}/me/top/artists'),
       headers: {
         'Authorization': 'Bearer $token',
@@ -218,7 +218,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getTopTracks() async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('${ApiConstants.baseUrl}/me/top/tracks'),
       headers: {
         'Authorization': 'Bearer $token',
@@ -236,7 +236,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Genre>> getTopGenres() async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('${ApiConstants.baseUrl}/me/top/genres'),
       headers: {
         'Authorization': 'Bearer $token',
@@ -254,7 +254,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Anime>> getTopAnime() async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('${ApiConstants.baseUrl}/me/top/anime'),
       headers: {
         'Authorization': 'Bearer $token',
@@ -272,7 +272,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Manga>> getTopManga() async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('${ApiConstants.baseUrl}/me/top/manga'),
       headers: {
         'Authorization': 'Bearer $token',
@@ -309,7 +309,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getPlayedTracksWithLocation() async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('${ApiConstants.baseUrl}/spotify/played-tracks-with-location'),
       headers: {
         'Authorization': 'Bearer $token',
@@ -328,7 +328,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getCurrentlyPlayedTracks() async {
-    final response = await client.get(
+    final response = await client.post(
       Uri.parse('${ApiConstants.baseUrl}/me/currently-played'),
       headers: {
         'Authorization': 'Bearer $token',

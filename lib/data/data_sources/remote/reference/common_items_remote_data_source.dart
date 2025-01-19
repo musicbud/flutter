@@ -33,7 +33,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   @override
   Future<List<CommonTrack>> getCommonLikedTracks(String username) async {
     try {
-      final response = await _dioClient.get('/common/tracks/liked/$username');
+      final response = await _dioClient.post('/common/tracks/liked/$username');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonTrack.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -45,7 +45,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   @override
   Future<List<CommonArtist>> getCommonLikedArtists(String username) async {
     try {
-      final response = await _dioClient.get('/common/artists/liked/$username');
+      final response = await _dioClient.post('/common/artists/liked/$username');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonArtist.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -57,7 +57,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   @override
   Future<List<CommonAlbum>> getCommonLikedAlbums(String username) async {
     try {
-      final response = await _dioClient.get('/common/albums/liked/$username');
+      final response = await _dioClient.post('/common/albums/liked/$username');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonAlbum.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -70,7 +70,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   Future<List<CommonTrack>> getCommonPlayedTracks(String identifier) async {
     try {
       final response =
-          await _dioClient.get('/common/tracks/played/$identifier');
+          await _dioClient.post('/common/tracks/played/$identifier');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonTrack.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -82,7 +82,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   @override
   Future<List<CommonArtist>> getCommonTopArtists(String username) async {
     try {
-      final response = await _dioClient.get('/common/artists/top/$username');
+      final response = await _dioClient.post('/common/artists/top/$username');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonArtist.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -94,7 +94,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   @override
   Future<List<CommonGenre>> getCommonTopGenres(String username) async {
     try {
-      final response = await _dioClient.get('/common/genres/top/$username');
+      final response = await _dioClient.post('/common/genres/top/$username');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonGenre.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -106,7 +106,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   @override
   Future<List<CommonAnime>> getCommonTopAnime(String username) async {
     try {
-      final response = await _dioClient.get('/common/anime/top/$username');
+      final response = await _dioClient.post('/common/anime/top/$username');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonAnime.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -118,7 +118,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   @override
   Future<List<CommonManga>> getCommonTopManga(String username) async {
     try {
-      final response = await _dioClient.get('/common/manga/top/$username');
+      final response = await _dioClient.post('/common/manga/top/$username');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonManga.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -130,7 +130,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   @override
   Future<List<CommonTrack>> getCommonTracks(String budUid) async {
     try {
-      final response = await _dioClient.get('/common/tracks/top/$budUid');
+      final response = await _dioClient.post('/common/tracks/top/$budUid');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonTrack.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -142,7 +142,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   @override
   Future<List<CommonArtist>> getCommonArtists(String budUid) async {
     try {
-      final response = await _dioClient.get('/common/artists/top/$budUid');
+      final response = await _dioClient.post('/common/artists/top/$budUid');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonArtist.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -154,7 +154,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   @override
   Future<List<CommonGenre>> getCommonGenres(String budUid) async {
     try {
-      final response = await _dioClient.get('/common/genres/top/$budUid');
+      final response = await _dioClient.post('/common/genres/top/$budUid');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonGenre.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -167,7 +167,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   Future<CategorizedCommonItems> getCategorizedCommonItems(
       String username) async {
     try {
-      final response = await _dioClient.get('/common/all/$username');
+      final response = await _dioClient.post('/common/all/$username');
       final data = response.data['data'] ?? response.data;
       return CategorizedCommonItems.fromJson(data);
     } on DioException catch (e) {

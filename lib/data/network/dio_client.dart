@@ -4,8 +4,9 @@ import 'package:dio/dio.dart';
 class DioClient {
   final Dio _dio;
 
-  DioClient({required String baseUrl})
-      : _dio = Dio(BaseOptions(baseUrl: baseUrl));
+  DioClient({required String baseUrl, Dio? dio}) : _dio = dio ?? Dio() {
+    _dio.options.baseUrl = baseUrl;
+  }
 
   /// Get the underlying Dio instance
   Dio get dio => _dio;

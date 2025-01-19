@@ -17,7 +17,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudMatches() async {
     try {
-      final response = await _dioClient.get('/buds/matches');
+      final response = await _dioClient.post('/buds/matches');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -57,7 +57,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<CommonTrack>> getCommonTracks(String userId) async {
     try {
-      final response = await _dioClient.get('/buds/$userId/common/tracks');
+      final response = await _dioClient.post('/buds/$userId/common/tracks');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonTrack.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -69,7 +69,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<CommonArtist>> getCommonArtists(String userId) async {
     try {
-      final response = await _dioClient.get('/buds/$userId/common/artists');
+      final response = await _dioClient.post('/buds/$userId/common/artists');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonArtist.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -81,7 +81,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<CommonGenre>> getCommonGenres(String userId) async {
     try {
-      final response = await _dioClient.get('/buds/$userId/common/genres');
+      final response = await _dioClient.post('/buds/$userId/common/genres');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonGenre.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -93,7 +93,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<CommonTrack>> getCommonPlayedTracks(String userId) async {
     try {
-      final response = await _dioClient.get('/buds/$userId/common/played');
+      final response = await _dioClient.post('/buds/$userId/common/played');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => CommonTrack.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -114,7 +114,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByLikedArtists() async {
     try {
-      final response = await _dioClient.get('/buds/liked/artists');
+      final response = await _dioClient.post('/buds/liked/artists');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -126,7 +126,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByLikedTracks() async {
     try {
-      final response = await _dioClient.get('/buds/liked/tracks');
+      final response = await _dioClient.post('/buds/liked/tracks');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -138,7 +138,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByLikedGenres() async {
     try {
-      final response = await _dioClient.get('/buds/liked/genres');
+      final response = await _dioClient.post('/buds/liked/genres');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -150,7 +150,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByLikedAlbums() async {
     try {
-      final response = await _dioClient.get('/buds/liked/albums');
+      final response = await _dioClient.post('/buds/liked/albums');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -162,7 +162,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByPlayedTracks() async {
     try {
-      final response = await _dioClient.get('/buds/played/tracks');
+      final response = await _dioClient.post('/buds/played/tracks');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -174,7 +174,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByTopArtists() async {
     try {
-      final response = await _dioClient.get('/buds/top/artists');
+      final response = await _dioClient.post('/buds/top/artists');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -186,7 +186,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByTopTracks() async {
     try {
-      final response = await _dioClient.get('/buds/top/tracks');
+      final response = await _dioClient.post('/buds/top/tracks');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -198,7 +198,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByTopGenres() async {
     try {
-      final response = await _dioClient.get('/buds/top/genres');
+      final response = await _dioClient.post('/buds/top/genres');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -210,7 +210,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByTopAnime() async {
     try {
-      final response = await _dioClient.get('/buds/top/anime');
+      final response = await _dioClient.post('/buds/top/anime');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -222,7 +222,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByTopManga() async {
     try {
-      final response = await _dioClient.get('/buds/top/manga');
+      final response = await _dioClient.post('/buds/top/manga');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -234,7 +234,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByArtist(String artistId) async {
     try {
-      final response = await _dioClient.get('/buds/artists/$artistId');
+      final response = await _dioClient.post('/buds/artists/$artistId');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -246,7 +246,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByTrack(String trackId) async {
     try {
-      final response = await _dioClient.get('/buds/tracks/$trackId');
+      final response = await _dioClient.post('/buds/tracks/$trackId');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -258,7 +258,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByGenre(String genreId) async {
     try {
-      final response = await _dioClient.get('/buds/genres/$genreId');
+      final response = await _dioClient.post('/buds/genres/$genreId');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -270,7 +270,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByAlbum(String albumId) async {
     try {
-      final response = await _dioClient.get('/buds/albums/$albumId');
+      final response = await _dioClient.post('/buds/albums/$albumId');
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {
@@ -283,7 +283,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   Future<List<BudMatch>> searchBuds(String query) async {
     try {
       final response =
-          await _dioClient.get('/buds/search', queryParameters: {'q': query});
+          await _dioClient.post('/buds/search', data: {'q': query});
       final List<dynamic> data = response.data['data'] ?? response.data;
       return data.map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {

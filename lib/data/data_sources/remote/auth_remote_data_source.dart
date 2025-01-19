@@ -28,15 +28,15 @@ abstract class AuthRemoteDataSource {
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final Dio _dio;
+  final DioClient _dioClient;
 
-  AuthRemoteDataSourceImpl({required String baseUrl})
-      : _dio = DioClient(baseUrl: baseUrl).dio;
+  AuthRemoteDataSourceImpl({required DioClient dioClient})
+      : _dioClient = dioClient;
 
   @override
   Future<Map<String, dynamic>> login(String username, String password) async {
     try {
-      final response = await _dio.post('/auth/login', data: {
+      final response = await _dioClient.post('/login/', data: {
         'username': username,
         'password': password,
       });
@@ -50,7 +50,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<Map<String, dynamic>> register(
       String username, String email, String password) async {
     try {
-      final response = await _dio.post('/auth/register', data: {
+      final response = await _dioClient.post('/register/', data: {
         'username': username,
         'email': email,
         'password': password,
@@ -64,8 +64,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<Map<String, dynamic>> refreshToken(String refreshToken) async {
     try {
-      final response = await _dio.post('/auth/refresh', data: {
-        'refresh_token': refreshToken,
+      final response = await _dioClient.post('/chat/refresh-token/', data: {
+        'refresh': refreshToken,
       });
       return response.data;
     } on DioException catch (e) {
@@ -76,7 +76,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> logout() async {
     try {
-      await _dio.post('/auth/logout');
+      await _dioClient.post('/logout/');
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to logout');
     }
@@ -86,8 +86,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<String> getSpotifyAuthUrl() async {
     try {
-      final response = await _dio.get('/auth/spotify/url');
-      return response.data['auth_url'];
+      final response = await _dioClient.get('/service/spotify/auth');
+      return response.data['url'];
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get Spotify auth URL');
@@ -97,7 +97,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> connectSpotify(String code) async {
     try {
-      await _dio.post('/auth/spotify/connect', data: {'code': code});
+      await _dioClient.post('/service/spotify/connect', data: {'code': code});
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to connect Spotify');
     }
@@ -106,7 +106,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> disconnectSpotify() async {
     try {
-      await _dio.post('/auth/spotify/disconnect');
+      await _dioClient.post('/service/spotify/disconnect');
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to disconnect Spotify');
@@ -116,39 +116,38 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<String> getYTMusicAuthUrl() async {
     try {
-      final response = await _dio.get('/auth/ytmusic/url');
-      return response.data['auth_url'];
+      final response = await _dioClient.get('/service/ytmusic/auth');
+      return response.data['url'];
     } on DioException catch (e) {
       throw ServerException(
-          message: e.message ?? 'Failed to get YouTube Music auth URL');
+          message: e.message ?? 'Failed to get YTMusic auth URL');
     }
   }
 
   @override
   Future<void> connectYTMusic(String code) async {
     try {
-      await _dio.post('/auth/ytmusic/connect', data: {'code': code});
+      await _dioClient.post('/service/ytmusic/connect', data: {'code': code});
     } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to connect YouTube Music');
+      throw ServerException(message: e.message ?? 'Failed to connect YTMusic');
     }
   }
 
   @override
   Future<void> disconnectYTMusic() async {
     try {
-      await _dio.post('/auth/ytmusic/disconnect');
+      await _dioClient.post('/service/ytmusic/disconnect');
     } on DioException catch (e) {
       throw ServerException(
-          message: e.message ?? 'Failed to disconnect YouTube Music');
+          message: e.message ?? 'Failed to disconnect YTMusic');
     }
   }
 
   @override
   Future<String> getMALAuthUrl() async {
     try {
-      final response = await _dio.get('/auth/mal/url');
-      return response.data['auth_url'];
+      final response = await _dioClient.get('/service/mal/auth');
+      return response.data['url'];
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get MAL auth URL');
     }
@@ -157,7 +156,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> connectMAL(String code) async {
     try {
-      await _dio.post('/auth/mal/connect', data: {'code': code});
+      await _dioClient.post('/service/mal/connect', data: {'code': code});
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to connect MAL');
     }
@@ -166,7 +165,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> disconnectMAL() async {
     try {
-      await _dio.post('/auth/mal/disconnect');
+      await _dioClient.post('/service/mal/disconnect');
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to disconnect MAL');
     }
@@ -175,8 +174,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<String> getLastFMAuthUrl() async {
     try {
-      final response = await _dio.get('/auth/lastfm/url');
-      return response.data['auth_url'];
+      final response = await _dioClient.get('/service/lastfm/auth');
+      return response.data['url'];
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get LastFM auth URL');
@@ -186,7 +185,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> connectLastFM(String code) async {
     try {
-      await _dio.post('/auth/lastfm/connect', data: {'code': code});
+      await _dioClient.post('/service/lastfm/connect', data: {'code': code});
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to connect LastFM');
     }
@@ -195,7 +194,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> disconnectLastFM() async {
     try {
-      await _dio.post('/auth/lastfm/disconnect');
+      await _dioClient.post('/service/lastfm/disconnect');
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to disconnect LastFM');

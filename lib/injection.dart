@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'domain/repositories/auth_repository.dart';
 import 'domain/repositories/profile_repository.dart';
 import 'data/repositories/auth_repository_impl.dart';
@@ -11,9 +12,43 @@ final sl = GetIt.instance;
 
 Future<void> initializeDependencies() async {
   // Network
-  sl.registerLazySingleton(() => Dio()); // Base Dio instance
+  sl.registerLazySingleton(() {
+    final dio = Dio();
+
+    dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) {
+        debugPrint('🌐 [${options.method}] Request: ${options.uri}');
+        if (options.data != null) {
+          debugPrint('Body: ${options.data}');
+        }
+        if (options.headers.isNotEmpty) {
+          debugPrint('Headers: ${options.headers}');
+        }
+        return handler.next(options);
+      },
+      onResponse: (response, handler) {
+        debugPrint(
+            '✅ [${response.statusCode}] Response: ${response.requestOptions.uri}');
+        debugPrint('Body: ${response.data}');
+        return handler.next(response);
+      },
+      onError: (error, handler) {
+        debugPrint(
+            '❌ [${error.response?.statusCode}] Error: ${error.requestOptions.uri}');
+        debugPrint('Message: ${error.message}');
+        if (error.response?.data != null) {
+          debugPrint('Body: ${error.response?.data}');
+        }
+        return handler.next(error);
+      },
+    ));
+
+    return dio;
+  }); // Base Dio instance
+
   sl.registerLazySingleton(() => DioClient(
-        baseUrl: 'http://127.0.0.1:8000', // Add your actual API base URL here
+        baseUrl: 'http://127.0.0.1:8000',
+        dio: sl<Dio>(),
       )); // DioClient
 
   // Repositories

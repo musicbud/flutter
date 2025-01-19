@@ -1,5 +1,5 @@
 import '../../domain/repositories/auth_repository.dart';
-import '../../domain/models/server_status.dart';
+// import '../../domain/models/server_status.dart';
 import '../network/dio_client.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -9,7 +9,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Map<String, dynamic>> login(String username, String password) async {
-    final response = await _dioClient.post('/auth/login', data: {
+    final response = await _dioClient.post('/chat/login/', data: {
       'username': username,
       'password': password,
     });
@@ -40,21 +40,21 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  @override
-  Future<ServerStatus> checkServerStatus() async {
-    try {
-      final response = await _dioClient.get('/health');
-      return ServerStatus(
-        isReachable: true,
-        message: response.data['message'],
-      );
-    } catch (e) {
-      return ServerStatus(
-        isReachable: false,
-        error: e.toString(),
-      );
-    }
-  }
+  // @override
+  // Future<ServerStatus> checkServerStatus() async {
+  //   try {
+  //     final response = await _dioClient.get('/health');
+  //     return ServerStatus(
+  //       isReachable: true,
+  //       message: response.data['message'],
+  //     );
+  //   } catch (e) {
+  //     return ServerStatus(
+  //       isReachable: false,
+  //       error: e.toString(),
+  //     );
+  //   }
+  // }
 
   @override
   Future<String> refreshToken() async {

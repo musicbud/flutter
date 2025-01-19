@@ -15,7 +15,7 @@ class ProfileRemoteDataSource {
         _baseUrl = baseUrl ?? ApiConfig.baseUrl;
 
   Future<Map<String, dynamic>?> getMyProfile() async {
-    final response = await _client.get(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/profile'),
       headers: await HttpUtils.getAuthHeaders(),
     );
@@ -80,7 +80,7 @@ class ProfileRemoteDataSource {
   }
 
   Future<List<Map<String, dynamic>>> getTopItems(String category) async {
-    final response = await _client.get(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/profile/top/$category'),
       headers: await HttpUtils.getAuthHeaders(),
     );
@@ -106,7 +106,7 @@ class ProfileRemoteDataSource {
   }
 
   Future<List<Map<String, dynamic>>> getConnectedServices() async {
-    final response = await _client.get(
+    final response = await _client.post(
       Uri.parse('$_baseUrl/profile/services'),
       headers: await HttpUtils.getAuthHeaders(),
     );

@@ -66,7 +66,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<Map<String, dynamic>> getChannelUsers(String channelId) async {
     try {
-      final response = await _dio.get('/chat/get_channel_users/$channelId/');
+      final response = await _dio.post('/chat/get_channel_users/$channelId/');
       return response.data;
     } on DioException catch (e) {
       throw ServerException(
@@ -102,7 +102,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<bool> isUserAdmin(String channelId) async {
     try {
-      final response = await _dio.get('/chat/channel/$channelId/is_admin/');
+      final response = await _dio.post('/chat/channel/$channelId/is_admin/');
       return response.data['is_admin'] ?? false;
     } on DioException catch (e) {
       throw ServerException(
@@ -113,7 +113,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<Map<String, bool>> checkChannelRoles(String channelId) async {
     try {
-      final response = await _dio.get('/chat/channel/$channelId/check_roles/');
+      final response = await _dio.post('/chat/channel/$channelId/check_roles/');
       return {
         'is_admin': response.data['is_admin'] ?? false,
         'is_moderator': response.data['is_moderator'] ?? false,
@@ -129,7 +129,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   Future<Map<String, dynamic>> getChannelDashboardData(String channelId) async {
     try {
       final response =
-          await _dio.get('/chat/channel/$channelId/dashboard_data/');
+          await _dio.post('/chat/channel/$channelId/dashboard_data/');
       return response.data;
     } on DioException catch (e) {
       throw ServerException(
@@ -140,7 +140,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<bool> isChannelAdmin(String channelId) async {
     try {
-      final response = await _dio.get('/chat/channel/$channelId/is_admin/');
+      final response = await _dio.post('/chat/channel/$channelId/is_admin/');
       return response.data['is_admin'] ?? false;
     } on DioException catch (e) {
       throw ServerException(
@@ -151,7 +151,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<bool> isChannelMember(String channelId) async {
     try {
-      final response = await _dio.get('/chat/channel/$channelId/is_member/');
+      final response = await _dio.post('/chat/channel/$channelId/is_member/');
       return response.data['is_member'] ?? false;
     } on DioException catch (e) {
       throw ServerException(
@@ -162,7 +162,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<bool> isChannelModerator(String channelId) async {
     try {
-      final response = await _dio.get('/chat/channel/$channelId/is_moderator/');
+      final response = await _dio.post('/chat/channel/$channelId/is_moderator/');
       return response.data['is_moderator'] ?? false;
     } on DioException catch (e) {
       throw ServerException(
@@ -283,7 +283,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       String channelId) async {
     try {
       final response =
-          await _dio.get('/chat/get_channel_invitations/$channelId/');
+          await _dio.post('/chat/get_channel_invitations/$channelId/');
       return List<Map<String, dynamic>>.from(response.data);
     } on DioException catch (e) {
       throw ServerException(
@@ -296,7 +296,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       String channelId) async {
     try {
       final response =
-          await _dio.get('/chat/get_channel_blocked_users/$channelId/');
+          await _dio.post('/chat/get_channel_blocked_users/$channelId/');
       return List<Map<String, dynamic>>.from(response.data);
     } on DioException catch (e) {
       throw ServerException(
@@ -307,7 +307,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<List<Map<String, dynamic>>> getUserInvitations(String userId) async {
     try {
-      final response = await _dio.get('/chat/get_user_invitations/$userId/');
+      final response = await _dio.post('/chat/get_user_invitations/$userId/');
       return List<Map<String, dynamic>>.from(response.data);
     } on DioException catch (e) {
       throw ServerException(
@@ -318,7 +318,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<List<Map<String, dynamic>>> getChannelList() async {
     try {
-      final response = await _dio.get('/chat/channels/');
+      final response = await _dio.post('/chat/channels/');
       final data = response.data as Map<String, dynamic>;
       return (data['channels'] as List).cast<Map<String, dynamic>>();
     } on DioException catch (e) {
@@ -339,7 +339,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<List<Map<String, dynamic>>> getUsers() async {
     try {
-      final response = await _dio.get('/chat/users/');
+      final response = await _dio.post('/chat/users/');
       if (response.data is List) {
         return List<Map<String, dynamic>>.from(response.data);
       } else if (response.data is Map && response.data['users'] is List) {
@@ -369,7 +369,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     try {
       final encodedCurrentUsername = Uri.encodeComponent(currentUsername);
       final encodedOtherUsername = Uri.encodeComponent(otherUsername);
-      final response = await _dio.get(
+      final response = await _dio.post(
           '/chat/get_user_messages/$encodedCurrentUsername/$encodedOtherUsername/');
       return response.data;
     } on DioException catch (e) {
@@ -397,7 +397,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<Map<String, dynamic>> getChannelMessages(String channelId) async {
     try {
-      final response = await _dio.get('/api/channels/$channelId/messages');
+      final response = await _dio.post('/api/channels/$channelId/messages');
       return response.data;
     } on DioException catch (e) {
       throw ServerException(
@@ -453,7 +453,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<Map<String, dynamic>> getChannelDetails(String channelId) async {
     try {
-      final response = await _dio.get('/api/channels/$channelId');
+      final response = await _dio.post('/api/channels/$channelId');
       return response.data;
     } on DioException catch (e) {
       throw ServerException(

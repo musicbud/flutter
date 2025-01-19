@@ -20,13 +20,22 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     Emitter<MainScreenState> emit,
   ) async {
     try {
+      emit(MainScreenLoading());
       final profile = await _profileRepository.getMyProfile();
       emit(MainScreenAuthenticated(
         username: profile.username,
         userProfile: profile.toJson(),
       ));
     } catch (error) {
-      emit(MainScreenUnauthenticated());
+      if (error.toString().contains('401') ||
+          error.toString().contains('unauthorized')) {
+        emit(MainScreenUnauthenticated());
+      } else {
+        emit(MainScreenFailure(error.toString()));
+        // Retry after a delay if it's not an auth error
+        await Future.delayed(const Duration(seconds: 3));
+        add(MainScreenRefreshRequested());
+      }
     }
   }
 
@@ -48,23 +57,30 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
         username: profile.username,
         userProfile: profile.toJson(),
       ));
-    } catch (e) {
-      emit(MainScreenFailure(e.toString()));
+    } catch (error) {
+      if (error.toString().contains('401') ||
+          error.toString().contains('unauthorized')) {
+        emit(MainScreenUnauthenticated());
+      } else {
+        emit(MainScreenFailure(error.toString()));
+      }
     }
   }
 
   Future<void> _checkAuthStatus(Emitter<MainScreenState> emit) async {
     try {
-      emit(MainScreenLoading());
-
-      // Get user profile
-      final userProfile = await _profileRepository.getMyProfile();
+      final profile = await _profileRepository.getMyProfile();
       emit(MainScreenAuthenticated(
-        username: userProfile.username,
-        userProfile: userProfile.toJson(),
+        username: profile.username,
+        userProfile: profile.toJson(),
       ));
     } catch (error) {
-      emit(MainScreenUnauthenticated());
+      if (error.toString().contains('401') ||
+          error.toString().contains('unauthorized')) {
+        emit(MainScreenUnauthenticated());
+      } else {
+        emit(MainScreenFailure(error.toString()));
+      }
     }
   }
 }
