@@ -28,7 +28,7 @@ abstract class CommonItemsRemoteDataSource {
 class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   final http.Client _client;
   final String _token;
-  final String _baseUrl = 'http://127.0.0.1:8000';
+  final String _baseUrl = 'http://84.235.170.234';
 
   CommonItemsRemoteDataSourceImpl({
     required http.Client client,

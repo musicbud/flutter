@@ -48,7 +48,7 @@ abstract class ChatRemoteDataSource {
 
 class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   final Dio _dio;
-  static const String _baseUrl = 'http://127.0.0.1:8000';
+  static const String _baseUrl = 'http://84.235.170.234';
 
   ChatRemoteDataSourceImpl() : _dio = DioClient(baseUrl: _baseUrl).dio;
 
@@ -162,7 +162,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<bool> isChannelModerator(String channelId) async {
     try {
-      final response = await _dio.post('/chat/channel/$channelId/is_moderator/');
+      final response =
+          await _dio.post('/chat/channel/$channelId/is_moderator/');
       return response.data['is_moderator'] ?? false;
     } on DioException catch (e) {
       throw ServerException(

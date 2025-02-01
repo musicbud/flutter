@@ -35,7 +35,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     try {
       emit(ProfileLoading());
-      final profile = await _userRepository.getMyProfile();
+      final profile = await _userRepository.getUserProfile();
       emit(MyProfileLoaded(profile));
     } catch (error) {
       emit(ProfileFailure(error.toString()));

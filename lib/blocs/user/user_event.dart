@@ -46,3 +46,12 @@ class SaveLocation extends UserEvent {
 }
 
 class LoadPlayedTracks extends UserEvent {}
+
+class UpdateToken extends UserEvent {
+  final String token;
+
+  const UpdateToken({required this.token});
+
+  @override
+  List<Object> get props => [token];
+}

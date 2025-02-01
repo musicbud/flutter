@@ -1,32 +1,31 @@
 import '../../models/track.dart';
+import '../../domain/models/user_profile.dart';
 import '../../models/artist.dart';
 import '../../models/album.dart';
 import '../../models/genre.dart';
 import '../../models/anime.dart';
 import '../../models/manga.dart';
-import '../models/user_profile.dart';
 
-abstract class UserRepository {
-  // Profile operations
+abstract class UserRemoteDataSource {
   Future<UserProfile> getUserProfile();
+  Future<List<Track>> getLikedTracks();
+  Future<void> likeSong(String songId);
+  Future<void> unlikeSong(String songId);
+  void updateToken(String token);
+
+  Future<UserProfile> getMyProfile();
   Future<UserProfile> getBudProfile(String username);
   Future<void> updateMyProfile(UserProfile profile);
   Future<void> updateMyLikes();
-
-  // Liked items
   Future<List<Artist>> getLikedArtists();
-  Future<List<Track>> getLikedTracks();
   Future<List<Album>> getLikedAlbums();
   Future<List<Genre>> getLikedGenres();
-
-  // Top items
   Future<List<Artist>> getTopArtists();
   Future<List<Track>> getTopTracks();
   Future<List<Genre>> getTopGenres();
   Future<List<Anime>> getTopAnime();
   Future<List<Manga>> getTopManga();
 
-  // Service connections
   Future<String> getSpotifyAuthUrl();
   Future<void> connectSpotify(String code);
   Future<void> disconnectSpotify();
@@ -43,16 +42,8 @@ abstract class UserRepository {
   Future<void> connectLastFM(String code);
   Future<void> disconnectLastFM();
 
-  // Location
   Future<void> saveLocation(double latitude, double longitude);
   Future<List<Track>> getPlayedTracks();
   Future<List<Track>> getPlayedTracksWithLocation();
   Future<List<Track>> getCurrentlyPlayedTracks();
-
-  // Track operations
-  Future<void> likeSong(String songId);
-  Future<void> unlikeSong(String songId);
-
-  // Token management
-  void updateToken(String token);
 }

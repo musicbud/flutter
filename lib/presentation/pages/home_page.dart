@@ -34,7 +34,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
+        debugPrint('UserBloc State Changed: ${state.runtimeType}');
         if (state is UserError) {
+          debugPrint('UserError: ${(state as UserError).message}');
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => const LoginPage(),
@@ -43,6 +45,7 @@ class _HomePageState extends State<HomePage> {
         }
       },
       builder: (context, state) {
+        debugPrint('UserBloc Builder State: ${state.runtimeType}');
         if (state is UserLoading) {
           return const Scaffold(
             body: Center(
@@ -52,6 +55,7 @@ class _HomePageState extends State<HomePage> {
         }
 
         if (state is ProfileLoaded) {
+          debugPrint('Profile Loaded: ${state.profile.username}');
           _userProfile = state.profile;
         }
 

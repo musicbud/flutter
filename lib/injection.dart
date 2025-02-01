@@ -47,7 +47,7 @@ Future<void> initializeDependencies() async {
   }); // Base Dio instance
 
   sl.registerLazySingleton(() => DioClient(
-        baseUrl: 'http://127.0.0.1:8000',
+        baseUrl: 'http://84.235.170.234',
         dio: sl<Dio>(),
       )); // DioClient
 

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../../../domain/models/user_profile.dart';
 import '../../../models/track.dart';
@@ -46,15 +47,19 @@ abstract class UserRemoteDataSource {
 
 class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   final http.Client _client;
-  final String _token;
+  String _token;
   final String _baseUrl =
-      'http://127.0.0.1:8000'; // Replace with your actual API URL
+      'http://84.235.170.234'; // Replace with your actual API URL
 
   UserRemoteDataSourceImpl({
     required http.Client client,
     required String token,
   })  : _client = client,
         _token = token;
+
+  void updateToken(String newToken) {
+    _token = newToken;
+  }
 
   Map<String, String> get _headers => {
         'Content-Type': 'application/json',
@@ -65,21 +70,23 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<UserProfile> getMyProfile() async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/users/me'),
+      Uri.parse('$_baseUrl/me/profile'),
       headers: _headers,
     );
 
     if (response.statusCode == 200) {
       return UserProfile.fromJson(jsonDecode(response.body));
     } else {
+      debugPrint(response.body);
+      debugPrint('headers: ${_headers.toString()}');
       throw Exception('Failed to load profile');
     }
   }
 
   @override
   Future<UserProfile> getBudProfile(String username) async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/users/$username'),
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/bud/profile'),
       headers: _headers,
     );
 
@@ -92,8 +99,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<void> updateMyProfile(UserProfile profile) async {
-    final response = await _client.put(
-      Uri.parse('$_baseUrl/users/me'),
+    final response = await _client.post(
+      Uri.parse('$_baseUrl/me/profile/set'),
       headers: _headers,
       body: jsonEncode(profile.toJson()),
     );
@@ -106,7 +113,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> updateMyLikes() async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/users/me/likes/update'),
+      Uri.parse('$_baseUrl/me/likes/update'),
       headers: _headers,
     );
 
@@ -117,8 +124,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getCurrentlyPlayedTracks() async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/users/me/played/tracks/current'),
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/spotify/played-tracks-with-location'),
       headers: _headers,
     );
 
@@ -132,8 +139,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Artist>> getLikedArtists() async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/users/me/liked/artists'),
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/me/likes/artists'),
       headers: _headers,
     );
 
@@ -147,8 +154,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getLikedTracks() async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/users/me/liked/tracks'),
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/me/likes/tracks'),
       headers: _headers,
     );
 
@@ -162,8 +169,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Album>> getLikedAlbums() async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/users/me/liked/albums'),
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/me/likes/albums'),
       headers: _headers,
     );
 
@@ -177,8 +184,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Genre>> getLikedGenres() async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/users/me/liked/genres'),
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/me/likes/genres'),
       headers: _headers,
     );
 
@@ -192,8 +199,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Artist>> getTopArtists() async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/users/me/top/artists'),
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/me/top/artists'),
       headers: _headers,
     );
 
@@ -207,8 +214,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getTopTracks() async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/users/me/top/tracks'),
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/me/top/tracks'),
       headers: _headers,
     );
 
@@ -222,8 +229,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Genre>> getTopGenres() async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/users/me/top/genres'),
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/me/top/genres'),
       headers: _headers,
     );
 
@@ -237,8 +244,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Anime>> getTopAnime() async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/users/me/top/anime'),
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/popular/anime'),
       headers: _headers,
     );
 
@@ -252,8 +259,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Manga>> getTopManga() async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/users/me/top/manga'),
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/me/top/manga'),
       headers: _headers,
     );
 
@@ -268,7 +275,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> saveLocation(double latitude, double longitude) async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/users/me/location'),
+      Uri.parse('$_baseUrl/me/location'),
       headers: _headers,
       body: jsonEncode({
         'latitude': latitude,
@@ -283,8 +290,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getPlayedTracks() async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/users/me/played/tracks'),
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/spotify/played-tracks-with-location'),
       headers: _headers,
     );
 
@@ -298,8 +305,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getPlayedTracksWithLocation() async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/users/me/played/tracks/with-location'),
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/spotify/played-tracks-with-location'),
       headers: _headers,
     );
 
@@ -313,8 +320,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<String> getSpotifyAuthUrl() async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/services/spotify/auth-url'),
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/spotify/callback'),
       headers: _headers,
     );
 
@@ -329,9 +336,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> connectSpotify(String code) async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/services/spotify/connect'),
+      Uri.parse('$_baseUrl/service/login'),
       headers: _headers,
-      body: jsonEncode({'code': code}),
+      body: jsonEncode({'service': 'spotify', 'code': code}),
     );
 
     if (response.statusCode != 200) {
@@ -342,8 +349,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> disconnectSpotify() async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/services/spotify/disconnect'),
+      Uri.parse('$_baseUrl/service/logout'),
       headers: _headers,
+      body: jsonEncode({'service': 'spotify'}),
     );
 
     if (response.statusCode != 200) {
@@ -353,8 +361,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<String> getYTMusicAuthUrl() async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/services/ytmusic/auth-url'),
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/ytmusic/callback'),
       headers: _headers,
     );
 
@@ -369,9 +377,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> connectYTMusic(String code) async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/services/ytmusic/connect'),
+      Uri.parse('$_baseUrl/service/login'),
       headers: _headers,
-      body: jsonEncode({'code': code}),
+      body: jsonEncode({'service': 'ytmusic', 'code': code}),
     );
 
     if (response.statusCode != 200) {
@@ -382,8 +390,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> disconnectYTMusic() async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/services/ytmusic/disconnect'),
+      Uri.parse('$_baseUrl/service/logout'),
       headers: _headers,
+      body: jsonEncode({'service': 'ytmusic'}),
     );
 
     if (response.statusCode != 200) {
@@ -393,8 +402,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<String> getMALAuthUrl() async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/services/mal/auth-url'),
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/mal/callback'),
       headers: _headers,
     );
 
@@ -409,9 +418,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> connectMAL(String code) async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/services/mal/connect'),
+      Uri.parse('$_baseUrl/service/login'),
       headers: _headers,
-      body: jsonEncode({'code': code}),
+      body: jsonEncode({'service': 'mal', 'code': code}),
     );
 
     if (response.statusCode != 200) {
@@ -422,8 +431,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> disconnectMAL() async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/services/mal/disconnect'),
+      Uri.parse('$_baseUrl/service/logout'),
       headers: _headers,
+      body: jsonEncode({'service': 'mal'}),
     );
 
     if (response.statusCode != 200) {
@@ -433,8 +443,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<String> getLastFMAuthUrl() async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/services/lastfm/auth-url'),
+    final response = await _client.get(
+      Uri.parse('$_baseUrl/lastfm/callback'),
       headers: _headers,
     );
 
@@ -449,9 +459,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> connectLastFM(String code) async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/services/lastfm/connect'),
+      Uri.parse('$_baseUrl/service/login'),
       headers: _headers,
-      body: jsonEncode({'code': code}),
+      body: jsonEncode({'service': 'lastfm', 'code': code}),
     );
 
     if (response.statusCode != 200) {
@@ -462,8 +472,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> disconnectLastFM() async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/services/lastfm/disconnect'),
+      Uri.parse('$_baseUrl/service/logout'),
       headers: _headers,
+      body: jsonEncode({'service': 'lastfm'}),
     );
 
     if (response.statusCode != 200) {

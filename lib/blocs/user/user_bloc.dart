@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/user_repository.dart';
 import 'user_event.dart';
@@ -16,6 +17,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<LoadTopItems>(_onLoadTopItems);
     on<SaveLocation>(_onSaveLocation);
     on<LoadPlayedTracks>(_onLoadPlayedTracks);
+    on<UpdateToken>(_onUpdateToken);
   }
 
   Future<void> _onLoadMyProfile(
@@ -24,9 +26,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   ) async {
     try {
       emit(UserLoading());
-      final profile = await _userRepository.getMyProfile();
+      final profile = await _userRepository.getUserProfile();
       emit(ProfileLoaded(profile));
     } catch (error) {
+      debugPrint(error.toString());
       emit(UserError(error.toString()));
     }
   }
@@ -128,5 +131,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     } catch (e) {
       emit(UserError(e.toString()));
     }
+  }
+
+  void _onUpdateToken(
+    UpdateToken event,
+    Emitter<UserState> emit,
+  ) {
+    _userRepository.updateToken(event.token);
   }
 }
