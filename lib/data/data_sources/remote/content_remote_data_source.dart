@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:dio/dio.dart';
 import '../../../core/error/exceptions.dart';
 import '../../network/dio_client.dart';

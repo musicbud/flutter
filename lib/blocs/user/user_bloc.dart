@@ -136,7 +136,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   void _onUpdateToken(
     UpdateToken event,
     Emitter<UserState> emit,
-  ) {
+  ) async {
     _userRepository.updateToken(event.token);
+    add(LoadMyProfile());
   }
 }

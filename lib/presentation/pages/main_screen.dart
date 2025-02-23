@@ -73,7 +73,7 @@ class MainScreen extends StatelessWidget {
                       .add(MainScreenRefreshRequested());
                 },
                 child: ListView(
-                  children: [
+                  children: const [
                     // Your main screen content here
                   ],
                 ),

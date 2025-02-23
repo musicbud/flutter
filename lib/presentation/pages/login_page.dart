@@ -63,7 +63,11 @@ class LoginPageState extends State<LoginPage> {
             } else if (state is LoginSuccess) {
               debugPrint('Login Success: ${state.data}');
               final accessToken = state.data['access_token'] as String;
-              context.read<AuthBloc>().emit(Authenticated(token: accessToken));
+              context.read<AuthBloc>().add(LoginRequested(
+                    username: _usernameController.text,
+                    password: _passwordController.text,
+                    token: accessToken,
+                  ));
               context.read<UserBloc>().add(UpdateToken(token: accessToken));
               Navigator.pushReplacement(
                 context,
@@ -106,7 +110,8 @@ class LoginPageState extends State<LoginPage> {
                       controller: _usernameController,
                       decoration: const InputDecoration(
                         labelText: 'Username',
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10))),
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -118,9 +123,15 @@ class LoginPageState extends State<LoginPage> {
                     const SizedBox(height: 16),
                     TextFormField(
                       controller: _passwordController,
+                      onFieldSubmitted: (value) {
+                        if (_formKey.currentState!.validate()) {
+                          _login();
+                        }
+                      },
                       decoration: const InputDecoration(
                         labelText: 'Password',
-                        border: OutlineInputBorder(),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10))),
                       ),
                       obscureText: true,
                       validator: (value) {
@@ -132,7 +143,9 @@ class LoginPageState extends State<LoginPage> {
                     ),
                     const SizedBox(height: 24),
                     SizedBox(
-                      width: double.infinity,
+                      //added
+                      width: MediaQuery.of(context).size.width * 0.25,
+
                       child: ElevatedButton(
                         onPressed: state is LoginLoading ? null : _login,
                         child: state is LoginLoading

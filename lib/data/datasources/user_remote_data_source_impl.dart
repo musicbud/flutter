@@ -10,34 +10,39 @@ import '../../models/genre.dart';
 import '../../models/anime.dart';
 import '../../models/manga.dart';
 import 'user_remote_data_source.dart';
+import '../providers/token_provider.dart';
 
 class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   final http.Client _client;
-  String _token;
+  final TokenProvider _tokenProvider;
   final String _baseUrl = 'http://84.235.170.234';
 
   UserRemoteDataSourceImpl({
     required http.Client client,
-    required String token,
+    required TokenProvider tokenProvider,
   })  : _client = client,
-        _token = token;
+        _tokenProvider = tokenProvider;
+
+  Map<String, String> get _headers => {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': 'Bearer ${_tokenProvider.token}',
+  };
 
   @override
   Future<UserProfile> getUserProfile() async {
+    debugPrint('Getting profile with token: ${_tokenProvider.token}');
     final response = await _client.post(
       Uri.parse('$_baseUrl/me/profile'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
       return UserProfile.fromJson(json.decode(response.body));
     } else {
-      debugPrint(response.body);
-      debugPrint('token: $_token');
-      debugPrint('headers: ${response.headers.toString()}');
+      debugPrint('Failed to get profile. Status: ${response.statusCode}');
+      debugPrint('Response body: ${response.body}');
+      debugPrint('Headers sent: $_headers');
       throw ServerException(message: 'Failed to get user profile');
     }
   }
@@ -46,10 +51,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<List<Track>> getLikedTracks() async {
     final response = await _client.get(
       Uri.parse('$_baseUrl/me/liked-tracks'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
@@ -64,10 +66,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<void> likeSong(String songId) async {
     final response = await _client.post(
       Uri.parse('$_baseUrl/me/liked-tracks/$songId'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode != 200) {
@@ -79,10 +78,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<void> unlikeSong(String songId) async {
     final response = await _client.delete(
       Uri.parse('$_baseUrl/me/liked-tracks/$songId'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode != 200) {
@@ -92,7 +88,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   void updateToken(String newToken) {
-    _token = newToken;
+    _tokenProvider.updateToken(newToken);
   }
 
   @override
@@ -104,10 +100,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<UserProfile> getBudProfile(String username) async {
     final response = await _client.get(
       Uri.parse('$_baseUrl/$username'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
@@ -121,10 +114,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<void> updateMyProfile(UserProfile profile) async {
     final response = await _client.put(
       Uri.parse('$_baseUrl/me'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
       body: json.encode(profile.toJson()),
     );
 
@@ -137,10 +127,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<void> updateMyLikes() async {
     final response = await _client.post(
       Uri.parse('$_baseUrl/me/likes/update'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode != 200) {
@@ -152,10 +139,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<List<Artist>> getLikedArtists() async {
     final response = await _client.get(
       Uri.parse('$_baseUrl/me/liked-artists'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
@@ -170,10 +154,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<List<Album>> getLikedAlbums() async {
     final response = await _client.get(
       Uri.parse('$_baseUrl/me/liked-albums'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
@@ -188,10 +169,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<List<Genre>> getLikedGenres() async {
     final response = await _client.get(
       Uri.parse('$_baseUrl/me/liked-genres'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
@@ -206,10 +184,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<List<Artist>> getTopArtists() async {
     final response = await _client.get(
       Uri.parse('$_baseUrl/me/top-artists'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
@@ -224,10 +199,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<List<Track>> getTopTracks() async {
     final response = await _client.get(
       Uri.parse('$_baseUrl/me/top-tracks'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
@@ -242,10 +214,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<List<Genre>> getTopGenres() async {
     final response = await _client.get(
       Uri.parse('$_baseUrl/me/top-genres'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
@@ -260,10 +229,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<List<Anime>> getTopAnime() async {
     final response = await _client.get(
       Uri.parse('$_baseUrl/me/top-anime'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
@@ -278,10 +244,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<List<Manga>> getTopManga() async {
     final response = await _client.get(
       Uri.parse('$_baseUrl/me/top-manga'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
@@ -296,10 +259,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<String> getSpotifyAuthUrl() async {
     final response = await _client.get(
       Uri.parse('$_baseUrl/auth/spotify/url'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
@@ -314,10 +274,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<void> connectSpotify(String code) async {
     final response = await _client.post(
       Uri.parse('$_baseUrl/auth/spotify/callback'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
       body: json.encode({'code': code}),
     );
 
@@ -330,10 +287,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<void> disconnectSpotify() async {
     final response = await _client.post(
       Uri.parse('$_baseUrl/auth/spotify/disconnect'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode != 200) {
@@ -345,10 +299,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<String> getYTMusicAuthUrl() async {
     final response = await _client.get(
       Uri.parse('$_baseUrl/auth/ytmusic/url'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
@@ -363,10 +314,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<void> connectYTMusic(String code) async {
     final response = await _client.post(
       Uri.parse('$_baseUrl/auth/ytmusic/callback'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
       body: json.encode({'code': code}),
     );
 
@@ -379,10 +327,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<void> disconnectYTMusic() async {
     final response = await _client.post(
       Uri.parse('$_baseUrl/auth/ytmusic/disconnect'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode != 200) {
@@ -394,10 +339,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<String> getMALAuthUrl() async {
     final response = await _client.get(
       Uri.parse('$_baseUrl/auth/mal/url'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
@@ -412,10 +354,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<void> connectMAL(String code) async {
     final response = await _client.post(
       Uri.parse('$_baseUrl/auth/mal/callback'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
       body: json.encode({'code': code}),
     );
 
@@ -428,10 +367,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<void> disconnectMAL() async {
     final response = await _client.post(
       Uri.parse('$_baseUrl/auth/mal/disconnect'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode != 200) {
@@ -443,10 +379,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<String> getLastFMAuthUrl() async {
     final response = await _client.get(
       Uri.parse('$_baseUrl/auth/lastfm/url'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
@@ -461,10 +394,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<void> connectLastFM(String code) async {
     final response = await _client.post(
       Uri.parse('$_baseUrl/auth/lastfm/callback'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
       body: json.encode({'code': code}),
     );
 
@@ -477,10 +407,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<void> disconnectLastFM() async {
     final response = await _client.post(
       Uri.parse('$_baseUrl/auth/lastfm/disconnect'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode != 200) {
@@ -492,10 +419,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<void> saveLocation(double latitude, double longitude) async {
     final response = await _client.post(
       Uri.parse('$_baseUrl/me/location'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
       body: json.encode({
         'latitude': latitude,
         'longitude': longitude,
@@ -511,10 +435,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<List<Track>> getPlayedTracks() async {
     final response = await _client.get(
       Uri.parse('$_baseUrl/me/played-tracks'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
@@ -529,10 +450,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<List<Track>> getPlayedTracksWithLocation() async {
     final response = await _client.get(
       Uri.parse('$_baseUrl/me/played-tracks/with-location'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {
@@ -548,10 +466,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<List<Track>> getCurrentlyPlayedTracks() async {
     final response = await _client.get(
       Uri.parse('$_baseUrl/me/currently-playing'),
-      headers: {
-        'Authorization': 'Bearer $_token',
-        'Content-Type': 'application/json',
-      },
+      headers: _headers,
     );
 
     if (response.statusCode == 200) {

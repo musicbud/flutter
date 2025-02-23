@@ -1,29 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
-import 'domain/repositories/auth_repository.dart';
-import 'domain/repositories/profile_repository.dart';
-import 'presentation/pages/login_page.dart';
-import 'presentation/pages/home_page.dart';
-import 'presentation/pages/main_screen.dart';
-import 'blocs/auth/auth_bloc.dart';
-import 'blocs/auth/login/login_bloc.dart';
-import 'blocs/auth/register/register_bloc.dart';
-import 'blocs/auth/spotify/spotify_bloc.dart';
-import 'blocs/auth/ytmusic/ytmusic_bloc.dart';
-import 'blocs/auth/mal/mal_bloc.dart';
-import 'blocs/auth/lastfm/lastfm_bloc.dart';
-import 'blocs/main/main_screen_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:musicbud_flutter/blocs/auth/auth_bloc.dart';
+import 'package:musicbud_flutter/blocs/auth/lastfm/lastfm_bloc.dart';
+import 'package:musicbud_flutter/blocs/auth/login/login_bloc.dart';
+import 'package:musicbud_flutter/blocs/auth/mal/mal_bloc.dart';
+import 'package:musicbud_flutter/blocs/auth/register/register_bloc.dart';
+import 'package:musicbud_flutter/blocs/auth/spotify/spotify_bloc.dart';
+import 'package:musicbud_flutter/blocs/auth/ytmusic/ytmusic_bloc.dart';
+import 'package:musicbud_flutter/blocs/main/main_screen_bloc.dart';
+import 'package:musicbud_flutter/blocs/profile/profile_bloc.dart';
+import 'package:musicbud_flutter/domain/repositories/auth_repository.dart';
+import 'package:musicbud_flutter/domain/repositories/bud_repository.dart';
+import 'package:musicbud_flutter/domain/repositories/content_repository.dart';
+import 'package:musicbud_flutter/domain/repositories/profile_repository.dart';
+import 'package:musicbud_flutter/presentation/pages/home_page.dart';
+import 'package:musicbud_flutter/presentation/pages/login_page.dart';
+import 'package:musicbud_flutter/presentation/pages/main_screen.dart';
+import 'package:musicbud_flutter/presentation/pages/profile_page.dart';
+import 'package:musicbud_flutter/utils/colors.dart';
 
 class App extends StatelessWidget {
-  const App({super.key});
+  const App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final authRepository = GetIt.instance<AuthRepository>();
+    final profileRepository = GetIt.instance<ProfileRepository>();
+    final contentRepository = GetIt.instance<ContentRepository>();
+    final budRepository = GetIt.instance<BudRepository>();
 
     return MultiBlocProvider(
       providers: [
+        BlocProvider<ProfileBloc>(
+          create: (context) => ProfileBloc(
+            profileRepository: profileRepository,
+            contentRepository: contentRepository,
+            budRepository: budRepository,
+          ),
+        ),
         BlocProvider<AuthBloc>(
           create: (context) => AuthBloc(authRepository: authRepository),
         ),
@@ -52,16 +68,19 @@ class App extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'MusicBud',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          colorScheme: AppColors.colorScheme,
           useMaterial3: true,
+          textTheme: GoogleFonts.josefinSansTextTheme(Theme.of(context).textTheme),
         ),
         initialRoute: '/login',
         routes: {
           '/': (context) => const MainScreen(),
           '/login': (context) => const LoginPage(),
           '/home': (context) => const HomePage(),
+          '/profile': (context) => const ProfilePage(),
         },
       ),
     );

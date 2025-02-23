@@ -4,29 +4,42 @@ import '../../domain/models/user_profile.dart';
 import '../../domain/models/content_service.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../network/dio_client.dart';
+import '../data_sources/remote/profile_remote_data_source.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
   final DioClient _dioClient;
+  final ProfileRemoteDataSource _remoteDataSource;
 
-  ProfileRepositoryImpl({required DioClient dioClient})
-      : _dioClient = dioClient;
+
+
+  ProfileRepositoryImpl({required DioClient dioClient, required ProfileRemoteDataSource remoteDataSource})
+      : _dioClient = dioClient,
+        _remoteDataSource = remoteDataSource;
+
 
   @override
   Future<UserProfile> getMyProfile() async {
-    final response = await _dioClient.get('/profile/me');
-    return UserProfile.fromJson(response.data);
+    final data = await _remoteDataSource.getMyProfile();
+    return data!;
   }
+
+
 
   @override
   Future<UserProfile> getUserProfile() async {
-    final response = await _dioClient.get('/profile');
-    return UserProfile.fromJson(response.data);
+    final data = await _remoteDataSource.getMyProfile();
+    return data!;
   }
+
+
+
 
   @override
   Future<void> updateProfile(Map<String, dynamic> profileData) async {
-    await _dioClient.put('/profile', data: profileData);
+    // return await _remoteDataSource.updateProfile(profileData);
   }
+
+
 
   @override
   Future<String> updateAvatar(XFile image) async {
@@ -48,7 +61,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
   @override
   Future<bool> isAuthenticated() async {
     try {
-      await _dioClient.get('/auth/status');
+      // await _dioClient.get('/auth/status');
       return true;
     } catch (e) {
       return false;

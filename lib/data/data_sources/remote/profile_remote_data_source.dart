@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import '../../../config/api_config.dart';
+import '../../../domain/models/user_profile.dart';
 import '../../../utils/http_utils.dart';
 
 class ProfileRemoteDataSource {
@@ -14,19 +15,21 @@ class ProfileRemoteDataSource {
   })  : _client = client,
         _baseUrl = baseUrl ?? ApiConfig.baseUrl;
 
-  Future<Map<String, dynamic>?> getMyProfile() async {
+  Future<UserProfile?> getMyProfile() async {
     final response = await _client.post(
-      Uri.parse('$_baseUrl/profile'),
+      Uri.parse('$_baseUrl/me/profile'),
       headers: await HttpUtils.getAuthHeaders(),
+
     );
 
     if (response.statusCode == 200) {
-      return json.decode(response.body) as Map<String, dynamic>;
+      return UserProfile.fromJson(json.decode(response.body));
     } else if (response.statusCode == 404) {
       return null;
     } else {
       throw Exception('Failed to get profile: ${response.body}');
     }
+
   }
 
   Future<Map<String, dynamic>> updateProfile(Map<String, dynamic> data) async {

@@ -8,7 +8,6 @@ import 'spotify_control_page.dart';
 import 'profile_page.dart';
 import 'chat_home_page.dart';
 import 'connect_services_page.dart';
-import 'login_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -35,14 +34,14 @@ class _HomePageState extends State<HomePage> {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
         debugPrint('UserBloc State Changed: ${state.runtimeType}');
-        if (state is UserError) {
-          debugPrint('UserError: ${(state as UserError).message}');
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const LoginPage(),
-            ),
-          );
-        }
+        // if (state is UserError) {
+        //   debugPrint('UserError: ${(state as UserError).message}');
+        //   Navigator.of(context).pushReplacement(
+        //     MaterialPageRoute(
+        //       builder: (context) => const LoginPage(),
+        //     ),
+        //   );
+        // }
       },
       builder: (context, state) {
         debugPrint('UserBloc Builder State: ${state.runtimeType}');

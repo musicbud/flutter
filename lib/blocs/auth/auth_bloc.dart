@@ -17,6 +17,7 @@ class LoginRequested extends AuthEvent {
   const LoginRequested({
     required this.username,
     required this.password,
+    required String token,
   });
 
   @override

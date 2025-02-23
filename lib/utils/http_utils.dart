@@ -1,6 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import '../config/api_config.dart';
 import '../core/error/exceptions.dart';
+import '../data/providers/token_provider.dart';
+import '../injection.dart';
 
 class HttpUtils {
   static const String _tokenKey = 'auth_token';
@@ -9,7 +11,8 @@ class HttpUtils {
 
   static Future<Map<String, String>> getAuthHeaders() async {
     try {
-      final token = await getToken();
+      // final token = await getToken();
+      final token = sl<TokenProvider>().token;
       final headers = Map<String, String>.from(ApiConfig.defaultHeaders);
 
       if (token != null) {

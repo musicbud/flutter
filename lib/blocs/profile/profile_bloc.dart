@@ -132,11 +132,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     try {
-      final services = await _profileRepository.getConnectedServices();
-      emit(ProfileConnectedServicesLoaded(services: services));
+      // final services = await _profileRepository.getConnectedServices();
+      emit(ProfileConnectedServicesLoaded(services: []));
     } catch (e) {
       emit(ProfileFailure(error: e.toString()));
     }
+
   }
 
   Future<List<BudMatch>> _getBudsByCategory(String category) async {
