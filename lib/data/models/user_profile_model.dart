@@ -13,16 +13,23 @@ class UserProfileModel extends UserProfile {
   });
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
-    return UserProfileModel(
-      id: json['id'] as String,
-      username: json['username'] as String,
-      email: json['email'] as String?,
-      avatarUrl: json['avatar_url'] as String?,
-      bio: json['bio'] as String?,
-      displayName: json['display_name'] as String?,
-      isActive: json['is_active'] as bool? ?? false,
-      isAuthenticated: json['is_authenticated'] as bool?,
-    );
+    print('UserProfileModel: Creating from JSON: $json');
+    try {
+      return UserProfileModel(
+        id: json['id']?.toString() ?? json['uid']?.toString() ?? '',
+        username: json['username']?.toString() ?? '',
+        email: json['email']?.toString(),
+        avatarUrl: json['avatar_url']?.toString() ?? json['avatarUrl']?.toString(),
+        bio: json['bio']?.toString(),
+        displayName: json['display_name']?.toString() ?? json['displayName']?.toString(),
+        isActive: json['is_active'] == true || json['isActive'] == true,
+        isAuthenticated: json['is_authenticated'] == true || json['isAuthenticated'] == true,
+      );
+    } catch (e, stackTrace) {
+      print('UserProfileModel: Error parsing JSON: $e');
+      print('UserProfileModel: Stack trace: $stackTrace');
+      rethrow;
+    }
   }
 
   /// Converts this [UserProfileModel] to a JSON map

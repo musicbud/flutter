@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../config/api_config.dart';
 import '../../../domain/models/user_profile.dart';
 import '../../../utils/http_utils.dart';
+import '../../../utils/json_helper.dart';
 
 class ProfileRemoteDataSource {
   final http.Client _client;
@@ -16,20 +17,31 @@ class ProfileRemoteDataSource {
         _baseUrl = baseUrl ?? ApiConfig.baseUrl;
 
   Future<UserProfile?> getMyProfile() async {
-    final response = await _client.post(
-      Uri.parse('$_baseUrl/me/profile'),
-      headers: await HttpUtils.getAuthHeaders(),
+    try {
+      final response = await _client.post(
+        Uri.parse('$_baseUrl/me/profile'),
+        headers: await HttpUtils.getAuthHeaders(),
+      );
 
-    );
-
-    if (response.statusCode == 200) {
-      return UserProfile.fromJson(json.decode(response.body));
-    } else if (response.statusCode == 404) {
-      return null;
-    } else {
-      throw Exception('Failed to get profile: ${response.body}');
+      print('ProfileRemoteDataSource: Raw response: ${response.body}');
+      
+      if (response.statusCode == 200) {
+        // Sanitize the JSON string before parsing
+        final sanitizedJson = sanitizeJsonString(response.body);
+        print('ProfileRemoteDataSource: Sanitized JSON: $sanitizedJson');
+        
+        final Map<String, dynamic> jsonData = json.decode(sanitizedJson);
+        return UserProfile.fromJson(jsonData);
+      } else if (response.statusCode == 404) {
+        return null;
+      } else {
+        throw Exception('Failed to get profile: ${response.body}');
+      }
+    } catch (e, stackTrace) {
+      print('ProfileRemoteDataSource: Error getting profile: $e');
+      print('ProfileRemoteDataSource: Stack trace: $stackTrace');
+      rethrow;
     }
-
   }
 
   Future<Map<String, dynamic>> updateProfile(Map<String, dynamic> data) async {

@@ -1,11 +1,34 @@
 import 'package:dio/dio.dart';
+import '../providers/token_provider.dart';
 
 /// A wrapper around [Dio] that provides consistent error handling and configuration
 class DioClient {
   final Dio _dio;
+  final TokenProvider _tokenProvider;
 
-  DioClient({required String baseUrl, Dio? dio}) : _dio = dio ?? Dio() {
+  DioClient({
+    required String baseUrl,
+    required Dio dio,
+    required TokenProvider tokenProvider,
+  }) : _dio = dio,
+       _tokenProvider = tokenProvider {
     _dio.options.baseUrl = baseUrl;
+    _dio.options.headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          final token = _tokenProvider.token;
+          if (token != null && token.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          return handler.next(options);
+        },
+      ),
+    );
   }
 
   /// Get the underlying Dio instance

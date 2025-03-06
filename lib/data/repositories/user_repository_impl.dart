@@ -6,14 +6,15 @@ import '../../models/album.dart';
 import '../../models/genre.dart';
 import '../../models/anime.dart';
 import '../../models/manga.dart';
-import '../datasources/user_remote_data_source.dart';
+import '../datasources/remote/user_remote_data_source.dart';
 import '../datasources/user_remote_data_source_impl.dart';
 
 class UserRepositoryImpl implements UserRepository {
   final UserRemoteDataSource _remoteDataSource;
 
-  UserRepositoryImpl({required UserRemoteDataSource remoteDataSource})
-      : _remoteDataSource = remoteDataSource;
+  UserRepositoryImpl({
+    required UserRemoteDataSource remoteDataSource,
+  }) : _remoteDataSource = remoteDataSource;
 
   @override
   Future<UserProfile> getUserProfile() async {

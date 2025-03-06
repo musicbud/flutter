@@ -29,11 +29,13 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  static const String _tag = '_ProfilePageState';
   int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    print('$_tag: Initializing profile page');
     _checkAuthentication();
     _loadUserProfile();
     _loadConnectedServices();
@@ -44,6 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _loadUserProfile() {
+    print('$_tag: Loading user profile');
     context.read<ProfileBloc>().add(ProfileRequested());
   }
 
@@ -79,6 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void _loadConnectedServices() {
+    print('$_tag: Loading connected services');
     context.read<ProfileBloc>().add(ProfileConnectedServicesRequested());
   }
 
@@ -86,7 +90,9 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
+        print('$_tag: State changed to: ${state.runtimeType}');
         if (state is ProfileFailure) {
+          print('$_tag: Error occurred: ${state.error}');
           _showSnackBar('Error: ${state.error}');
         } else if (state is ProfileLogoutSuccess) {
           Navigator.pushReplacement(
@@ -179,8 +185,10 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildProfileTab(ProfileState state) {
+    print('$_tag: Building profile tab with state: ${state.runtimeType}');
     if (state is ProfileLoaded) {
       final profile = state.profile;
+      print('$_tag: Profile data loaded: ${profile.toString()}');
       return SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -256,7 +264,35 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       );
     } else if (state is ProfileFailure) {
-      return ErrorMessage(message: state.error);
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.error_outline, size: 48, color: Colors.red),
+            const SizedBox(height: 16),
+            Text(
+              'Error loading profile',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Text(
+                state.error,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.red,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _loadUserProfile,
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
     } else if (state is ProfileLogoutSuccess) {
       return const LoginPage();
     } else if (state is ProfileLoading) {
@@ -340,12 +376,14 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget _buildConnectedServices(List<ContentService> services) {
+    print('$_tag: Building connected services list. Count: ${services.length}');
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: services.length,
       itemBuilder: (context, index) {
         final service = services[index];
+        print('$_tag: Building service item: ${service.name}');
         return ListTile(
           leading: Image.network(
             service.iconUrl,

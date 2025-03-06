@@ -7,18 +7,15 @@ import 'profile_event.dart';
 import 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  final ProfileRepository _profileRepository;
-  final ContentRepository _contentRepository;
-  final BudRepository _budRepository;
+  final ProfileRepository profileRepository;
+  final ContentRepository contentRepository;
+  final BudRepository budRepository;
 
   ProfileBloc({
-    required ProfileRepository profileRepository,
-    required ContentRepository contentRepository,
-    required BudRepository budRepository,
-  })  : _profileRepository = profileRepository,
-        _contentRepository = contentRepository,
-        _budRepository = budRepository,
-        super(ProfileInitial()) {
+    required this.profileRepository,
+    required this.contentRepository,
+    required this.budRepository,
+  }) : super(ProfileInitial()) {
     on<ProfileRequested>(_onProfileRequested);
     on<ProfileUpdateRequested>(_onProfileUpdateRequested);
     on<ProfileAvatarUpdateRequested>(_onProfileAvatarUpdateRequested);
@@ -35,9 +32,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     try {
-      final profile = await _profileRepository.getUserProfile();
+      print('ProfileBloc: Requesting user profile');
+      emit(ProfileLoading());
+      final profile = await profileRepository.getUserProfile();
+      print('ProfileBloc: Received profile data: $profile');
       emit(ProfileLoaded(profile: profile));
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('ProfileBloc: Error getting profile: $e');
+      print('ProfileBloc: Stack trace: $stackTrace');
       emit(ProfileFailure(error: e.toString()));
     }
   }
@@ -47,8 +49,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     try {
-      await _profileRepository.updateProfile(event.profileData);
-      final profile = await _profileRepository.getUserProfile();
+      await profileRepository.updateProfile(event.profileData);
+      final profile = await profileRepository.getUserProfile();
       emit(ProfileUpdateSuccess(profile: profile));
     } catch (e) {
       emit(ProfileFailure(error: e.toString()));
@@ -60,7 +62,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     try {
-      final avatarUrl = await _profileRepository.updateAvatar(event.imageFile);
+      final avatarUrl = await profileRepository.updateAvatar(event.imageFile);
       emit(ProfileAvatarUpdateSuccess(avatarUrl: avatarUrl));
     } catch (e) {
       emit(ProfileFailure(error: e.toString()));
@@ -72,7 +74,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     try {
-      final isAuthenticated = await _profileRepository.isAuthenticated();
+      final isAuthenticated = await profileRepository.isAuthenticated();
       emit(ProfileAuthenticationStatus(isAuthenticated: isAuthenticated));
     } catch (e) {
       emit(ProfileFailure(error: e.toString()));
@@ -84,7 +86,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     try {
-      await _profileRepository.logout();
+      await profileRepository.logout();
       emit(ProfileLogoutSuccess());
     } catch (e) {
       emit(ProfileFailure(error: e.toString()));
@@ -96,7 +98,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     try {
-      final items = await _contentRepository.getTopItems(event.category);
+      final items = await contentRepository.getTopItems(event.category);
       emit(ProfileTopItemsLoaded(items: items, category: event.category));
     } catch (e) {
       emit(ProfileFailure(error: e.toString()));
@@ -108,7 +110,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     try {
-      final items = await _contentRepository.getLikedItems(event.category);
+      final items = await contentRepository.getLikedItems(event.category);
       emit(ProfileLikedItemsLoaded(items: items, category: event.category));
     } catch (e) {
       emit(ProfileFailure(error: e.toString()));
@@ -143,17 +145,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   Future<List<BudMatch>> _getBudsByCategory(String category) async {
     switch (category) {
       case 'liked/artists':
-        return await _budRepository.getBudsByLikedArtists();
+        return await budRepository.getBudsByLikedArtists();
       case 'liked/tracks':
-        return await _budRepository.getBudsByLikedTracks();
+        return await budRepository.getBudsByLikedTracks();
       case 'liked/genres':
-        return await _budRepository.getBudsByLikedGenres();
+        return await budRepository.getBudsByLikedGenres();
       case 'top/artists':
-        return await _budRepository.getBudsByTopArtists();
+        return await budRepository.getBudsByTopArtists();
       case 'top/tracks':
-        return await _budRepository.getBudsByTopTracks();
+        return await budRepository.getBudsByTopTracks();
       case 'top/genres':
-        return await _budRepository.getBudsByTopGenres();
+        return await budRepository.getBudsByTopGenres();
       default:
         throw Exception('Invalid category: $category');
     }
