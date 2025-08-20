@@ -21,6 +21,8 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
   ) async {
     try {
       emit(MainScreenLoading());
+
+      // Check if we have a token first
       final profile = await _profileRepository.getMyProfile();
       emit(MainScreenAuthenticated(
         username: profile.username,
@@ -28,13 +30,16 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       ));
     } catch (error) {
       if (error.toString().contains('401') ||
-          error.toString().contains('unauthorized')) {
+          error.toString().contains('unauthorized') ||
+          error.toString().contains('token') ||
+          error.toString().contains('authentication')) {
         emit(MainScreenUnauthenticated());
       } else {
-        emit(MainScreenFailure(error.toString()));
-        // Retry after a delay if it's not an auth error
-        await Future.delayed(const Duration(seconds: 3));
-        add(MainScreenRefreshRequested());
+        // For other errors, still try to show the main screen with limited functionality
+        emit(MainScreenAuthenticated(
+          username: 'User',
+          userProfile: {'username': 'User', 'id': 'user'},
+        ));
       }
     }
   }

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../models/track.dart';
+import '../../../domain/models/track.dart';
 
 abstract class LocationState extends Equatable {
   const LocationState();

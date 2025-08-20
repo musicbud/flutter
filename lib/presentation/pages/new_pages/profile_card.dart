@@ -188,32 +188,4 @@ class ProfileCard extends StatelessWidget {
   }
 }
 
-Widget _buildMusicTile(String title, String artist, String image) {
-  return Container(
-    width: 250,
-    height: 40,
-    padding: EdgeInsets.all(6),
-    decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-            color: const Color.fromARGB(255, 82, 81, 81), width: .5)),
-    child: Center(
-      child: ListTile(
-        leading: Image.asset(image, width: 21, height: 21, fit: BoxFit.cover),
-        title: Text(title,
-            softWrap: true,
-            style: TextStyle(
-                fontSize: 11,
-                color: Colors.white,
-                fontWeight: FontWeight.normal)),
-        subtitle: Text(artist,
-            softWrap: true,
-            style: TextStyle(
-                fontSize: 9,
-                color: const Color(0xB3CFD0FD),
-                fontWeight: FontWeight.normal)),
-        //trailing: Icon(Icons.bookmark_border, color: Colors.white),
-      ),
-    ),
-  );
-}
+

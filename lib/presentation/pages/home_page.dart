@@ -4,10 +4,11 @@ import '../../blocs/user/user_bloc.dart';
 import '../../blocs/user/user_state.dart';
 import '../../blocs/user/user_event.dart';
 import '../../domain/models/user_profile.dart';
-import 'spotify_control_page.dart';
-import 'profile_page.dart';
-import 'chat_home_page.dart';
-import 'connect_services_page.dart';
+import '../widgets/common/app_scaffold.dart';
+import '../widgets/common/app_app_bar.dart';
+import '../widgets/common/app_button.dart';
+import '../constants/app_constants.dart';
+import '../mixins/page_mixin.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,7 +17,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with PageMixin {
   UserProfile? _userProfile;
 
   @override
@@ -26,27 +27,18 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _initializeData() {
-    context.read<UserBloc>().add(LoadMyProfile());
+    addBlocEvent<UserBloc, LoadMyProfile>(LoadMyProfile());
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<UserBloc, UserState>(
-      listener: (context, state) {
-        debugPrint('UserBloc State Changed: ${state.runtimeType}');
-        // if (state is UserError) {
-        //   debugPrint('UserError: ${(state as UserError).message}');
-        //   Navigator.of(context).pushReplacement(
-        //     MaterialPageRoute(
-        //       builder: (context) => const LoginPage(),
-        //     ),
-        //   );
-        // }
-      },
+      listener: _handleUserStateChange,
       builder: (context, state) {
         debugPrint('UserBloc Builder State: ${state.runtimeType}');
+
         if (state is UserLoading) {
-          return const Scaffold(
+          return const AppScaffold(
             body: Center(
               child: CircularProgressIndicator(),
             ),
@@ -58,83 +50,139 @@ class _HomePageState extends State<HomePage> {
           _userProfile = state.profile;
         }
 
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('MusicBud'),
+        return AppScaffold(
+          appBar: AppAppBar(
+            title: 'MusicBud',
             actions: [
               IconButton(
                 icon: const Icon(Icons.person),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const ProfilePage(),
-                    ),
-                  );
+                  navigateTo(AppConstants.profileRoute);
                 },
               ),
             ],
           ),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'Welcome to MusicBud!',
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                if (_userProfile != null) ...[
-                  const SizedBox(height: 10),
-                  Text(
-                    'Hello, ${_userProfile!.username}!',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ],
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: _userProfile != null
-                      ? () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ChatHomePage(
-                                currentUsername: _userProfile!.username,
-                              ),
-                            ),
-                          );
-                        }
-                      : null,
-                  child: const Text('Go to Chat'),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SpotifyControlPage(),
-                      ),
-                    );
-                  },
-                  child: const Text('Spotify Control'),
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ConnectServicesPage(),
-                      ),
-                    );
-                  },
-                  child: const Text('Connect Services'),
-                ),
-              ],
-            ),
-          ),
+          body: _buildHomeContent(),
         );
       },
+    );
+  }
+
+  void _handleUserStateChange(BuildContext context, UserState state) {
+    debugPrint('UserBloc State Changed: ${state.runtimeType}');
+    // TODO: Handle user error states if needed
+  }
+
+  Widget _buildHomeContent() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AppConstants.defaultPadding),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            // Welcome Section
+            _buildWelcomeSection(),
+            const SizedBox(height: 32),
+
+            // Action Buttons
+            _buildActionButtons(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWelcomeSection() {
+    return Column(
+      children: [
+        // App Logo/Icon
+        Icon(
+          Icons.music_note,
+          size: 80,
+          color: AppConstants.primaryColor,
+        ),
+        const SizedBox(height: 24),
+
+        // Welcome Text
+        Text(
+          'Welcome to MusicBud!',
+          style: AppConstants.headingStyle.copyWith(fontSize: 28),
+          textAlign: TextAlign.center,
+        ),
+
+        // User Greeting
+        if (_userProfile != null) ...[
+          const SizedBox(height: 16),
+          Text(
+            'Hello, ${_userProfile!.username}!',
+            style: AppConstants.subheadingStyle.copyWith(fontSize: 20),
+            textAlign: TextAlign.center,
+          ),
+        ],
+
+        const SizedBox(height: 16),
+        Text(
+          'Connect with music lovers and discover new sounds',
+          style: AppConstants.captionStyle.copyWith(fontSize: 16),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Column(
+      children: [
+        // Chat Button
+        if (_userProfile != null) ...[
+          AppButton(
+            text: 'Go to Chat',
+            onPressed: () {
+              // TODO: Implement chat navigation
+              showSnackBar('Chat functionality coming soon!');
+            },
+            icon: const Icon(Icons.chat),
+            width: double.infinity,
+          ),
+          const SizedBox(height: 16),
+        ],
+
+        // Profile Button
+        AppButton(
+          text: 'View Profile',
+          onPressed: () {
+            navigateTo(AppConstants.profileRoute);
+          },
+          icon: const Icon(Icons.person),
+          width: double.infinity,
+        ),
+        const SizedBox(height: 16),
+
+        // Settings Button
+        AppButton(
+          text: 'Settings',
+          onPressed: () {
+            // TODO: Implement settings navigation
+            showSnackBar('Settings functionality coming soon!');
+          },
+          icon: const Icon(Icons.settings),
+          width: double.infinity,
+          isOutlined: true,
+        ),
+        const SizedBox(height: 16),
+
+        // Help Button
+        AppButton(
+          text: 'Help & Support',
+          onPressed: () {
+            // TODO: Implement help navigation
+            showSnackBar('Help functionality coming soon!');
+          },
+          icon: const Icon(Icons.help),
+          width: double.infinity,
+          isOutlined: true,
+        ),
+      ],
     );
   }
 }

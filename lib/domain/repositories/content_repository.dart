@@ -85,5 +85,5 @@ abstract class ContentRepository {
   Future<void> toggleMangaLike(String mangaId);
 
   // Update methods
-  Future<void> updateLikes();
+  Future<void> updateLikes(String type, String id, bool isLiked);
 }

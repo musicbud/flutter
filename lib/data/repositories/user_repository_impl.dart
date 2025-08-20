@@ -1,13 +1,13 @@
 import '../../domain/repositories/user_repository.dart';
 import '../../domain/models/user_profile.dart';
-import '../../models/track.dart';
-import '../../models/artist.dart';
-import '../../models/album.dart';
-import '../../models/genre.dart';
-import '../../models/anime.dart';
-import '../../models/manga.dart';
-import '../datasources/remote/user_remote_data_source.dart';
-import '../datasources/user_remote_data_source_impl.dart';
+import '../../domain/models/track.dart';
+import '../../domain/models/common_artist.dart';
+import '../../domain/models/common_album.dart';
+import '../../domain/models/common_genre.dart';
+import '../../domain/models/common_anime.dart';
+import '../../domain/models/common_manga.dart';
+import '../data_sources/remote/user_remote_data_source.dart';
+import '../data_sources/remote/user_remote_data_source_impl.dart';
 
 class UserRepositoryImpl implements UserRepository {
   final UserRemoteDataSource _remoteDataSource;
@@ -37,47 +37,57 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<List<Artist>> getLikedArtists() async {
+  Future<List<CommonArtist>> getLikedArtists() async {
     return await _remoteDataSource.getLikedArtists();
   }
 
   @override
   Future<List<Track>> getLikedTracks() async {
-    return await _remoteDataSource.getLikedTracks();
+    try {
+      final tracks = await _remoteDataSource.getLikedTracks();
+      return tracks;
+    } catch (e) {
+      throw Exception('Failed to get liked tracks: $e');
+    }
   }
 
   @override
-  Future<List<Album>> getLikedAlbums() async {
+  Future<List<CommonAlbum>> getLikedAlbums() async {
     return await _remoteDataSource.getLikedAlbums();
   }
 
   @override
-  Future<List<Genre>> getLikedGenres() async {
+  Future<List<CommonGenre>> getLikedGenres() async {
     return await _remoteDataSource.getLikedGenres();
   }
 
   @override
-  Future<List<Artist>> getTopArtists() async {
+  Future<List<CommonArtist>> getTopArtists() async {
     return await _remoteDataSource.getTopArtists();
   }
 
   @override
   Future<List<Track>> getTopTracks() async {
-    return await _remoteDataSource.getTopTracks();
+    try {
+      final tracks = await _remoteDataSource.getTopTracks();
+      return tracks;
+    } catch (e) {
+      throw Exception('Failed to get top tracks: $e');
+    }
   }
 
   @override
-  Future<List<Genre>> getTopGenres() async {
+  Future<List<CommonGenre>> getTopGenres() async {
     return await _remoteDataSource.getTopGenres();
   }
 
   @override
-  Future<List<Anime>> getTopAnime() async {
+  Future<List<CommonAnime>> getTopAnime() async {
     return await _remoteDataSource.getTopAnime();
   }
 
   @override
-  Future<List<Manga>> getTopManga() async {
+  Future<List<CommonManga>> getTopManga() async {
     return await _remoteDataSource.getTopManga();
   }
 
@@ -148,17 +158,32 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<List<Track>> getPlayedTracks() async {
-    return await _remoteDataSource.getPlayedTracks();
+    try {
+      final tracks = await _remoteDataSource.getPlayedTracks();
+      return tracks;
+    } catch (e) {
+      throw Exception('Failed to get played tracks: $e');
+    }
   }
 
   @override
   Future<List<Track>> getPlayedTracksWithLocation() async {
-    return await _remoteDataSource.getPlayedTracksWithLocation();
+    try {
+      final tracks = await _remoteDataSource.getPlayedTracksWithLocation();
+      return tracks;
+    } catch (e) {
+      throw Exception('Failed to get played tracks with location: $e');
+    }
   }
 
   @override
   Future<List<Track>> getCurrentlyPlayedTracks() async {
-    return await _remoteDataSource.getCurrentlyPlayedTracks();
+    try {
+      final tracks = await _remoteDataSource.getCurrentlyPlayedTracks();
+      return tracks;
+    } catch (e) {
+      throw Exception('Failed to get currently played tracks: $e');
+    }
   }
 
   @override

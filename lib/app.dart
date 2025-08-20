@@ -2,87 +2,157 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:musicbud_flutter/blocs/auth/auth_bloc.dart';
-import 'package:musicbud_flutter/blocs/auth/lastfm/lastfm_bloc.dart';
-import 'package:musicbud_flutter/blocs/auth/login/login_bloc.dart';
-import 'package:musicbud_flutter/blocs/auth/mal/mal_bloc.dart';
-import 'package:musicbud_flutter/blocs/auth/register/register_bloc.dart';
-import 'package:musicbud_flutter/blocs/auth/spotify/spotify_bloc.dart';
-import 'package:musicbud_flutter/blocs/auth/ytmusic/ytmusic_bloc.dart';
-import 'package:musicbud_flutter/blocs/main/main_screen_bloc.dart';
-import 'package:musicbud_flutter/blocs/profile/profile_bloc.dart';
-import 'package:musicbud_flutter/domain/repositories/auth_repository.dart';
-import 'package:musicbud_flutter/domain/repositories/bud_repository.dart';
-import 'package:musicbud_flutter/domain/repositories/content_repository.dart';
-import 'package:musicbud_flutter/domain/repositories/profile_repository.dart';
-import 'package:musicbud_flutter/presentation/pages/home_page.dart';
-import 'package:musicbud_flutter/presentation/pages/login_page.dart';
-import 'package:musicbud_flutter/presentation/pages/main_screen.dart';
-import 'package:musicbud_flutter/presentation/pages/profile_page.dart';
-import 'package:musicbud_flutter/utils/colors.dart';
 
+// BLoCs
+import 'blocs/auth/auth_bloc.dart';
+import 'blocs/auth/lastfm/lastfm_bloc.dart';
+import 'blocs/auth/login/login_bloc.dart';
+import 'blocs/auth/mal/mal_bloc.dart';
+import 'blocs/auth/register/register_bloc.dart';
+import 'blocs/auth/spotify/spotify_bloc.dart';
+import 'blocs/auth/ytmusic/ytmusic_bloc.dart';
+import 'blocs/main/main_screen_bloc.dart';
+import 'blocs/profile/profile_bloc.dart';
+
+// Repositories
+import 'domain/repositories/auth_repository.dart';
+import 'domain/repositories/bud_repository.dart';
+import 'domain/repositories/content_repository.dart';
+import 'domain/repositories/profile_repository.dart';
+
+// Pages
+import 'presentation/pages/home_page.dart';
+import 'presentation/pages/login_page.dart';
+import 'presentation/pages/new_pages/main.dart';
+import 'presentation/pages/new_pages/profile_page.dart';
+import 'presentation/pages/new_pages/service_connection_page.dart';
+import 'presentation/pages/new_pages/settings_page.dart';
+import 'presentation/pages/new_pages/admin_dashboard_page.dart';
+import 'presentation/pages/new_pages/event_page.dart';
+
+// Utilities
+import 'utils/colors.dart';
+import 'presentation/constants/app_constants.dart';
+
+/// Main application widget for MusicBud
 class App extends StatelessWidget {
-  const App({Key? key}) : super(key: key);
+  const App({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final authRepository = GetIt.instance<AuthRepository>();
-    final profileRepository = GetIt.instance<ProfileRepository>();
-    final contentRepository = GetIt.instance<ContentRepository>();
-    final budRepository = GetIt.instance<BudRepository>();
-
     return MultiBlocProvider(
-      providers: [
-        BlocProvider<ProfileBloc>(
-          create: (context) => ProfileBloc(
-            profileRepository: profileRepository,
-            contentRepository: contentRepository,
-            budRepository: budRepository,
-          ),
-        ),
-        BlocProvider<AuthBloc>(
-          create: (context) => AuthBloc(authRepository: authRepository),
-        ),
-        BlocProvider<LoginBloc>(
-          create: (context) => LoginBloc(authRepository: authRepository),
-        ),
-        BlocProvider<RegisterBloc>(
-          create: (context) => RegisterBloc(authRepository: authRepository),
-        ),
-        BlocProvider<SpotifyBloc>(
-          create: (context) => SpotifyBloc(authRepository: authRepository),
-        ),
-        BlocProvider<YtMusicBloc>(
-          create: (context) => YtMusicBloc(authRepository: authRepository),
-        ),
-        BlocProvider<MALBloc>(
-          create: (context) => MALBloc(authRepository: authRepository),
-        ),
-        BlocProvider<LastFmBloc>(
-          create: (context) => LastFmBloc(authRepository: authRepository),
-        ),
-        BlocProvider<MainScreenBloc>(
-          create: (context) => MainScreenBloc(
-            profileRepository: GetIt.instance<ProfileRepository>(),
-          ),
-        ),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'MusicBud',
-        theme: ThemeData(
-          colorScheme: AppColors.colorScheme,
-          useMaterial3: true,
-          textTheme: GoogleFonts.josefinSansTextTheme(Theme.of(context).textTheme),
-        ),
-        initialRoute: '/login',
-        routes: {
-          '/': (context) => const MainScreen(),
-          '/login': (context) => const LoginPage(),
-          '/home': (context) => const HomePage(),
-          '/profile': (context) => const ProfilePage(),
-        },
-      ),
+      providers: _buildBlocProviders(),
+      child: _buildMaterialApp(),
     );
   }
+
+  /// Builds the list of BLoC providers for the application
+  List<BlocProvider> _buildBlocProviders() {
+    final sl = GetIt.instance;
+
+    return [
+      // Core BLoCs
+      BlocProvider<ProfileBloc>(
+        create: (context) => ProfileBloc(
+          profileRepository: sl<ProfileRepository>(),
+          contentRepository: sl<ContentRepository>(),
+          budRepository: sl<BudRepository>(),
+        ),
+      ),
+
+      // Authentication BLoCs
+      BlocProvider<AuthBloc>(
+        create: (context) => AuthBloc(authRepository: sl<AuthRepository>()),
+      ),
+      BlocProvider<LoginBloc>(
+        create: (context) => LoginBloc(authRepository: sl<AuthRepository>()),
+      ),
+      BlocProvider<RegisterBloc>(
+        create: (context) => RegisterBloc(authRepository: sl<AuthRepository>()),
+      ),
+
+      // Service Connection BLoCs
+      BlocProvider<SpotifyBloc>(
+        create: (context) => SpotifyBloc(authRepository: sl<AuthRepository>()),
+      ),
+      BlocProvider<YtMusicBloc>(
+        create: (context) => YtMusicBloc(authRepository: sl<AuthRepository>()),
+      ),
+      BlocProvider<MALBloc>(
+        create: (context) => MALBloc(authRepository: sl<AuthRepository>()),
+      ),
+      BlocProvider<LastFmBloc>(
+        create: (context) => LastFmBloc(authRepository: sl<AuthRepository>()),
+      ),
+
+      // Main Screen BLoC
+      BlocProvider<MainScreenBloc>(
+        create: (context) => MainScreenBloc(
+          profileRepository: sl<ProfileRepository>(),
+        ),
+      ),
+    ];
+  }
+
+  /// Builds the MaterialApp with theme and routing
+  Widget _buildMaterialApp() {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: AppConstants.appTitle,
+      theme: _buildAppTheme(),
+      initialRoute: AppConstants.loginRoute,
+      routes: _buildAppRoutes(),
+    );
+  }
+
+  /// Builds the application theme
+  ThemeData _buildAppTheme() {
+    return ThemeData(
+      colorScheme: AppColors.colorScheme,
+      useMaterial3: true,
+      textTheme: GoogleFonts.josefinSansTextTheme(
+        ThemeData.light().textTheme,
+      ),
+      // Additional theme customizations
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppConstants.backgroundColor,
+        foregroundColor: AppConstants.textColor,
+        elevation: 0,
+      ),
+      scaffoldBackgroundColor: AppConstants.backgroundColor,
+      primaryColor: AppConstants.primaryColor,
+    );
+  }
+
+  /// Builds the application routes
+  Map<String, WidgetBuilder> _buildAppRoutes() {
+    return {
+      AppConstants.homeRoute: (context) => const NewMainScreen(),
+      AppConstants.loginRoute: (context) => const LoginPage(),
+      AppConstants.homePageRoute: (context) => const HomePage(),
+      AppConstants.profileRoute: (context) => const ProfilePage(),
+      '/services': (context) => const ServiceConnectionPage(),
+      '/settings': (context) => const SettingsPage(),
+      '/admin': (context) => const AdminDashboardPage(),
+      '/events': (context) => const EventPage(),
+    };
+  }
+}
+
+/// Application configuration and constants
+class AppConfig {
+  /// Application name
+  static const String appName = 'MusicBud';
+
+  /// Application version
+  static const String appVersion = '1.0.0';
+
+  /// Application description
+  static const String appDescription = 'Connect through music';
+
+  /// Build number
+  static const String buildNumber = '1';
+
+  /// Minimum supported Flutter version
+  static const String minFlutterVersion = '3.0.0';
 }

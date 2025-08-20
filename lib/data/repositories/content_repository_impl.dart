@@ -6,10 +6,10 @@ import '../../domain/models/common_album.dart';
 import '../../domain/models/common_anime.dart';
 import '../../domain/models/common_manga.dart';
 import '../../domain/repositories/content_repository.dart';
-import '../data_sources/remote/reference/content_remote_data_source.dart';
+import '../data_sources/remote/content_remote_data_source.dart';
 import '../../domain/models/track.dart';
 import '../network/dio_client.dart';
-import '../data_sources/remote/reference/user_remote_data_source.dart';
+import '../data_sources/remote/user_remote_data_source.dart';
 
 class ContentRepositoryImpl implements ContentRepository {
   final DioClient dioClient;
@@ -358,7 +358,7 @@ class ContentRepositoryImpl implements ContentRepository {
   }
 
   @override
-  Future<void> updateLikes() async {
-    await remoteDataSource.updateLikes();
+  Future<void> updateLikes(String type, String id, bool isLiked) async {
+    await remoteDataSource.updateLikes(type, id, isLiked);
   }
 }

@@ -3,7 +3,8 @@ import '../../domain/repositories/content_repository.dart';
 import 'spotify_control_event.dart' as events;
 import 'spotify_control_state.dart' as states;
 
-/// Bloc that handles Spotify playback control and track management
+/// Enhanced Bloc that handles Spotify playback control and track management
+/// with additional functionality from legacy implementation
 class SpotifyControlBloc
     extends Bloc<events.SpotifyControlEvent, states.SpotifyControlState> {
   final ContentRepository _contentRepository;
@@ -17,6 +18,8 @@ class SpotifyControlBloc
     on<events.SpotifyPlaybackControlRequested>(_onPlaybackControlRequested);
     on<events.SpotifyVolumeChangeRequested>(_onVolumeChangeRequested);
     on<events.SpotifyTrackLocationSaveRequested>(_onTrackLocationSaveRequested);
+    on<events.SpotifyPlayTrackRequested>(_onPlayTrackRequested);
+    on<events.SpotifySavePlayedTrackRequested>(_onSavePlayedTrackRequested);
   }
 
   Future<void> _onPlayedTracksRequested(
@@ -58,8 +61,22 @@ class SpotifyControlBloc
       emit(states.SpotifyControlLoading());
       await _contentRepository.controlSpotifyPlayback(
           event.command, event.deviceId);
-      emit(states.SpotifyPlaybackStateChanged(
-          isPlaying: event.command == 'play'));
+
+      // Enhanced state management based on command
+      switch (event.command) {
+        case 'play':
+          emit(states.SpotifyPlaybackStateChanged(isPlaying: true));
+          break;
+        case 'pause':
+          emit(states.SpotifyPlaybackStateChanged(isPlaying: false));
+          break;
+        case 'next':
+        case 'previous':
+          emit(states.SpotifyPlaybackControlled());
+          break;
+        default:
+          emit(states.SpotifyPlaybackControlled());
+      }
     } catch (e) {
       emit(states.SpotifyControlFailure(error: e.toString()));
     }
@@ -99,6 +116,37 @@ class SpotifyControlBloc
         latitude: event.latitude,
         longitude: event.longitude,
       ));
+    } catch (e) {
+      emit(states.SpotifyControlFailure(error: e.toString()));
+    }
+  }
+
+  Future<void> _onPlayTrackRequested(
+    events.SpotifyPlayTrackRequested event,
+    Emitter<states.SpotifyControlState> emit,
+  ) async {
+    if (event.deviceId.isEmpty) {
+      emit(states.SpotifyControlFailure(error: 'No device selected'));
+      return;
+    }
+
+    try {
+      emit(states.SpotifyControlLoading());
+      await _contentRepository.playTrack(event.trackId, event.deviceId);
+      emit(states.SpotifyTrackPlaying(trackId: event.trackId));
+    } catch (e) {
+      emit(states.SpotifyControlFailure(error: e.toString()));
+    }
+  }
+
+  Future<void> _onSavePlayedTrackRequested(
+    events.SpotifySavePlayedTrackRequested event,
+    Emitter<states.SpotifyControlState> emit,
+  ) async {
+    try {
+      emit(states.SpotifyControlLoading());
+      await _contentRepository.savePlayedTrack(event.trackId);
+      emit(states.SpotifyPlayedTrackSaved(trackId: event.trackId));
     } catch (e) {
       emit(states.SpotifyControlFailure(error: e.toString()));
     }

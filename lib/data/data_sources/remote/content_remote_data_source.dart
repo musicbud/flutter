@@ -17,6 +17,11 @@ abstract class ContentRemoteDataSource {
   Future<List<CommonAnime>> getPopularAnime({int limit = 20});
   Future<List<CommonManga>> getPopularManga({int limit = 20});
 
+  // Popular content (missing methods)
+  Future<List<CommonTrack>> getPopularTracks({int limit = 20});
+  Future<List<CommonArtist>> getPopularArtists({int limit = 20});
+  Future<List<CommonAlbum>> getPopularAlbums({int limit = 20});
+
   // Top content
   Future<List<CommonTrack>> getTopTracks();
   Future<List<CommonArtist>> getTopArtists();
@@ -37,6 +42,31 @@ abstract class ContentRemoteDataSource {
   Future<void> like(String type, String id);
   Future<void> unlike(String type, String id);
 
+  // Specific like/unlike methods
+  Future<void> likeTrack(String trackId);
+  Future<void> unlikeTrack(String trackId);
+  Future<void> likeArtist(String artistId);
+  Future<void> unlikeArtist(String artistId);
+  Future<void> likeAlbum(String albumId);
+  Future<void> unlikeAlbum(String albumId);
+  Future<void> likeGenre(String genreId);
+  Future<void> unlikeGenre(String genreId);
+  Future<void> likeAnime(String animeId);
+  Future<void> unlikeAnime(String animeId);
+  Future<void> likeManga(String mangaId);
+  Future<void> unlikeManga(String mangaId);
+
+  // Toggle like methods (missing methods)
+  Future<void> toggleTrackLike(String trackId);
+  Future<void> toggleArtistLike(String artistId);
+  Future<void> toggleAlbumLike(String albumId);
+  Future<void> toggleGenreLike(String genreId);
+  Future<void> toggleAnimeLike(String animeId);
+  Future<void> toggleMangaLike(String mangaId);
+
+  // Update likes method (missing method)
+  Future<void> updateLikes(String type, String id, bool isLiked);
+
   // Search operations
   Future<List<CommonTrack>> searchTracks(String query);
   Future<List<CommonArtist>> searchArtists(String query);
@@ -44,6 +74,14 @@ abstract class ContentRemoteDataSource {
   Future<List<CommonGenre>> searchGenres(String query);
   Future<List<CommonAnime>> searchAnime(String query);
   Future<List<CommonManga>> searchManga(String query);
+
+  // Detail methods
+  Future<CommonTrack> getTrackDetails(String trackId);
+  Future<CommonArtist> getArtistDetails(String artistId);
+  Future<CommonAlbum> getAlbumDetails(String albumId);
+  Future<CommonGenre> getGenreDetails(String genreId);
+  Future<CommonAnime> getAnimeDetails(String animeId);
+  Future<CommonManga> getMangaDetails(String mangaId);
 
   // Playback operations
   Future<List<Map<String, dynamic>>> getSpotifyDevices();
@@ -108,6 +146,48 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get popular manga');
+    }
+  }
+
+  @override
+  Future<List<CommonTrack>> getPopularTracks({int limit = 20}) async {
+    try {
+      final response = await _dioClient
+          .get('/popular/tracks', queryParameters: {'limit': limit});
+      return (response.data as List)
+          .map((track) => CommonTrack.fromJson(track))
+          .toList();
+    } on DioException catch (e) {
+      throw ServerException(
+          message: e.message ?? 'Failed to get popular tracks');
+    }
+  }
+
+  @override
+  Future<List<CommonArtist>> getPopularArtists({int limit = 20}) async {
+    try {
+      final response = await _dioClient
+          .get('/popular/artists', queryParameters: {'limit': limit});
+      return (response.data as List)
+          .map((artist) => CommonArtist.fromJson(artist))
+          .toList();
+    } on DioException catch (e) {
+      throw ServerException(
+          message: e.message ?? 'Failed to get popular artists');
+    }
+  }
+
+  @override
+  Future<List<CommonAlbum>> getPopularAlbums({int limit = 20}) async {
+    try {
+      final response = await _dioClient
+          .get('/popular/albums', queryParameters: {'limit': limit});
+      return (response.data as List)
+          .map((album) => CommonAlbum.fromJson(album))
+          .toList();
+    } on DioException catch (e) {
+      throw ServerException(
+          message: e.message ?? 'Failed to get popular albums');
     }
   }
 
@@ -261,6 +341,181 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   }
 
   @override
+  Future<void> likeTrack(String trackId) async {
+    try {
+      await _dioClient.post('/like/track', data: {'track_id': trackId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to like track');
+    }
+  }
+
+  @override
+  Future<void> unlikeTrack(String trackId) async {
+    try {
+      await _dioClient.post('/unlike/track', data: {'track_id': trackId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to unlike track');
+    }
+  }
+
+  @override
+  Future<void> likeArtist(String artistId) async {
+    try {
+      await _dioClient.post('/like/artist', data: {'artist_id': artistId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to like artist');
+    }
+  }
+
+  @override
+  Future<void> unlikeArtist(String artistId) async {
+    try {
+      await _dioClient.post('/unlike/artist', data: {'artist_id': artistId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to unlike artist');
+    }
+  }
+
+  @override
+  Future<void> likeAlbum(String albumId) async {
+    try {
+      await _dioClient.post('/like/album', data: {'album_id': albumId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to like album');
+    }
+  }
+
+  @override
+  Future<void> unlikeAlbum(String albumId) async {
+    try {
+      await _dioClient.post('/unlike/album', data: {'album_id': albumId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to unlike album');
+    }
+  }
+
+  @override
+  Future<void> likeGenre(String genreId) async {
+    try {
+      await _dioClient.post('/like/genre', data: {'genre_id': genreId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to like genre');
+    }
+  }
+
+  @override
+  Future<void> unlikeGenre(String genreId) async {
+    try {
+      await _dioClient.post('/unlike/genre', data: {'genre_id': genreId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to unlike genre');
+    }
+  }
+
+  @override
+  Future<void> likeAnime(String animeId) async {
+    try {
+      await _dioClient.post('/like/anime', data: {'anime_id': animeId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to like anime');
+    }
+  }
+
+  @override
+  Future<void> unlikeAnime(String animeId) async {
+    try {
+      await _dioClient.post('/unlike/anime', data: {'anime_id': animeId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to unlike anime');
+    }
+  }
+
+  @override
+  Future<void> likeManga(String mangaId) async {
+    try {
+      await _dioClient.post('/like/manga', data: {'manga_id': mangaId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to like manga');
+    }
+  }
+
+  @override
+  Future<void> unlikeManga(String mangaId) async {
+    try {
+      await _dioClient.post('/unlike/manga', data: {'manga_id': mangaId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to unlike manga');
+    }
+  }
+
+  @override
+  Future<void> toggleTrackLike(String trackId) async {
+    try {
+      await _dioClient.post('/toggle/track/like', data: {'track_id': trackId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to toggle track like');
+    }
+  }
+
+  @override
+  Future<void> toggleArtistLike(String artistId) async {
+    try {
+      await _dioClient.post('/toggle/artist/like', data: {'artist_id': artistId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to toggle artist like');
+    }
+  }
+
+  @override
+  Future<void> toggleAlbumLike(String albumId) async {
+    try {
+      await _dioClient.post('/toggle/album/like', data: {'album_id': albumId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to toggle album like');
+    }
+  }
+
+  @override
+  Future<void> toggleGenreLike(String genreId) async {
+    try {
+      await _dioClient.post('/toggle/genre/like', data: {'genre_id': genreId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to toggle genre like');
+    }
+  }
+
+  @override
+  Future<void> toggleAnimeLike(String animeId) async {
+    try {
+      await _dioClient.post('/toggle/anime/like', data: {'anime_id': animeId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to toggle anime like');
+    }
+  }
+
+  @override
+  Future<void> toggleMangaLike(String mangaId) async {
+    try {
+      await _dioClient.post('/toggle/manga/like', data: {'manga_id': mangaId});
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to toggle manga like');
+    }
+  }
+
+  @override
+  Future<void> updateLikes(String type, String id, bool isLiked) async {
+    try {
+      await _dioClient.post('/update/likes', data: {
+        'type': type,
+        'id': id,
+        'is_liked': isLiked,
+      });
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to update likes');
+    }
+  }
+
+  @override
   Future<List<CommonTrack>> searchTracks(String query) async {
     try {
       final response =
@@ -335,6 +590,66 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
           .toList();
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to search manga');
+    }
+  }
+
+  @override
+  Future<CommonTrack> getTrackDetails(String trackId) async {
+    try {
+      final response = await _dioClient.get('/tracks/$trackId');
+      return CommonTrack.fromJson(response.data);
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to get track details');
+    }
+  }
+
+  @override
+  Future<CommonArtist> getArtistDetails(String artistId) async {
+    try {
+      final response = await _dioClient.get('/artists/$artistId');
+      return CommonArtist.fromJson(response.data);
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to get artist details');
+    }
+  }
+
+  @override
+  Future<CommonAlbum> getAlbumDetails(String albumId) async {
+    try {
+      final response = await _dioClient.get('/albums/$albumId');
+      return CommonAlbum.fromJson(response.data);
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to get album details');
+    }
+  }
+
+  @override
+  Future<CommonGenre> getGenreDetails(String genreId) async {
+    try {
+      final response = await _dioClient.get('/genres/$genreId');
+      return CommonGenre.fromJson(response.data);
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to get genre details');
+    }
+  }
+
+  @override
+  Future<CommonAnime> getAnimeDetails(String animeId) async {
+    try {
+      final response = await _dioClient.get('/anime/$animeId');
+      return CommonAnime.fromJson(response.data);
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to get anime details');
+    }
+  }
+
+  @override
+  Future<CommonManga> getMangaDetails(String mangaId) async {
+    try {
+      final response = await _dioClient.get('/manga/$mangaId');
+      return CommonManga.fromJson(response.data);
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to get manga details');
     }
   }
 

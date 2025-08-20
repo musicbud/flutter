@@ -35,6 +35,9 @@ class SpotifyPlaybackStateChanged extends SpotifyControlState {
   SpotifyPlaybackStateChanged({required this.isPlaying});
 }
 
+/// State when playback control is executed (next, previous, etc.)
+class SpotifyPlaybackControlled extends SpotifyControlState {}
+
 /// State when volume changes
 class SpotifyVolumeStateChanged extends SpotifyControlState {
   final int volume;
@@ -53,6 +56,20 @@ class SpotifyTrackLocationSaved extends SpotifyControlState {
     required this.latitude,
     required this.longitude,
   });
+}
+
+/// State when a track starts playing
+class SpotifyTrackPlaying extends SpotifyControlState {
+  final String trackId;
+
+  SpotifyTrackPlaying({required this.trackId});
+}
+
+/// State when a played track is saved
+class SpotifyPlayedTrackSaved extends SpotifyControlState {
+  final String trackId;
+
+  SpotifyPlayedTrackSaved({required this.trackId});
 }
 
 /// Error state

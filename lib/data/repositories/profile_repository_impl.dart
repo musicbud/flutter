@@ -4,30 +4,29 @@ import '../../domain/models/user_profile.dart';
 import '../../domain/models/content_service.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../network/dio_client.dart';
-import '../data_sources/remote/profile_remote_data_source.dart';
 import '../../utils/json_helper.dart';
 import 'dart:convert';
 import '../models/user_profile_model.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
   final DioClient _dioClient;
-  final ProfileRemoteDataSource _remoteDataSource;
 
   ProfileRepositoryImpl({
     required DioClient dioClient,
-    required ProfileRemoteDataSource remoteDataSource,
-  })  : _dioClient = dioClient,
-        _remoteDataSource = remoteDataSource;
+  }) : _dioClient = dioClient;
 
   @override
   Future<UserProfile> getMyProfile() async {
     try {
       print('ProfileRepository: Getting my profile');
-      final response = await _remoteDataSource.getMyProfile();
-      if (response == null) {
+      final response = await _dioClient.post('/me/profile');
+      if (response.data == null) {
         throw Exception('Profile not found');
       }
-      return response;
+      print('ProfileRepository: Response data: ${response.data}');
+      print('ProfileRepository: Response data type: ${response.data.runtimeType}');
+      print('ProfileRepository: Response data keys: ${response.data.keys.toList()}');
+      return UserProfile.fromJson(response.data);
     } catch (e, stackTrace) {
       print('ProfileRepository: Error getting profile: $e');
       print('ProfileRepository: Stack trace: $stackTrace');
@@ -42,24 +41,53 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   @override
   Future<void> updateProfile(Map<String, dynamic> profileData) async {
-    // return await _remoteDataSource.updateProfile(profileData);
+    final response = await _dioClient.put('/profile/me', data: profileData);
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update profile');
+    }
   }
 
   @override
   Future<String> updateAvatar(XFile image) async {
-    final formData = FormData();
-    formData.files.add(MapEntry(
-      'avatar',
-      await MultipartFile.fromFile(image.path),
-    ));
-    final response =
-        await _dioClient.dio.post('/profile/avatar', data: formData);
-    return response.data['avatar_url'];
+    try {
+      final formData = FormData();
+      formData.files.add(MapEntry(
+        'avatar',
+        await MultipartFile.fromFile(image.path),
+      ));
+
+      // Use post method directly with FormData
+      final response = await _dioClient.post('/profile/avatar', data: formData);
+
+      if (response.data != null && response.data['avatar_url'] != null) {
+        return response.data['avatar_url'];
+      } else {
+        throw Exception('Avatar URL not found in response');
+      }
+    } catch (e) {
+      print('ProfileRepository: Error updating avatar: $e');
+      rethrow;
+    }
   }
 
   @override
   Future<void> logout() async {
-    await _dioClient.post('/auth/logout');
+    try {
+      // Try POST first, if it fails, try GET
+      try {
+        await _dioClient.post('/auth/logout');
+      } catch (e) {
+        if (e.toString().contains('405')) {
+          // If POST fails with 405, try GET
+          await _dioClient.get('/auth/logout');
+        } else {
+          rethrow;
+        }
+      }
+    } catch (e) {
+      print('ProfileRepository: Logout failed: $e');
+      // Don't rethrow - logout should not fail the app
+    }
   }
 
   @override

@@ -43,3 +43,23 @@ class SpotifyTrackLocationSaveRequested extends SpotifyControlEvent {
     required this.longitude,
   });
 }
+
+/// Event to play a specific track
+class SpotifyPlayTrackRequested extends SpotifyControlEvent {
+  final String trackId;
+  final String deviceId;
+
+  SpotifyPlayTrackRequested({
+    required this.trackId,
+    required this.deviceId,
+  });
+}
+
+/// Event to save a played track
+class SpotifySavePlayedTrackRequested extends SpotifyControlEvent {
+  final String trackId;
+
+  SpotifySavePlayedTrackRequested({
+    required this.trackId,
+  });
+}

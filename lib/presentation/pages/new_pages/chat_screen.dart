@@ -1,21 +1,5 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: const ChatListScreen(),
-    );
-  }
-}
-
 class ChatListScreen extends StatelessWidget {
   const ChatListScreen({super.key});
 
@@ -37,12 +21,12 @@ class ChatListScreen extends StatelessWidget {
       MusicGenre("Bassline Society", 'assets/cover2.jpg'),
       MusicGenre("Echo Chamber", 'assets/cover3.jpg'),
       MusicGenre("Sound Collective", 'assets/cover4.jpg'),
-    
+
       MusicGenre("Melodic Fusion", 'assets/cover.jpg'),
       MusicGenre("Bassline Society", 'assets/cover6.jpg'),
       MusicGenre("Echo Chamber", 'assets/music_cover4.jpg'),
       MusicGenre("Sound Collective", 'assets/profile2.jpg'),
-    
+
       MusicGenre("Melodic Fusion", 'assets/profile4.jpg'),
       MusicGenre("Bassline Society", 'assets/cover2.jpg'),
       MusicGenre("Echo Chamber", 'assets/music_cover6.jpg'),
@@ -167,7 +151,7 @@ class MatchNowButton extends StatelessWidget {
                   children: [
                     CircleAvatar(
                       radius: 13,
-                      backgroundColor: Colors.pinkAccent, 
+                      backgroundColor: Colors.pinkAccent,
                       child: ClipOval(child: Image.asset('assets/profile.jpg', fit: BoxFit.cover, width: 24, height: 24)),
                     ),
                     Positioned(
@@ -301,7 +285,7 @@ class MusicGenre {
 //                 },
 //               ),
 //             ),
-            
+
 
 //           ],
 //         ),
@@ -349,7 +333,7 @@ class MusicGenre {
 //                   ),
 //                 ),
 //               ],
-              
+
 //             ),
 //           ),
 
@@ -357,7 +341,7 @@ class MusicGenre {
 //           MatchNowButton(isHighlighted: user.isSpecial),
 //         ],
 //       ),
-      
+
 //     );
 //   }
 // }
@@ -374,7 +358,7 @@ class MusicGenre {
 //         Container(
 //           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
 //           decoration: BoxDecoration(
-            
+
 //             color: Colors.white,
 //             borderRadius: BorderRadius.circular(50),
 //           ),
@@ -388,7 +372,7 @@ class MusicGenre {
 //                     children: [
 //                       CircleAvatar(
 //                         radius: 13,
-//                         backgroundColor: Colors.pinkAccent, 
+//                         backgroundColor: Colors.pinkAccent,
 //                         child: ClipOval(child: Image.asset('assets/profile.jpg', fit: BoxFit.cover, width: 24, height: 24,)),// Replace with your desired color 0xFF232C4E),
 //                       ),
 //                       Positioned(
@@ -396,7 +380,7 @@ class MusicGenre {
 //                         child: CircleAvatar(
 //                           radius: 13,
 //                           backgroundColor: Colors.pinkAccent,
-                          
+
 //                            child: ClipOval(child: Image.asset('assets/profile4.jpg', fit: BoxFit.cover, width: 24, height: 24,)),// Replace with your desired color 0xFF232C4E
 //                         ),
 //                       ),
@@ -423,7 +407,7 @@ class MusicGenre {
 //           ),
 //         ),
 //       ],
-      
+
 //     );
 //   }
 // }

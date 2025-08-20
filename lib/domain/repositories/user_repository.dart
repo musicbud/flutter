@@ -1,9 +1,9 @@
-import '../../models/track.dart';
-import '../../models/artist.dart';
-import '../../models/album.dart';
-import '../../models/genre.dart';
-import '../../models/anime.dart';
-import '../../models/manga.dart';
+import '../models/track.dart';
+import '../models/common_artist.dart';
+import '../models/common_album.dart';
+import '../models/common_genre.dart';
+import '../models/common_anime.dart';
+import '../models/common_manga.dart';
 import '../models/user_profile.dart';
 
 abstract class UserRepository {
@@ -14,17 +14,17 @@ abstract class UserRepository {
   Future<void> updateMyLikes();
 
   // Liked items
-  Future<List<Artist>> getLikedArtists();
+  Future<List<CommonArtist>> getLikedArtists();
   Future<List<Track>> getLikedTracks();
-  Future<List<Album>> getLikedAlbums();
-  Future<List<Genre>> getLikedGenres();
+  Future<List<CommonAlbum>> getLikedAlbums();
+  Future<List<CommonGenre>> getLikedGenres();
 
   // Top items
-  Future<List<Artist>> getTopArtists();
+  Future<List<CommonArtist>> getTopArtists();
   Future<List<Track>> getTopTracks();
-  Future<List<Genre>> getTopGenres();
-  Future<List<Anime>> getTopAnime();
-  Future<List<Manga>> getTopManga();
+  Future<List<CommonGenre>> getTopGenres();
+  Future<List<CommonAnime>> getTopAnime();
+  Future<List<CommonManga>> getTopManga();
 
   // Service connections
   Future<String> getSpotifyAuthUrl();

@@ -144,7 +144,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       final result =
           await _authRepository.login(event.username, event.password);
-      emit(Authenticated(token: result['token']));
+      emit(Authenticated(token: result['access_token']));
     } catch (e) {
       emit(AuthError(e.toString()));
     }
@@ -161,7 +161,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         event.email,
         event.password,
       );
-      emit(Authenticated(token: result['token']));
+      emit(Authenticated(token: result['access_token']));
     } catch (e) {
       emit(AuthError(e.toString()));
     }

@@ -1,24 +1,9 @@
 
 import 'package:flutter/material.dart';
 
-//theme: ThemeData.dark(),
-void main(List<String> args) {
-  runApp(ProfileApp(key: UniqueKey()));
-}
+class Profile1Page extends StatelessWidget {
+  const Profile1Page({Key? key}) : super(key: key);
 
-class ProfileApp extends StatelessWidget {
-  const ProfileApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: ProfileScreen(),
-    );
-  }
-}
-
-class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,14 +16,14 @@ class ProfileScreen extends StatelessWidget {
               children: [
                 Container(
                   height: 400,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/cover.jpg'), // Cover image
+                      image: AssetImage('assets/cover.jpg'),
                       fit: BoxFit.cover,
                     ),
                   ),
                 ),
-                Positioned(
+                const Positioned(
                   top: 140,
                   left: 20,
                   child: CircleAvatar(
@@ -46,7 +31,7 @@ class ProfileScreen extends StatelessWidget {
                     backgroundImage: AssetImage('assets/profile.jpg'),
                   ),
                 ),
-                Positioned(
+                const Positioned(
                   top: 160,
                   left: 120,
                   child: Text(
@@ -65,34 +50,34 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
+                  const Text(
                     'Age: 24',
                     style: TextStyle(color: Colors.white70),
                   ),
-                  SizedBox(height: 5),
-                  Text(
+                  const SizedBox(height: 5),
+                  const Text(
                     'Joined since 21 Oct 2023',
                     style: TextStyle(color: Colors.white70),
                   ),
-                  SizedBox(height: 10),
-                  Text(
+                  const SizedBox(height: 10),
+                  const Text(
                     'UK • London',
                     style: TextStyle(color: Colors.white),
                   ),
-                  SizedBox(height: 10),
-                  Text(
+                  const SizedBox(height: 10),
+                  const Text(
                     'A passionate marketing specialist with a flair for creativity and innovation.',
                     style: TextStyle(color: Colors.white70),
                   ),
-                  Divider(color: Colors.white24),
-                  SizedBox(height: 10),
-                  Text(
+                  const Divider(color: Colors.white24),
+                  const SizedBox(height: 10),
+                  const Text(
                     'Listened a moment ago',
                     style: TextStyle(color: Colors.white, fontSize: 16),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   _buildMusicTile('Waves of Stardust', 'Midnight Echoes', 'assets/music_cover.jpg'),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -101,7 +86,7 @@ class ProfileScreen extends StatelessWidget {
                       _buildChip('Liked Genres'),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   _buildMusicTile('Echoes in the Dark', 'Midnight Echoes', 'assets/music_cover2.jpg'),
                   _buildMusicTile('Mosaic of Memories', 'Infinity Sound', 'assets/music_cover3.jpg'),
                 ],
@@ -119,15 +104,15 @@ class ProfileScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: Image.asset(image, width: 50, height: 50, fit: BoxFit.cover),
       ),
-      title: Text(title, style: TextStyle(color: Colors.white)),
-      subtitle: Text(artist, style: TextStyle(color: Colors.white70)),
-      trailing: Icon(Icons.bookmark_border, color: Colors.white),
+      title: Text(title, style: const TextStyle(color: Colors.white)),
+      subtitle: Text(artist, style: const TextStyle(color: Colors.white70)),
+      trailing: const Icon(Icons.bookmark_border, color: Colors.white),
     );
   }
 
   Widget _buildChip(String label) {
     return Chip(
-      label: Text(label, style: TextStyle(color: Colors.white)),
+      label: Text(label, style: const TextStyle(color: Colors.white)),
       backgroundColor: Colors.white24,
     );
   }

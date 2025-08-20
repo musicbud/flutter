@@ -1,28 +1,7 @@
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Stories Map',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        brightness: Brightness.dark,
-      ),
-      home: const StoriesMapPage(),
-      debugShowCheckedModeBanner: false,
-    );
-  }
-}
-
-class StoriesMapPage extends StatelessWidget {
-  const StoriesMapPage({Key? key}) : super(key: key);
+class StoriesPage extends StatelessWidget {
+  const StoriesPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +23,7 @@ class StoriesMapPage extends StatelessWidget {
               ),
             ),
           ),
-          
+
           // Main content
           Expanded(
             child: Stack(
@@ -58,7 +37,7 @@ class StoriesMapPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                
+
                 // Top bar with title and camera button
                 Positioned(
                   top: 0,
@@ -83,7 +62,7 @@ class StoriesMapPage extends StatelessWidget {
                             ),
                           ),
                         ),
-                        
+
                         // Title
                         const Text(
                           'Stories',
@@ -93,7 +72,7 @@ class StoriesMapPage extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        
+
                         // Camera button
                         Container(
                           width: 36,
@@ -112,7 +91,7 @@ class StoriesMapPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                
+
                 // Story circles at the top
                 Positioned(
                   top: 60,
@@ -132,26 +111,26 @@ class StoriesMapPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                
+
                 // Map story pins
                 Positioned(
                   left: 110,
                   top: 230,
                   child: _buildMapPin('Ali ahmed', 'assets/ali_avatar.jpg', 2, showDetails: true),
                 ),
-                
+
                 Positioned(
                   right: 30,
                   bottom: 120,
                   child: _buildMapPin('Ahmed', 'assets/ahmed_avatar.jpg', 1),
                 ),
-                
+
                 Positioned(
                   right: 120,
                   top: 350,
                   child: _buildMapPin('Mohammed', 'assets/mohammed_avatar.jpg', 4),
                 ),
-                
+
                 // Bottom navigation bar
                 Positioned(
                   bottom: 24,
@@ -181,7 +160,7 @@ class StoriesMapPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildStoryCircle(String name, String imagePath, {bool isYou = false}) {
     return Container(
       width: 70,
@@ -240,7 +219,7 @@ class StoriesMapPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildMapPin(String name, String imagePath, int count, {bool showDetails = false}) {
     return Column(
       children: [
@@ -283,7 +262,7 @@ class StoriesMapPage extends StatelessWidget {
             ),
           ],
         ),
-        
+
         if (showDetails)
           Container(
             width: 150,
@@ -305,9 +284,9 @@ class StoriesMapPage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                
+
                 const SizedBox(height: 4),
-                
+
                 // Location
                 Row(
                   children: const [
@@ -326,9 +305,9 @@ class StoriesMapPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 // Dreamcatcher badge
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -380,7 +359,7 @@ class StoriesMapPage extends StatelessWidget {
       ],
     );
   }
-  
+
   Widget _buildNavButton(IconData icon, {bool isSelected = false}) {
     return Container(
       width: 64,
@@ -388,8 +367,8 @@ class StoriesMapPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: isSelected ? Colors.black : Colors.transparent,
         borderRadius: BorderRadius.circular(20),
-        border: isSelected 
-            ? Border.all(color: Colors.pink, width: 1) 
+        border: isSelected
+            ? Border.all(color: Colors.pink, width: 1)
             : null,
       ),
       child: Icon(

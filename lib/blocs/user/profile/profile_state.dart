@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
 import '../../../domain/models/user_profile.dart';
-import '../../../models/track.dart';
-import '../../../models/artist.dart';
-import '../../../models/album.dart';
-import '../../../models/genre.dart';
-import '../../../models/anime.dart';
-import '../../../models/manga.dart';
+import '../../../domain/models/track.dart';
+import '../../../domain/models/common_artist.dart';
+import '../../../domain/models/common_album.dart';
+import '../../../domain/models/common_genre.dart';
+import '../../../domain/models/common_anime.dart';
+import '../../../domain/models/common_manga.dart';
 
 abstract class ProfileState extends Equatable {
   const ProfileState();
@@ -52,7 +52,7 @@ class LikesUpdateSuccess extends ProfileState {}
 
 // Liked items
 class LikedArtistsLoaded extends ProfileState {
-  final List<Artist> artists;
+  final List<CommonArtist> artists;
 
   const LikedArtistsLoaded(this.artists);
 
@@ -70,7 +70,7 @@ class LikedTracksLoaded extends ProfileState {
 }
 
 class LikedAlbumsLoaded extends ProfileState {
-  final List<Album> albums;
+  final List<CommonAlbum> albums;
 
   const LikedAlbumsLoaded(this.albums);
 
@@ -79,7 +79,7 @@ class LikedAlbumsLoaded extends ProfileState {
 }
 
 class LikedGenresLoaded extends ProfileState {
-  final List<Genre> genres;
+  final List<CommonGenre> genres;
 
   const LikedGenresLoaded(this.genres);
 
@@ -89,7 +89,7 @@ class LikedGenresLoaded extends ProfileState {
 
 // Top items
 class TopArtistsLoaded extends ProfileState {
-  final List<Artist> artists;
+  final List<CommonArtist> artists;
 
   const TopArtistsLoaded(this.artists);
 
@@ -107,7 +107,7 @@ class TopTracksLoaded extends ProfileState {
 }
 
 class TopGenresLoaded extends ProfileState {
-  final List<Genre> genres;
+  final List<CommonGenre> genres;
 
   const TopGenresLoaded(this.genres);
 
@@ -116,7 +116,7 @@ class TopGenresLoaded extends ProfileState {
 }
 
 class TopAnimeLoaded extends ProfileState {
-  final List<Anime> anime;
+  final List<CommonAnime> anime;
 
   const TopAnimeLoaded(this.anime);
 
@@ -125,7 +125,7 @@ class TopAnimeLoaded extends ProfileState {
 }
 
 class TopMangaLoaded extends ProfileState {
-  final List<Manga> manga;
+  final List<CommonManga> manga;
 
   const TopMangaLoaded(this.manga);
 

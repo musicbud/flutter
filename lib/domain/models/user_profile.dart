@@ -30,19 +30,42 @@ class UserProfile extends Equatable {
 
   /// Creates a [UserProfile] from a JSON map
   factory UserProfile.fromJson(Map<String, dynamic> json) {
-    return UserProfile(
-      id: json['id']?.toString() ?? '',
-      username: json['username']?.toString() ?? '',
-      email: json['email']?.toString(),
-      avatarUrl: json['avatar_url']?.toString(),
-      bio: json['bio']?.toString(),
-      displayName: json['display_name']?.toString(),
-      location: json['location'] as String?,
-      followersCount: json['followers_count'] as int? ?? 0,
-      followingCount: json['following_count'] as int? ?? 0,
-      isActive: json['is_active'] as bool? ?? false,
-      isAuthenticated: json['is_authenticated'] as bool?,
-    );
+    try {
+      print('UserProfile.fromJson: Input json: $json');
+      print('UserProfile.fromJson: json type: ${json.runtimeType}');
+
+      final id = json['id']?.toString() ?? json['username']?.toString() ?? '';
+      final username = json['username']?.toString() ?? '';
+      final email = json['email']?.toString();
+      final avatarUrl = json['avatar_url']?.toString();
+      final bio = json['bio']?.toString();
+      final displayName = json['display_name']?.toString();
+      final location = json['location']?.toString();
+      final followersCount = json['followers_count'] as int? ?? 0;
+      final followingCount = json['following_count'] as int? ?? 0;
+      final isActive = json['is_active'] as bool? ?? true;
+      final isAuthenticated = json['is_authenticated'] as bool? ?? true;
+
+      print('UserProfile.fromJson: Parsed values - id: $id, username: $username, email: $email');
+
+      return UserProfile(
+        id: id,
+        username: username,
+        email: email,
+        avatarUrl: avatarUrl,
+        bio: bio,
+        displayName: displayName,
+        location: location,
+        followersCount: followersCount,
+        followingCount: followingCount,
+        isActive: isActive,
+        isAuthenticated: isAuthenticated,
+      );
+    } catch (e, stackTrace) {
+      print('UserProfile.fromJson: Error parsing json: $e');
+      print('UserProfile.fromJson: Stack trace: $stackTrace');
+      rethrow;
+    }
   }
 
   /// Converts this [UserProfile] to a JSON map

@@ -1,155 +1,109 @@
+import 'package:dio/dio.dart';
 import '../../domain/repositories/auth_repository.dart';
-// import '../../domain/models/server_status.dart';
-import '../network/dio_client.dart';
-import '../providers/token_provider.dart';
+import '../../config/api_config.dart';
+import '../data_sources/remote/auth_remote_data_source.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  final DioClient dioClient;
-  final TokenProvider tokenProvider;
+  final AuthRemoteDataSource _authRemoteDataSource;
 
-  AuthRepositoryImpl({
-    required this.dioClient,
-    required this.tokenProvider,
-  });
+  AuthRepositoryImpl({required AuthRemoteDataSource authRemoteDataSource})
+      : _authRemoteDataSource = authRemoteDataSource;
 
   @override
   Future<Map<String, dynamic>> login(String username, String password) async {
-    final response = await dioClient.post(
-      '/chat/login/',
-      data: {'username': username, 'password': password},
-    );
-    
-    // Set the token after successful login
-    tokenProvider.token = response.data['access_token'];
-    return response.data;
+    return await _authRemoteDataSource.login(username, password);
   }
 
   @override
   Future<Map<String, dynamic>> register(
-    String username,
-    String email,
-    String password,
-  ) async {
-    final response = await dioClient.post('/auth/register', data: {
-      'username': username,
-      'email': email,
-      'password': password,
-    });
-    return response.data;
+      String username, String email, String password) async {
+    return await _authRemoteDataSource.register(username, email, password);
   }
 
   @override
   Future<bool> isAuthenticated() async {
     try {
-      // await dioClient.get('/auth/status');
+      // Try to make a request to check if the user is authenticated
+      await _authRemoteDataSource.getConnectedServices();
       return true;
     } catch (e) {
       return false;
     }
   }
 
-  // @override
-  // Future<ServerStatus> checkServerStatus() async {
-  //   try {
-  //     final response = await dioClient.get('/health');
-  //     return ServerStatus(
-  //       isReachable: true,
-  //       message: response.data['message'],
-  //     );
-  //   } catch (e) {
-  //     return ServerStatus(
-  //       isReachable: false,
-  //       error: e.toString(),
-  //     );
-  //   }
-  // }
-
   @override
   Future<String> refreshToken() async {
-    final response = await dioClient.post('/auth/refresh');
-    return response.data['token'];
-  }
-
-  @override
-  Future<String> getSpotifyAuthUrl() async {
-    final response = await dioClient.get('/auth/spotify/url');
-    return response.data['auth_url'];
-  }
-
-  @override
-  Future<String> getYTMusicAuthUrl() async {
-    final response = await dioClient.get('/auth/ytmusic/url');
-    return response.data['auth_url'];
-  }
-
-  @override
-  Future<String> getLastFMAuthUrl() async {
-    final response = await dioClient.get('/auth/lastfm/url');
-    return response.data['auth_url'];
-  }
-
-  @override
-  Future<String> getMALAuthUrl() async {
-    final response = await dioClient.get('/auth/mal/url');
-    return response.data['auth_url'];
-  }
-
-  @override
-  Future<void> connectSpotify(String code) async {
-    await dioClient.post('/auth/spotify/connect', data: {
-      'code': code,
-    });
-  }
-
-  @override
-  Future<void> connectYTMusic(String code) async {
-    await dioClient.post('/auth/ytmusic/connect', data: {
-      'code': code,
-    });
-  }
-
-  @override
-  Future<void> connectLastFM(String code) async {
-    await dioClient.post('/auth/lastfm/connect', data: {
-      'code': code,
-    });
-  }
-
-  @override
-  Future<void> connectMAL(String code) async {
-    await dioClient.post('/auth/mal/connect', data: {
-      'code': code,
-    });
+    final result = await _authRemoteDataSource.refreshToken('');
+    return result['access_token'] ?? '';
   }
 
   @override
   Future<void> logout() async {
-    await dioClient.post('/auth/logout');
+    await _authRemoteDataSource.logout();
+  }
+
+  @override
+  Future<String> getSpotifyAuthUrl() async {
+    return await _authRemoteDataSource.getSpotifyAuthUrl();
+  }
+
+  @override
+  Future<void> connectSpotify(String code) async {
+    await _authRemoteDataSource.connectSpotify(code);
+  }
+
+  @override
+  Future<String> getYTMusicAuthUrl() async {
+    return await _authRemoteDataSource.getYTMusicAuthUrl();
+  }
+
+  @override
+  Future<void> connectYTMusic(String code) async {
+    await _authRemoteDataSource.connectYTMusic(code);
+  }
+
+  @override
+  Future<String> getLastFMAuthUrl() async {
+    return await _authRemoteDataSource.getLastFMAuthUrl();
+  }
+
+  @override
+  Future<void> connectLastFM(String code) async {
+    await _authRemoteDataSource.connectLastFM(code);
+  }
+
+  @override
+  Future<String> getMALAuthUrl() async {
+    return await _authRemoteDataSource.getMALAuthUrl();
+  }
+
+  @override
+  Future<void> connectMAL(String code) async {
+    await _authRemoteDataSource.connectMAL(code);
   }
 
   @override
   Future<List<Map<String, dynamic>>> getConnectedServices() async {
-    final response = await dioClient.get('/auth/services');
-    return List<Map<String, dynamic>>.from(response.data);
+    return await _authRemoteDataSource.getConnectedServices();
   }
 
   @override
   Future<void> disconnectSpotify() async {
-    await dioClient.post('/auth/spotify/disconnect');
+    await _authRemoteDataSource.disconnectSpotify();
   }
 
   @override
   Future<void> disconnectYTMusic() async {
-    await dioClient.post('/auth/ytmusic/disconnect');
+    await _authRemoteDataSource.disconnectYTMusic();
   }
 
   @override
   Future<void> disconnectLastFM() async {
-    await dioClient.post('/auth/lastfm/disconnect');
+    await _authRemoteDataSource.disconnectLastFM();
   }
 
   @override
   Future<void> disconnectMAL() async {
-    await dioClient.post('/auth/mal/disconnect');
+    await _authRemoteDataSource.disconnectMAL();
   }
 }

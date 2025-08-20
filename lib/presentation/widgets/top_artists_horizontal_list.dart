@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/models/common_artist.dart';
+import 'loading_indicator.dart';
+import '../../../domain/models/common_artist.dart';
 import '../../blocs/top_artists/top_artists_bloc.dart';
 import '../../blocs/top_artists/top_artists_event.dart';
 import '../../blocs/top_artists/top_artists_state.dart';
-import '../pages/artist_details_page.dart';
-import 'loading_indicator.dart';
 
 class TopArtistsHorizontalList extends StatefulWidget {
   const TopArtistsHorizontalList({super.key});
@@ -46,22 +45,20 @@ class _TopArtistsHorizontalListState extends State<TopArtistsHorizontalList> {
     return Card(
       child: InkWell(
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ArtistDetailsPage(
-                artistId: artist.id,
-                artistName: artist.name,
-              ),
+          // TODO: Navigate to artist details page when implemented
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Artist details for ${artist.name} coming soon!'),
+              duration: const Duration(seconds: 2),
             ),
           );
         },
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (artist.imageUrls?.isNotEmpty == true || artist.imageUrl != null)
+            if (artist.imageUrls?.isNotEmpty == true)
               Image.network(
-                artist.imageUrl ?? artist.imageUrls!.first,
+                artist.imageUrls!.first,
                 height: 120,
                 width: 120,
                 fit: BoxFit.cover,
