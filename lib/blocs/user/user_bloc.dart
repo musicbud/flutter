@@ -112,8 +112,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   ) async {
     try {
       emit(UserLoading());
-      await _userRepository.saveLocation(event.latitude, event.longitude);
-      final playedTracks = await _userRepository.getPlayedTracksWithLocation();
+      // Location saving is not supported by the API, so we'll just load played tracks
+      final playedTracks = await _userRepository.getPlayedTracks();
       emit(PlayedTracksLoaded(playedTracks));
     } catch (e) {
       emit(UserError(e.toString()));

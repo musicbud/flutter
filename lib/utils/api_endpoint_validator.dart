@@ -16,8 +16,8 @@ class ApiEndpointValidator {
     '/bud/profile',
     '/me/profile/set',
     '/me/likes/update',
-    '/profile/services',
-    '/profile/avatar',
+
+
     '/profile/top-items',
 
     // Bud matching endpoints
@@ -141,17 +141,15 @@ class ApiEndpointValidator {
         ApiConfig.budProfile,
         ApiConfig.updateProfile,
         ApiConfig.updateLikes,
-        ApiConfig.profileServices,
-        ApiConfig.profileAvatar,
-        ApiConfig.topItems,
-        ApiConfig.budCommonLikedArtists,
-        ApiConfig.budCommonLikedTracks,
-        ApiConfig.chatLogin,
-        ApiConfig.chatGetChannels,
-        ApiConfig.chatCreateChannel,
-        ApiConfig.spotifyAuth,
+        ApiConfig.serviceLogin,
         ApiConfig.spotifyConnect,
-        ApiConfig.spotifyDisconnect,
+        ApiConfig.ytmusicConnect,
+        ApiConfig.lastfmConnect,
+        ApiConfig.malConnect,
+        ApiConfig.budLikedArtists,
+        ApiConfig.budLikedTracks,
+        ApiConfig.chatChannels,
+        ApiConfig.chatUsers,
       ];
 
       int validCount = 0;

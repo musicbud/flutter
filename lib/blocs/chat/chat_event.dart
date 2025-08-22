@@ -9,6 +9,8 @@ abstract class ChatEvent extends Equatable {
 
 class ChatChannelListRequested extends ChatEvent {}
 
+class ChatUsersRequested extends ChatEvent {}
+
 class ChatUserListRequested extends ChatEvent {}
 
 class ChatChannelUsersRequested extends ChatEvent {
@@ -88,10 +90,10 @@ class ChatChannelJoined extends ChatEvent {
 class ChatChannelJoinRequested extends ChatEvent {
   final String channelId;
 
-  const ChatChannelJoinRequested(this.channelId);
+  const ChatChannelJoinRequested({required this.channelId});
 
   @override
-  List<Object> get props => [channelId];
+  List<Object?> get props => [channelId];
 }
 
 class ChatChannelDetailsRequested extends ChatEvent {

@@ -58,6 +58,24 @@ class _ProfilePageState extends State<ProfilePage> with PageMixin, TickerProvide
   void _loadProfileData() {
     context.read<ProfileBloc>().add(ProfileRequested());
     context.read<ProfileBloc>().add(ProfileConnectedServicesRequested());
+    context.read<ProfileBloc>().add(ProfileStatsRequested());
+    context.read<ProfileBloc>().add(ProfilePreferencesRequested());
+  }
+
+  void _loadTopItems(String category) {
+    context.read<ProfileBloc>().add(ProfileTopItemsRequested(category));
+  }
+
+  void _loadLikedItems(String category) {
+    context.read<ProfileBloc>().add(ProfileLikedItemsRequested(category));
+  }
+
+  void _loadBuds(String category) {
+    context.read<ProfileBloc>().add(ProfileBudsRequested(category));
+  }
+
+  void _refreshProfile() {
+    context.read<ProfileBloc>().add(ProfileRefreshRequested());
   }
 
   @override
@@ -104,13 +122,14 @@ class _ProfilePageState extends State<ProfilePage> with PageMixin, TickerProvide
     );
   }
 
-  Widget _buildProfileContent(UserProfile profile, List<ContentService> connectedServices) {
+  Widget _buildProfileContent(UserProfile profile, List<dynamic> services) {
     return Column(
       children: [
         _buildProfileHeader(profile),
-        _buildTabBar(),
+        _buildProfileStats(),
+        _buildConnectedServices(services),
         Expanded(
-          child: _buildTabView(profile, connectedServices),
+          child: _buildProfileTabs(profile),
         ),
       ],
     );
@@ -140,7 +159,7 @@ class _ProfilePageState extends State<ProfilePage> with PageMixin, TickerProvide
           const SizedBox(height: 16),
 
           // Profile Stats
-          _buildProfileStats(profile),
+          _buildProfileStats(),
           const SizedBox(height: 16),
 
           // Connected Services
@@ -257,15 +276,30 @@ class _ProfilePageState extends State<ProfilePage> with PageMixin, TickerProvide
     );
   }
 
-  Widget _buildProfileStats(UserProfile profile) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _buildStatItem('Followers', '${profile.followersCount}'),
-        _buildStatItem('Following', '${profile.followingCount}'),
-        _buildStatItem('Stories', '0'),
-        _buildStatItem('Buds', '0'),
-      ],
+  Widget _buildProfileStats() {
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        if (state is ProfileStatsLoaded) {
+          return Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildStatItem('Tracks', state.stats['totalTracks']?.toString() ?? '0'),
+                _buildStatItem('Artists', state.stats['totalArtists']?.toString() ?? '0'),
+                _buildStatItem('Genres', state.stats['totalGenres']?.toString() ?? '0'),
+                _buildStatItem('Buds', state.stats['totalBuds']?.toString() ?? '0'),
+              ],
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
     );
   }
 
@@ -275,19 +309,70 @@ class _ProfilePageState extends State<ProfilePage> with PageMixin, TickerProvide
         Text(
           value,
           style: const TextStyle(
-            color: Colors.white,
-            fontSize: 20,
+            fontSize: 24,
             fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
         ),
         Text(
           label,
           style: const TextStyle(
-            color: Colors.white70,
             fontSize: 12,
+            color: Colors.white70,
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildConnectedServices(List<dynamic> services) {
+    if (services.isEmpty) {
+      return Container(
+        margin: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Text(
+          'No services connected',
+          style: TextStyle(color: Colors.white70),
+        ),
+      );
+    }
+
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Connected Services',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: services.map((service) {
+              return Chip(
+                label: Text(service.toString()),
+                backgroundColor: Colors.blue.withOpacity(0.3),
+                labelStyle: const TextStyle(color: Colors.white),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
     );
   }
 
@@ -360,420 +445,251 @@ class _ProfilePageState extends State<ProfilePage> with PageMixin, TickerProvide
     );
   }
 
-  Widget _buildTabView(UserProfile profile, List<ContentService> connectedServices) {
-    return TabBarView(
-      controller: _tabController,
+  Widget _buildProfileTabs(UserProfile profile) {
+    return Column(
       children: [
-        _buildOverviewTab(profile, connectedServices),
-        _buildLibraryTab(),
-        _buildPlaylistsTab(),
-        _buildFollowingTab(),
-        _buildFollowersTab(),
+        TabBar(
+          controller: _tabController,
+          isScrollable: true,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
+          indicatorColor: Colors.blue,
+          tabs: const [
+            Tab(text: 'Top Items'),
+            Tab(text: 'Liked Items'),
+            Tab(text: 'Buds'),
+            Tab(text: 'Preferences'),
+            Tab(text: 'Settings'),
+          ],
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildTopItemsTab(),
+              _buildLikedItemsTab(),
+              _buildBudsTab(),
+              _buildPreferencesTab(),
+              _buildSettingsTab(),
+            ],
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildOverviewTab(UserProfile profile, List<ContentService> services) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildSectionTitle('Account Information'),
-          _buildAccountInfoCard(profile),
-          const SizedBox(height: 24),
-          _buildSectionTitle('Recent Activity'),
-          _buildRecentActivityCard(),
-          const SizedBox(height: 24),
-          _buildSectionTitle('Quick Actions'),
-          _buildQuickActionsCard(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLibraryTab() {
+  Widget _buildTopItemsTab() {
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
         if (state is ProfileTopItemsLoaded) {
-          return _buildLibraryContent([], [], []);
+          return _buildItemsList(state.items, 'Top Items');
         }
-
-        return const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.library_music, size: 64, color: Colors.white54),
-              SizedBox(height: 16),
-              Text(
-                'Library',
-                style: TextStyle(color: Colors.white54),
-              ),
-              Text(
-                'Your music library will appear here',
-                style: TextStyle(color: Colors.white38, fontSize: 12),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        );
+        return _buildTabPlaceholder('Top Items', () {
+          _loadTopItems('tracks');
+        });
       },
     );
   }
 
-  Widget _buildPlaylistsTab() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.playlist_play, size: 64, color: Colors.white54),
-          SizedBox(height: 16),
-          Text(
-            'Playlists',
-            style: TextStyle(color: Colors.white54),
-          ),
-          Text(
-            'Your playlists will appear here',
-            style: TextStyle(color: Colors.white38, fontSize: 12),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+  Widget _buildLikedItemsTab() {
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        if (state is ProfileLikedItemsLoaded) {
+          return _buildItemsList(state.items, 'Liked Items');
+        }
+        return _buildTabPlaceholder('Liked Items', () {
+          _loadLikedItems('tracks');
+        });
+      },
     );
   }
 
-  Widget _buildFollowingTab() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.people, size: 64, color: Colors.white54),
-          SizedBox(height: 16),
-          Text(
-            'Following',
-            style: TextStyle(color: Colors.white54),
-          ),
-          Text(
-            'People you follow will appear here',
-            style: TextStyle(color: Colors.white38, fontSize: 12),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+  Widget _buildBudsTab() {
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        if (state is ProfileBudsLoaded) {
+          return _buildBudsList(state.buds, state.category);
+        }
+        return _buildTabPlaceholder('Buds', () {
+          _loadBuds('liked/artists');
+        });
+      },
     );
   }
 
-  Widget _buildFollowersTab() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.people_outline, size: 64, color: Colors.white54),
-          SizedBox(height: 16),
-          Text(
-            'Followers',
-            style: TextStyle(color: Colors.white54),
-          ),
-          Text(
-            'Your followers will appear here',
-            style: TextStyle(color: Colors.white38, fontSize: 12),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+  Widget _buildPreferencesTab() {
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        if (state is ProfilePreferencesLoaded) {
+          return _buildPreferencesList(state.preferences);
+        }
+        return _buildTabPlaceholder('Preferences', () {
+          context.read<ProfileBloc>().add(ProfilePreferencesRequested());
+        });
+      },
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: AppConstants.textColor,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAccountInfoCard(UserProfile profile) {
-    return Card(
-      color: AppConstants.surfaceColor,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            _buildInfoRow('Username', profile.username),
-            _buildInfoRow('Email', profile.email ?? 'Not provided'),
-            _buildInfoRow('Member Since', 'Recently'),
-            _buildInfoRow('Status', profile.isActive ? 'Active' : 'Inactive'),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: AppConstants.textSecondaryColor,
-              fontSize: 14,
-            ),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              color: AppConstants.textColor,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRecentActivityCard() {
-    return Card(
-      color: AppConstants.surfaceColor,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Recent Activity',
-              style: TextStyle(
-                color: AppConstants.textColor,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            _buildActivityItem('Listened to music', '2 hours ago', Icons.music_note),
-            _buildActivityItem('Added new bud', '1 day ago', Icons.person_add),
-            _buildActivityItem('Shared story', '2 days ago', Icons.share),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActivityItem(String activity, String time, IconData icon) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: AppConstants.primaryColor,
-            size: 20,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              activity,
-              style: TextStyle(
-                color: AppConstants.textColor,
-                fontSize: 14,
-              ),
-            ),
-          ),
-          Text(
-            time,
-            style: TextStyle(
-              color: AppConstants.textSecondaryColor,
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildQuickActionsCard() {
-    return Card(
-      color: AppConstants.surfaceColor,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Quick Actions',
-              style: TextStyle(
-                color: AppConstants.textColor,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: AppButton(
-                    text: 'Edit Profile',
-                    onPressed: _toggleEdit,
-                    isOutlined: true,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: AppButton(
-                    text: 'Connect Services',
-                    onPressed: () => navigateTo('/services'),
-                    isOutlined: true,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: AppButton(
-                    text: 'Privacy Settings',
-                    onPressed: () => navigateTo('/settings'),
-                    isOutlined: true,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: AppButton(
-                    text: 'Logout',
-                    onPressed: _logout,
-                    backgroundColor: Colors.red,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLibraryContent(
-    List<CommonTrack>? topTracks,
-    List<CommonArtist>? topArtists,
-    List<CommonGenre>? topGenres,
-  ) {
-    return SingleChildScrollView(
+  Widget _buildSettingsTab() {
+    return ListView(
       padding: const EdgeInsets.all(16),
+      children: [
+        ListTile(
+          leading: const Icon(Icons.notifications, color: Colors.white),
+          title: const Text('Notifications', style: TextStyle(color: Colors.white)),
+          trailing: Switch(
+            value: true,
+            onChanged: (value) {
+              // Handle notification toggle
+            },
+          ),
+        ),
+        ListTile(
+          leading: const Icon(Icons.privacy_tip, color: Colors.white),
+          title: const Text('Privacy', style: TextStyle(color: Colors.white)),
+          trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white),
+          onTap: () {
+            // Navigate to privacy settings
+          },
+        ),
+        ListTile(
+          leading: const Icon(Icons.language, color: Colors.white),
+          title: const Text('Language', style: TextStyle(color: Colors.white)),
+          trailing: const Text('English', style: TextStyle(color: Colors.white70)),
+          onTap: () {
+            // Show language picker
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTabPlaceholder(String title, VoidCallback onLoad) {
+    return Center(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (topTracks != null && topTracks.isNotEmpty) ...[
-            _buildSectionTitle('Top Tracks'),
-            _buildTracksList(topTracks),
-            const SizedBox(height: 24),
-          ],
-          if (topArtists != null && topArtists.isNotEmpty) ...[
-            _buildSectionTitle('Top Artists'),
-            _buildArtistsList(topArtists),
-            const SizedBox(height: 24),
-          ],
-          if (topGenres != null && topGenres.isNotEmpty) ...[
-            _buildSectionTitle('Top Genres'),
-            _buildGenresList(topGenres),
-          ],
+          Text(
+            'No $title loaded',
+            style: const TextStyle(color: Colors.white70, fontSize: 18),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: onLoad,
+            child: Text('Load $title'),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildTracksList(List<CommonTrack> tracks) {
+  Widget _buildItemsList(List<dynamic> items, String title) {
+    if (items.isEmpty) {
+      return Center(
+        child: Text(
+          'No $title found',
+          style: const TextStyle(color: Colors.white70),
+        ),
+      );
+    }
+
     return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: tracks.length,
+      padding: const EdgeInsets.all(16),
+      itemCount: items.length,
       itemBuilder: (context, index) {
-        final track = tracks[index];
-        return ListTile(
-          leading: Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: AppConstants.primaryColor.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(8),
+        final item = items[index];
+        return Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          color: Colors.white.withOpacity(0.1),
+          child: ListTile(
+            title: Text(
+              item.toString(),
+              style: const TextStyle(color: Colors.white),
             ),
-            child: const Icon(
-              Icons.music_note,
-              color: Colors.white70,
-            ),
-          ),
-          title: Text(
-            track.name,
-            style: const TextStyle(color: Colors.white),
-          ),
-                      subtitle: Text(
-              track.artistName ?? 'Unknown Artist',
-              style: const TextStyle(color: Colors.white70),
-            ),
-          trailing: Icon(
-            track.isLiked ? Icons.favorite : Icons.favorite_border,
-            color: track.isLiked ? Colors.red : Colors.white70,
+            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white70),
+            onTap: () {
+              // Navigate to item details
+            },
           ),
         );
       },
     );
   }
 
-  Widget _buildArtistsList(List<CommonArtist> artists) {
+  Widget _buildBudsList(List<dynamic> buds, String category) {
+    if (buds.isEmpty) {
+      return Center(
+        child: Text(
+          'No buds found for $category',
+          style: const TextStyle(color: Colors.white70),
+        ),
+      );
+    }
+
     return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: artists.length,
+      padding: const EdgeInsets.all(16),
+      itemCount: buds.length,
       itemBuilder: (context, index) {
-        final artist = artists[index];
-        return ListTile(
-          leading: CircleAvatar(
-            backgroundColor: AppConstants.primaryColor.withOpacity(0.3),
-            child: Text(
-              artist.name.isNotEmpty ? artist.name[0].toUpperCase() : 'A',
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+        final bud = buds[index];
+        return Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          color: Colors.white.withOpacity(0.1),
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.blue,
+              child: Text(
+                bud.toString().substring(0, 1).toUpperCase(),
+                style: const TextStyle(color: Colors.white),
               ),
             ),
-          ),
-          title: Text(
-            artist.name,
-            style: const TextStyle(color: Colors.white),
-          ),
-                      subtitle: Text(
-              '${artist.followers ?? 0} followers',
+            title: Text(
+              bud.toString(),
+              style: const TextStyle(color: Colors.white),
+            ),
+            subtitle: Text(
+              'Category: $category',
               style: const TextStyle(color: Colors.white70),
             ),
-          trailing: Icon(
-            artist.isLiked ? Icons.favorite : Icons.favorite_border,
-            color: artist.isLiked ? Colors.red : Colors.white70,
+            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white70),
+            onTap: () {
+              // Navigate to bud profile
+            },
           ),
         );
       },
     );
   }
 
-  Widget _buildGenresList(List<CommonGenre> genres) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: genres.map((genre) => Chip(
-        label: Text(
-          genre.name,
-          style: const TextStyle(color: Colors.white),
-        ),
-        backgroundColor: AppConstants.primaryColor.withOpacity(0.2),
-        side: BorderSide(color: AppConstants.primaryColor),
-      )).toList(),
+  Widget _buildPreferencesList(Map<String, dynamic> preferences) {
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: preferences.entries.map((entry) {
+        return Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          color: Colors.white.withOpacity(0.1),
+          child: ListTile(
+            title: Text(
+              entry.key.replaceAll('_', ' ').toUpperCase(),
+              style: const TextStyle(color: Colors.white),
+            ),
+            subtitle: Text(
+              entry.value.toString(),
+              style: const TextStyle(color: Colors.white70),
+            ),
+            trailing: entry.value is bool
+                ? Switch(
+                    value: entry.value,
+                    onChanged: (value) {
+                      // Handle preference toggle
+                    },
+                  )
+                : const Icon(Icons.arrow_forward_ios, color: Colors.white70),
+            onTap: entry.value is bool ? null : () {
+              // Navigate to preference details
+            },
+          ),
+        );
+      }).toList(),
     );
   }
 
@@ -877,6 +793,7 @@ class _ProfilePageState extends State<ProfilePage> with PageMixin, TickerProvide
     );
   }
 }
+
 
 
 

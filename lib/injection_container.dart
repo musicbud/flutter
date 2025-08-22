@@ -16,6 +16,7 @@ import 'data/data_sources/remote/user_remote_data_source.dart';
 import 'data/data_sources/remote/user_remote_data_source_impl.dart';
 import 'data/data_sources/remote/bud_remote_data_source.dart';
 import 'data/data_sources/remote/auth_remote_data_source.dart';
+import 'data/data_sources/remote/chat_remote_data_source.dart';
 
 // Repositories
 import 'data/repositories/auth_repository_impl.dart';
@@ -23,6 +24,7 @@ import 'data/repositories/bud_repository_impl.dart';
 import 'data/repositories/content_repository_impl.dart';
 import 'data/repositories/user_repository_impl.dart';
 import 'data/repositories/profile_repository_impl.dart';
+import 'data/repositories/chat_repository_impl.dart';
 
 // Domain Interfaces
 import 'domain/repositories/auth_repository.dart';
@@ -30,13 +32,17 @@ import 'domain/repositories/user_repository.dart';
 import 'domain/repositories/profile_repository.dart';
 import 'domain/repositories/content_repository.dart';
 import 'domain/repositories/bud_repository.dart';
+import 'domain/repositories/chat_repository.dart';
 
 // BLoCs
 import 'blocs/user/user_bloc.dart';
 import 'blocs/auth/auth_bloc.dart';
-import 'blocs/services/services_bloc.dart';
+
 import 'blocs/profile/profile_bloc.dart';
 import 'blocs/main/main_screen_bloc.dart';
+import 'blocs/chat/chat_bloc.dart';
+import 'blocs/content/content_bloc.dart';
+import 'blocs/bud/bud_bloc.dart';
 
 // Configuration
 import 'config/api_config.dart';
@@ -145,6 +151,11 @@ Future<void> _registerDataSources() async {
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(dioClient: sl<DioClient>()),
   );
+
+  // Chat Data Source
+  sl.registerLazySingleton<ChatRemoteDataSource>(
+    () => ChatRemoteDataSourceImpl(dioClient: sl<DioClient>()),
+  );
 }
 
 /// Registers repository dependencies
@@ -160,7 +171,6 @@ Future<void> _registerRepositories() async {
   sl.registerLazySingleton<ContentRepository>(
     () => ContentRepositoryImpl(
       remoteDataSource: sl<ContentRemoteDataSource>(),
-      dioClient: sl<DioClient>(),
     ),
   );
 
@@ -184,6 +194,13 @@ Future<void> _registerRepositories() async {
       dioClient: sl<DioClient>(),
     ),
   );
+
+  // Chat Repository
+  sl.registerLazySingleton<ChatRepository>(
+    () => ChatRepositoryImpl(
+      chatRemoteDataSource: sl<ChatRemoteDataSource>(),
+    ),
+  );
 }
 
 /// Registers BLoC dependencies
@@ -198,10 +215,7 @@ Future<void> _registerBlocs() async {
     authRepository: sl<AuthRepository>(),
   ));
 
-  // Services BLoC
-  sl.registerFactory<ServicesBloc>(() => ServicesBloc(
-    authRepository: sl<AuthRepository>(),
-  ));
+
 
   // Profile BLoC
   sl.registerFactory<ProfileBloc>(() => ProfileBloc(
@@ -214,6 +228,21 @@ Future<void> _registerBlocs() async {
   sl.registerFactory<MainScreenBloc>(() => MainScreenBloc(
     profileRepository: sl<ProfileRepository>(),
   ));
+
+  // Chat BLoC
+  sl.registerFactory<ChatBloc>(() => ChatBloc(
+    chatRepository: sl<ChatRepository>(),
+  ));
+
+  // Content BLoC
+  sl.registerFactory<ContentBloc>(() => ContentBloc(
+    contentRepository: sl<ContentRepository>(),
+  ));
+
+  // Bud BLoC
+  sl.registerFactory<BudBloc>(() => BudBloc(
+    budRepository: sl<BudRepository>(),
+  ));
 }
 
 /// Logs dependency registration for debugging
@@ -222,7 +251,7 @@ void _logDependencyRegistration() {
   debugPrint('📡 Network: DioClient, DioClientAdapter');
   debugPrint('💾 Data Sources: Content, User, Bud');
   debugPrint('🏗️ Repositories: Auth, Content, Bud, User, Profile');
-  debugPrint('🧠 BLoCs: User, Auth, Services, Profile');
+  debugPrint('🧠 BLoCs: User, Auth, Services, Profile, Chat, Content, Bud');
 }
 
 /// Dependency injection utilities

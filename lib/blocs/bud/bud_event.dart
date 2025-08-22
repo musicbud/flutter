@@ -75,3 +75,67 @@ class BudsSearchRequested extends BudEvent {
   @override
   List<Object> get props => [query];
 }
+
+class BudsRequested extends BudEvent {}
+
+class BudMatchesRequested extends BudEvent {}
+
+class BudRecommendationsRequested extends BudEvent {}
+
+class BudSearchRequested extends BudEvent {
+  final String query;
+
+  const BudSearchRequested({required this.query});
+
+  @override
+  List<Object?> get props => [query];
+}
+
+class BudRequestSent extends BudEvent {
+  final String userId;
+
+  const BudRequestSent({required this.userId});
+
+  @override
+  List<Object?> get props => [userId];
+}
+
+class BudRequestAccepted extends BudEvent {
+  final String userId;
+
+  const BudRequestAccepted({required this.userId});
+
+  @override
+  List<Object?> get props => [userId];
+}
+
+class BudRequestRejected extends BudEvent {
+  final String userId;
+
+  const BudRequestRejected({required this.userId});
+
+  @override
+  List<Object?> get props => [userId];
+}
+
+class BudRemoved extends BudEvent {
+  final String userId;
+
+  const BudRemoved({required this.userId});
+
+  @override
+  List<Object?> get props => [userId];
+}
+
+class CommonItemsRequested extends BudEvent {
+  final String userId;
+  final String category;
+
+  const CommonItemsRequested({
+    required this.userId,
+    required this.category,
+  });
+
+  @override
+  List<Object?> get props => [userId, category];
+}

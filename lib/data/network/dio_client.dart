@@ -82,6 +82,18 @@ class DioClient {
     try {
       return await _dio.get(path, queryParameters: queryParameters);
     } on DioException catch (e) {
+      // Retry once for 500 server errors
+      if (e.response?.statusCode == 500) {
+        try {
+          await Future.delayed(Duration(seconds: 2)); // Wait 2 seconds before retry
+          return await _dio.get(path, queryParameters: queryParameters);
+        } catch (retryError) {
+          if (retryError is DioException) {
+            _handleDioException(retryError, 'GET', path);
+          }
+          rethrow;
+        }
+      }
       _handleDioException(e, 'GET', path);
       rethrow;
     }
@@ -92,6 +104,18 @@ class DioClient {
     try {
       return await _dio.post(path, data: data);
     } on DioException catch (e) {
+      // Retry once for 500 server errors
+      if (e.response?.statusCode == 500) {
+        try {
+          await Future.delayed(Duration(seconds: 2)); // Wait 2 seconds before retry
+          return await _dio.post(path, data: data);
+        } catch (retryError) {
+          if (retryError is DioException) {
+            _handleDioException(retryError, 'POST', path);
+          }
+          rethrow;
+        }
+      }
       _handleDioException(e, 'POST', path);
       rethrow;
     }
@@ -102,6 +126,18 @@ class DioClient {
     try {
       return await _dio.put(path, data: data);
     } on DioException catch (e) {
+      // Retry once for 500 server errors
+      if (e.response?.statusCode == 500) {
+        try {
+          await Future.delayed(Duration(seconds: 2)); // Wait 2 seconds before retry
+          return await _dio.put(path, data: data);
+        } catch (retryError) {
+          if (retryError is DioException) {
+            _handleDioException(retryError, 'PUT', path);
+          }
+          rethrow;
+        }
+      }
       _handleDioException(e, 'PUT', path);
       rethrow;
     }
@@ -111,6 +147,18 @@ class DioClient {
     try {
       return await _dio.delete(path, queryParameters: queryParameters);
     } on DioException catch (e) {
+      // Retry once for 500 server errors
+      if (e.response?.statusCode == 500) {
+        try {
+          await Future.delayed(Duration(seconds: 2)); // Wait 2 seconds before retry
+          return await _dio.delete(path, queryParameters: queryParameters);
+        } catch (retryError) {
+          if (retryError is DioException) {
+            _handleDioException(retryError, 'DELETE', path);
+          }
+          rethrow;
+        }
+      }
       _handleDioException(e, 'DELETE', path);
       rethrow;
     }

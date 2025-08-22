@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../blocs/top_artists/top_artists_bloc.dart';
-import '../../../blocs/top_tracks/top_tracks_bloc.dart';
-import '../../../blocs/genre/top_genres_bloc.dart';
+import '../../../blocs/track/track_bloc.dart';
+import '../../../blocs/track/track_event.dart';
+import '../../../blocs/track/track_state.dart';
 import '../../../blocs/spotify_control/spotify_control_bloc.dart';
 import '../../../blocs/spotify_control/spotify_control_event.dart';
 import '../../../blocs/spotify_control/spotify_control_state.dart';
 import '../../../blocs/likes/likes_bloc.dart';
 import '../../../blocs/likes/likes_event.dart';
 import '../../../blocs/likes/likes_state.dart';
+import '../../../domain/models/track.dart';
 import '../../../domain/models/common_artist.dart';
+import '../../../domain/models/common_album.dart';
 import '../../../domain/models/common_track.dart';
-import '../../../domain/models/common_genre.dart';
-import '../../../domain/models/spotify_device.dart';
+import '../../widgets/loading_indicator.dart';
 import '../../constants/app_constants.dart';
-import '../../widgets/common/app_scaffold.dart';
-import '../../widgets/common/app_app_bar.dart';
-import '../../widgets/common/app_button.dart';
+import '../../mixins/page_mixin.dart';
 
 class MusicPage extends StatefulWidget {
   const MusicPage({Key? key}) : super(key: key);
@@ -25,98 +24,59 @@ class MusicPage extends StatefulWidget {
   State<MusicPage> createState() => _MusicPageState();
 }
 
-class _MusicPageState extends State<MusicPage> with TickerProviderStateMixin {
-  late TabController _tabController;
-  int _currentIndex = 0;
-  SpotifyDevice? _selectedDevice;
-  bool _isPlaying = false;
+class _MusicPageState extends State<MusicPage> with PageMixin {
+  int _selectedCategoryIndex = 0;
+  final TextEditingController _searchController = TextEditingController();
+  bool _isSearching = false;
+
+  final List<String> _categories = [
+    'All',
+    'Tracks',
+    'Artists',
+    'Albums',
+    'Playlists',
+    'Genres',
+    'Recently Played',
+    'Liked Songs',
+  ];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
-    _tabController.addListener(() {
-      setState(() {
-        _currentIndex = _tabController.index;
-      });
-    });
-    _loadMusicData();
+    _loadInitialData();
+  }
+
+  void _loadInitialData() {
+    // Load initial music data
+    context.read<TrackBloc>().add(const TrackBudsRequested('recent'));
+    // Note: Using a placeholder event since SpotifyControlLoadUserProfile doesn't exist
     context.read<SpotifyControlBloc>().add(SpotifyDevicesRequested());
   }
 
   @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
-
-  void _loadMusicData() {
-    // Load top artists, tracks, and genres
-    context.read<TopArtistsBloc>().add(const TopArtistsRequested());
-    context.read<TopTracksBloc>().add(const TopTracksRequested(artistId: 'default'));
-    context.read<TopGenresBloc>().add(const TopGenresRequested());
-
-    // Load Spotify devices
-    context.read<SpotifyControlBloc>().add(const SpotifyDevicesRequested());
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return BlocListener<LikesBloc, LikesState>(
-      listener: (context, state) {
-        if (state is LikesUpdateSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
-        } else if (state is LikesUpdateFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: ${state.error}')),
-          );
-        }
-      },
-      child: BlocListener<SpotifyControlBloc, SpotifyControlState>(
-        listener: (context, state) {
-          if (state is SpotifyPlaybackStateChanged) {
-            setState(() {
-              _isPlaying = state.isPlaying;
-            });
-          } else if (state is SpotifyDevicesLoaded && _selectedDevice == null) {
-            // Auto-select first active device
-            final activeDevice = state.devices.firstWhere(
-              (device) => device.isActive,
-              orElse: () => state.devices.first,
-            );
-            if (activeDevice != null) {
-              setState(() {
-                _selectedDevice = activeDevice;
-              });
-            }
-          } else if (state is SpotifyControlFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error: ${state.error}')),
-            );
-          }
-        },
-        child: AppScaffold(
-          appBar: AppAppBar(
-            title: 'Music',
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.playlist_play),
-                onPressed: () => _showPlaylistDialog(),
-              ),
-              IconButton(
-                icon: const Icon(Icons.settings),
-                onPressed: () => _showMusicSettings(),
-              ),
-            ],
-          ),
-          body: Column(
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<TrackBloc, TrackState>(
+          listener: _handleTrackStateChange,
+        ),
+        BlocListener<SpotifyControlBloc, SpotifyControlState>(
+          listener: _handleSpotifyControlStateChange,
+        ),
+        BlocListener<LikesBloc, LikesState>(
+          listener: _handleLikesStateChange,
+        ),
+      ],
+      child: Scaffold(
+        backgroundColor: AppConstants.backgroundColor,
+        body: SafeArea(
+          child: Column(
             children: [
-              _buildMusicControls(),
-              _buildTabBar(),
+              _buildHeader(),
+              _buildSearchBar(),
+              _buildCategoryTabs(),
               Expanded(
-                child: _buildTabView(),
+                child: _buildContent(),
               ),
             ],
           ),
@@ -125,488 +85,807 @@ class _MusicPageState extends State<MusicPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildMusicControls() {
+  Widget _buildHeader() {
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppConstants.surfaceColor,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppConstants.borderColor.withOpacity(0.3)),
-      ),
-      margin: const EdgeInsets.all(16),
-      child: Column(
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildControlButton(
-                Icons.skip_previous,
-                'Previous',
-                () => _previousTrack(),
+              Text(
+                'Music',
+                style: AppConstants.headingStyle,
               ),
-              _buildControlButton(
-                Icons.play_circle_filled,
-                'Play/Pause',
-                () => _togglePlayPause(),
-                isPrimary: true,
-              ),
-              _buildControlButton(
-                Icons.skip_next,
-                'Next',
-                () => _nextTrack(),
+              const SizedBox(height: 4),
+              Text(
+                'Discover and enjoy your music',
+                style: AppConstants.captionStyle,
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          _buildNowPlaying(),
+          Row(
+            children: [
+              IconButton(
+                onPressed: _showNowPlaying,
+                icon: const Icon(
+                  Icons.play_circle_filled,
+                  color: AppConstants.primaryColor,
+                  size: 32,
+                ),
+              ),
+              IconButton(
+                onPressed: _showMusicSettings,
+                icon: const Icon(
+                  Icons.settings,
+                  color: AppConstants.textColor,
+                  size: 24,
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildControlButton(IconData icon, String label, VoidCallback onTap, {bool isPrimary = false}) {
-    return Column(
-      children: [
-        IconButton(
-          onPressed: onTap,
-          icon: Icon(
-            icon,
-            size: isPrimary ? 48 : 32,
-            color: isPrimary ? AppConstants.primaryColor : AppConstants.textColor,
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: TextField(
+        controller: _searchController,
+        onChanged: _onSearchChanged,
+        decoration: InputDecoration(
+          hintText: 'Search for songs, artists, albums...',
+          hintStyle: TextStyle(color: AppConstants.textSecondaryColor),
+          prefixIcon: const Icon(Icons.search, color: AppConstants.textSecondaryColor),
+          suffixIcon: _isSearching
+              ? const Icon(Icons.clear, color: AppConstants.textSecondaryColor)
+              : null,
+          filled: true,
+          fillColor: AppConstants.surfaceColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide.none,
           ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         ),
-        Text(
-          label,
-          style: TextStyle(
-            color: AppConstants.textColor,
-            fontSize: 12,
-          ),
-        ),
-      ],
+        style: const TextStyle(color: AppConstants.textColor),
+      ),
     );
   }
 
-  Widget _buildNowPlaying() {
+  Widget _buildCategoryTabs() {
     return Container(
-      padding: const EdgeInsets.all(12),
+      height: 50,
+      margin: const EdgeInsets.symmetric(vertical: 20),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        itemCount: _categories.length,
+        itemBuilder: (context, index) {
+          final isSelected = index == _selectedCategoryIndex;
+          return GestureDetector(
+            onTap: () => _onCategorySelected(index),
+            child: Container(
+              margin: const EdgeInsets.only(right: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: isSelected ? AppConstants.primaryColor : AppConstants.surfaceColor,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isSelected ? AppConstants.primaryColor : AppConstants.borderColor,
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  _categories[index],
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : AppConstants.textColor,
+                    fontSize: 14,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildContent() {
+    return BlocBuilder<TrackBloc, TrackState>(
+      builder: (context, trackState) {
+        if (trackState is TrackLoading) {
+          return const Center(child: LoadingIndicator());
+        }
+
+        if (trackState is TrackFailure) {
+          return _buildErrorWidget(trackState.error);
+        }
+
+        return _buildMusicContent();
+      },
+    );
+  }
+
+  Widget _buildMusicContent() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildNowPlayingSection(),
+          const SizedBox(height: 24),
+          _buildQuickActions(),
+          const SizedBox(height: 24),
+          _buildRecentlyPlayed(),
+          const SizedBox(height: 24),
+          _buildTopTracks(),
+          const SizedBox(height: 24),
+          _buildRecommendedArtists(),
+          const SizedBox(height: 24),
+          _buildNewReleases(),
+          const SizedBox(height: 24),
+          _buildPlaylists(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNowPlayingSection() {
+    return BlocBuilder<SpotifyControlBloc, SpotifyControlState>(
+      builder: (context, state) {
+        // Note: Using a placeholder since SpotifyControlUserProfileLoaded doesn't exist
+        if (state is SpotifyDevicesLoaded) {
+          return _buildNowPlayingCard({
+            'name': 'Sample Track',
+            'artist': 'Sample Artist',
+            'album_cover': 'assets/music_cover.jpg',
+          });
+        }
+        return _buildNoTrackPlaying();
+      },
+    );
+  }
+
+  Widget _buildNowPlayingCard(Map<String, dynamic> track) {
+    return Container(
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.black26,
-        borderRadius: BorderRadius.circular(8),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppConstants.primaryColor.withOpacity(0.8),
+            AppConstants.primaryColor.withOpacity(0.4),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
         children: [
           Container(
-            width: 50,
-            height: 50,
+            width: 80,
+            height: 80,
             decoration: BoxDecoration(
-              color: AppConstants.primaryColor.withOpacity(0.3),
               borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Icon(
-              Icons.music_note,
-              color: Colors.white70,
+              image: DecorationImage(
+                image: AssetImage(track['album_cover'] ?? 'assets/music_cover.jpg'),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  track['name'] ?? 'Unknown Track',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  track['artist'] ?? 'Unknown Artist',
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: _togglePlayPause,
+                      icon: Icon(
+                        _isPlaying ? Icons.pause : Icons.play_arrow,
+                        color: Colors.white,
+                        size: 32,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: _skipToPrevious,
+                      icon: const Icon(
+                        Icons.skip_previous,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: _skipToNext,
+                      icon: const Icon(
+                        Icons.skip_next,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNoTrackPlaying() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppConstants.surfaceColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppConstants.borderColor),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.music_note,
+            color: AppConstants.primaryColor,
+            size: 32,
+          ),
+          const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'No track playing',
-                  style: TextStyle(
-                    color: AppConstants.textColor,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: AppConstants.subheadingStyle,
                 ),
+                const SizedBox(height: 4),
                 Text(
-                  'Select a track to start listening',
-                  style: TextStyle(
-                    color: AppConstants.textSecondaryColor,
-                    fontSize: 12,
-                  ),
+                  'Start playing music to see what\'s currently playing',
+                  style: AppConstants.captionStyle,
                 ),
               ],
             ),
           ),
-          IconButton(
-            onPressed: () => _showQueue(),
-            icon: const Icon(
-              Icons.queue_music,
-              color: Colors.white70,
+          ElevatedButton(
+            onPressed: _browseMusic,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppConstants.primaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
             ),
+            child: const Text('Browse'),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTabBar() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: AppConstants.surfaceColor,
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: AppConstants.borderColor.withOpacity(0.3)),
-      ),
-      child: TabBar(
-        controller: _tabController,
-        indicator: BoxDecoration(
-          color: AppConstants.primaryColor,
-          borderRadius: BorderRadius.circular(25),
-        ),
-        labelColor: Colors.white,
-        unselectedLabelColor: AppConstants.textSecondaryColor,
-        tabs: const [
-          Tab(text: 'Top Artists'),
-          Tab(text: 'Top Tracks'),
-          Tab(text: 'Genres'),
-          Tab(text: 'Devices'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTabView() {
-    return TabBarView(
-      controller: _tabController,
+  Widget _buildQuickActions() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildTopArtistsTab(),
-        _buildTopTracksTab(),
-        _buildGenresTab(),
-        _buildDevicesTab(),
+        Text(
+          'Quick Actions',
+          style: AppConstants.subheadingStyle,
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _buildQuickActionCard(
+                'Create Playlist',
+                Icons.playlist_add,
+                AppConstants.primaryColor,
+                _createPlaylist,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildQuickActionCard(
+                'Discover',
+                Icons.explore,
+                Colors.blue,
+                _discoverMusic,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _buildQuickActionCard(
+                'Radio',
+                Icons.radio,
+                Colors.green,
+                _startRadio,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildQuickActionCard(
+                'Library',
+                Icons.library_music,
+                Colors.orange,
+                _openLibrary,
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
 
-  Widget _buildTopArtistsTab() {
-    return BlocBuilder<TopArtistsBloc, TopArtistsState>(
-      builder: (context, state) {
-        if (state is TopArtistsLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (state is TopArtistsLoaded) {
-          return _buildArtistsList(state.artists);
-        }
-
-        if (state is TopArtistsFailure) {
-          return _buildErrorWidget(state.error);
-        }
-
-        return const Center(child: Text('No artists found'));
-      },
-    );
-  }
-
-  Widget _buildTopTracksTab() {
-    return BlocBuilder<TopTracksBloc, TopTracksState>(
-      builder: (context, state) {
-        if (state is TopTracksLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (state is TopTracksLoaded) {
-          return _buildTracksList(state.tracks);
-        }
-
-        if (state is TopTracksFailure) {
-          return _buildErrorWidget(state.error);
-        }
-
-        return const Center(child: Text('No tracks found'));
-      },
-    );
-  }
-
-  Widget _buildGenresTab() {
-    return BlocBuilder<TopGenresBloc, TopGenresState>(
-      builder: (context, state) {
-        if (state is TopGenresLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (state is TopGenresLoaded) {
-          return _buildGenresList(state.genres);
-        }
-
-        if (state is TopGenresFailure) {
-          return _buildErrorWidget(state.error);
-        }
-
-        return const Center(child: Text('No genres found'));
-      },
-    );
-  }
-
-  Widget _buildDevicesTab() {
-    return BlocBuilder<SpotifyControlBloc, SpotifyControlState>(
-      builder: (context, state) {
-        if (state is SpotifyDevicesLoaded) {
-          return _buildDevicesList(state.devices);
-        }
-
-        return const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.devices, size: 64, color: Colors.white54),
-              SizedBox(height: 16),
-              Text(
-                'No devices found',
-                style: TextStyle(color: Colors.white54),
+  Widget _buildQuickActionCard(String title, IconData icon, Color color, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withOpacity(0.5)),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 32),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: const TextStyle(
+                color: AppConstants.textColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
               ),
-              Text(
-                'Connect to Spotify to see available devices',
-                style: TextStyle(color: Colors.white38, fontSize: 12),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecentlyPlayed() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Recently Played',
+              style: AppConstants.subheadingStyle,
+            ),
+            TextButton(
+              onPressed: _viewAllRecentlyPlayed,
+              child: Text(
+                'View All',
+                style: TextStyle(color: AppConstants.primaryColor),
               ),
-            ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        SizedBox(
+          height: 200,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 10,
+            itemBuilder: (context, index) {
+              return _buildTrackCard(
+                'Track ${index + 1}',
+                'Artist ${index + 1}',
+                'assets/music_cover.jpg',
+                () => _playTrack('track_$index'),
+              );
+            },
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTopTracks() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Top Tracks',
+              style: AppConstants.subheadingStyle,
+            ),
+            TextButton(
+              onPressed: _viewAllTopTracks,
+              child: Text(
+                'View All',
+                style: TextStyle(color: AppConstants.primaryColor),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        _buildTrackList(),
+      ],
+    );
+  }
+
+  Widget _buildTrackList() {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: 5,
+      itemBuilder: (context, index) {
+        return _buildTrackListItem(
+          'Top Track ${index + 1}',
+          'Top Artist ${index + 1}',
+          '3:${(index + 1) * 10}',
+          () => _playTrack('top_track_$index'),
         );
       },
     );
   }
 
-  Widget _buildArtistsList(List<CommonArtist> artists) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: artists.length,
-      itemBuilder: (context, index) {
-        final artist = artists[index];
-        return _buildArtistCard(artist);
-      },
-    );
-  }
-
-  Widget _buildArtistCard(CommonArtist artist) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      color: AppConstants.surfaceColor,
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: AppConstants.primaryColor.withOpacity(0.3),
-          child: Text(
-            artist.name.isNotEmpty ? artist.name[0].toUpperCase() : 'A',
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+  Widget _buildTrackListItem(String title, String artist, String duration, VoidCallback onTap) {
+    return ListTile(
+      onTap: onTap,
+      leading: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: AppConstants.surfaceColor,
         ),
-        title: Text(
-          artist.name,
-          style: const TextStyle(color: Colors.white),
-        ),
-        subtitle: Text(
-          '${artist.followers ?? 0} followers',
-          style: const TextStyle(color: Colors.white70),
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              onPressed: () => _likeArtist(artist.id),
-              icon: Icon(
-                artist.isLiked ? Icons.favorite : Icons.favorite_border,
-                color: artist.isLiked ? Colors.red : Colors.white70,
-              ),
-            ),
-            IconButton(
-              onPressed: () => _playArtist(artist.id),
-              icon: const Icon(
-                Icons.play_circle_outline,
-                color: Colors.white70,
-              ),
-            ),
-          ],
-        ),
-        onTap: () => _showArtistDetails(artist),
-      ),
-    );
-  }
-
-  Widget _buildTracksList(List<CommonTrack> tracks) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: tracks.length,
-      itemBuilder: (context, index) {
-        final track = tracks[index];
-        return _buildTrackCard(track);
-      },
-    );
-  }
-
-  Widget _buildTrackCard(CommonTrack track) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      color: AppConstants.surfaceColor,
-      child: ListTile(
-        leading: Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: AppConstants.primaryColor.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Icon(
-            Icons.music_note,
-            color: Colors.white70,
-          ),
-        ),
-        title: Text(
-          track.name,
-          style: const TextStyle(color: Colors.white),
-        ),
-        subtitle: Text(
-          track.artistName ?? 'Unknown Artist',
-          style: const TextStyle(color: Colors.white70),
-        ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              onPressed: () => _likeTrack(track.id),
-              icon: Icon(
-                track.isLiked ? Icons.favorite : Icons.favorite_border,
-                color: track.isLiked ? Colors.red : Colors.white70,
-              ),
-            ),
-            IconButton(
-              onPressed: () => _playTrack(track.id),
-              icon: const Icon(
-                Icons.play_circle_outline,
-                color: Colors.white70,
-              ),
-            ),
-          ],
-        ),
-        onTap: () => _showTrackDetails(track),
-      ),
-    );
-  }
-
-  Widget _buildGenresList(List<CommonGenre> genres) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(16),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 1.5,
-        crossAxisSpacing: 16,
-        mainAxisSpacing: 16,
-      ),
-      itemCount: genres.length,
-      itemBuilder: (context, index) {
-        final genre = genres[index];
-        return _buildGenreCard(genre);
-      },
-    );
-  }
-
-  Widget _buildGenreCard(CommonGenre genre) {
-    return Card(
-      color: AppConstants.surfaceColor,
-      child: InkWell(
-        onTap: () => _showGenreDetails(genre),
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppConstants.primaryColor.withOpacity(0.3),
-                AppConstants.primaryColor.withOpacity(0.1),
-              ],
-            ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.category,
-                size: 48,
-                color: AppConstants.primaryColor,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                genre.name,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Various tracks',
-                style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDevicesList(List<SpotifyDevice> devices) {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: devices.length,
-      itemBuilder: (context, index) {
-        final device = devices[index];
-        return _buildDeviceCard(device);
-      },
-    );
-  }
-
-  Widget _buildDeviceCard(SpotifyDevice device) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      color: AppConstants.surfaceColor,
-      child: ListTile(
-        leading: Icon(
-          _getDeviceIcon(device.type),
+        child: Icon(
+          Icons.music_note,
           color: AppConstants.primaryColor,
-          size: 32,
         ),
-        title: Text(
-          device.name,
-          style: const TextStyle(color: Colors.white),
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(
+          color: AppConstants.textColor,
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
         ),
-        subtitle: Text(
-          device.type,
-          style: const TextStyle(color: Colors.white70),
-        ),
-        trailing: Switch(
-          value: device.isActive,
-          onChanged: (value) => _toggleDevice(device.id, value),
-          activeColor: AppConstants.primaryColor,
-        ),
-        onTap: () => _selectDevice(device.id),
+      ),
+      subtitle: Text(
+        artist,
+        style: AppConstants.captionStyle,
+      ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            duration,
+            style: AppConstants.captionStyle,
+          ),
+          const SizedBox(width: 8),
+          IconButton(
+            onPressed: () => _toggleLike('track_$title'),
+            icon: Icon(
+              Icons.favorite_border,
+              color: AppConstants.primaryColor,
+              size: 20,
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  IconData _getDeviceIcon(String deviceType) {
-    switch (deviceType.toLowerCase()) {
-      case 'computer':
-        return Icons.computer;
-      case 'smartphone':
-        return Icons.phone_android;
-      case 'tablet':
-        return Icons.tablet_android;
-      case 'tv':
-        return Icons.tv;
-      case 'speaker':
-        return Icons.speaker;
-      default:
-        return Icons.devices;
-    }
+  Widget _buildRecommendedArtists() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Recommended Artists',
+          style: AppConstants.subheadingStyle,
+        ),
+        const SizedBox(height: 16),
+        SizedBox(
+          height: 120,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 8,
+            itemBuilder: (context, index) {
+              return _buildArtistCard(
+                'Artist ${index + 1}',
+                'assets/music_cover.jpg',
+                () => _viewArtist('artist_$index'),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildArtistCard(String name, String imageUrl, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 100,
+        margin: const EdgeInsets.only(right: 16),
+        child: Column(
+          children: [
+            CircleAvatar(
+              radius: 40,
+              backgroundImage: AssetImage(imageUrl),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              name,
+              style: const TextStyle(
+                color: AppConstants.textColor,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNewReleases() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'New Releases',
+          style: AppConstants.subheadingStyle,
+        ),
+        const SizedBox(height: 16),
+        SizedBox(
+          height: 200,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 6,
+            itemBuilder: (context, index) {
+              return _buildAlbumCard(
+                'Album ${index + 1}',
+                'Artist ${index + 1}',
+                'assets/music_cover.jpg',
+                () => _viewAlbum('album_$index'),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAlbumCard(String title, String artist, String imageUrl, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 150,
+        margin: const EdgeInsets.only(right: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                image: DecorationImage(
+                  image: AssetImage(imageUrl),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: const TextStyle(
+                color: AppConstants.textColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              artist,
+              style: AppConstants.captionStyle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlaylists() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Your Playlists',
+              style: AppConstants.subheadingStyle,
+            ),
+            TextButton(
+              onPressed: _createNewPlaylist,
+              child: Text(
+                'Create New',
+                style: TextStyle(color: AppConstants.primaryColor),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 1.2,
+          ),
+          itemCount: 4,
+          itemBuilder: (context, index) {
+            return _buildPlaylistCard(
+              'Playlist ${index + 1}',
+              '${(index + 1) * 5} songs',
+              'assets/music_cover.jpg',
+              () => _viewPlaylist('playlist_$index'),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPlaylistCard(String title, String songCount, String imageUrl, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppConstants.surfaceColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppConstants.borderColor),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                  image: DecorationImage(
+                    image: AssetImage(imageUrl),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.7),
+                      ],
+                    ),
+                  ),
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Text(
+                        songCount,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(
+                title,
+                style: const TextStyle(
+                  color: AppConstants.textColor,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTrackCard(String title, String artist, String imageUrl, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 160,
+        margin: const EdgeInsets.only(right: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 160,
+              height: 160,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                image: DecorationImage(
+                  image: AssetImage(imageUrl),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: const TextStyle(
+                color: AppConstants.textColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Text(
+              artist,
+              style: AppConstants.captionStyle,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildErrorWidget(String error) {
@@ -614,220 +893,243 @@ class _MusicPageState extends State<MusicPage> with TickerProviderStateMixin {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.error_outline,
+            color: AppConstants.errorColor,
             size: 64,
-            color: Colors.red,
           ),
           const SizedBox(height: 16),
           Text(
-            'Error loading data',
-            style: TextStyle(
-              color: AppConstants.textColor,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            'Error loading music',
+            style: AppConstants.subheadingStyle,
           ),
           const SizedBox(height: 8),
           Text(
             error,
-            style: TextStyle(
-              color: AppConstants.textSecondaryColor,
-              fontSize: 14,
-            ),
+            style: AppConstants.captionStyle,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
-          AppButton(
-            text: 'Retry',
-            onPressed: _loadMusicData,
+          ElevatedButton(
+            onPressed: _retryLoading,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppConstants.primaryColor,
+            ),
+            child: const Text('Retry'),
           ),
         ],
       ),
     );
   }
 
+  // Event handlers
+  void _onSearchChanged(String query) {
+    setState(() {
+      _isSearching = query.isNotEmpty;
+    });
+
+    if (query.isNotEmpty) {
+      // Implement search functionality
+      context.read<TrackBloc>().add(TrackBudsRequested(query));
+    }
+  }
+
+  void _onCategorySelected(int index) {
+    setState(() {
+      _selectedCategoryIndex = index;
+    });
+
+    // Load data based on category
+    switch (_categories[index].toLowerCase()) {
+      case 'tracks':
+        context.read<TrackBloc>().add(const TrackBudsRequested('tracks'));
+        break;
+      case 'artists':
+        context.read<TrackBloc>().add(const TrackBudsRequested('artists'));
+        break;
+      case 'albums':
+        context.read<TrackBloc>().add(const TrackBudsRequested('albums'));
+        break;
+      case 'playlists':
+        context.read<TrackBloc>().add(const TrackBudsRequested('playlists'));
+        break;
+      case 'genres':
+        context.read<TrackBloc>().add(const TrackBudsRequested('genres'));
+        break;
+      case 'recently played':
+        context.read<TrackBloc>().add(const TrackBudsRequested('recent'));
+        break;
+      case 'liked songs':
+        context.read<TrackBloc>().add(const TrackBudsRequested('liked'));
+        break;
+      default:
+        context.read<TrackBloc>().add(const TrackBudsRequested('all'));
+    }
+  }
+
   // Action methods
-  void _previousTrack() {
-    if (_selectedDevice != null) {
-      context.read<SpotifyControlBloc>().add(
-        SpotifyPlaybackControlRequested(
-          command: 'previous',
-          deviceId: _selectedDevice!.id,
-        ),
-      );
-    } else {
-      _showDeviceSelectionDialog();
-    }
-  }
-
-  void _togglePlayPause() {
-    if (_selectedDevice != null) {
-      final command = _isPlaying ? 'pause' : 'play';
-      context.read<SpotifyControlBloc>().add(
-        SpotifyPlaybackControlRequested(
-          command: command,
-          deviceId: _selectedDevice!.id,
-        ),
-      );
-    } else {
-      _showDeviceSelectionDialog();
-    }
-  }
-
-  void _nextTrack() {
-    if (_selectedDevice != null) {
-      context.read<SpotifyControlBloc>().add(
-        SpotifyPlaybackControlRequested(
-          command: 'next',
-          deviceId: _selectedDevice!.id,
-        ),
-      );
-    } else {
-      _showDeviceSelectionDialog();
-    }
-  }
-
-  void _showPlaylistDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Playlists'),
-        content: const Text('Playlist functionality coming soon!'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
+  void _showNowPlaying() {
+    // Show now playing modal or navigate to now playing page
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Now playing details coming soon!')),
     );
   }
 
   void _showMusicSettings() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Music Settings'),
-        content: const Text('Music settings functionality coming soon!'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showQueue() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Queue'),
-        content: const Text('Queue functionality coming soon!'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _likeArtist(String artistId) {
-    context.read<LikesBloc>().add(ArtistLikeRequested(artistId: artistId));
-  }
-
-  void _playArtist(String artistId) {
-    if (_selectedDevice != null) {
-      // TODO: Implement artist play logic
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Playing artist: $artistId')),
-      );
-    } else {
-      _showDeviceSelectionDialog();
-    }
-  }
-
-  void _showArtistDetails(CommonArtist artist) {
-    // TODO: Navigate to artist details page
+    // Show music settings
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Artist details for: ${artist.name}')),
+      const SnackBar(content: Text('Music settings coming soon!')),
     );
   }
 
-  void _likeTrack(String trackId) {
-    context.read<LikesBloc>().add(TrackLikeRequested(trackId: trackId));
+  void _togglePlayPause() {
+    // Toggle play/pause
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Play/pause functionality coming soon!')),
+    );
+  }
+
+  void _skipToPrevious() {
+    // Skip to previous track
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Skip to previous coming soon!')),
+    );
+  }
+
+  void _skipToNext() {
+    // Skip to next track
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Skip to next coming soon!')),
+    );
+  }
+
+  void _browseMusic() {
+    // Browse music
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Music browser coming soon!')),
+    );
+  }
+
+  void _createPlaylist() {
+    // Create playlist
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Playlist creation coming soon!')),
+    );
+  }
+
+  void _discoverMusic() {
+    // Discover music
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Music discovery coming soon!')),
+    );
+  }
+
+  void _startRadio() {
+    // Start radio
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Radio functionality coming soon!')),
+    );
+  }
+
+  void _openLibrary() {
+    // Open library
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Music library coming soon!')),
+    );
+  }
+
+  void _viewAllRecentlyPlayed() {
+    // View all recently played
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Recently played expanded view coming soon!')),
+    );
   }
 
   void _playTrack(String trackId) {
-    if (_selectedDevice != null) {
-      context.read<SpotifyControlBloc>().add(
-        SpotifyPlayTrackRequested(
-          trackId: trackId,
-          deviceId: _selectedDevice!.id,
-        ),
-      );
-
-      // Save the played track
-      context.read<SpotifyControlBloc>().add(
-        SpotifySavePlayedTrackRequested(trackId: trackId),
-      );
-    } else {
-      _showDeviceSelectionDialog();
-    }
+    // Play track
+    context.read<TrackBloc>().add(TrackPlayRequested(trackId: trackId));
   }
 
-  void _showTrackDetails(CommonTrack track) {
-    // TODO: Navigate to track details page
+  void _toggleLike(String trackId) {
+    // Toggle like
+    context.read<TrackBloc>().add(TrackLikeToggled(trackId));
+  }
+
+  void _viewAllTopTracks() {
+    // View all top tracks
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Track details for: ${track.name}')),
+      const SnackBar(content: Text('Top tracks expanded view coming soon!')),
     );
   }
 
-  void _showGenreDetails(CommonGenre genre) {
-    // TODO: Navigate to genre details page
+  void _viewArtist(String artistId) {
+    // View artist
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Genre details for: ${genre.name}')),
+      const SnackBar(content: Text('Artist view coming soon!')),
     );
   }
 
-  void _toggleDevice(String deviceId, bool isActive) {
-    // TODO: Implement device toggle logic
+  void _viewAlbum(String albumId) {
+    // View album
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Toggled device: $deviceId to $isActive')),
+      const SnackBar(content: Text('Album view coming soon!')),
     );
   }
 
-  void _selectDevice(String deviceId) {
-    final devices = context.read<SpotifyControlBloc>().state;
-    if (devices is SpotifyDevicesLoaded) {
-      final device = devices.devices.firstWhere((d) => d.id == deviceId);
-      setState(() {
-        _selectedDevice = device;
-      });
+  void _createNewPlaylist() {
+    // Create new playlist
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Playlist creation coming soon!')),
+    );
+  }
 
+  void _viewPlaylist(String playlistId) {
+    // View playlist
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Playlist view coming soon!')),
+    );
+  }
+
+  void _retryLoading() {
+    // Retry loading
+    _loadInitialData();
+  }
+
+  // Bloc state handlers
+  void _handleTrackStateChange(BuildContext context, TrackState state) {
+    if (state is TrackFailure) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Selected device: ${device.name}')),
+        SnackBar(content: Text('Track error: ${state.error}')),
       );
     }
   }
 
-  void _showDeviceSelectionDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Select Device'),
-        content: const Text('Please select a device to control playback.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
+  void _handleSpotifyControlStateChange(BuildContext context, SpotifyControlState state) {
+    if (state is SpotifyControlFailure) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Spotify error: ${state.error}')),
+      );
+    }
   }
+
+  void _handleLikesStateChange(BuildContext context, LikesState state) {
+    if (state is LikesUpdateSuccess) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(state.message)),
+      );
+    } else if (state is LikesUpdateFailure) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${state.error}')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  // Placeholder variables for demo
+  bool _isPlaying = false;
 }

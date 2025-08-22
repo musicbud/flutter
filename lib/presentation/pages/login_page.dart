@@ -88,7 +88,6 @@ class LoginPageState extends State<LoginPage> with PageMixin {
         LoginRequested(
           username: _usernameController.text,
           password: _passwordController.text,
-          token: accessToken,
         ),
       );
       addBlocEvent<UserBloc, UpdateToken>(UpdateToken(token: accessToken));
@@ -209,7 +208,7 @@ class LoginPageState extends State<LoginPage> with PageMixin {
     return TextButton(
       onPressed: () {
         // TODO: Implement forgot password functionality
-        showSnackBar('Forgot password functionality coming soon!');
+        showInfoSnackBar('Forgot password functionality coming soon!');
       },
       child: Text(
         'Forgot Password?',

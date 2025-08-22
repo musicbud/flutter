@@ -3,7 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'blocs/user/user_bloc.dart';
 import 'blocs/user/user_event.dart';
-import 'blocs/services/services_bloc.dart';
+
+import 'blocs/chat/chat_bloc.dart';
+import 'blocs/content/content_bloc.dart';
+import 'blocs/bud/bud_bloc.dart';
 import 'data/providers/token_provider.dart';
 import 'domain/repositories/auth_repository.dart';
 import 'app.dart';
@@ -47,13 +50,26 @@ class MusicBudApp extends StatelessWidget {
       BlocProvider<ProfileBloc>(
         create: (context) => di.sl<ProfileBloc>(),
       ),
-      BlocProvider<ServicesBloc>(
-        create: (context) => di.sl<ServicesBloc>(),
-      ),
+
 
       // Main Screen BLoC for authentication status
       BlocProvider<MainScreenBloc>(
         create: (context) => di.sl<MainScreenBloc>(),
+      ),
+
+      // Chat BLoC for chat functionality
+      BlocProvider<ChatBloc>(
+        create: (context) => di.sl<ChatBloc>(),
+      ),
+
+      // Content BLoC for content management
+      BlocProvider<ContentBloc>(
+        create: (context) => di.sl<ContentBloc>(),
+      ),
+
+      // Bud BLoC for bud matching
+      BlocProvider<BudBloc>(
+        create: (context) => di.sl<BudBloc>(),
       ),
 
       // Authentication BLoC with token management

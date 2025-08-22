@@ -86,4 +86,7 @@ abstract class ContentRepository {
 
   // Update methods
   Future<void> updateLikes(String type, String id, bool isLiked);
+
+  // Unified toggle method
+  Future<void> toggleLike(String id, String type);
 }

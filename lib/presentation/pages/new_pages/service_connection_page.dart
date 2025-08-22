@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../blocs/auth/spotify/spotify_bloc.dart';
-import '../../../blocs/auth/ytmusic/ytmusic_bloc.dart';
-import '../../../blocs/auth/lastfm/lastfm_bloc.dart';
-import '../../../blocs/auth/mal/mal_bloc.dart';
-import '../../../blocs/services/services_bloc.dart';
+import '../../../blocs/auth/auth_bloc.dart';
 import '../../../domain/models/content_service.dart';
 import '../../constants/app_constants.dart';
 import '../../widgets/common/app_scaffold.dart';
 import '../../widgets/common/app_app_bar.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/app_text_field.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ServiceConnectionPage extends StatefulWidget {
   const ServiceConnectionPage({Key? key}) : super(key: key);
@@ -35,9 +32,6 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
     _tabController.addListener(() {
       setState(() {});
     });
-
-    // Load connected services
-    _loadConnectedServices();
   }
 
   @override
@@ -47,38 +41,82 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
     super.dispose();
   }
 
-  void _loadConnectedServices() {
-    // TODO: Load services
-    print('Loading services...');
-  }
-
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      appBar: AppAppBar(
-        title: 'Connect Services',
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadConnectedServices,
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          _buildConnectedServicesOverview(),
-          _buildTabBar(),
-          Expanded(
-            child: _buildTabView(),
-          ),
-        ],
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is ServiceAuthUrlReceived) {
+          _launchAuthUrl(state.url, state.service);
+        } else if (state is AuthError) {
+          _showErrorSnackBar(state.message);
+        } else if (state is AuthSuccess) {
+          _showSuccessSnackBar('Service connected successfully!');
+        }
+      },
+      child: AppScaffold(
+        appBar: AppAppBar(
+          title: 'Connect Services',
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () {
+                // Refresh token for connected services
+                _refreshServiceTokens();
+              },
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            _buildConnectedServicesOverview(),
+            _buildTabBar(),
+            Expanded(
+              child: _buildTabView(),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildConnectedServicesOverview() {
-    // TODO: Implement services overview
-    return const SizedBox.shrink();
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is Authenticated) {
+          return _buildServicesOverview([
+            ContentService(
+              id: 'spotify',
+              name: 'Spotify',
+              iconUrl: '',
+              status: 'active',
+              isConnected: state.connectedServices['spotify'] ?? false,
+            ),
+            ContentService(
+              id: 'ytmusic',
+              name: 'YouTube Music',
+              iconUrl: '',
+              status: 'active',
+              isConnected: state.connectedServices['ytmusic'] ?? false,
+            ),
+            ContentService(
+              id: 'lastfm',
+              name: 'Last.fm',
+              iconUrl: '',
+              status: 'active',
+              isConnected: state.connectedServices['lastfm'] ?? false,
+            ),
+            ContentService(
+              id: 'mal',
+              name: 'MyAnimeList',
+              iconUrl: '',
+              status: 'active',
+              isConnected: state.connectedServices['mal'] ?? false,
+            ),
+          ]);
+        }
+        return const SizedBox.shrink();
+      },
+    );
   }
 
   Widget _buildServicesOverview(List<ContentService> services) {
@@ -126,7 +164,9 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
         service.name,
         style: const TextStyle(color: Colors.white),
       ),
-      backgroundColor: AppConstants.surfaceColor,
+      backgroundColor: service.isConnected
+          ? _getServiceColor(service.name).withOpacity(0.3)
+          : AppConstants.surfaceColor,
       side: BorderSide(
         color: _getServiceColor(service.name),
         width: 2,
@@ -173,58 +213,90 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
   }
 
   Widget _buildSpotifyTab() {
-    // TODO: Implement Spotify tab
-    return _buildServiceTab(
-      'Spotify',
-      Icons.music_note,
-      Colors.green,
-      'Connect your Spotify account to sync your music library, playlists, and listening history.',
-      null,
-      () => _connectSpotify(),
-      () => _disconnectSpotify(),
-      () => _getSpotifyAuthUrl(),
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        final isConnected = state is Authenticated && (state.connectedServices['spotify'] ?? false);
+        final isLoading = state is AuthLoading;
+
+        return _buildServiceTab(
+          'Spotify',
+          Icons.music_note,
+          Colors.green,
+          'Connect your Spotify account to sync your music library, playlists, and listening history.',
+          state,
+          () => _connectSpotify(),
+          () => _refreshSpotifyToken(),
+          () => _getSpotifyAuthUrl(),
+          isConnected,
+          isLoading,
+        );
+      },
     );
   }
 
   Widget _buildYTMusicTab() {
-    // TODO: Implement YouTube Music tab
-    return _buildServiceTab(
-      'YouTube Music',
-      Icons.play_circle_filled,
-      Colors.red,
-      'Connect your YouTube Music account to sync your music library and playlists.',
-      null,
-      () => _connectYTMusic(),
-      () => _disconnectYTMusic(),
-      () => _getYTMusicAuthUrl(),
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        final isConnected = state is Authenticated && (state.connectedServices['ytmusic'] ?? false);
+        final isLoading = state is AuthLoading;
+
+        return _buildServiceTab(
+          'YouTube Music',
+          Icons.play_circle_filled,
+          Colors.red,
+          'Connect your YouTube Music account to sync your music library and playlists.',
+          state,
+          () => _connectYTMusic(),
+          () => _refreshYTMusicToken(),
+          () => _getYTMusicAuthUrl(),
+          isConnected,
+          isLoading,
+        );
+      },
     );
   }
 
   Widget _buildLastFMTab() {
-    // TODO: Implement LastFM tab
-    return _buildServiceTab(
-      'LastFM',
-      Icons.radio,
-      Colors.purple,
-      'Connect your LastFM account to track your listening habits and discover new music.',
-      null,
-      () => _connectLastFM(),
-      () => _disconnectLastFM(),
-      () => _getLastFMAuthUrl(),
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        final isConnected = state is Authenticated && (state.connectedServices['lastfm'] ?? false);
+        final isLoading = state is AuthLoading;
+
+        return _buildServiceTab(
+          'LastFM',
+          Icons.radio,
+          Colors.purple,
+          'Connect your LastFM account to track your listening habits and discover new music.',
+          state,
+          () => _connectLastFM(),
+          () => _refreshLastFMToken(),
+          () => _getLastFMAuthUrl(),
+          isConnected,
+          isLoading,
+        );
+      },
     );
   }
 
   Widget _buildMALTab() {
-    // TODO: Implement MAL tab
-    return _buildServiceTab(
-      'MyAnimeList',
-      Icons.animation,
-      Colors.blue,
-      'Connect your MyAnimeList account to sync your anime and manga preferences.',
-      null,
-      () => _connectMAL(),
-      () => _disconnectMAL(),
-      () => _getMALAuthUrl(),
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        final isConnected = state is Authenticated && (state.connectedServices['mal'] ?? false);
+        final isLoading = state is AuthLoading;
+
+        return _buildServiceTab(
+          'MyAnimeList',
+          Icons.animation,
+          Colors.blue,
+          'Connect your MyAnimeList account to sync your anime and manga preferences.',
+          state,
+          () => _connectMAL(),
+          () => _refreshMALToken(),
+          () => _getMALAuthUrl(),
+          isConnected,
+          isLoading,
+        );
+      },
     );
   }
 
@@ -235,12 +307,11 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
     String description,
     dynamic state,
     VoidCallback onConnect,
-    VoidCallback onDisconnect,
+    VoidCallback onRefreshToken,
     VoidCallback onGetAuthUrl,
+    bool isConnected,
+    bool isLoading,
   ) {
-    final isConnected = false; // TODO: Implement connection status
-    final isLoading = false; // TODO: Implement loading status
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -251,13 +322,15 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
           _buildConnectionStatus(isConnected, isLoading),
           const SizedBox(height: 24),
           if (isConnected)
-            _buildConnectedActions(onDisconnect)
+            _buildConnectedActions(onRefreshToken, serviceName)
           else
             _buildConnectionActions(onConnect, onGetAuthUrl),
           const SizedBox(height: 24),
           _buildManualAuthSection(serviceName),
           const SizedBox(height: 24),
           _buildServiceFeatures(serviceName),
+          const SizedBox(height: 24),
+          _buildServiceLimitations(serviceName),
         ],
       ),
     );
@@ -293,8 +366,8 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
             style: TextStyle(
               color: AppConstants.textSecondaryColor,
               fontSize: 14,
-              // textAlign: TextAlign.center,
             ),
+            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -352,26 +425,50 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
     );
   }
 
-  Widget _buildConnectedActions(VoidCallback onDisconnect) {
+  Widget _buildConnectedActions(VoidCallback onRefreshToken, String serviceName) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         AppButton(
-          text: 'Disconnect',
-          onPressed: onDisconnect,
-          backgroundColor: Colors.red,
+          text: 'Refresh Token',
+          onPressed: onRefreshToken,
+          backgroundColor: AppConstants.primaryColor,
         ),
         const SizedBox(height: 12),
         AppButton(
           text: 'View Profile',
-          onPressed: () => _viewServiceProfile(),
+          onPressed: () => _viewServiceProfile(serviceName),
           isOutlined: true,
         ),
         const SizedBox(height: 12),
         AppButton(
           text: 'Sync Data',
-          onPressed: () => _syncServiceData(),
+          onPressed: () => _syncServiceData(serviceName),
           isOutlined: true,
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.orange.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: Colors.orange.withOpacity(0.3)),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.info, color: Colors.orange, size: 20),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Service disconnection is not supported by the API. To disconnect, you may need to revoke access from the service provider.',
+                  style: TextStyle(
+                    color: Colors.orange,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -419,7 +516,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
           ),
           const SizedBox(height: 8),
           Text(
-            'If OAuth is not working, you can manually enter your authentication token.',
+            'If OAuth is not working, you can manually enter your authentication code.',
             style: TextStyle(
               color: AppConstants.textSecondaryColor,
               fontSize: 12,
@@ -428,14 +525,14 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
           const SizedBox(height: 16),
           AppTextField(
             controller: controller,
-            labelText: 'Auth Token',
-            hintText: 'Enter your authentication token',
-            obscureText: true,
+            labelText: 'Auth Code',
+            hintText: 'Enter your authentication code',
+            obscureText: false,
           ),
           const SizedBox(height: 16),
           AppButton(
-            text: 'Connect with Token',
-            onPressed: () => _connectWithToken(serviceName),
+            text: 'Connect with Code',
+            onPressed: () => _connectWithCode(serviceName),
             isOutlined: true,
           ),
         ],
@@ -492,6 +589,46 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
     );
   }
 
+  Widget _buildServiceLimitations(String serviceName) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.red.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.red.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Limitations',
+            style: TextStyle(
+              color: Colors.red,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Icon(Icons.warning, color: Colors.red, size: 20),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Service disconnection is not supported by the API. You can only connect and refresh tokens.',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   List<String> _getServiceFeatures(String serviceName) {
     switch (serviceName.toLowerCase()) {
       case 'spotify':
@@ -499,7 +636,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
           'Sync your music library',
           'Import playlists',
           'Track listening history',
-          'Control playback',
+          'Token refresh support',
           'Discover new music',
         ];
       case 'youtube music':
@@ -507,6 +644,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
           'Sync your music library',
           'Import playlists',
           'Track listening history',
+          'Token refresh support',
           'Access YouTube Music content',
         ];
       case 'lastfm':
@@ -560,8 +698,12 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
   }
 
   // Action methods
-  void _launchUrl(String url) {
-    // Implement URL launching logic
+  Future<void> _launchAuthUrl(String url, String service) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
+    } else {
+      _showErrorSnackBar('Could not launch authentication URL');
+    }
   }
 
   void _showErrorSnackBar(String message) {
@@ -583,94 +725,110 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
   }
 
   void _connectSpotify() {
-    // TODO: Implement Spotify connect
-    print('Connecting to Spotify...');
+    final controller = _authControllers['spotify'];
+    if (controller != null && controller.text.isNotEmpty) {
+      context.read<AuthBloc>().add(ConnectService(service: 'spotify', code: controller.text));
+    } else {
+      _showErrorSnackBar('Please enter an authentication code');
+    }
   }
 
-  void _disconnectSpotify() {
-    // TODO: Implement Spotify disconnect
-    print('Disconnecting from Spotify...');
+  void _refreshSpotifyToken() {
+    context.read<AuthBloc>().add(RefreshServiceToken('spotify'));
   }
 
   void _getSpotifyAuthUrl() {
-    // TODO: Implement Spotify auth URL
-    print('Getting Spotify auth URL...');
+    context.read<AuthBloc>().add(GetServiceAuthUrl('spotify'));
   }
 
   void _connectYTMusic() {
-    // TODO: Implement YT Music connect
-    print('Connecting to YouTube Music...');
+    final controller = _authControllers['ytmusic'];
+    if (controller != null && controller.text.isNotEmpty) {
+      context.read<AuthBloc>().add(ConnectService(service: 'ytmusic', code: controller.text));
+    } else {
+      _showErrorSnackBar('Please enter an authentication code');
+    }
   }
 
-  void _disconnectYTMusic() {
-    // TODO: Implement YT Music disconnect
-    print('Disconnecting from YouTube Music...');
+  void _refreshYTMusicToken() {
+    context.read<AuthBloc>().add(RefreshServiceToken('ytmusic'));
   }
 
   void _getYTMusicAuthUrl() {
-    // TODO: Implement YT Music auth URL
-    print('Getting YouTube Music auth URL...');
+    context.read<AuthBloc>().add(GetServiceAuthUrl('ytmusic'));
   }
 
   void _connectLastFM() {
-    // TODO: Implement LastFM connect
-    print('Connecting to LastFM...');
+    final controller = _authControllers['lastfm'];
+    if (controller != null && controller.text.isNotEmpty) {
+      context.read<AuthBloc>().add(ConnectService(service: 'lastfm', code: controller.text));
+    } else {
+      _showErrorSnackBar('Please enter an authentication code');
+    }
   }
 
-  void _disconnectLastFM() {
-    // TODO: Implement LastFM disconnect
-    print('Disconnecting from LastFM...');
+  void _refreshLastFMToken() {
+    // Last.fm doesn't support token refresh
+    _showErrorSnackBar('Token refresh not supported for Last.fm');
   }
 
   void _getLastFMAuthUrl() {
-    // TODO: Implement LastFM auth URL
-    print('Getting LastFM auth URL...');
+    context.read<AuthBloc>().add(GetServiceAuthUrl('lastfm'));
   }
 
   void _connectMAL() {
-    // TODO: Implement MAL connect
-    print('Connecting to MyAnimeList...');
+    final controller = _authControllers['mal'];
+    if (controller != null && controller.text.isNotEmpty) {
+      context.read<AuthBloc>().add(ConnectService(service: 'mal', code: controller.text));
+    } else {
+      _showErrorSnackBar('Please enter an authentication code');
+    }
   }
 
-  void _disconnectMAL() {
-    // TODO: Implement MAL disconnect
-    print('Disconnecting from MyAnimeList...');
+  void _refreshMALToken() {
+    // MAL doesn't support token refresh
+    _showErrorSnackBar('Token refresh not supported for MyAnimeList');
   }
 
   void _getMALAuthUrl() {
-    // TODO: Implement MAL auth URL
-    print('Getting MyAnimeList auth URL...');
+    context.read<AuthBloc>().add(GetServiceAuthUrl('mal'));
   }
 
-  void _connectWithToken(String serviceName) {
+  void _connectWithCode(String serviceName) {
     final controller = _authControllers[serviceName.toLowerCase()];
     if (controller != null && controller.text.isNotEmpty) {
       switch (serviceName.toLowerCase()) {
         case 'spotify':
-          // TODO: Implement Spotify manual connect
-          print('Manual Spotify connect with: ${controller.text}');
+          _connectSpotify();
           break;
         case 'youtube music':
-                      // TODO: Implement YT Music manual connect
-            print('Manual YT Music connect with: ${controller.text}');
+          _connectYTMusic();
           break;
         case 'lastfm':
-                      // TODO: Implement LastFM manual connect
-            print('Manual LastFM connect with: ${controller.text}');
+          _connectLastFM();
           break;
         case 'myanimelist':
-                      // TODO: Implement MAL manual connect
-            print('Manual MAL connect with: ${controller.text}');
+          _connectMAL();
           break;
       }
+    } else {
+      _showErrorSnackBar('Please enter an authentication code');
     }
   }
 
-  void _viewServiceProfile() {
-    // Implement view service profile logic
+  void _viewServiceProfile(String serviceName) {
+    // TODO: Implement view service profile logic
+    _showErrorSnackBar('Service profile viewing not yet implemented');
   }
 
-  void _syncServiceData() {
-    // Implement sync service data logic
+  void _syncServiceData(String serviceName) {
+    // TODO: Implement sync service data logic
+    _showErrorSnackBar('Service data syncing not yet implemented');
+  }
+
+  void _refreshServiceTokens() {
+    // Refresh tokens for all connected services
+    context.read<AuthBloc>().add(RefreshServiceToken('spotify'));
+    context.read<AuthBloc>().add(RefreshServiceToken('ytmusic'));
   }
 }

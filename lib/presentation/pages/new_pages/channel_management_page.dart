@@ -1,90 +1,87 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/chat/chat_bloc.dart';
+import '../../../blocs/chat/chat_event.dart';
 import '../../../blocs/chat/chat_state.dart';
+import '../../../domain/models/channel.dart';
+import '../../constants/app_constants.dart';
+import '../../widgets/common/app_scaffold.dart';
+import '../../widgets/common/app_app_bar.dart';
+import '../../widgets/common/app_button.dart';
+import '../../widgets/common/app_text_field.dart';
 
-class ChannelManagementPage extends StatelessWidget {
+class ChannelManagementPage extends StatefulWidget {
   const ChannelManagementPage({super.key});
 
   @override
+  State<ChannelManagementPage> createState() => _ChannelManagementPageState();
+}
+
+class _ChannelManagementPageState extends State<ChannelManagementPage> {
+  final TextEditingController _channelNameController = TextEditingController();
+  final TextEditingController _channelDescriptionController = TextEditingController();
+  bool _isPrivateChannel = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Load channels when page initializes
+    context.read<ChatBloc>().add(ChatChannelListRequested());
+  }
+
+  @override
+  void dispose() {
+    _channelNameController.dispose();
+    _channelDescriptionController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text(
-          'Channel Management',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
+    return AppScaffold(
+      appBar: AppAppBar(
+        title: 'Channel Management',
         actions: [
           IconButton(
-            icon: const Icon(Icons.add, color: Colors.white),
+            icon: const Icon(Icons.add),
             onPressed: () => _showCreateChannelDialog(context),
           ),
         ],
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/pixiled_background.jpg'),
-            fit: BoxFit.cover,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildLimitationsNotice(),
+          const SizedBox(height: 16),
+          _buildFilterTabs(),
+          const SizedBox(height: 16),
+          Expanded(
+            child: _buildChannelList(),
           ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-
-              // Search Bar
-              _buildSearchBar(),
-              const SizedBox(height: 24),
-
-              // Filter Tabs
-              _buildFilterTabs(),
-              const SizedBox(height: 24),
-
-              // Channel List
-              Expanded(
-                child: _buildChannelList(),
-              ),
-            ],
-          ),
-        ),
+        ],
       ),
     );
   }
 
-  Widget _buildSearchBar() {
+  Widget _buildLimitationsNotice() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+        color: Colors.orange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.orange.withOpacity(0.3)),
       ),
       child: Row(
         children: [
-          const Icon(Icons.search, color: Colors.white70, size: 20),
-          const SizedBox(width: 12),
+          Icon(Icons.info, color: Colors.orange, size: 20),
+          const SizedBox(width: 8),
           Expanded(
-            child: TextField(
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                hintText: 'Search channels...',
-                hintStyle: TextStyle(color: Colors.white70),
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.zero,
+            child: Text(
+              'Channel management is limited. You can only create channels and view basic information. Advanced features like editing, deleting, and member management are not supported by the API.',
+              style: TextStyle(
+                color: Colors.orange,
+                fontSize: 12,
               ),
             ),
           ),
@@ -94,35 +91,46 @@ class ChannelManagementPage extends StatelessWidget {
   }
 
   Widget _buildFilterTabs() {
-    return Row(
-      children: [
-        _buildFilterTab('All', true),
-        const SizedBox(width: 12),
-        _buildFilterTab('My Channels', false),
-        const SizedBox(width: 12),
-        _buildFilterTab('Public', false),
-        const SizedBox(width: 12),
-        _buildFilterTab('Private', false),
-      ],
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          _buildFilterTab('All', true),
+          const SizedBox(width: 12),
+          _buildFilterTab('My Channels', false),
+          const SizedBox(width: 12),
+          _buildFilterTab('Public', false),
+          const SizedBox(width: 12),
+          _buildFilterTab('Private', false),
+        ],
+      ),
     );
   }
 
   Widget _buildFilterTab(String title, bool isActive) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        // Filter functionality is not implemented due to API limitations
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Filtering is not supported by the API'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+      },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isActive ? Colors.pinkAccent : Colors.transparent,
+          color: isActive ? AppConstants.primaryColor : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isActive ? Colors.pinkAccent : Colors.white.withValues(alpha: 0.3),
+            color: isActive ? AppConstants.primaryColor : AppConstants.borderColor.withOpacity(0.3),
           ),
         ),
         child: Text(
           title,
           style: TextStyle(
-            color: isActive ? Colors.white : Colors.white70,
+            color: isActive ? Colors.white : AppConstants.textSecondaryColor,
             fontSize: 14,
             fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
           ),
@@ -136,46 +144,117 @@ class ChannelManagementPage extends StatelessWidget {
       builder: (context, state) {
         if (state is ChatLoading) {
           return const Center(
-            child: CircularProgressIndicator(color: Colors.pinkAccent),
+            child: CircularProgressIndicator(),
           );
         }
 
         if (state is ChatError) {
           return Center(
-            child: Text(
-              'Error: ${state.message}',
-              style: const TextStyle(color: Colors.red),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error_outline, size: 64, color: Colors.red),
+                const SizedBox(height: 16),
+                Text(
+                  _getUserFriendlyErrorMessage(state.error),
+                  style: TextStyle(color: AppConstants.textColor),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                if (_isServerError(state.error))
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                    ),
+                    child: Text(
+                      'The server is experiencing issues. This is not a problem with your app.',
+                      style: TextStyle(
+                        color: Colors.orange,
+                        fontSize: 12,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                const SizedBox(height: 16),
+                AppButton(
+                  text: 'Retry',
+                  onPressed: () {
+                    context.read<ChatBloc>().add(ChatChannelListRequested());
+                  },
+                ),
+              ],
             ),
           );
         }
 
-        // Mock data for now - replace with actual data from bloc
-        final channels = [
-          ChannelData('Music Lovers', 'Public', 156, true, Colors.blue),
-          ChannelData('Rock Fans', 'Private', 89, false, Colors.red),
-          ChannelData('Jazz Club', 'Public', 234, true, Colors.green),
-          ChannelData('Classical Music', 'Private', 67, false, Colors.purple),
-          ChannelData('Hip Hop', 'Public', 189, true, Colors.orange),
-        ];
+        if (state is ChatChannelListLoaded) {
+          if (state.channels.isEmpty) {
+            return _buildEmptyState();
+          }
+          return ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: state.channels.length,
+            itemBuilder: (context, index) {
+              return _buildChannelItem(state.channels[index]);
+            },
+          );
+        }
 
-        return ListView.builder(
-          itemCount: channels.length,
-          itemBuilder: (context, index) {
-            return _buildChannelItem(channels[index]);
-          },
-        );
+        // Default state - show empty state
+        return _buildEmptyState();
       },
     );
   }
 
-  Widget _buildChannelItem(ChannelData channel) {
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.chat_bubble_outline,
+            size: 64,
+            color: AppConstants.textSecondaryColor,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No channels found',
+            style: TextStyle(
+              color: AppConstants.textColor,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Create your first channel to get started',
+            style: TextStyle(
+              color: AppConstants.textSecondaryColor,
+              fontSize: 14,
+            ),
+          ),
+          const SizedBox(height: 16),
+          AppButton(
+            text: 'Create Channel',
+            onPressed: () => _showCreateChannelDialog(context),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChannelItem(Channel channel) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: channel.color.withValues(alpha: 0.3)),
+        border: Border.all(color: AppConstants.borderColor.withOpacity(0.3)),
       ),
       child: Row(
         children: [
@@ -184,12 +263,12 @@ class ChannelManagementPage extends StatelessWidget {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: channel.color.withValues(alpha: 0.2),
+              color: AppConstants.primaryColor.withOpacity(0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
               Icons.chat_bubble_outline,
-              color: channel.color,
+              color: AppConstants.primaryColor,
               size: 24,
             ),
           ),
@@ -204,8 +283,8 @@ class ChannelManagementPage extends StatelessWidget {
                   children: [
                     Text(
                       channel.name,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: AppConstants.textColor,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -214,16 +293,18 @@ class ChannelManagementPage extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: channel.type == 'Public' ? Colors.green.withValues(alpha: 0.2) : Colors.orange.withValues(alpha: 0.2),
+                        color: channel.type == 'private'
+                            ? Colors.orange.withOpacity(0.2)
+                            : Colors.green.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: channel.type == 'Public' ? Colors.green : Colors.orange,
+                          color: channel.type == 'private' ? Colors.orange : Colors.green,
                         ),
                       ),
                       child: Text(
-                        channel.type,
+                        channel.type == 'private' ? 'Private' : 'Public',
                         style: TextStyle(
-                          color: channel.type == 'Public' ? Colors.green : Colors.orange,
+                          color: channel.type == 'private' ? Colors.orange : Colors.green,
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                         ),
@@ -233,11 +314,13 @@ class ChannelManagementPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${channel.memberCount} members',
+                  channel.description ?? 'No description',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: AppConstants.textSecondaryColor,
                     fontSize: 14,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -246,33 +329,32 @@ class ChannelManagementPage extends StatelessWidget {
           // Action Buttons
           Column(
             children: [
-              if (channel.isOwner)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.pinkAccent.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.pinkAccent),
-                  ),
-                  child: const Text(
-                    'Owner',
-                    style: TextStyle(
-                      color: Colors.pinkAccent,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppConstants.primaryColor.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppConstants.primaryColor),
+                ),
+                child: Text(
+                  'View',
+                  style: TextStyle(
+                    color: AppConstants.primaryColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
+              ),
               const SizedBox(height: 8),
               Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.white70, size: 20),
-                    onPressed: () => _showEditChannelDialog(),
+                    icon: Icon(Icons.edit, color: AppConstants.textSecondaryColor, size: 20),
+                    onPressed: () => _showEditNotSupported(),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.settings, color: Colors.white70, size: 20),
-                    onPressed: () => _showChannelSettingsDialog(),
+                    icon: Icon(Icons.settings, color: AppConstants.textSecondaryColor, size: 20),
+                    onPressed: () => _showSettingsNotSupported(),
                   ),
                 ],
               ),
@@ -287,72 +369,131 @@ class ChannelManagementPage extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.grey[900],
-        title: const Text(
+        backgroundColor: AppConstants.surfaceColor,
+        title: Text(
           'Create New Channel',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: AppConstants.textColor),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                labelText: 'Channel Name',
-                labelStyle: TextStyle(color: Colors.white70),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white30),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.pinkAccent),
-                ),
-              ),
+            AppTextField(
+              controller: _channelNameController,
+              labelText: 'Channel Name',
+              hintText: 'Enter channel name',
+            ),
+            const SizedBox(height: 16),
+            AppTextField(
+              controller: _channelDescriptionController,
+              labelText: 'Description',
+              hintText: 'Enter channel description',
             ),
             const SizedBox(height: 16),
             Row(
               children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[700],
-                    ),
-                    child: const Text('Cancel'),
-                  ),
+                Checkbox(
+                  value: _isPrivateChannel,
+                  onChanged: (value) {
+                    setState(() {
+                      _isPrivateChannel = value ?? false;
+                    });
+                  },
+                  activeColor: AppConstants.primaryColor,
                 ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pinkAccent,
-                    ),
-                    child: const Text('Create'),
-                  ),
+                Text(
+                  'Private Channel',
+                  style: TextStyle(color: AppConstants.textColor),
                 ),
               ],
             ),
           ],
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: AppConstants.textSecondaryColor),
+            ),
+          ),
+          AppButton(
+            text: 'Create',
+            onPressed: () => _createChannel(context),
+          ),
+        ],
       ),
     );
   }
 
-  void _showEditChannelDialog() {
-    // Implement edit channel dialog
+  void _createChannel(BuildContext context) {
+    final name = _channelNameController.text.trim();
+    final description = _channelDescriptionController.text.trim();
+
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please enter a channel name'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Create channel using the chat bloc
+    context.read<ChatBloc>().add(ChatChannelCreated(
+      name: name,
+      description: description,
+      isPrivate: _isPrivateChannel,
+    ));
+
+    // Clear controllers
+    _channelNameController.clear();
+    _channelDescriptionController.clear();
+    _isPrivateChannel = false;
+
+    // Close dialog
+    Navigator.pop(context);
+
+    // Show success message
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Channel created successfully!'),
+        backgroundColor: Colors.green,
+      ),
+    );
   }
 
-  void _showChannelSettingsDialog() {
-    // Implement channel settings dialog
+  void _showEditNotSupported() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Channel editing is not supported by the API'),
+        backgroundColor: Colors.orange,
+      ),
+    );
   }
-}
 
-class ChannelData {
-  final String name;
-  final String type;
-  final int memberCount;
-  final bool isOwner;
-  final Color color;
+  void _showSettingsNotSupported() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Channel settings are not supported by the API'),
+        backgroundColor: Colors.orange,
+      ),
+    );
+  }
 
-  ChannelData(this.name, this.type, this.memberCount, this.isOwner, this.color);
+  String _getUserFriendlyErrorMessage(String error) {
+    if (_isServerError(error)) {
+      return 'Server Error: The chat service is temporarily unavailable';
+    }
+    if (error.contains('Failed to get channels')) {
+      return 'Unable to load channels at this time';
+    }
+    return 'Error: $error';
+  }
+
+  bool _isServerError(String error) {
+    return error.contains('Server error') ||
+           error.contains('500') ||
+           error.contains('temporarily unavailable');
+  }
 }

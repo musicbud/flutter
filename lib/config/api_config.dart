@@ -2,11 +2,11 @@ class ApiConfig {
   // Base URL - matches the backend repository structure
   static const String baseUrl = 'http://84.235.170.234';
 
-  // API version - backend uses v1
-  static const String apiVersion = 'v1';
+  // Full API base URL (no versioning based on backend logs)
+  static const String fullBaseUrl = baseUrl;
 
-  // Full API base URL
-  static const String fullBaseUrl = '$baseUrl/$apiVersion';
+  // API Version (kept for compatibility)
+  static const String apiVersion = 'v1';
 
   // Timeouts
   static const int connectTimeout = 5000; // milliseconds
@@ -21,7 +21,7 @@ class ApiConfig {
   // Authentication endpoints
   static const String login = '/login/';
   static const String register = '/register/';
-  static const String refreshToken = '/chat/refresh-token/';
+  static const String refreshToken = '/token/refresh/';
   static const String logout = '/logout/';
 
   // Profile endpoints
@@ -29,12 +29,51 @@ class ApiConfig {
   static const String budProfile = '/bud/profile';
   static const String updateProfile = '/me/profile/set';
   static const String updateLikes = '/me/likes/update';
-  static const String profileServices = '/profile/services';
-  static const String profileAvatar = '/profile/avatar';
-  static const String topItems = '/profile/top-items';
 
-  // Bud matching endpoints
-  static const String budCommon = '/bud/common';
+  // User's content endpoints (all require JWT authentication)
+  static const String myLikedArtists = '/me/liked/artists';
+  static const String myLikedTracks = '/me/liked/tracks';
+  static const String myLikedGenres = '/me/liked/genres';
+  static const String myLikedAlbums = '/me/liked/albums';
+  static const String myTopArtists = '/me/top/artists';
+  static const String myTopTracks = '/me/top/tracks';
+  static const String myTopGenres = '/me/top/genres';
+  static const String myTopAnime = '/me/top/anime';
+  static const String myTopManga = '/me/top/manga';
+  static const String myPlayedTracks = '/me/played/tracks';
+
+  // Service connection endpoints (all require JWT authentication)
+  static const String serviceLogin = '/service/login';
+  static const String spotifyConnect = '/spotify/connect';
+  static const String spotifyCallback = '/spotify/callback';
+  static const String ytmusicConnect = '/ytmusic/connect';
+  static const String ytmusicCallback = '/ytmusic/callback';
+  static const String lastfmConnect = '/lastfm/connect';
+  static const String lastfmCallback = '/lastfm/callback';
+  static const String malConnect = '/mal/connect';
+  static const String malCallback = '/mal/callback';
+  static const String spotifyRefreshToken = '/spotify/token/refresh';
+  static const String ytmusicRefreshToken = '/ytmusic/token/refresh';
+
+  // Bud matching endpoints (all require JWT authentication)
+  static const String budLikedArtists = '/bud/liked/artists';
+  static const String budLikedTracks = '/bud/liked/tracks';
+  static const String budLikedGenres = '/bud/liked/genres';
+  static const String budLikedAlbums = '/bud/liked/albums';
+  static const String budLikedAio = '/bud/liked/aio';
+  static const String budTopArtists = '/bud/top/artists';
+  static const String budTopTracks = '/bud/top/tracks';
+  static const String budTopGenres = '/bud/top/genres';
+  static const String budTopAnime = '/bud/top/anime';
+  static const String budTopManga = '/bud/top/manga';
+  static const String budPlayedTracks = '/bud/played/tracks';
+  static const String budArtist = '/bud/artist';
+  static const String budTrack = '/bud/track';
+  static const String budGenre = '/bud/genre';
+  static const String budAlbum = '/bud/album';
+  static const String budSearch = '/bud/search';
+
+  // Bud common content endpoints (all require JWT authentication)
   static const String budCommonLikedArtists = '/bud/common/liked/artists';
   static const String budCommonLikedTracks = '/bud/common/liked/tracks';
   static const String budCommonLikedGenres = '/bud/common/liked/genres';
@@ -46,45 +85,37 @@ class ApiConfig {
   static const String budCommonTopAnime = '/bud/common/top/anime';
   static const String budCommonTopManga = '/bud/common/top/manga';
 
-  // Chat endpoints
-  static const String chatLogin = '/chat/login/';
-  static const String chatGetChannels = '/chat/get_channels/';
-  static const String chatCreateChannel = '/chat/create_channel/';
-  static const String chatGetChannelUsers = '/chat/get_channel_users';
-  static const String chatGetChannelMessages = '/chat/get_channel_messages';
+  // Chat endpoints (all require login authentication)
+  static const String chatHome = '/chat/';
+  static const String chatUsers = '/chat/users/';
+  static const String chatChannels = '/chat/channels/';
+  static const String chatUserChat = '/chat/user_chat/';
+  static const String chatUserChatByUsername = '/chat/chat/';
+  static const String chatChannelChat = '/chat/channel/';
   static const String chatSendMessage = '/chat/send_message/';
-  static const String chatSendChannelMessage = '/chat/send_channel_message/';
-  static const String chatSendUserMessage = '/chat/send_user_message/';
-  static const String chatDeleteMessage = '/chat/channel';
-  static const String chatJoinChannel = '/chat/join_channel/';
-  static const String chatLeaveChannel = '/chat/leave_channel/';
-  static const String chatRequestJoin = '/chat/request_join/';
+  static const String chatCreateChannel = '/chat/create_channel/';
+  static const String chatChannelDashboard = '/chat/channel/';
+  static const String chatAddChannelMember = '/chat/add_channel_member/';
+  static const String chatAcceptUserInvitation = '/chat/channel/';
+  static const String chatKickUser = '/chat/channel/';
+  static const String chatBlockUser = '/chat/channel/';
+  static const String chatAddModerator = '/chat/channel/';
+  static const String chatDeleteMessage = '/chat/delete_message/';
+  static const String chatHandleInvitation = '/chat/handle_invitation/';
 
-  // Service connection endpoints
-  static const String spotifyAuth = '/service/spotify/auth';
-  static const String spotifyConnect = '/service/spotify/connect';
-  static const String spotifyDisconnect = '/service/spotify/disconnect';
-  static const String lastfmAuth = '/service/lastfm/auth';
-  static const String lastfmConnect = '/service/lastfm/connect';
-  static const String lastfmDisconnect = '/service/lastfm/disconnect';
-  static const String ytmusicAuth = '/service/ytmusic/auth';
-  static const String ytmusicConnect = '/service/ytmusic/connect';
-  static const String ytmusicDisconnect = '/service/ytmusic/disconnect';
-  static const String malAuth = '/service/mal/auth';
-  static const String malConnect = '/service/mal/connect';
-  static const String malDisconnect = '/service/mal/disconnect';
+  // Admin & Utility endpoints
+  static const String admin = '/admin/';
+  static const String spotifySeedUserCreate = '/spotify/seed/user/create';
+  static const String mergeSimilars = '/merge-similars';
+  static const String usersWeb = '/users/';
+  static const String channelsWeb = '/channels/';
 
-  // User endpoints
-  static const String users = '/users';
-  static const String userProfile = '/users/profile';
-  static const String userMessages = '/users/messages';
+  // Error handling endpoints
+  static const String notFound = '/404';
+  static const String serverError = '/500';
 
-  // Channel endpoints
-  static const String channels = '/channels';
-  static const String channelDetails = '/channels/details';
-  static const String channelMessages = '/channels/messages';
-  static const String channelUsers = '/channels/users';
-  static const String channelRoles = '/channels/roles';
-  static const String channelDashboard = '/channels/dashboard';
-  static const String channelAdmin = '/channels/admin';
+  // Legacy endpoints for compatibility (to be removed)
+  static const String topItems = '/top/items';
+
+
 }

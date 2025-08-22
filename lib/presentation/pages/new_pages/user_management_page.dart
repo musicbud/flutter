@@ -1,144 +1,171 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/chat/chat_bloc.dart';
+import '../../../blocs/chat/chat_event.dart';
 import '../../../blocs/chat/chat_state.dart';
+import '../../../domain/models/user_profile.dart';
+import '../../constants/app_constants.dart';
+import '../../widgets/common/app_scaffold.dart';
+import '../../widgets/common/app_app_bar.dart';
+import '../../widgets/common/app_button.dart';
+import '../../widgets/common/app_text_field.dart';
 
-class UserManagementPage extends StatelessWidget {
+class UserManagementPage extends StatefulWidget {
   const UserManagementPage({super.key});
 
   @override
+  State<UserManagementPage> createState() => _UserManagementPageState();
+}
+
+class _UserManagementPageState extends State<UserManagementPage> {
+  final TextEditingController _searchController = TextEditingController();
+  final TextEditingController _inviteController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Load users when page initializes
+    context.read<ChatBloc>().add(ChatUsersRequested());
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _inviteController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text(
-          'User Management',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
-        ),
+    return AppScaffold(
+      appBar: AppAppBar(
+        title: 'User Management',
         actions: [
           IconButton(
-            icon: const Icon(Icons.person_add, color: Colors.white),
+            icon: const Icon(Icons.person_add),
             onPressed: () => _showInviteUserDialog(context),
           ),
         ],
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/pixiled_background.jpg'),
-            fit: BoxFit.cover,
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildLimitationsNotice(),
+          const SizedBox(height: 16),
+          _buildSearchAndFilterBar(),
+          const SizedBox(height: 16),
+          _buildUserStats(),
+          const SizedBox(height: 16),
+          Expanded(
+            child: _buildUserList(),
           ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
 
-              // Search and Filter Bar
-              _buildSearchAndFilterBar(),
-              const SizedBox(height: 24),
-
-              // User Stats
-              _buildUserStats(),
-              const SizedBox(height: 24),
-
-              // User List
-              Expanded(
-                child: _buildUserList(),
+  Widget _buildLimitationsNotice() {
+    return Container(
+      margin: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.orange.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.info, color: Colors.orange, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'User management is limited. You can only view users and send basic messages. Advanced features like role management, banning, and user invitations are not supported by the API.',
+              style: TextStyle(
+                color: Colors.orange,
+                fontSize: 12,
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
   Widget _buildSearchAndFilterBar() {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.search, color: Colors.white70, size: 20),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    style: const TextStyle(color: Colors.white),
-                    decoration: const InputDecoration(
-                      hintText: 'Search users...',
-                      hintStyle: TextStyle(color: Colors.white70),
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.zero,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          Expanded(
+            child: AppTextField(
+              controller: _searchController,
+              labelText: 'Search users',
+              hintText: 'Enter username or name...',
+              prefixIcon: Icon(Icons.search),
+              onChanged: (value) {
+                // Search functionality is not implemented due to API limitations
+                if (value.isNotEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('User search is not supported by the API'),
+                      backgroundColor: Colors.orange,
                     ),
-                  ),
-                ),
-              ],
+                  );
+                }
+              },
             ),
           ),
-        ),
-        const SizedBox(width: 16),
-        Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+          const SizedBox(width: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppConstants.surfaceColor,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppConstants.borderColor.withOpacity(0.3)),
+            ),
+            child: Icon(
+              Icons.filter_list,
+              color: AppConstants.textSecondaryColor,
+            ),
           ),
-          child: const Icon(Icons.filter_list, color: Colors.white70),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildUserStats() {
-    return Row(
-      children: [
-        Expanded(
-          child: _buildStatCard(
-            'Total Users',
-            '1,234',
-            Icons.people_outline,
-            Colors.blue,
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildStatCard(
+              'Total Users',
+              'Loading...',
+              Icons.people_outline,
+              Colors.blue,
+            ),
           ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _buildStatCard(
-            'Online',
-            '89',
-            Icons.circle,
-            Colors.green,
+          const SizedBox(width: 16),
+          Expanded(
+            child: _buildStatCard(
+              'Online',
+              'N/A',
+              Icons.circle,
+              Colors.green,
+            ),
           ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: _buildStatCard(
-            'Banned',
-            '12',
-            Icons.block,
-            Colors.red,
+          const SizedBox(width: 16),
+          Expanded(
+            child: _buildStatCard(
+              'Active',
+              'N/A',
+              Icons.person,
+              Colors.orange,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -146,9 +173,9 @@ class UserManagementPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withOpacity(0.3)),
       ),
       child: Column(
         children: [
@@ -164,8 +191,8 @@ class UserManagementPage extends StatelessWidget {
           ),
           Text(
             title,
-            style: const TextStyle(
-              color: Colors.white70,
+            style: TextStyle(
+              color: AppConstants.textSecondaryColor,
               fontSize: 10,
             ),
             textAlign: TextAlign.center,
@@ -180,82 +207,131 @@ class UserManagementPage extends StatelessWidget {
       builder: (context, state) {
         if (state is ChatLoading) {
           return const Center(
-            child: CircularProgressIndicator(color: Colors.pinkAccent),
+            child: CircularProgressIndicator(),
           );
         }
 
         if (state is ChatError) {
           return Center(
-            child: Text(
-              'Error: ${state.message}',
-              style: const TextStyle(color: Colors.red),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.error_outline, size: 64, color: Colors.red),
+                const SizedBox(height: 16),
+                Text(
+                  _getUserFriendlyErrorMessage(state.error),
+                  style: TextStyle(color: AppConstants.textColor),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                if (_isServerError(state.error))
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                    ),
+                    child: Text(
+                      'The server is experiencing issues. This is not a problem with your app.',
+                      style: TextStyle(
+                        color: Colors.orange,
+                        fontSize: 12,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                const SizedBox(height: 16),
+                AppButton(
+                  text: 'Retry',
+                  onPressed: () {
+                    context.read<ChatBloc>().add(ChatUsersRequested());
+                  },
+                ),
+              ],
             ),
           );
         }
 
-        // Mock data for now - replace with actual data from bloc
-        final users = [
-          UserData('Liam Carter', 'Online', 'Admin', true, 'assets/profile.jpg'),
-          UserData('Ava Sinclair', 'Online', 'Moderator', false, 'assets/profile2.jpg'),
-          UserData('Noah Bennett', 'Offline', 'Member', false, 'assets/profile6.jpg'),
-          UserData('Ethan Reed', 'Online', 'Member', false, 'assets/white_card.jpg'),
-          UserData('Mia Thompson', 'Away', 'Member', false, 'assets/music_cover2.jpg'),
-          UserData('Zoe Patel', 'Online', 'Member', false, 'assets/cover.jpg'),
-          UserData('Sia Patel', 'Banned', 'Banned', false, 'assets/cover2.jpg'),
-        ];
+        if (state is ChatUsersLoaded) {
+          if (state.users.isEmpty) {
+            return _buildEmptyState();
+          }
+          return ListView.builder(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            itemCount: state.users.length,
+            itemBuilder: (context, index) {
+              return _buildUserItem(context, state.users[index]);
+            },
+          );
+        }
 
-        return ListView.builder(
-          itemCount: users.length,
-          itemBuilder: (context, index) {
-            return _buildUserItem(context, users[index]);
-          },
-        );
+        // Default state - show empty state
+        return _buildEmptyState();
       },
     );
   }
 
-  Widget _buildUserItem(BuildContext context, UserData user) {
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.people_outline,
+            size: 64,
+            color: AppConstants.textSecondaryColor,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No users found',
+            style: TextStyle(
+              color: AppConstants.textColor,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Users will appear here once they join the platform',
+            style: TextStyle(
+              color: AppConstants.textSecondaryColor,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserItem(BuildContext context, UserProfile user) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: _getStatusColor(user.status).withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AppConstants.borderColor.withOpacity(0.3)),
       ),
       child: Row(
         children: [
           // User Avatar
-          Stack(
-            children: [
-              CircleAvatar(
-                backgroundColor: Colors.pinkAccent,
-                radius: 24,
-                child: ClipOval(
-                  child: Image.asset(
-                    user.imageUrl,
-                    fit: BoxFit.cover,
-                    width: 48,
-                    height: 48,
-                  ),
-                ),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  width: 16,
-                  height: 16,
-                  decoration: BoxDecoration(
-                    color: _getStatusColor(user.status),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.black, width: 2),
-                  ),
-                ),
-              ),
-            ],
+          CircleAvatar(
+            backgroundColor: AppConstants.primaryColor,
+            radius: 24,
+            backgroundImage: user.avatarUrl != null
+                ? NetworkImage(user.avatarUrl!)
+                : null,
+            child: user.avatarUrl == null
+                ? Text(
+                    user.username.isNotEmpty ? user.username[0].toUpperCase() : 'U',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                : null,
           ),
           const SizedBox(width: 16),
 
@@ -267,9 +343,9 @@ class UserManagementPage extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      user.name,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      user.displayName ?? user.username,
+                      style: TextStyle(
+                        color: AppConstants.textColor,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
                       ),
@@ -278,14 +354,14 @@ class UserManagementPage extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: _getRoleColor(user.role).withValues(alpha: 0.2),
+                        color: AppConstants.primaryColor.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: _getRoleColor(user.role)),
+                        border: Border.all(color: AppConstants.primaryColor),
                       ),
                       child: Text(
-                        user.role,
+                        'Member',
                         style: TextStyle(
-                          color: _getRoleColor(user.role),
+                          color: AppConstants.primaryColor,
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                         ),
@@ -295,11 +371,13 @@ class UserManagementPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  user.status,
+                  user.bio ?? 'No bio available',
                   style: TextStyle(
-                    color: _getStatusColor(user.status),
+                    color: AppConstants.textSecondaryColor,
                     fontSize: 14,
                   ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -308,32 +386,31 @@ class UserManagementPage extends StatelessWidget {
           // Action Buttons
           Column(
             children: [
-              if (user.isAdmin)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.pinkAccent.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.pinkAccent),
-                  ),
-                  child: const Text(
-                    'Admin',
-                    style: TextStyle(
-                      color: Colors.pinkAccent,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                    ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppConstants.primaryColor.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppConstants.primaryColor),
+                ),
+                child: Text(
+                  'View',
+                  style: TextStyle(
+                    color: AppConstants.primaryColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
+              ),
               const SizedBox(height: 8),
               Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.message, color: Colors.white70, size: 20),
+                    icon: Icon(Icons.message, color: AppConstants.textSecondaryColor, size: 20),
                     onPressed: () => _showMessageDialog(user),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.more_vert, color: Colors.white70, size: 20),
+                    icon: Icon(Icons.more_vert, color: AppConstants.textSecondaryColor, size: 20),
                     onPressed: () => _showUserOptionsDialog(context, user),
                   ),
                 ],
@@ -345,145 +422,171 @@ class UserManagementPage extends StatelessWidget {
     );
   }
 
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'online':
-        return Colors.green;
-      case 'offline':
-        return Colors.grey;
-      case 'away':
-        return Colors.orange;
-      case 'banned':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
-
-  Color _getRoleColor(String role) {
-    switch (role.toLowerCase()) {
-      case 'admin':
-        return Colors.pinkAccent;
-      case 'moderator':
-        return Colors.blue;
-      case 'member':
-        return Colors.green;
-      case 'banned':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
-
   void _showInviteUserDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: Colors.grey[900],
-        title: const Text(
+        backgroundColor: AppConstants.surfaceColor,
+        title: Text(
           'Invite User',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: AppConstants.textColor),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            TextField(
-              style: const TextStyle(color: Colors.white),
-              decoration: const InputDecoration(
-                labelText: 'Username or Email',
-                labelStyle: TextStyle(color: Colors.white70),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white30),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.pinkAccent),
-                ),
-              ),
+            AppTextField(
+              controller: _inviteController,
+              labelText: 'Username or Email',
+              hintText: 'Enter username or email',
             ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.grey[700],
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.orange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.orange.withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.info, color: Colors.orange, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'User invitations are not supported by the API',
+                      style: TextStyle(
+                        color: Colors.orange,
+                        fontSize: 12,
+                      ),
                     ),
-                    child: const Text('Cancel'),
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.pop(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pinkAccent,
-                    ),
-                    child: const Text('Invite'),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: AppConstants.textSecondaryColor),
+            ),
+          ),
+          AppButton(
+            text: 'Invite',
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('User invitations are not supported by the API'),
+                  backgroundColor: Colors.orange,
+                ),
+              );
+              Navigator.pop(context);
+            },
+          ),
+        ],
       ),
     );
   }
 
-  void _showMessageDialog(UserData user) {
-    // Implement message dialog
+  void _showMessageDialog(UserProfile user) {
+    // Basic message functionality - can be implemented
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Messaging ${user.username} is not yet implemented'),
+        backgroundColor: Colors.blue,
+      ),
+    );
   }
 
-  void _showUserOptionsDialog(BuildContext context, UserData user) {
+  void _showUserOptionsDialog(BuildContext context, UserProfile user) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.grey[900],
+      backgroundColor: AppConstants.surfaceColor,
       builder: (context) => Container(
         padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: const Icon(Icons.person, color: Colors.white),
-              title: const Text('View Profile', style: TextStyle(color: Colors.white)),
-              onTap: () => Navigator.pop(context),
+              leading: Icon(Icons.person, color: AppConstants.textColor),
+              title: Text('View Profile', style: TextStyle(color: AppConstants.textColor)),
+              onTap: () {
+                Navigator.pop(context);
+                _showProfileNotImplemented();
+              },
             ),
             ListTile(
-              leading: const Icon(Icons.message, color: Colors.white),
-              title: const Text('Send Message', style: TextStyle(color: Colors.white)),
-              onTap: () => Navigator.pop(context),
+              leading: Icon(Icons.message, color: AppConstants.textColor),
+              title: Text('Send Message', style: TextStyle(color: AppConstants.textColor)),
+              onTap: () {
+                Navigator.pop(context);
+                _showMessageDialog(user);
+              },
             ),
-            if (user.role != 'Admin')
-              ListTile(
-                leading: const Icon(Icons.admin_panel_settings, color: Colors.white),
-                title: const Text('Make Admin', style: TextStyle(color: Colors.white)),
-                onTap: () => Navigator.pop(context),
-              ),
-            if (user.status != 'Banned')
-              ListTile(
-                leading: const Icon(Icons.block, color: Colors.red),
-                title: const Text('Ban User', style: TextStyle(color: Colors.red)),
-                onTap: () => Navigator.pop(context),
-              ),
-            if (user.status == 'Banned')
-              ListTile(
-                leading: const Icon(Icons.check_circle, color: Colors.green),
-                title: const Text('Unban User', style: TextStyle(color: Colors.green)),
-                onTap: () => Navigator.pop(context),
-              ),
+            ListTile(
+              leading: Icon(Icons.admin_panel_settings, color: AppConstants.textSecondaryColor),
+              title: Text('Make Admin', style: TextStyle(color: AppConstants.textSecondaryColor)),
+              onTap: () {
+                Navigator.pop(context);
+                _showAdminNotSupported();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.block, color: AppConstants.textSecondaryColor),
+              title: Text('Ban User', style: TextStyle(color: AppConstants.textSecondaryColor)),
+              onTap: () {
+                Navigator.pop(context);
+                _showBanNotSupported();
+              },
+            ),
           ],
         ),
       ),
     );
   }
-}
 
-class UserData {
-  final String name;
-  final String status;
-  final String role;
-  final bool isAdmin;
-  final String imageUrl;
+  void _showProfileNotImplemented() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('User profile viewing is not yet implemented'),
+        backgroundColor: Colors.blue,
+      ),
+    );
+  }
 
-  UserData(this.name, this.status, this.role, this.isAdmin, this.imageUrl);
+  void _showAdminNotSupported() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Role management is not supported by the API'),
+        backgroundColor: Colors.orange,
+      ),
+    );
+  }
+
+  void _showBanNotSupported() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('User banning is not supported by the API'),
+        backgroundColor: Colors.orange,
+      ),
+    );
+  }
+
+  String _getUserFriendlyErrorMessage(String error) {
+    if (_isServerError(error)) {
+      return 'Server Error: The user service is temporarily unavailable';
+    }
+    if (error.contains('Failed to get users')) {
+      return 'Unable to load users at this time';
+    }
+    return 'Error: $error';
+  }
+
+  bool _isServerError(String error) {
+    return error.contains('Server error') ||
+           error.contains('500') ||
+           error.contains('temporarily unavailable');
+  }
 }

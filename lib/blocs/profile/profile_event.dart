@@ -38,7 +38,7 @@ class ProfileTopItemsRequested extends ProfileEvent {
   const ProfileTopItemsRequested(this.category);
 
   @override
-  List<Object> get props => [category];
+  List<Object?> get props => [category];
 }
 
 class ProfileLikedItemsRequested extends ProfileEvent {
@@ -47,7 +47,7 @@ class ProfileLikedItemsRequested extends ProfileEvent {
   const ProfileLikedItemsRequested(this.category);
 
   @override
-  List<Object> get props => [category];
+  List<Object?> get props => [category];
 }
 
 class ProfileBudsRequested extends ProfileEvent {
@@ -56,7 +56,13 @@ class ProfileBudsRequested extends ProfileEvent {
   const ProfileBudsRequested(this.category);
 
   @override
-  List<Object> get props => [category];
+  List<Object?> get props => [category];
 }
 
 class ProfileConnectedServicesRequested extends ProfileEvent {}
+
+class ProfileRefreshRequested extends ProfileEvent {}
+
+class ProfileStatsRequested extends ProfileEvent {}
+
+class ProfilePreferencesRequested extends ProfileEvent {}

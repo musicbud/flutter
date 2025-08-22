@@ -34,6 +34,8 @@ class UserProfile extends Equatable {
       print('UserProfile.fromJson: Input json: $json');
       print('UserProfile.fromJson: json type: ${json.runtimeType}');
 
+      // Handle case where API response doesn't include id field
+      // Use username as id if id is missing (common in some API responses)
       final id = json['id']?.toString() ?? json['username']?.toString() ?? '';
       final username = json['username']?.toString() ?? '';
       final email = json['email']?.toString();
@@ -47,6 +49,11 @@ class UserProfile extends Equatable {
       final isAuthenticated = json['is_authenticated'] as bool? ?? true;
 
       print('UserProfile.fromJson: Parsed values - id: $id, username: $username, email: $email');
+
+      // Validate that we have at least an id or username
+      if (id.isEmpty) {
+        throw Exception('UserProfile.fromJson: Missing required id/username field');
+      }
 
       return UserProfile(
         id: id,

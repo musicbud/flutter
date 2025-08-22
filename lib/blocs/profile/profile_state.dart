@@ -1,8 +1,14 @@
 import '../../domain/models/content_service.dart';
 import '../../domain/models/user_profile.dart';
 import '../../domain/models/bud_match.dart';
+import 'package:equatable/equatable.dart';
 
-abstract class ProfileState {}
+abstract class ProfileState extends Equatable {
+  const ProfileState();
+
+  @override
+  List<Object?> get props => [];
+}
 
 class ProfileInitial extends ProfileState {}
 
@@ -36,36 +42,57 @@ class ProfileTopItemsLoaded extends ProfileState {
   final List<dynamic> items;
   final String category;
 
-  ProfileTopItemsLoaded({
-    required this.items,
-    required this.category,
-  });
+  const ProfileTopItemsLoaded({required this.items, required this.category});
+
+  @override
+  List<Object?> get props => [items, category];
 }
 
 class ProfileLikedItemsLoaded extends ProfileState {
   final List<dynamic> items;
   final String category;
 
-  ProfileLikedItemsLoaded({
-    required this.items,
-    required this.category,
-  });
+  const ProfileLikedItemsLoaded({required this.items, required this.category});
+
+  @override
+  List<Object?> get props => [items, category];
 }
 
 class ProfileBudsLoaded extends ProfileState {
-  final List<BudMatch> buds;
+  final List<dynamic> buds;
   final String category;
 
-  ProfileBudsLoaded({
-    required this.buds,
-    required this.category,
-  });
+  const ProfileBudsLoaded({required this.buds, required this.category});
+
+  @override
+  List<Object?> get props => [buds, category];
 }
 
 class ProfileConnectedServicesLoaded extends ProfileState {
-  final List<ContentService> services;
+  final List<dynamic> services;
 
-  ProfileConnectedServicesLoaded({required this.services});
+  const ProfileConnectedServicesLoaded({required this.services});
+
+  @override
+  List<Object?> get props => [services];
+}
+
+class ProfileStatsLoaded extends ProfileState {
+  final Map<String, dynamic> stats;
+
+  const ProfileStatsLoaded({required this.stats});
+
+  @override
+  List<Object?> get props => [stats];
+}
+
+class ProfilePreferencesLoaded extends ProfileState {
+  final Map<String, dynamic> preferences;
+
+  const ProfilePreferencesLoaded({required this.preferences});
+
+  @override
+  List<Object?> get props => [preferences];
 }
 
 class ProfileAvatarUpdateSuccess extends ProfileState {

@@ -1,15 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../constants/app_constants.dart';
 
-/// Mixin providing common page functionality
+/// A mixin that provides common functionality for pages
 mixin PageMixin<T extends StatefulWidget> on State<T> {
-  /// Shows a snack bar with the given message
-  void showSnackBar(String message, {Duration? duration}) {
+  // Navigation methods
+  void navigateTo(String route) {
+    Navigator.of(context).pushNamed(route);
+  }
+
+  void replaceRoute(String route) {
+    Navigator.of(context).pushReplacementNamed(route);
+  }
+
+  void navigateBack() {
+    Navigator.of(context).pop();
+  }
+
+  void navigateBackWithResult(dynamic result) {
+    Navigator.of(context).pop(result);
+  }
+
+  // Snackbar methods
+  void showSuccessSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        duration: duration ?? const Duration(seconds: 3),
-        backgroundColor: Colors.black87,
+        backgroundColor: AppConstants.successColor,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
@@ -18,13 +35,11 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
     );
   }
 
-  /// Shows an error snack bar
-  void showErrorSnackBar(String message, {Duration? duration}) {
+  void showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        duration: duration ?? const Duration(seconds: 4),
-        backgroundColor: Colors.red,
+        backgroundColor: AppConstants.errorColor,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
@@ -33,13 +48,11 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
     );
   }
 
-  /// Shows a success snack bar
-  void showSuccessSnackBar(String message, {Duration? duration}) {
+  void showInfoSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        duration: duration ?? const Duration(seconds: 3),
-        backgroundColor: Colors.green,
+        backgroundColor: AppConstants.primaryColor,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
@@ -48,125 +61,156 @@ mixin PageMixin<T extends StatefulWidget> on State<T> {
     );
   }
 
-  /// Shows a confirmation dialog
-  Future<bool?> showConfirmationDialog({
-    required String title,
-    required String content,
-    String confirmText = 'Confirm',
-    String cancelText = 'Cancel',
-  }) async {
-    return showDialog<bool>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(content),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(cancelText),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(confirmText),
-            ),
-          ],
-        );
-      },
+  void showWarningSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.orange,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
     );
   }
 
-  /// Shows a loading dialog
-  void showLoadingDialog({String message = 'Loading...'}) {
+  // Dialog methods
+  void showLoadingDialog(String message) {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          content: Row(
-            children: [
-              const CircularProgressIndicator(),
-              const SizedBox(width: 16),
-              Text(message),
-            ],
-          ),
-        );
-      },
+      builder: (context) => AlertDialog(
+        content: Row(
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(width: 16),
+            Text(message),
+          ],
+        ),
+      ),
     );
   }
 
-  /// Hides the loading dialog
   void hideLoadingDialog() {
     Navigator.of(context).pop();
   }
 
-  /// Navigates to a new route
-  void navigateTo(String route, {Object? arguments}) {
-    Navigator.of(context).pushNamed(route, arguments: arguments);
+  Future<bool?> showConfirmationDialog({
+    required String title,
+    required String message,
+    String confirmText = 'Confirm',
+    String cancelText = 'Cancel',
+  }) {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(cancelText),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppConstants.primaryColor,
+            ),
+            child: Text(confirmText),
+          ),
+        ],
+      ),
+    );
   }
 
-  /// Replaces the current route
-  void replaceRoute(String route, {Object? arguments}) {
-    Navigator.of(context).pushReplacementNamed(route, arguments: arguments);
+  Future<String?> showInputDialog({
+    required String title,
+    required String message,
+    String hintText = '',
+    String confirmText = 'OK',
+    String cancelText = 'Cancel',
+  }) {
+    final controller = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(message),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                hintText: hintText,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(null),
+            child: Text(cancelText),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(controller.text),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppConstants.primaryColor,
+            ),
+            child: Text(confirmText),
+          ),
+        ],
+      ),
+    );
   }
 
-  /// Navigates back
-  void goBack() {
-    Navigator.of(context).pop();
-  }
-
-  /// Navigates back to a specific route
-  void goBackTo(String route) {
-    Navigator.of(context).popUntil(ModalRoute.withName(route));
-  }
-
-  /// Gets the bloc from the context
-  B getBloc<B extends BlocBase>() {
-    return context.read<B>();
-  }
-
-  /// Gets the bloc state from the context
-  S getBlocState<B extends BlocBase<S>, S>() {
-    return context.read<B>().state;
-  }
-
-  /// Adds an event to a bloc
-  void addBlocEvent<B extends BlocBase, E>(E event) {
-    final bloc = context.read<B>();
+  // Bloc utility methods
+  void addBlocEvent<B extends BlocBase<dynamic>, E>(E event) {
     try {
-      // Use dynamic dispatch to call the add method
-      (bloc as dynamic).add(event);
+      final bloc = context.read<B>();
+      if (bloc is Bloc<dynamic, dynamic>) {
+        bloc.add(event);
+      }
     } catch (e) {
-      debugPrint('Warning: Could not add event to bloc: $e');
+      // Handle error silently
     }
   }
 
-  /// Checks if the current route is the given route
-  bool isCurrentRoute(String route) {
-    return ModalRoute.of(context)?.settings.name == route;
+  S? getBlocState<B extends BlocBase<S>, S>(BuildContext context) {
+    try {
+      return context.read<B>().state;
+    } catch (e) {
+      return null;
+    }
   }
 
-  /// Gets the screen size
+  bool isBlocInState<B extends BlocBase<S>, S>(BuildContext context, bool Function(S state) condition) {
+    try {
+      final state = context.read<B>().state;
+      return condition(state);
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Contextual properties
   Size get screenSize => MediaQuery.of(context).size;
-
-  /// Gets the screen width
-  double get screenWidth => MediaQuery.of(context).size.width;
-
-  /// Gets the screen height
-  double get screenHeight => MediaQuery.of(context).size.height;
-
-  /// Checks if the screen is in landscape mode
+  bool get isDarkMode => Theme.of(context).brightness == Brightness.dark;
+  Color get primaryColor => Theme.of(context).primaryColor;
+  double get defaultPadding => 16.0;
+  double get defaultBorderRadius => 12.0;
+  EdgeInsets get screenPadding => MediaQuery.of(context).padding;
+  double get statusBarHeight => MediaQuery.of(context).padding.top;
+  double get bottomPadding => MediaQuery.of(context).padding.bottom;
   bool get isLandscape => MediaQuery.of(context).orientation == Orientation.landscape;
-
-  /// Gets the device pixel ratio
-  double get devicePixelRatio => MediaQuery.of(context).devicePixelRatio;
-
-  /// Gets the text scale factor
-  double get textScaleFactor => MediaQuery.of(context).textScaleFactor;
-
-  /// Checks if the device has a notch
-  bool get hasNotch => MediaQuery.of(context).padding.top > 20;
-
-  /// Gets the safe area padding
-  EdgeInsets get safeAreaPadding => MediaQuery.of(context).padding;
+  bool get isPortrait => MediaQuery.of(context).orientation == Orientation.portrait;
+  double get screenWidth => MediaQuery.of(context).size.width;
+  double get screenHeight => MediaQuery.of(context).size.height;
+  double get aspectRatio => MediaQuery.of(context).size.aspectRatio;
+  bool get isTablet => screenWidth > 600;
+  bool get isPhone => screenWidth <= 600;
 }

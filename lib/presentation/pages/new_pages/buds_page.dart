@@ -3,14 +3,18 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/bud/bud_bloc.dart';
 import '../../../blocs/bud/bud_event.dart';
 import '../../../blocs/bud/bud_state.dart';
-import '../../../domain/models/bud.dart';
-import '../../../domain/models/bud_match.dart';
+import '../../../blocs/bud/bud_category_bloc.dart';
+import '../../../blocs/bud/bud_category_event.dart';
+import '../../../blocs/bud/bud_category_state.dart';
+import '../../../blocs/profile/profile_bloc.dart';
+import '../../../blocs/profile/profile_event.dart';
+import '../../../blocs/profile/profile_state.dart';
 import '../../../domain/models/user_profile.dart';
+import '../../../domain/models/bud_match.dart';
+import '../../../domain/models/common_item.dart';
+import '../../widgets/loading_indicator.dart';
 import '../../constants/app_constants.dart';
-import '../../widgets/common/app_scaffold.dart';
-import '../../widgets/common/app_app_bar.dart';
-import '../../widgets/common/app_button.dart';
-import '../../widgets/common/app_text_field.dart';
+import '../../mixins/page_mixin.dart';
 
 class BudsPage extends StatefulWidget {
   const BudsPage({Key? key}) : super(key: key);
@@ -19,59 +23,106 @@ class BudsPage extends StatefulWidget {
   State<BudsPage> createState() => _BudsPageState();
 }
 
-class _BudsPageState extends State<BudsPage> with TickerProviderStateMixin {
-  late TabController _tabController;
+class _BudsPageState extends State<BudsPage> with PageMixin {
+  int _selectedCategoryIndex = 0;
   final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
+  bool _isSearching = false;
+  bool _isLoading = false;
+
+  final List<String> _categories = [
+    'All',
+    'By Artists',
+    'By Tracks',
+    'By Genres',
+    'By Albums',
+    'Top Matches',
+    'Recent',
+    'Nearby',
+  ];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
-    _tabController.addListener(() {
-      setState(() {});
-    });
-
-    // Load initial data
-    _loadBudsData();
+    _loadInitialData();
   }
 
-  @override
-  void dispose() {
-    _tabController.dispose();
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  void _loadBudsData() {
-    // Load buds, matches, and recommendations
+  void _loadInitialData() {
+    // Load initial buds data
     context.read<BudBloc>().add(BudsRequested());
-    context.read<BudBloc>().add(BudMatchesRequested());
-    context.read<BudBloc>().add(BudRecommendationsRequested());
+    context.read<BudCategoryBloc>().add(BudCategoriesRequested());
   }
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      appBar: AppAppBar(
-        title: 'Buds',
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person_add),
-            onPressed: () => _showAddBudDialog(),
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<BudBloc, BudState>(
+          listener: _handleBudStateChange,
+        ),
+        BlocListener<BudCategoryBloc, BudCategoryState>(
+          listener: _handleBudCategoryStateChange,
+        ),
+        BlocListener<ProfileBloc, ProfileState>(
+          listener: _handleProfileStateChange,
+        ),
+      ],
+      child: Scaffold(
+        backgroundColor: AppConstants.backgroundColor,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(),
+              _buildSearchBar(),
+              _buildCategoryTabs(),
+              Expanded(
+                child: _buildContent(),
+              ),
+            ],
           ),
-          IconButton(
-            icon: const Icon(Icons.filter_list),
-            onPressed: () => _showFilterDialog(),
-          ),
-        ],
+        ),
       ),
-      body: Column(
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildSearchBar(),
-          _buildTabBar(),
-          Expanded(
-            child: _buildTabView(),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Buds',
+                style: AppConstants.headingStyle,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Connect with music lovers',
+                style: AppConstants.captionStyle,
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              IconButton(
+                onPressed: _showBudRequests,
+                icon: const Icon(
+                  Icons.person_add,
+                  color: AppConstants.primaryColor,
+                  size: 28,
+                ),
+              ),
+              IconButton(
+                onPressed: _showBudSettings,
+                icon: const Icon(
+                  Icons.settings,
+                  color: AppConstants.textColor,
+                  size: 24,
+                ),
+              ),
+            ],
           ),
         ],
       ),
@@ -79,377 +130,656 @@ class _BudsPageState extends State<BudsPage> with TickerProviderStateMixin {
   }
 
   Widget _buildSearchBar() {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      child: AppTextField(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: TextField(
         controller: _searchController,
-        labelText: 'Search buds...',
-        hintText: 'Enter name, genre, or location',
-        prefixIcon: const Icon(Icons.search),
-        onChanged: (value) {
-          setState(() {
-            _searchQuery = value;
-          });
-          if (value.isNotEmpty) {
-            context.read<BudBloc>().add(BudSearchRequested(query: value));
-          }
-        },
-        suffixIcon: _searchQuery.isNotEmpty
-            ? IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: () {
-                  _searchController.clear();
-                  setState(() {
-                    _searchQuery = '';
-                  });
-                  _loadBudsData();
-                },
-              )
-            : null,
+        onChanged: _onSearchChanged,
+        decoration: InputDecoration(
+          hintText: 'Search for buds by name, music taste...',
+          hintStyle: TextStyle(color: AppConstants.textSecondaryColor),
+          prefixIcon: const Icon(Icons.search, color: AppConstants.textSecondaryColor),
+          suffixIcon: _isSearching
+              ? IconButton(
+                  icon: const Icon(Icons.clear, color: AppConstants.textSecondaryColor),
+                  onPressed: () {
+                    _searchController.clear();
+                    setState(() {
+                      _isSearching = false;
+                    });
+                  },
+                )
+              : null,
+          filled: true,
+          fillColor: AppConstants.surfaceColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(25),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        ),
+        style: const TextStyle(color: AppConstants.textColor),
       ),
     );
   }
 
-  Widget _buildTabBar() {
+  Widget _buildCategoryTabs() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: AppConstants.surfaceColor,
-        borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: AppConstants.borderColor.withOpacity(0.3)),
+      height: 50,
+      margin: const EdgeInsets.symmetric(vertical: 20),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        itemCount: _categories.length,
+        itemBuilder: (context, index) {
+          final isSelected = index == _selectedCategoryIndex;
+          return GestureDetector(
+            onTap: () => _onCategorySelected(index),
+            child: Container(
+              margin: const EdgeInsets.only(right: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: isSelected ? AppConstants.primaryColor : AppConstants.surfaceColor,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isSelected ? AppConstants.primaryColor : AppConstants.borderColor,
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Text(
+                  _categories[index],
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : AppConstants.textColor,
+                    fontSize: 14,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
-      child: TabBar(
-        controller: _tabController,
-        indicator: BoxDecoration(
-          color: AppConstants.primaryColor,
-          borderRadius: BorderRadius.circular(25),
-        ),
-        labelColor: Colors.white,
-        unselectedLabelColor: AppConstants.textSecondaryColor,
-        tabs: const [
-          Tab(text: 'My Buds'),
-          Tab(text: 'Matches'),
-          Tab(text: 'Discover'),
+    );
+  }
+
+  Widget _buildContent() {
+    return BlocBuilder<BudBloc, BudState>(
+      builder: (context, budState) {
+        if (budState is BudLoading || _isLoading) {
+          return const Center(child: LoadingIndicator());
+        }
+
+        if (budState is BudFailure) {
+          return _buildErrorWidget(budState.error);
+        }
+
+        return _buildBudsContent();
+      },
+    );
+  }
+
+  Widget _buildBudsContent() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildQuickActions(),
+          const SizedBox(height: 24),
+          _buildBudRequests(),
+          const SizedBox(height: 24),
+          _buildTopMatches(),
+          const SizedBox(height: 24),
+          _buildRecentConnections(),
+          const SizedBox(height: 24),
+          _buildRecommendedBuds(),
+          const SizedBox(height: 24),
+          _buildNearbyBuds(),
+          const SizedBox(height: 24),
+          _buildBudCategories(),
         ],
       ),
     );
   }
 
-  Widget _buildTabView() {
-    return TabBarView(
-      controller: _tabController,
+  Widget _buildQuickActions() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildMyBudsTab(),
-        _buildMatchesTab(),
-        _buildDiscoverTab(),
+        Text(
+          'Quick Actions',
+          style: AppConstants.subheadingStyle,
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _buildQuickActionCard(
+                'Find Buds',
+                Icons.people,
+                AppConstants.primaryColor,
+                _findBuds,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildQuickActionCard(
+                'Invite Friends',
+                Icons.person_add_alt,
+                Colors.blue,
+                _inviteFriends,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: _buildQuickActionCard(
+                'Music Groups',
+                Icons.group_work,
+                Colors.green,
+                _joinMusicGroups,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildQuickActionCard(
+                'Events',
+                Icons.event,
+                Colors.orange,
+                _findEvents,
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
 
-  Widget _buildMyBudsTab() {
-    return BlocBuilder<BudBloc, BudState>(
-      builder: (context, state) {
-        if (state is BudLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (state is BudsLoaded) {
-          final filteredBuds = _filterBuds(state.buds);
-          return _buildBudsList(filteredBuds, showActions: true);
-        }
-
-        if (state is BudFailure) {
-          return _buildErrorWidget(state.error);
-        }
-
-        return const Center(child: Text('No buds found'));
-      },
-    );
-  }
-
-  Widget _buildMatchesTab() {
-    return BlocBuilder<BudBloc, BudState>(
-      builder: (context, state) {
-        if (state is BudMatchesLoaded) {
-          return _buildMatchesList(state.matches);
-        }
-
-        return const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.favorite, size: 64, color: Colors.white54),
-              SizedBox(height: 16),
-              Text(
-                'No matches yet',
-                style: TextStyle(color: Colors.white54),
-              ),
-              Text(
-                'Start connecting with music lovers to find matches',
-                style: TextStyle(color: Colors.white38, fontSize: 12),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildDiscoverTab() {
-    return BlocBuilder<BudBloc, BudState>(
-      builder: (context, state) {
-        if (state is BudRecommendationsLoaded) {
-          return _buildRecommendationsList(state.recommendations);
-        }
-
-        return const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.explore, size: 64, color: Colors.white54),
-              SizedBox(height: 16),
-              Text(
-                'Discover new buds',
-                style: TextStyle(color: Colors.white54),
-              ),
-              Text(
-                'Find music lovers with similar tastes',
-                style: TextStyle(color: Colors.white38, fontSize: 12),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildBudsList(List<Bud> buds, {bool showActions = false}) {
-    if (buds.isEmpty) {
-      return const Center(
-        child: Text(
-          'No buds found',
-          style: TextStyle(color: Colors.white54),
+  Widget _buildQuickActionCard(String title, IconData icon, Color color, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withOpacity(0.5)),
         ),
-      );
-    }
+        child: Column(
+          children: [
+            Icon(icon, color: color, size: 32),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: const TextStyle(
+                color: AppConstants.textColor,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
-    return ListView.builder(
+  Widget _buildBudRequests() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Bud Requests',
+              style: AppConstants.subheadingStyle,
+            ),
+            TextButton(
+              onPressed: _viewAllRequests,
+              child: Text(
+                'View All',
+                style: TextStyle(color: AppConstants.primaryColor),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        SizedBox(
+          height: 120,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 3,
+            itemBuilder: (context, index) {
+              return _buildBudRequestCard(
+                'User ${index + 1}',
+                'Has similar music taste',
+                'assets/ahmed_avatar.jpg',
+                () => _acceptBudRequest('user_$index'),
+                () => _rejectBudRequest('user_$index'),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBudRequestCard(String name, String description, String avatar, VoidCallback onAccept, VoidCallback onReject) {
+    return Container(
+      width: 200,
+      margin: const EdgeInsets.only(right: 16),
       padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppConstants.surfaceColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppConstants.borderColor),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 25,
+                backgroundImage: AssetImage(avatar),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      style: const TextStyle(
+                        color: AppConstants.textColor,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      description,
+                      style: AppConstants.captionStyle,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: onAccept,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppConstants.primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: const Text('Accept'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: onReject,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppConstants.errorColor,
+                    side: BorderSide(color: AppConstants.errorColor),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
+                  child: const Text('Reject'),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTopMatches() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Top Matches',
+              style: AppConstants.subheadingStyle,
+            ),
+            TextButton(
+              onPressed: _viewAllTopMatches,
+              child: Text(
+                'View All',
+                style: TextStyle(color: AppConstants.primaryColor),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        BlocBuilder<BudBloc, BudState>(
+          builder: (context, state) {
+            if (state is BudsLoaded && state.buds.isNotEmpty) {
+              return _buildTopMatchesList(state.buds.take(3).toList());
+            }
+            return _buildEmptyState('No top matches found', Icons.people_outline);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTopMatchesList(List<dynamic> buds) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: buds.length,
       itemBuilder: (context, index) {
         final bud = buds[index];
-        return _buildBudCard(bud, showActions: showActions);
+        return _buildTopMatchCard(
+          bud.name ?? 'Bud ${index + 1}',
+          bud.matchPercentage?.toString() ?? '${(index + 1) * 25}%',
+          bud.avatar ?? 'assets/ahmed_avatar.jpg',
+          () => _viewBudProfile(bud.id ?? 'bud_$index'),
+        );
       },
     );
   }
 
-  Widget _buildBudCard(Bud bud, {bool showActions = false}) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      color: AppConstants.surfaceColor,
-      child: ListTile(
-        leading: CircleAvatar(
-          radius: 30,
-          backgroundColor: AppConstants.primaryColor.withOpacity(0.3),
-          backgroundImage: bud.avatarUrl != null
-              ? NetworkImage(bud.avatarUrl!)
-              : null,
-          child: bud.avatarUrl == null
-              ? Text(
-                  bud.username.isNotEmpty ? bud.username[0].toUpperCase() : 'B',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                  ),
-                )
-              : null,
+  Widget _buildTopMatchCard(String name, String matchPercentage, String avatar, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppConstants.surfaceColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppConstants.borderColor),
         ),
-        title: Text(
-          bud.username,
-          style: const TextStyle(color: Colors.white),
-        ),
-        subtitle: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            if (bud.displayName != null)
-              Text(
-                bud.displayName!,
-                style: const TextStyle(color: Colors.white70),
-              ),
-            if (bud.matchScore > 0)
-              Text(
-                'Match: ${(bud.matchScore * 100).toStringAsFixed(0)}%',
-                style: TextStyle(
-                  color: _getMatchColor(bud.matchScore),
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-          ],
-        ),
-        trailing: showActions
-            ? Row(
-                mainAxisSize: MainAxisSize.min,
+            CircleAvatar(
+              radius: 30,
+              backgroundImage: AssetImage(avatar),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  IconButton(
-                    onPressed: () => _messageBud(bud.id),
-                    icon: const Icon(
-                      Icons.message,
-                      color: Colors.white70,
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      color: AppConstants.textColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  IconButton(
-                    onPressed: () => _showBudProfile(bud.id),
-                    icon: const Icon(
-                      Icons.person,
-                      color: Colors.white70,
+                  const SizedBox(height: 4),
+                  Text(
+                    'Match: $matchPercentage',
+                    style: TextStyle(
+                      color: AppConstants.primaryColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
                     ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      _buildCommonItemChip('Rock', Colors.red),
+                      const SizedBox(width: 8),
+                      _buildCommonItemChip('Pop', Colors.blue),
+                    ],
                   ),
                 ],
-              )
-            : null,
-        onTap: () => _showBudProfile(bud.id),
+              ),
+            ),
+            Column(
+              children: [
+                IconButton(
+                  onPressed: () => _sendBudRequest(name),
+                  icon: const Icon(
+                    Icons.person_add,
+                    color: AppConstants.primaryColor,
+                    size: 24,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => _startChat(name),
+                  icon: const Icon(
+                    Icons.chat,
+                    color: AppConstants.textColor,
+                    size: 24,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildMatchesList(List<BudMatch> matches) {
-    if (matches.isEmpty) {
-      return const Center(
-        child: Text(
-          'No matches found',
-          style: TextStyle(color: Colors.white54),
+  Widget _buildCommonItemChip(String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withOpacity(0.5)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
         ),
-      );
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: matches.length,
-      itemBuilder: (context, index) {
-        final match = matches[index];
-        return _buildMatchCard(match);
-      },
+      ),
     );
   }
 
-  Widget _buildMatchCard(BudMatch match) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      color: AppConstants.surfaceColor,
+  Widget _buildRecentConnections() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Recent Connections',
+          style: AppConstants.subheadingStyle,
+        ),
+        const SizedBox(height: 16),
+        SizedBox(
+          height: 100,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: 6,
+            itemBuilder: (context, index) {
+              return _buildRecentConnectionCard(
+                'Bud ${index + 1}',
+                'assets/ahmed_avatar.jpg',
+                () => _viewBudProfile('recent_bud_$index'),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRecentConnectionCard(String name, String avatar, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        width: 80,
+        margin: const EdgeInsets.only(right: 16),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 25,
-                  backgroundColor: AppConstants.primaryColor.withOpacity(0.3),
-                  backgroundImage: match.bud.avatarUrl != null
-                      ? NetworkImage(match.bud.avatarUrl!)
-                      : null,
-                  child: match.bud.avatarUrl == null
-                      ? Text(
-                          match.bud.username.isNotEmpty
-                              ? match.bud.username[0].toUpperCase()
-                              : 'B',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      : null,
+            CircleAvatar(
+              radius: 35,
+              backgroundImage: AssetImage(avatar),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              name,
+              style: const TextStyle(
+                color: AppConstants.textColor,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRecommendedBuds() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Recommended for You',
+              style: AppConstants.subheadingStyle,
+            ),
+            TextButton(
+              onPressed: _refreshRecommendations,
+              child: Text(
+                'Refresh',
+                style: TextStyle(color: AppConstants.primaryColor),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.8,
+          ),
+          itemCount: 4,
+          itemBuilder: (context, index) {
+            return _buildRecommendedBudCard(
+              'Recommended ${index + 1}',
+              '${(index + 1) * 20}% match',
+              'assets/ahmed_avatar.jpg',
+              () => _viewBudProfile('recommended_$index'),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRecommendedBudCard(String name, String matchInfo, String avatar, VoidCallback onTap) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppConstants.surfaceColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppConstants.borderColor),
+        ),
+        child: Column(
+          children: [
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                  image: DecorationImage(
+                    image: AssetImage(avatar),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        match.bud.username,
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.7),
+                      ],
+                    ),
+                  ),
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Text(
+                        matchInfo,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'Matched ${_formatDate(match.matchedAt)}',
-                        style: const TextStyle(
-                          color: Colors.white70,
                           fontSize: 12,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppConstants.primaryColor,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '${(match.matchScore * 100).toStringAsFixed(0)}%',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
-            if (match.commonInterests.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Text(
-                'Common interests:',
-                style: TextStyle(
-                  color: AppConstants.textSecondaryColor,
-                  fontSize: 12,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: match.commonInterests
-                    .take(5)
-                    .map((interest) => Chip(
-                          label: Text(
-                            interest,
-                            style: const TextStyle(fontSize: 10),
-                          ),
-                          backgroundColor: AppConstants.primaryColor.withOpacity(0.2),
-                          labelStyle: const TextStyle(color: Colors.white),
-                        ))
-                    .toList(),
-              ),
-            ],
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: AppButton(
-                    text: 'Message',
-                    onPressed: () => _messageBud(match.bud.id),
-                    isOutlined: true,
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                children: [
+                  Text(
+                    name,
+                    style: const TextStyle(
+                      color: AppConstants.textColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: AppButton(
-                    text: 'View Profile',
-                    onPressed: () => _showBudProfile(match.bud.id),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IconButton(
+                        onPressed: () => _sendBudRequest(name),
+                        icon: const Icon(
+                          Icons.person_add,
+                          color: AppConstants.primaryColor,
+                          size: 20,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => _startChat(name),
+                        icon: const Icon(
+                          Icons.chat,
+                          color: AppConstants.textColor,
+                          size: 20,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
@@ -457,121 +787,124 @@ class _BudsPageState extends State<BudsPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildRecommendationsList(List<Bud> recommendations) {
-    if (recommendations.isEmpty) {
-      return const Center(
-        child: Text(
-          'No recommendations found',
-          style: TextStyle(color: Colors.white54),
+  Widget _buildNearbyBuds() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Buds Nearby',
+          style: AppConstants.subheadingStyle,
         ),
-      );
-    }
+        const SizedBox(height: 16),
+        _buildEmptyState('Enable location to find nearby buds', Icons.location_on_outlined),
+      ],
+    );
+  }
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: recommendations.length,
+  Widget _buildBudCategories() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Browse by Category',
+          style: AppConstants.subheadingStyle,
+        ),
+        const SizedBox(height: 16),
+        BlocBuilder<BudCategoryBloc, BudCategoryState>(
+          builder: (context, state) {
+            if (state is BudCategoryLoaded) {
+              return _buildCategoryGrid(state.categories);
+            }
+            return _buildEmptyState('Loading categories...', Icons.category_outlined);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCategoryGrid(List<String> categories) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 1.5,
+      ),
+      itemCount: categories.length,
       itemBuilder: (context, index) {
-        final bud = recommendations[index];
-        return _buildRecommendationCard(bud);
+        final category = categories[index];
+        return _buildCategoryCard(
+          category,
+          'Explore this category',
+          Icons.category,
+          () => _exploreCategory(category),
+        );
       },
     );
   }
 
-  Widget _buildRecommendationCard(Bud bud) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      color: AppConstants.surfaceColor,
+  Widget _buildCategoryCard(String title, String description, IconData icon, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppConstants.surfaceColor,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: AppConstants.borderColor),
+        ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: AppConstants.primaryColor.withOpacity(0.3),
-                  backgroundImage: bud.avatarUrl != null
-                      ? NetworkImage(bud.avatarUrl!)
-                      : null,
-                  child: bud.avatarUrl == null
-                      ? Text(
-                          bud.username.isNotEmpty
-                              ? bud.username[0].toUpperCase()
-                              : 'B',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        )
-                      : null,
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        bud.username,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-                      if (bud.displayName != null)
-                        Text(
-                          bud.displayName!,
-                          style: const TextStyle(
-                            color: Colors.white70,
-                            fontSize: 14,
-                          ),
-                        ),
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.favorite,
-                            color: AppConstants.primaryColor,
-                            size: 16,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${(bud.matchScore * 100).toStringAsFixed(0)}% match',
-                            style: TextStyle(
-                              color: AppConstants.primaryColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+            Icon(
+              icon,
+              color: AppConstants.primaryColor,
+              size: 32,
             ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: AppButton(
-                    text: 'Connect',
-                    onPressed: () => _connectWithBud(bud.id),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: AppButton(
-                    text: 'View Profile',
-                    onPressed: () => _showBudProfile(bud.id),
-                    isOutlined: true,
-                  ),
-                ),
-              ],
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: const TextStyle(
+                color: AppConstants.textColor,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              description,
+              style: AppConstants.captionStyle,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(String message, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(32),
+      child: Column(
+        children: [
+          Icon(
+            icon,
+            color: AppConstants.textSecondaryColor,
+            size: 48,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            message,
+            style: AppConstants.captionStyle,
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
@@ -581,86 +914,221 @@ class _BudsPageState extends State<BudsPage> with TickerProviderStateMixin {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.error_outline,
+            color: AppConstants.errorColor,
             size: 64,
-            color: Colors.red,
           ),
           const SizedBox(height: 16),
           Text(
             'Error loading buds',
-            style: TextStyle(
-              color: AppConstants.textColor,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppConstants.subheadingStyle,
           ),
           const SizedBox(height: 8),
           Text(
             error,
-            style: TextStyle(
-              color: AppConstants.textSecondaryColor,
-              fontSize: 14,
-            ),
+            style: AppConstants.captionStyle,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
-          AppButton(
-            text: 'Retry',
-            onPressed: _loadBudsData,
+          ElevatedButton(
+            onPressed: _retryLoading,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppConstants.primaryColor,
+            ),
+            child: const Text('Retry'),
           ),
         ],
       ),
     );
   }
 
-  // Helper methods
-  List<Bud> _filterBuds(List<Bud> buds) {
-    if (_searchQuery.isEmpty) return buds;
+  // Event handlers
+  void _onSearchChanged(String query) {
+    setState(() {
+      _isSearching = query.isNotEmpty;
+    });
 
-    return buds.where((bud) {
-      final query = _searchQuery.toLowerCase();
-      return bud.username.toLowerCase().contains(query) ||
-             (bud.displayName?.toLowerCase().contains(query) ?? false) ||
-             (bud.bio?.toLowerCase().contains(query) ?? false);
-    }).toList();
+    if (query.isNotEmpty) {
+      context.read<BudBloc>().add(BudsSearchRequested(query));
+    }
   }
 
-  Color _getMatchColor(double matchScore) {
-    if (matchScore >= 0.8) return Colors.green;
-    if (matchScore >= 0.6) return Colors.orange;
-    return Colors.red;
-  }
+  void _onCategorySelected(int index) {
+    setState(() {
+      _selectedCategoryIndex = index;
+    });
 
-  String _formatDate(DateTime date) {
-    final now = DateTime.now();
-    final difference = now.difference(date);
-
-    if (difference.inDays == 0) return 'today';
-    if (difference.inDays == 1) return 'yesterday';
-    if (difference.inDays < 7) return '${difference.inDays} days ago';
-    if (difference.inDays < 30) return '${(difference.inDays / 7).floor()} weeks ago';
-    return '${(difference.inDays / 30).floor()} months ago';
+    // Load data based on category
+    switch (_categories[index].toLowerCase()) {
+      case 'by artists':
+        context.read<BudBloc>().add(BudsByLikedArtistsRequested());
+        break;
+      case 'by tracks':
+        context.read<BudBloc>().add(BudsByLikedTracksRequested());
+        break;
+      case 'by genres':
+        context.read<BudBloc>().add(BudsByLikedGenresRequested());
+        break;
+      case 'by albums':
+        context.read<BudBloc>().add(BudsByLikedAlbumsRequested());
+        break;
+      case 'top matches':
+        context.read<BudBloc>().add(BudRecommendationsRequested());
+        break;
+      case 'recent':
+        context.read<BudBloc>().add(BudsRequested());
+        break;
+      case 'nearby':
+        // TODO: Implement nearby buds functionality
+        break;
+      default:
+        context.read<BudBloc>().add(BudsRequested());
+    }
   }
 
   // Action methods
-  void _showAddBudDialog() {
-    // Implement add bud dialog
+  void _showBudRequests() {
+    // Show bud requests
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Bud requests coming soon!')),
+    );
   }
 
-  void _showFilterDialog() {
-    // Implement filter dialog
+  void _showBudSettings() {
+    // Show bud settings
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Bud settings coming soon!')),
+    );
   }
 
-  void _messageBud(String budId) {
-    // Implement message bud logic
+  void _findBuds() {
+    // Find buds
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Bud finder coming soon!')),
+    );
   }
 
-  void _showBudProfile(String budId) {
-    // Navigate to bud profile page
+  void _inviteFriends() {
+    // Invite friends
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Friend invitation coming soon!')),
+    );
   }
 
-  void _connectWithBud(String budId) {
-    // Implement connect with bud logic
+  void _joinMusicGroups() {
+    // Join music groups
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Music groups coming soon!')),
+    );
+  }
+
+  void _findEvents() {
+    // Find events
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Event finder coming soon!')),
+    );
+  }
+
+  void _viewAllRequests() {
+    // View all requests
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('All requests view coming soon!')),
+    );
+  }
+
+  void _acceptBudRequest(String userId) {
+    // Accept bud request
+    context.read<BudBloc>().add(BudRequestAccepted(userId: userId));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Bud request accepted!')),
+    );
+  }
+
+  void _rejectBudRequest(String userId) {
+    // Reject bud request
+    context.read<BudBloc>().add(BudRequestRejected(userId: userId));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Bud request rejected')),
+    );
+  }
+
+  void _viewAllTopMatches() {
+    // View all top matches
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('All top matches view coming soon!')),
+    );
+  }
+
+  void _viewBudProfile(String budId) {
+    // View bud profile
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Bud profile view coming soon!')),
+    );
+  }
+
+  void _sendBudRequest(String budName) {
+    // Send bud request
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Bud request sent to $budName!')),
+    );
+  }
+
+  void _startChat(String budName) {
+    // Start chat
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Starting chat with $budName...')),
+    );
+  }
+
+  void _refreshRecommendations() {
+    // Refresh recommendations
+    context.read<BudBloc>().add(BudRecommendationsRequested());
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Recommendations refreshed!')),
+    );
+  }
+
+  void _exploreCategory(String categoryId) {
+    // Explore category
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Category exploration coming soon!')),
+    );
+  }
+
+  void _retryLoading() {
+    // Retry loading
+    _loadInitialData();
+  }
+
+  // Bloc state handlers
+  void _handleBudStateChange(BuildContext context, BudState state) {
+    if (state is BudFailure) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Bud error: ${state.error}')),
+      );
+    }
+  }
+
+  void _handleBudCategoryStateChange(BuildContext context, BudCategoryState state) {
+    if (state is BudCategoryFailure) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Category error: ${state.error}')),
+      );
+    }
+  }
+
+  void _handleProfileStateChange(BuildContext context, ProfileState state) {
+    if (state is ProfileFailure) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Profile error: ${state.error}')),
+      );
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 }

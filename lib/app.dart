@@ -5,12 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 // BLoCs
 import 'blocs/auth/auth_bloc.dart';
-import 'blocs/auth/lastfm/lastfm_bloc.dart';
 import 'blocs/auth/login/login_bloc.dart';
-import 'blocs/auth/mal/mal_bloc.dart';
 import 'blocs/auth/register/register_bloc.dart';
-import 'blocs/auth/spotify/spotify_bloc.dart';
-import 'blocs/auth/ytmusic/ytmusic_bloc.dart';
 import 'blocs/main/main_screen_bloc.dart';
 import 'blocs/profile/profile_bloc.dart';
 
@@ -71,19 +67,7 @@ class App extends StatelessWidget {
         create: (context) => RegisterBloc(authRepository: sl<AuthRepository>()),
       ),
 
-      // Service Connection BLoCs
-      BlocProvider<SpotifyBloc>(
-        create: (context) => SpotifyBloc(authRepository: sl<AuthRepository>()),
-      ),
-      BlocProvider<YtMusicBloc>(
-        create: (context) => YtMusicBloc(authRepository: sl<AuthRepository>()),
-      ),
-      BlocProvider<MALBloc>(
-        create: (context) => MALBloc(authRepository: sl<AuthRepository>()),
-      ),
-      BlocProvider<LastFmBloc>(
-        create: (context) => LastFmBloc(authRepository: sl<AuthRepository>()),
-      ),
+      // Service Connection is now handled by the centralized AuthBloc
 
       // Main Screen BLoC
       BlocProvider<MainScreenBloc>(

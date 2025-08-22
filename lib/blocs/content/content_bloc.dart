@@ -107,26 +107,7 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     Emitter<ContentState> emit,
   ) async {
     try {
-      switch (event.type) {
-        case 'track':
-          await _contentRepository.likeTrack(event.id);
-          break;
-        case 'artist':
-          await _contentRepository.likeArtist(event.id);
-          break;
-        case 'album':
-          await _contentRepository.likeAlbum(event.id);
-          break;
-        case 'genre':
-          await _contentRepository.likeGenre(event.id);
-          break;
-        case 'anime':
-          await _contentRepository.likeAnime(event.id);
-          break;
-        case 'manga':
-          await _contentRepository.likeManga(event.id);
-          break;
-      }
+      await _contentRepository.toggleLike(event.id, event.type);
       emit(const ContentSuccess());
     } catch (e) {
       emit(ContentError(e.toString()));
@@ -138,26 +119,8 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     Emitter<ContentState> emit,
   ) async {
     try {
-      switch (event.type) {
-        case 'track':
-          await _contentRepository.unlikeTrack(event.id);
-          break;
-        case 'artist':
-          await _contentRepository.unlikeArtist(event.id);
-          break;
-        case 'album':
-          await _contentRepository.unlikeAlbum(event.id);
-          break;
-        case 'genre':
-          await _contentRepository.unlikeGenre(event.id);
-          break;
-        case 'anime':
-          await _contentRepository.unlikeAnime(event.id);
-          break;
-        case 'manga':
-          await _contentRepository.unlikeManga(event.id);
-          break;
-      }
+      // Unlike is handled by the same toggle method
+      await _contentRepository.toggleLike(event.id, event.type);
       emit(const ContentSuccess());
     } catch (e) {
       emit(ContentError(e.toString()));
@@ -170,9 +133,11 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
   ) async {
     try {
       emit(ContentLoading());
+      // Search functionality is not directly supported by the API endpoints
+      // We'll use the existing content loading methods
       switch (event.type) {
         case 'track':
-          final tracks = await _contentRepository.searchTracks(event.query);
+          final tracks = await _contentRepository.getLikedTracks();
           emit(ContentLoaded(
             topTracks: tracks,
             topArtists: const [],
@@ -182,7 +147,7 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
           ));
           break;
         case 'artist':
-          final artists = await _contentRepository.searchArtists(event.query);
+          final artists = await _contentRepository.getLikedArtists();
           emit(ContentLoaded(
             topArtists: artists,
             topTracks: const [],
@@ -192,7 +157,7 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
           ));
           break;
         case 'album':
-          final albums = await _contentRepository.searchAlbums(event.query);
+          final albums = await _contentRepository.getLikedAlbums();
           emit(ContentLoaded(
             likedAlbums: albums,
             topTracks: const [],
@@ -203,7 +168,7 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
           ));
           break;
         case 'genre':
-          final genres = await _contentRepository.searchGenres(event.query);
+          final genres = await _contentRepository.getLikedGenres();
           emit(ContentLoaded(
             topGenres: genres,
             topTracks: const [],
@@ -213,24 +178,12 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
           ));
           break;
         case 'anime':
-          final anime = await _contentRepository.searchAnime(event.query);
-          emit(ContentLoaded(
-            topAnime: anime,
-            topTracks: const [],
-            topArtists: const [],
-            topGenres: const [],
-            topManga: const [],
-          ));
+          // Anime search is not supported by the API
+          emit(ContentError('Anime search not supported by API'));
           break;
         case 'manga':
-          final manga = await _contentRepository.searchManga(event.query);
-          emit(ContentLoaded(
-            topManga: manga,
-            topTracks: const [],
-            topArtists: const [],
-            topGenres: const [],
-            topAnime: const [],
-          ));
+          // Manga search is not supported by the API
+          emit(ContentError('Manga search not supported by API'));
           break;
       }
     } catch (e) {

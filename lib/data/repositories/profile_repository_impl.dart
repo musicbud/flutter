@@ -39,9 +39,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
     return getMyProfile(); // Reuse the same implementation since they do the same thing
   }
 
-  @override
+    @override
   Future<void> updateProfile(Map<String, dynamic> profileData) async {
-    final response = await _dioClient.put('/profile/me', data: profileData);
+    final response = await _dioClient.post('/me/profile/set', data: profileData);
     if (response.statusCode != 200) {
       throw Exception('Failed to update profile');
     }
@@ -49,41 +49,15 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   @override
   Future<String> updateAvatar(XFile image) async {
-    try {
-      final formData = FormData();
-      formData.files.add(MapEntry(
-        'avatar',
-        await MultipartFile.fromFile(image.path),
-      ));
-
-      // Use post method directly with FormData
-      final response = await _dioClient.post('/profile/avatar', data: formData);
-
-      if (response.data != null && response.data['avatar_url'] != null) {
-        return response.data['avatar_url'];
-      } else {
-        throw Exception('Avatar URL not found in response');
-      }
-    } catch (e) {
-      print('ProfileRepository: Error updating avatar: $e');
-      rethrow;
-    }
+    // Avatar upload endpoint does not exist in the current backend API
+    throw Exception('Avatar upload is not supported by the current API');
   }
 
   @override
   Future<void> logout() async {
     try {
-      // Try POST first, if it fails, try GET
-      try {
-        await _dioClient.post('/auth/logout');
-      } catch (e) {
-        if (e.toString().contains('405')) {
-          // If POST fails with 405, try GET
-          await _dioClient.get('/auth/logout');
-        } else {
-          rethrow;
-        }
-      }
+      // Use the correct logout endpoint
+      await _dioClient.get('/logout/');
     } catch (e) {
       print('ProfileRepository: Logout failed: $e');
       // Don't rethrow - logout should not fail the app
@@ -93,7 +67,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
   @override
   Future<bool> isAuthenticated() async {
     try {
-      // await _dioClient.get('/auth/status');
+      // Check authentication by trying to get profile
+      // This is more reliable than a dedicated auth status endpoint
+      await _dioClient.post('/me/profile');
       return true;
     } catch (e) {
       return false;
@@ -102,9 +78,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
 
   @override
   Future<List<ContentService>> getConnectedServices() async {
-    final response = await _dioClient.get('/profile/services');
-    return (response.data as List)
-        .map((json) => ContentService.fromJson(json))
-        .toList();
+    // This endpoint no longer exists in the backend API
+    // Service connection is now handled by the AuthBloc
+    // Return empty list to avoid breaking the app
+    return [];
   }
 }

@@ -11,10 +11,7 @@ abstract class AuthRepository {
   Future<void> logout();
 
   // Service connection URLs
-  Future<String> getSpotifyAuthUrl();
-  Future<String> getYTMusicAuthUrl();
-  Future<String> getLastFMAuthUrl();
-  Future<String> getMALAuthUrl();
+  Future<String> getServiceAuthUrl();
 
   // Service connections
   Future<void> connectSpotify(String code);
@@ -22,12 +19,7 @@ abstract class AuthRepository {
   Future<void> connectLastFM(String code);
   Future<void> connectMAL(String code);
 
-  // Service disconnections
-  Future<void> disconnectSpotify();
-  Future<void> disconnectYTMusic();
-  Future<void> disconnectLastFM();
-  Future<void> disconnectMAL();
-
-  // Service status
-  Future<List<Map<String, dynamic>>> getConnectedServices();
+  // Token refresh
+  Future<void> refreshSpotifyToken();
+  Future<void> refreshYTMusicToken();
 }

@@ -17,7 +17,6 @@ class LoginRequested extends AuthEvent {
   const LoginRequested({
     required this.username,
     required this.password,
-    required String token,
   });
 
   @override
@@ -53,19 +52,19 @@ class ConnectService extends AuthEvent {
   List<Object?> get props => [service, code];
 }
 
-class DisconnectService extends AuthEvent {
+class GetServiceAuthUrl extends AuthEvent {
   final String service;
 
-  const DisconnectService(this.service);
+  const GetServiceAuthUrl(this.service);
 
   @override
   List<Object?> get props => [service];
 }
 
-class GetServiceAuthUrl extends AuthEvent {
+class RefreshServiceToken extends AuthEvent {
   final String service;
 
-  const GetServiceAuthUrl(this.service);
+  const RefreshServiceToken(this.service);
 
   @override
   List<Object?> get props => [service];
@@ -132,8 +131,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogoutRequested>(_onLogoutRequested);
     on<TokenRefreshRequested>(_onTokenRefreshRequested);
     on<ConnectService>(_onConnectService);
-    on<DisconnectService>(_onDisconnectService);
     on<GetServiceAuthUrl>(_onGetServiceAuthUrl);
+    on<RefreshServiceToken>(_onRefreshServiceToken);
   }
 
   Future<void> _onLoginRequested(
@@ -227,64 +226,44 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onDisconnectService(
-    DisconnectService event,
-    Emitter<AuthState> emit,
-  ) async {
-    try {
-      emit(AuthLoading());
-      switch (event.service) {
-        case 'spotify':
-          await _authRepository.disconnectSpotify();
-          break;
-        case 'ytmusic':
-          await _authRepository.disconnectYTMusic();
-          break;
-        case 'mal':
-          await _authRepository.disconnectMAL();
-          break;
-        case 'lastfm':
-          await _authRepository.disconnectLastFM();
-          break;
-      }
-      if (state is Authenticated) {
-        final currentState = state as Authenticated;
-        emit(currentState.copyWith(
-          connectedServices: Map.from(currentState.connectedServices)
-            ..[event.service] = false,
-        ));
-      }
-    } catch (e) {
-      emit(AuthError(e.toString()));
-    }
-  }
-
   Future<void> _onGetServiceAuthUrl(
     GetServiceAuthUrl event,
     Emitter<AuthState> emit,
   ) async {
     try {
       emit(AuthLoading());
-      String url = '';
-      switch (event.service) {
-        case 'spotify':
-          url = await _authRepository.getSpotifyAuthUrl();
-          break;
-        case 'ytmusic':
-          url = await _authRepository.getYTMusicAuthUrl();
-          break;
-        case 'mal':
-          url = await _authRepository.getMALAuthUrl();
-          break;
-        case 'lastfm':
-          url = await _authRepository.getLastFMAuthUrl();
-          break;
-      }
+      final url = await _authRepository.getServiceAuthUrl();
       emit(ServiceAuthUrlReceived(service: event.service, url: url));
     } catch (e) {
       emit(AuthError(e.toString()));
     }
   }
+
+  Future<void> _onRefreshServiceToken(
+    RefreshServiceToken event,
+    Emitter<AuthState> emit,
+  ) async {
+    try {
+      emit(AuthLoading());
+      switch (event.service) {
+        case 'spotify':
+          await _authRepository.refreshSpotifyToken();
+          break;
+        case 'ytmusic':
+          await _authRepository.refreshYTMusicToken();
+          break;
+        default:
+          throw Exception('Unsupported service for token refresh: ${event.service}');
+      }
+      emit(const AuthSuccess());
+    } catch (e) {
+      emit(AuthError(e.toString()));
+    }
+  }
+}
+
+class AuthSuccess extends AuthState {
+  const AuthSuccess();
 }
 
 extension on Authenticated {

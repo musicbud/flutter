@@ -31,10 +31,11 @@ class StoriesPage extends StatelessWidget {
                 // Map background
                 Container(
                   decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/dark_map_bg.jpg'),
-                      fit: BoxFit.cover,
-                    ),
+                    color: Color(0xFF1a1a2e), // Dark blue background instead of image
+                    // image: DecorationImage(
+                    //   image: AssetImage('assets/dark_map_bg.jpg'),
+                    //   fit: BoxFit.cover,
+                    // ),
                   ),
                 ),
 
@@ -56,10 +57,16 @@ class StoriesPage extends StatelessWidget {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white24),
-                            image: const DecorationImage(
-                              image: AssetImage('assets/user_avatar.jpg'),
-                              fit: BoxFit.cover,
-                            ),
+                            color: Colors.blue, // Placeholder color instead of image
+                            // image: const DecorationImage(
+                            //   image: AssetImage('assets/user_avatar.jpg'),
+                            //   fit: BoxFit.cover,
+                            // ),
+                          ),
+                          child: const Icon(
+                            Icons.person,
+                            color: Colors.white,
+                            size: 20,
                           ),
                         ),
 
@@ -178,10 +185,16 @@ class StoriesPage extends StatelessWidget {
                     color: isYou ? Colors.blue : Colors.pink,
                     width: 2,
                   ),
-                  image: DecorationImage(
-                    image: AssetImage(imagePath),
-                    fit: BoxFit.cover,
-                  ),
+                  color: isYou ? Colors.blue : Colors.purple, // Placeholder color instead of image
+                  // image: DecorationImage(
+                  //   image: AssetImage(imagePath),
+                  //   fit: BoxFit.cover,
+                  // ),
+                ),
+                child: Icon(
+                  Icons.person,
+                  color: Colors.white,
+                  size: 30,
                 ),
               ),
               if (isYou)
@@ -234,10 +247,16 @@ class StoriesPage extends StatelessWidget {
                   color: Colors.pink,
                   width: 2,
                 ),
-                image: DecorationImage(
-                  image: AssetImage(imagePath),
-                  fit: BoxFit.cover,
-                ),
+                color: Colors.orange, // Placeholder color instead of image
+                // image: DecorationImage(
+                //   image: AssetImage(imagePath),
+                //   fit: BoxFit.cover,
+                // ),
+              ),
+              child: Icon(
+                Icons.person,
+                color: Colors.white,
+                size: 25,
               ),
             ),
             Positioned(

@@ -11,6 +11,7 @@ import '../../../domain/models/common_manga.dart';
 import 'user_remote_data_source.dart';
 import '../../providers/token_provider.dart';
 import '../../network/dio_client.dart';
+import '../../../config/api_config.dart';
 
 class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   final DioClient _dioClient;
@@ -31,7 +32,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<UserProfile> getUserProfile() async {
     debugPrint('Getting profile with token: ${_tokenProvider.token}');
-    final response = await _dioClient.post('/me/profile');
+    final response = await _dioClient.post(ApiConfig.myProfile);
 
     if (response.statusCode == 200) {
       return UserProfile.fromJson(json.decode(response.data));
@@ -45,7 +46,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getLikedTracks() async {
-    final response = await _dioClient.get('/me/liked-tracks');
+    final response = await _dioClient.post(ApiConfig.myLikedTracks);
 
     if (response.statusCode == 200) {
       final List<dynamic> tracksJson = json.decode(response.data);
@@ -57,7 +58,10 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<void> likeSong(String songId) async {
-    final response = await _dioClient.post('/me/liked-tracks/$songId');
+    final response = await _dioClient.post(ApiConfig.updateLikes, data: {
+      'contentId': songId,
+      'contentType': 'track',
+    });
 
     if (response.statusCode != 200) {
       throw ServerException(message: 'Failed to like song');
@@ -66,7 +70,11 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<void> unlikeSong(String songId) async {
-    final response = await _dioClient.delete('/me/liked-tracks/$songId');
+    final response = await _dioClient.post(ApiConfig.updateLikes, data: {
+      'contentId': songId,
+      'contentType': 'track',
+      'action': 'unlike',
+    });
 
     if (response.statusCode != 200) {
       throw ServerException(message: 'Failed to unlike song');
@@ -85,7 +93,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<UserProfile> getBudProfile(String username) async {
-    final response = await _dioClient.get('/$username');
+    final response = await _dioClient.post(ApiConfig.budProfile, data: {
+      'username': username,
+    });
 
     if (response.statusCode == 200) {
       return UserProfile.fromJson(json.decode(response.data));
@@ -96,8 +106,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<void> updateMyProfile(UserProfile profile) async {
-    final response = await _dioClient.put(
-      '/me',
+    final response = await _dioClient.post(
+      ApiConfig.updateProfile,
       data: profile.toJson(),
     );
 
@@ -108,7 +118,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<void> updateMyLikes() async {
-    final response = await _dioClient.post('/me/likes/update');
+    final response = await _dioClient.post(ApiConfig.updateLikes);
 
     if (response.statusCode != 200) {
       throw ServerException(message: 'Failed to update likes');
@@ -117,7 +127,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<CommonArtist>> getLikedArtists() async {
-    final response = await _dioClient.get('/me/liked-artists');
+    final response = await _dioClient.post(ApiConfig.myLikedArtists);
 
     if (response.statusCode == 200) {
       final List<dynamic> artistsJson = json.decode(response.data);
@@ -129,7 +139,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<CommonAlbum>> getLikedAlbums() async {
-    final response = await _dioClient.get('/me/liked-albums');
+    final response = await _dioClient.post(ApiConfig.myLikedAlbums);
 
     if (response.statusCode == 200) {
       final List<dynamic> albumsJson = json.decode(response.data);
@@ -141,7 +151,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<CommonGenre>> getLikedGenres() async {
-    final response = await _dioClient.get('/me/liked-genres');
+    final response = await _dioClient.post(ApiConfig.myLikedGenres);
 
     if (response.statusCode == 200) {
       final List<dynamic> genresJson = json.decode(response.data);
@@ -153,7 +163,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<CommonArtist>> getTopArtists() async {
-    final response = await _dioClient.get('/me/top-artists');
+    final response = await _dioClient.post(ApiConfig.myTopArtists);
 
     if (response.statusCode == 200) {
       final List<dynamic> artistsJson = json.decode(response.data);
@@ -165,7 +175,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getTopTracks() async {
-    final response = await _dioClient.get('/me/top-tracks');
+    final response = await _dioClient.post(ApiConfig.myTopTracks);
 
     if (response.statusCode == 200) {
       final List<dynamic> tracksJson = json.decode(response.data);
@@ -177,7 +187,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<CommonGenre>> getTopGenres() async {
-    final response = await _dioClient.get('/me/top-genres');
+    final response = await _dioClient.post(ApiConfig.myTopGenres);
 
     if (response.statusCode == 200) {
       final List<dynamic> genresJson = json.decode(response.data);
@@ -189,7 +199,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<CommonAnime>> getTopAnime() async {
-    final response = await _dioClient.get('/me/top-anime');
+    final response = await _dioClient.post(ApiConfig.myTopAnime);
 
     if (response.statusCode == 200) {
       final List<dynamic> animeJson = json.decode(response.data);
@@ -201,7 +211,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<CommonManga>> getTopManga() async {
-    final response = await _dioClient.get('/me/top-manga');
+    final response = await _dioClient.post(ApiConfig.myTopManga);
 
     if (response.statusCode == 200) {
       final List<dynamic> mangaJson = json.decode(response.data);
@@ -213,7 +223,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<String> getSpotifyAuthUrl() async {
-    final response = await _dioClient.get('/auth/spotify/url');
+    final response = await _dioClient.get(ApiConfig.serviceLogin);
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.data);
@@ -226,7 +236,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> connectSpotify(String code) async {
     final response = await _dioClient.post(
-      '/auth/spotify/callback',
+      ApiConfig.spotifyConnect,
       data: json.encode({'code': code}),
     );
 
@@ -237,16 +247,13 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<void> disconnectSpotify() async {
-    final response = await _dioClient.post('/auth/spotify/disconnect');
-
-    if (response.statusCode != 200) {
-      throw ServerException(message: 'Failed to disconnect Spotify');
-    }
+    // This endpoint is not in the requirements, so we'll throw an error
+    throw ServerException(message: 'Disconnect Spotify not supported by API');
   }
 
   @override
   Future<String> getYTMusicAuthUrl() async {
-    final response = await _dioClient.get('/auth/ytmusic/url');
+    final response = await _dioClient.get(ApiConfig.serviceLogin);
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.data);
@@ -259,7 +266,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> connectYTMusic(String code) async {
     final response = await _dioClient.post(
-      '/auth/ytmusic/callback',
+      ApiConfig.ytmusicConnect,
       data: json.encode({'code': code}),
     );
 
@@ -270,16 +277,13 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<void> disconnectYTMusic() async {
-    final response = await _dioClient.post('/auth/ytmusic/disconnect');
-
-    if (response.statusCode != 200) {
-      throw ServerException(message: 'Failed to disconnect YouTube Music');
-    }
+    // This endpoint is not in the requirements, so we'll throw an error
+    throw ServerException(message: 'Disconnect YouTube Music not supported by API');
   }
 
   @override
   Future<String> getMALAuthUrl() async {
-    final response = await _dioClient.get('/auth/mal/url');
+    final response = await _dioClient.get(ApiConfig.serviceLogin);
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.data);
@@ -292,7 +296,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> connectMAL(String code) async {
     final response = await _dioClient.post(
-      '/auth/mal/callback',
+      ApiConfig.malConnect,
       data: json.encode({'code': code}),
     );
 
@@ -303,16 +307,13 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<void> disconnectMAL() async {
-    final response = await _dioClient.post('/auth/mal/disconnect');
-
-    if (response.statusCode != 200) {
-      throw ServerException(message: 'Failed to disconnect MyAnimeList');
-    }
+    // This endpoint is not in the requirements, so we'll throw an error
+    throw ServerException(message: 'Disconnect MyAnimeList not supported by API');
   }
 
   @override
   Future<String> getLastFMAuthUrl() async {
-    final response = await _dioClient.get('/auth/lastfm/url');
+    final response = await _dioClient.get(ApiConfig.serviceLogin);
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.data);
@@ -325,7 +326,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> connectLastFM(String code) async {
     final response = await _dioClient.post(
-      '/auth/lastfm/callback',
+      ApiConfig.lastfmConnect,
       data: json.encode({'code': code}),
     );
 
@@ -336,31 +337,19 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<void> disconnectLastFM() async {
-    final response = await _dioClient.post('/auth/lastfm/disconnect');
-
-    if (response.statusCode != 200) {
-      throw ServerException(message: 'Failed to disconnect Last.fm');
-    }
+    // This endpoint is not in the requirements, so we'll throw an error
+    throw ServerException(message: 'Disconnect Last.fm not supported by API');
   }
 
   @override
   Future<void> saveLocation(double latitude, double longitude) async {
-    final response = await _dioClient.post(
-      '/me/location',
-      data: json.encode({
-        'latitude': latitude,
-        'longitude': longitude,
-      }),
-    );
-
-    if (response.statusCode != 200) {
-      throw ServerException(message: 'Failed to save location');
-    }
+    // This endpoint is not in the requirements, so we'll throw an error
+    throw ServerException(message: 'Save location not supported by API');
   }
 
   @override
   Future<List<Track>> getPlayedTracks() async {
-    final response = await _dioClient.get('/me/played-tracks');
+    final response = await _dioClient.post(ApiConfig.myPlayedTracks);
 
     if (response.statusCode == 200) {
       final List<dynamic> tracksJson = json.decode(response.data);
@@ -372,26 +361,13 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getPlayedTracksWithLocation() async {
-    final response = await _dioClient.get('/me/played-tracks/with-location');
-
-    if (response.statusCode == 200) {
-      final List<dynamic> tracksJson = json.decode(response.data);
-      return tracksJson.map((json) => Track.fromJson(json)).toList();
-    } else {
-      throw ServerException(
-          message: 'Failed to get played tracks with location');
-    }
+    // This endpoint is not in the requirements, so we'll use the regular played tracks
+    return getPlayedTracks();
   }
 
   @override
   Future<List<Track>> getCurrentlyPlayedTracks() async {
-    final response = await _dioClient.get('/me/currently-playing');
-
-    if (response.statusCode == 200) {
-      final List<dynamic> tracksJson = json.decode(response.data);
-      return tracksJson.map((json) => Track.fromJson(json)).toList();
-    } else {
-      throw ServerException(message: 'Failed to get currently played tracks');
-    }
+    // This endpoint is not in the requirements, so we'll throw an error
+    throw ServerException(message: 'Currently played tracks not supported by API');
   }
 }

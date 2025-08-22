@@ -74,12 +74,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      final usersMap =
-          await _chatRepository.getChannelUsers(event.channelId.toString());
-      final users = usersMap.entries
-          .map((e) => ChannelUser.fromJson(e.value as Map<String, dynamic>))
-          .toList();
-      emit(ChatChannelUsersLoaded(users));
+      // This functionality is not supported by the API
+      emit(ChatError('Get channel users not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -157,8 +153,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      await _chatRepository.joinChannel(event.channelId);
-      emit(ChatChannelJoinedSuccess());
+      // This functionality is not supported by the API
+      emit(ChatError('Join channel not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -169,8 +165,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     Emitter<ChatState> emit,
   ) async {
     try {
-      await _chatRepository.requestJoinChannel(event.channelId.toString());
-      emit(ChatChannelJoinRequestedSuccess());
+      // This functionality is not supported by the API
+      emit(ChatError('Request join channel not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -211,9 +207,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      final roles =
-          await _chatRepository.checkChannelRoles(event.channelId.toString());
-      emit(ChatChannelRolesLoaded(roles));
+      // This functionality is not supported by the API
+      emit(ChatError('Check channel roles not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -241,12 +236,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      final invitationsData = await _chatRepository
-          .getChannelInvitations(event.channelId.toString());
-      final invitations = invitationsData
-          .map((data) => ChannelInvitation.fromJson(data))
-          .toList();
-      emit(ChatChannelInvitationsLoaded(invitations));
+      // This functionality is not supported by the API
+      emit(ChatError('Get channel invitations not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -258,11 +249,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      final blockedUsersData = await _chatRepository
-          .getChannelBlockedUsers(event.channelId.toString());
-      final blockedUsers =
-          blockedUsersData.map((data) => UserProfile.fromJson(data)).toList();
-      emit(ChatChannelBlockedUsersLoaded(blockedUsers));
+      // This functionality is not supported by the API
+      emit(ChatError('Get channel blocked users not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -274,12 +262,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      final invitationsData =
-          await _chatRepository.getUserInvitations(event.userId.toString());
-      final invitations = invitationsData
-          .map((data) => ChannelInvitation.fromJson(data))
-          .toList();
-      emit(ChatUserInvitationsLoaded(invitations));
+      // This functionality is not supported by the API
+      emit(ChatError('Get user invitations not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -336,10 +320,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      final statisticsData =
-          await _chatRepository.getChannelStatistics(event.channelId);
-      final statistics = ChannelStatistics.fromJson(statisticsData);
-      emit(ChatChannelStatisticsLoaded(statistics));
+      // This functionality is not supported by the API
+      emit(ChatError('Get channel statistics not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }

@@ -49,11 +49,12 @@ class LikesBloc extends Bloc<LikesEvent, LikesState> {
     Emitter<LikesState> emit,
   ) async {
     try {
-      await _authRepository.getSpotifyAuthUrl();
-      emit(const LikesUpdateSuccess('Please connect your Spotify account'));
+      // Spotify connection is now handled by the centralized AuthBloc
+      // Use the service connection page instead
+      emit(const LikesUpdateSuccess('Please connect your Spotify account from the service connection page'));
     } catch (e) {
       emit(LikesUpdateFailure(
-        error: 'Failed to get Spotify auth URL: ${e.toString()}',
+        error: 'Spotify connection is now handled centrally. Please use the service connection page.',
       ));
     }
   }

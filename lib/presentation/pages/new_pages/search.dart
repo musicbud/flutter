@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../blocs/profile/profile_bloc.dart';
-import '../../../blocs/profile/profile_event.dart';
-import '../../../blocs/profile/profile_state.dart';
+import '../../../blocs/content/content_bloc.dart';
+import '../../../blocs/content/content_event.dart';
+import '../../../blocs/bud/bud_bloc.dart';
+import '../../../blocs/bud/bud_event.dart';
 import '../../../domain/models/common_track.dart';
 import '../../../domain/models/common_artist.dart';
+import '../../../domain/models/common_album.dart';
 import '../../../domain/models/common_genre.dart';
-import '../../../domain/models/user_profile.dart';
-import '../../../domain/models/channel.dart';
+import '../../../domain/models/common_anime.dart';
+import '../../../domain/models/common_manga.dart';
+import '../../../domain/models/bud_match.dart';
 import '../../constants/app_constants.dart';
 import '../../widgets/common/app_scaffold.dart';
 import '../../widgets/common/app_app_bar.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/app_text_field.dart';
-import '../../mixins/page_mixin.dart';
+import '../../widgets/error_message.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -22,63 +25,41 @@ class SearchPage extends StatefulWidget {
   State<SearchPage> createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> with PageMixin, TickerProviderStateMixin {
+class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
   late TabController _tabController;
   final TextEditingController _searchController = TextEditingController();
-  final ScrollController _scrollController = ScrollController();
-  String _currentQuery = '';
-  String _selectedCategory = 'all';
-  String _selectedFilter = 'relevance';
+  final Map<String, List<dynamic>> _searchResults = {};
+  final Map<String, bool> _isLoading = {};
+  final Map<String, String?> _errorMessages = {};
 
-  final List<String> _categories = [
-    'all',
-    'music',
-    'users',
-    'channels',
-    'stories',
+  final List<String> _searchTypes = [
+    'tracks',
+    'artists',
+    'albums',
     'genres',
-  ];
-
-  final List<String> _filters = [
-    'relevance',
-    'newest',
-    'popular',
-    'rating',
+    'anime',
+    'manga',
+    'buds',
   ];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: _categories.length, vsync: this);
-    _tabController.addListener(() {
-      setState(() {
-        _selectedCategory = _categories[_tabController.index];
-      });
-    });
+    _tabController = TabController(length: _searchTypes.length, vsync: this);
 
-    _scrollController.addListener(_onScroll);
+    // Initialize search results and loading states
+    for (String type in _searchTypes) {
+      _searchResults[type] = [];
+      _isLoading[type] = false;
+      _errorMessages[type] = null;
+    }
   }
 
   @override
   void dispose() {
     _tabController.dispose();
-    _scrollController.dispose();
     _searchController.dispose();
     super.dispose();
-  }
-
-  void _onScroll() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent * 0.8) {
-      _loadMoreResults();
-    }
-  }
-
-  void _loadMoreResults() {
-    if (_currentQuery.isNotEmpty) {
-      // TODO: Implement search load more
-      print('Load more for: $_currentQuery, $_selectedCategory, $_selectedFilter');
-    }
   }
 
   @override
@@ -88,19 +69,15 @@ class _SearchPageState extends State<SearchPage> with PageMixin, TickerProviderS
         title: 'Search',
         actions: [
           IconButton(
-            icon: const Icon(Icons.filter_list),
-            onPressed: () => _showAdvancedFilters(),
-          ),
-          IconButton(
-            icon: const Icon(Icons.history),
-            onPressed: () => _showSearchHistory(),
+            icon: const Icon(Icons.clear),
+            onPressed: _clearSearch,
           ),
         ],
       ),
       body: Column(
         children: [
           _buildSearchBar(),
-          _buildFilterChips(),
+          _buildSearchLimitations(),
           _buildTabBar(),
           Expanded(
             child: _buildTabView(),
@@ -113,66 +90,56 @@ class _SearchPageState extends State<SearchPage> with PageMixin, TickerProviderS
   Widget _buildSearchBar() {
     return Container(
       margin: const EdgeInsets.all(16),
-      child: AppTextField(
-        controller: _searchController,
-        labelText: 'Search MusicBud',
-        hintText: 'Search for music, users, channels, stories...',
-        prefixIcon: const Icon(Icons.search),
-        suffixIcon: _currentQuery.isNotEmpty
-            ? IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: _clearSearch,
-              )
-            : null,
-        onChanged: (value) {
-          setState(() {
-            _currentQuery = value;
-          });
-          if (value.isNotEmpty) {
-            _performSearch(value);
-          }
-        },
-        onSubmitted: _performSearch,
+      child: Row(
+        children: [
+          Expanded(
+            child:             AppTextField(
+              controller: _searchController,
+              labelText: 'Search',
+              hintText: 'Enter your search query...',
+              onSubmitted: (value) => _performSearch(),
+            ),
+          ),
+          const SizedBox(width: 12),
+          AppButton(
+            text: 'Search',
+            onPressed: _performSearch,
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildFilterChips() {
+  Widget _buildSearchLimitations() {
     return Container(
-      height: 50,
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: _filters.map((filter) => Container(
-          margin: const EdgeInsets.only(right: 8),
-          child: FilterChip(
-            label: Text(filter),
-            selected: _selectedFilter == filter,
-            onSelected: (selected) {
-              setState(() {
-                _selectedFilter = filter;
-              });
-              if (_currentQuery.isNotEmpty) {
-                _performSearch(_currentQuery);
-              }
-            },
-            backgroundColor: AppConstants.surfaceColor,
-            selectedColor: AppConstants.primaryColor,
-            labelStyle: TextStyle(
-              color: _selectedFilter == filter ? Colors.white : AppConstants.textColor,
-            ),
-            side: BorderSide(
-              color: _selectedFilter == filter ? AppConstants.primaryColor : AppConstants.borderColor,
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.orange.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.info, color: Colors.orange, size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Search functionality is limited. Content search is not supported by the API. You can browse your existing content instead.',
+              style: TextStyle(
+                color: Colors.orange,
+                fontSize: 12,
+              ),
             ),
           ),
-        )).toList(),
+        ],
       ),
     );
   }
 
   Widget _buildTabBar() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(25),
@@ -187,641 +154,426 @@ class _SearchPageState extends State<SearchPage> with PageMixin, TickerProviderS
         labelColor: Colors.white,
         unselectedLabelColor: AppConstants.textSecondaryColor,
         isScrollable: true,
-        tabs: _categories.map((category) => Tab(
-          text: _getCategoryDisplayName(category),
-        )).toList(),
+        tabs: _searchTypes.map((type) => Tab(text: type.toUpperCase())).toList(),
       ),
     );
   }
 
   Widget _buildTabView() {
-    if (_currentQuery.isEmpty) {
-      return _buildSearchSuggestions();
-    }
-
     return TabBarView(
       controller: _tabController,
-      children: _categories.map((category) => _buildSearchResults(category)).toList(),
+      children: _searchTypes.map((type) => _buildSearchTab(type)).toList(),
     );
   }
 
-  Widget _buildSearchSuggestions() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+  Widget _buildSearchTab(String searchType) {
+    if (_errorMessages[searchType] != null) {
+      return ErrorMessage(
+        message: _errorMessages[searchType]!,
+        onRetry: () => _performSearch(),
+      );
+    }
+
+    if (_isLoading[searchType] == true) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    final results = _searchResults[searchType] ?? [];
+
+    if (results.isEmpty && _searchController.text.isNotEmpty) {
+      return _buildNoResults(searchType);
+    }
+
+    if (results.isEmpty) {
+      return _buildEmptyState(searchType);
+    }
+
+    return _buildSearchResults(searchType, results);
+  }
+
+  Widget _buildEmptyState(String searchType) {
+    return Center(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildSectionTitle('Popular Searches'),
-          _buildPopularSearches(),
-          const SizedBox(height: 24),
-          _buildSectionTitle('Recent Searches'),
-          _buildRecentSearches(),
-          const SizedBox(height: 24),
-          _buildSectionTitle('Trending Topics'),
-          _buildTrendingTopics(),
+          Icon(
+            _getSearchTypeIcon(searchType),
+            size: 64,
+            color: AppConstants.textSecondaryColor,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No ${searchType} to display',
+            style: TextStyle(
+              color: AppConstants.textColor,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Start searching or browse your existing content',
+            style: TextStyle(
+              color: AppConstants.textSecondaryColor,
+              fontSize: 14,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSearchResults(String category) {
-        // TODO: Implement search results
-    return const Center(child: Text('Search functionality coming soon'));
-  }
-
-  Widget _buildPopularSearches() {
-    final popularSearches = [
-      'Pop Music',
-      'Rock Bands',
-      'Jazz Artists',
-      'Electronic Music',
-      'Hip Hop',
-      'Classical',
-      'Country Music',
-      'R&B',
-    ];
-
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: popularSearches.map((search) => ActionChip(
-        label: Text(search),
-        onPressed: () => _performSearch(search),
-        backgroundColor: AppConstants.surfaceColor,
-        labelStyle: const TextStyle(color: Colors.white),
-        side: BorderSide(color: AppConstants.borderColor),
-      )).toList(),
+  Widget _buildNoResults(String searchType) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.search_off,
+            size: 64,
+            color: AppConstants.textSecondaryColor,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'No ${searchType} found',
+            style: TextStyle(
+              color: AppConstants.textColor,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Try a different search term or browse your existing content',
+            style: TextStyle(
+              color: AppConstants.textSecondaryColor,
+              fontSize: 14,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildRecentSearches() {
-    final recentSearches = [
-      'Ed Sheeran',
-      'Taylor Swift',
-      'The Weeknd',
-      'Drake',
-      'Ariana Grande',
-    ];
-
-    return Column(
-      children: recentSearches.map((search) => ListTile(
-        leading: const Icon(Icons.history, color: Colors.white70),
-        title: Text(
-          search,
-          style: const TextStyle(color: Colors.white),
-        ),
-        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white70, size: 16),
-        onTap: () => _performSearch(search),
-      )).toList(),
-    );
-  }
-
-  Widget _buildTrendingTopics() {
-    final trendingTopics = [
-      {'topic': 'Summer Hits 2024', 'count': '2.3K'},
-      {'topic': 'Indie Rock', 'count': '1.8K'},
-      {'topic': 'K-Pop', 'count': '1.5K'},
-      {'topic': 'Lo-Fi', 'count': '1.2K'},
-    ];
-
-    return Column(
-      children: trendingTopics.map((topic) => ListTile(
-        leading: const Icon(Icons.trending_up, color: AppConstants.primaryColor),
-        title: Text(
-          topic['topic']!,
-          style: const TextStyle(color: Colors.white),
-        ),
-        subtitle: Text(
-          '${topic['count']} searches',
-          style: const TextStyle(color: Colors.white70),
-        ),
-        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white70, size: 16),
-        onTap: () => _performSearch(topic['topic']!),
-      )).toList(),
-    );
-  }
-
-  Widget _buildResultsList(List<dynamic> results, String category) {
+  Widget _buildSearchResults(String searchType, List<dynamic> results) {
     return ListView.builder(
-      controller: _scrollController,
       padding: const EdgeInsets.all(16),
       itemCount: results.length,
       itemBuilder: (context, index) {
-        final result = results[index];
-        return _buildResultItem(result, category);
+        final item = results[index];
+        return _buildSearchResultItem(searchType, item);
       },
     );
   }
 
-  Widget _buildResultItem(dynamic result, String category) {
-    switch (category) {
-      case 'music':
-        if (result is CommonTrack) {
-          return _buildTrackResult(result);
-        } else if (result is CommonArtist) {
-          return _buildArtistResult(result);
-        } else if (result is CommonGenre) {
-          return _buildGenreResult(result);
+  Widget _buildSearchResultItem(String searchType, dynamic item) {
+    switch (searchType) {
+      case 'tracks':
+        if (item is CommonTrack) {
+          return _buildTrackItem(item);
         }
         break;
-      case 'users':
-        if (result is UserProfile) {
-          return _buildUserResult(result);
+      case 'artists':
+        if (item is CommonArtist) {
+          return _buildArtistItem(item);
         }
         break;
-      case 'channels':
-        if (result is Channel) {
-          return _buildChannelResult(result);
+      case 'albums':
+        if (item is CommonAlbum) {
+          return _buildAlbumItem(item);
         }
         break;
-      case 'stories':
-        // TODO: Implement story result
+      case 'genres':
+        if (item is CommonGenre) {
+          return _buildGenreItem(item);
+        }
         break;
+      case 'anime':
+        if (item is CommonAnime) {
+          return _buildAnimeItem(item);
+        }
+        break;
+      case 'manga':
+        if (item is CommonManga) {
+          return _buildMangaItem(item);
+        }
+        break;
+      case 'buds':
+        if (item is BudMatch) {
+          return _buildBudItem(item);
+        }
         break;
     }
 
     return const SizedBox.shrink();
   }
 
-  Widget _buildTrackResult(CommonTrack track) {
+  Widget _buildTrackItem(CommonTrack track) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      color: AppConstants.surfaceColor,
+      margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        leading: Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: AppConstants.primaryColor.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Icon(
-            Icons.music_note,
-            color: Colors.white70,
-          ),
+        leading: CircleAvatar(
+          backgroundColor: AppConstants.primaryColor.withOpacity(0.2),
+          child: Icon(Icons.music_note, color: AppConstants.primaryColor),
         ),
         title: Text(
           track.name,
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: AppConstants.textColor),
         ),
-                    subtitle: Text(
-              track.artistName ?? 'Unknown Artist',
-              style: const TextStyle(color: Colors.white70),
-            ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              onPressed: () => _playTrack(track.id),
-              icon: const Icon(
-                Icons.play_circle_outline,
-                color: Colors.white70,
-              ),
-            ),
-            Icon(
-              track.isLiked ? Icons.favorite : Icons.favorite_border,
-              color: track.isLiked ? Colors.red : Colors.white70,
-            ),
-          ],
+        subtitle: Text(
+                          track.artistName ?? 'Unknown Artist',
+          style: TextStyle(color: AppConstants.textSecondaryColor),
         ),
-        onTap: () => _showTrackDetails(track),
+        trailing: IconButton(
+          icon: Icon(
+            track.isLiked ? Icons.favorite : Icons.favorite_border,
+            color: track.isLiked ? Colors.red : AppConstants.textSecondaryColor,
+          ),
+          onPressed: () => _toggleLike(track.id, 'track'),
+        ),
       ),
     );
   }
 
-  Widget _buildArtistResult(CommonArtist artist) {
+  Widget _buildArtistItem(CommonArtist artist) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      color: AppConstants.surfaceColor,
+      margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: AppConstants.primaryColor.withOpacity(0.3),
-          child: Text(
-            artist.name.isNotEmpty ? artist.name[0].toUpperCase() : 'A',
-            style: const TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          backgroundColor: AppConstants.primaryColor.withOpacity(0.2),
+          child: Icon(Icons.person, color: AppConstants.primaryColor),
         ),
         title: Text(
           artist.name,
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: AppConstants.textColor),
         ),
-                    subtitle: Text(
-              '${artist.followers ?? 0} followers',
-              style: const TextStyle(color: Colors.white70),
-            ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              onPressed: () => _followArtist(artist.id),
-              icon:             Icon(
-              Icons.person_add,
-              color: Colors.white70,
-            ),
-            ),
-            Icon(
-              artist.isLiked ? Icons.favorite : Icons.favorite_border,
-              color: artist.isLiked ? Colors.red : Colors.white70,
-            ),
-          ],
+        subtitle: Text(
+          '${artist.followers ?? 0} followers',
+          style: TextStyle(color: AppConstants.textSecondaryColor),
         ),
-        onTap: () => _showArtistDetails(artist),
+        trailing: IconButton(
+          icon: Icon(
+            artist.isLiked ? Icons.favorite : Icons.favorite_border,
+            color: artist.isLiked ? Colors.red : AppConstants.textSecondaryColor,
+          ),
+          onPressed: () => _toggleLike(artist.id, 'artist'),
+        ),
       ),
     );
   }
 
-  Widget _buildGenreResult(CommonGenre genre) {
+  Widget _buildAlbumItem(CommonAlbum album) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      color: AppConstants.surfaceColor,
+      margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        leading: Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: AppConstants.primaryColor.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(8),
+        leading: CircleAvatar(
+          backgroundColor: AppConstants.primaryColor.withOpacity(0.2),
+          child: Icon(Icons.album, color: AppConstants.primaryColor),
+        ),
+        title: Text(
+          album.name,
+          style: TextStyle(color: AppConstants.textColor),
+        ),
+        subtitle: Text(
+                          album.artistName ?? 'Unknown Artist',
+          style: TextStyle(color: AppConstants.textSecondaryColor),
+        ),
+        trailing: IconButton(
+          icon: Icon(
+            album.isLiked ? Icons.favorite : Icons.favorite_border,
+            color: album.isLiked ? Colors.red : AppConstants.textSecondaryColor,
           ),
-          child: const Icon(
-            Icons.category,
-            color: Colors.white70,
-          ),
+          onPressed: () => _toggleLike(album.id, 'album'),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildGenreItem(CommonGenre genre) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: AppConstants.primaryColor.withOpacity(0.2),
+          child: Icon(Icons.category, color: AppConstants.primaryColor),
         ),
         title: Text(
           genre.name,
-          style: const TextStyle(color: Colors.white),
+          style: TextStyle(color: AppConstants.textColor),
         ),
         subtitle: Text(
-          '0 tracks',
-          style: const TextStyle(color: Colors.white70),
+                          'Genre',
+          style: TextStyle(color: AppConstants.textSecondaryColor),
         ),
         trailing: IconButton(
-          onPressed: () => _exploreGenre(genre.id),
-          icon: const Icon(
-            Icons.explore,
-            color: Colors.white70,
+          icon: Icon(
+            genre.isLiked ? Icons.favorite : Icons.favorite_border,
+            color: genre.isLiked ? Colors.red : AppConstants.textSecondaryColor,
           ),
+          onPressed: () => _toggleLike(genre.id, 'genre'),
         ),
-        onTap: () => _showGenreDetails(genre),
       ),
     );
   }
 
-  Widget _buildUserResult(UserProfile user) {
+  Widget _buildAnimeItem(CommonAnime anime) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      color: AppConstants.surfaceColor,
+      margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: AppConstants.primaryColor.withOpacity(0.3),
-          backgroundImage: user.avatarUrl != null
-              ? NetworkImage(user.avatarUrl!)
-              : null,
-          child: user.avatarUrl == null
-              ? Text(
-                  user.username.isNotEmpty ? user.username[0].toUpperCase() : 'U',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                )
-              : null,
+          backgroundColor: AppConstants.primaryColor.withOpacity(0.2),
+          child: Icon(Icons.animation, color: AppConstants.primaryColor),
         ),
         title: Text(
-          user.displayName ?? user.username,
-          style: const TextStyle(color: Colors.white),
+          anime.title,
+          style: TextStyle(color: AppConstants.textColor),
         ),
         subtitle: Text(
-          user.bio ?? 'No bio available',
-          style: const TextStyle(color: Colors.white70),
+          anime.type ?? 'Unknown Type',
+          style: TextStyle(color: AppConstants.textSecondaryColor),
         ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              onPressed: () => _sendBudRequest(user.id),
-              icon: const Icon(
-                Icons.person_add,
-                color: Colors.white70,
-              ),
-            ),
-            IconButton(
-              onPressed: () => _viewUserProfile(user.id),
-              icon: const Icon(
-                Icons.person,
-                color: Colors.white70,
-              ),
-            ),
-          ],
+        trailing: IconButton(
+          icon: Icon(
+            anime.isLiked ? Icons.favorite : Icons.favorite_border,
+            color: anime.isLiked ? Colors.red : AppConstants.textSecondaryColor,
+          ),
+          onPressed: () => _toggleLike(anime.id, 'anime'),
         ),
-        onTap: () => _viewUserProfile(user.id),
       ),
     );
   }
 
-  Widget _buildChannelResult(Channel channel) {
+  Widget _buildMangaItem(CommonManga manga) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      color: AppConstants.surfaceColor,
+      margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        leading: Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: AppConstants.primaryColor.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Icon(
-            Icons.chat,
-            color: Colors.white70,
-          ),
+        leading: CircleAvatar(
+          backgroundColor: AppConstants.primaryColor.withOpacity(0.2),
+          child: Icon(Icons.book, color: AppConstants.primaryColor),
         ),
         title: Text(
-          channel.name,
-          style: const TextStyle(color: Colors.white),
+          manga.title,
+          style: TextStyle(color: AppConstants.textColor),
         ),
         subtitle: Text(
-          '${channel.memberCount} members',
-          style: const TextStyle(color: Colors.white70),
+          manga.type ?? 'Unknown Type',
+          style: TextStyle(color: AppConstants.textSecondaryColor),
         ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              onPressed: () => _joinChannel(channel.id),
-              icon:                 Icon(
-                  Icons.login,
-                  color: Colors.white70,
-                ),
-            ),
-            IconButton(
-              onPressed: () => _viewChannelDetails(channel.id),
-              icon: const Icon(
-                Icons.info,
-                color: Colors.white70,
-              ),
-            ),
-          ],
+        trailing: IconButton(
+          icon: Icon(
+            manga.isLiked ? Icons.favorite : Icons.favorite_border,
+            color: manga.isLiked ? Colors.red : AppConstants.textSecondaryColor,
+          ),
+          onPressed: () => _toggleLike(manga.id, 'manga'),
         ),
-        onTap: () => _viewChannelDetails(channel.id),
       ),
     );
   }
 
-  Widget _buildStoryResult(dynamic story) {
+  Widget _buildBudItem(BudMatch bud) {
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      color: AppConstants.surfaceColor,
+      margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
-        leading: Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: AppConstants.primaryColor.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Icon(
-            Icons.article,
-            color: Colors.white70,
-          ),
+        leading: CircleAvatar(
+          backgroundColor: AppConstants.primaryColor.withOpacity(0.2),
+          child: Icon(Icons.person, color: AppConstants.primaryColor),
         ),
         title: Text(
-          story.title.isNotEmpty ? story.title : 'Untitled Story',
-          style: const TextStyle(color: Colors.white),
+          bud.username,
+          style: TextStyle(color: AppConstants.textColor),
         ),
         subtitle: Text(
-          'by ${story.authorName}',
-          style: const TextStyle(color: Colors.white70),
+          '${bud.matchScore ?? 0}% match',
+          style: TextStyle(color: AppConstants.textSecondaryColor),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.favorite,
-              color: story.isLiked ? Colors.red : Colors.white70,
+            IconButton(
+              icon: Icon(Icons.person_add, color: AppConstants.primaryColor),
+              onPressed: () => _sendBudRequest(bud.id),
             ),
-            const SizedBox(width: 4),
-            Text(
-              '${story.likesCount}',
-              style: const TextStyle(color: Colors.white70),
+            IconButton(
+              icon: Icon(Icons.message, color: AppConstants.primaryColor),
+              onPressed: () => _openChat(bud.id),
             ),
           ],
         ),
-        onTap: () => _viewStory(story.id),
       ),
     );
   }
 
-  Widget _buildNoResultsFound(String category) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            _getCategoryIcon(category),
-            size: 64,
-            color: Colors.white54,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'No ${_getCategoryDisplayName(category)} found',
-            style: TextStyle(
-              color: AppConstants.textColor,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Try adjusting your search terms or filters',
-            style: TextStyle(
-              color: AppConstants.textSecondaryColor,
-              fontSize: 14,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildErrorWidget(String error) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(
-            Icons.error_outline,
-            size: 64,
-            color: Colors.red,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Search Error',
-            style: TextStyle(
-              color: AppConstants.textColor,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            error,
-            style: TextStyle(
-              color: AppConstants.textSecondaryColor,
-              fontSize: 14,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 16),
-          AppButton(
-            text: 'Retry',
-            onPressed: () => _performSearch(_currentQuery),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: AppConstants.textColor,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
-  // Helper methods
-  String _getCategoryDisplayName(String category) {
-    switch (category) {
-      case 'all':
-        return 'All';
-      case 'music':
-        return 'Music';
-      case 'users':
-        return 'Users';
-      case 'channels':
-        return 'Channels';
-      case 'stories':
-        return 'Stories';
-      case 'genres':
-        return 'Genres';
-      default:
-        return category;
-    }
-  }
-
-  IconData _getCategoryIcon(String category) {
-    switch (category) {
-      case 'music':
+  IconData _getSearchTypeIcon(String searchType) {
+    switch (searchType) {
+      case 'tracks':
         return Icons.music_note;
-      case 'users':
-        return Icons.people;
-      case 'channels':
-        return Icons.chat;
-      case 'stories':
-        return Icons.article;
+      case 'artists':
+        return Icons.person;
+      case 'albums':
+        return Icons.album;
       case 'genres':
         return Icons.category;
+      case 'anime':
+        return Icons.animation;
+      case 'manga':
+        return Icons.book;
+      case 'buds':
+        return Icons.people;
       default:
         return Icons.search;
     }
   }
 
-  List<dynamic> _filterResultsByCategory(List<dynamic> results, String category) {
-    if (category == 'all') return results;
-
-    return results.where((result) {
-      switch (category) {
-        case 'music':
-          return result is CommonTrack || result is CommonArtist || result is CommonGenre;
-        case 'users':
-          return result is UserProfile;
-        case 'channels':
-          return result is Channel;
-        case 'stories':
-          return false; // TODO: Implement story filtering
-        case 'genres':
-          return result is CommonGenre;
-        default:
-          return true;
-      }
-    }).toList();
-  }
-
-  // Action methods
-  void _performSearch(String query) {
-    if (query.trim().isNotEmpty) {
-      // TODO: Implement search
-      print('Search for: ${query.trim()}, $_selectedCategory, $_selectedFilter');
+  void _performSearch() {
+    final query = _searchController.text.trim();
+    if (query.isEmpty) {
+      _showErrorSnackBar('Please enter a search query');
+      return;
     }
+
+    // Since search is not supported by the API, we'll show an error message
+    _showErrorSnackBar('Content search is not supported by the API. Please browse your existing content instead.');
+
+    // Clear previous results
+    for (String type in _searchTypes) {
+      _searchResults[type] = [];
+      _errorMessages[type] = 'Search functionality is not supported by the API';
+    }
+    setState(() {});
   }
 
   void _clearSearch() {
     _searchController.clear();
-    setState(() {
-      _currentQuery = '';
-    });
+    for (String type in _searchTypes) {
+      _searchResults[type] = [];
+      _errorMessages[type] = null;
+    }
+    setState(() {});
   }
 
-  void _showAdvancedFilters() {
-    // Implement advanced filters dialog
+  void _toggleLike(String id, String type) {
+    final event = LikeItem(id: id, type: type);
+    context.read<ContentBloc>().add(event);
   }
 
-  void _showSearchHistory() {
-    // Implement search history dialog
+  void _sendBudRequest(String budId) {
+    final event = BudRequestSent(userId: budId);
+    context.read<BudBloc>().add(event);
   }
 
-  void _playTrack(String trackId) {
-    // Implement play track logic
+  void _openChat(String budId) {
+    // TODO: Implement chat opening
+    _showErrorSnackBar('Chat functionality not yet implemented');
   }
 
-  void _showTrackDetails(CommonTrack track) {
-    // Navigate to track details page
-  }
-
-  void _followArtist(String artistId) {
-    // Implement follow artist logic
-  }
-
-  void _showArtistDetails(CommonArtist artist) {
-    // Navigate to artist details page
-  }
-
-  void _exploreGenre(String genreId) {
-    // Navigate to genre exploration page
-  }
-
-  void _showGenreDetails(CommonGenre genre) {
-    // Navigate to genre details page
-  }
-
-  void _sendBudRequest(String userId) {
-    // Implement send bud request logic
-  }
-
-  void _viewUserProfile(String userId) {
-    // Navigate to user profile page
-  }
-
-  void _joinChannel(String channelId) {
-    // Implement join/leave channel logic
-  }
-
-  void _viewChannelDetails(String channelId) {
-    // Navigate to channel details page
-  }
-
-  void _viewStory(String storyId) {
-    // Navigate to story view page
+  void _showErrorSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 }

@@ -9,19 +9,13 @@ abstract class AuthRemoteDataSource {
       String username, String email, String password);
   Future<Map<String, dynamic>> refreshToken(String refreshToken);
   Future<void> logout();
-  Future<String> getSpotifyAuthUrl();
+  Future<String> getServiceAuthUrl();
   Future<void> connectSpotify(String code);
-  Future<String> getYTMusicAuthUrl();
   Future<void> connectYTMusic(String code);
-  Future<String> getLastFMAuthUrl();
   Future<void> connectLastFM(String code);
-  Future<String> getMALAuthUrl();
   Future<void> connectMAL(String code);
-  Future<List<Map<String, dynamic>>> getConnectedServices();
-  Future<void> disconnectSpotify();
-  Future<void> disconnectYTMusic();
-  Future<void> disconnectLastFM();
-  Future<void> disconnectMAL();
+  Future<void> refreshSpotifyToken();
+  Future<void> refreshYTMusicToken();
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -73,7 +67,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> logout() async {
     try {
-      await _dioClient.post(ApiConfig.logout);
+      await _dioClient.get(ApiConfig.logout);
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to logout');
     }
@@ -81,13 +75,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   // Service connections
   @override
-  Future<String> getSpotifyAuthUrl() async {
+  Future<String> getServiceAuthUrl() async {
     try {
-      final response = await _dioClient.get(ApiConfig.spotifyAuth);
+      final response = await _dioClient.get(ApiConfig.serviceLogin);
       return response.data['url'];
     } on DioException catch (e) {
       throw ServerException(
-          message: e.message ?? 'Failed to get Spotify auth URL');
+          message: e.message ?? 'Failed to get service auth URL');
     }
   }
 
@@ -104,17 +98,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<String> getYTMusicAuthUrl() async {
-    try {
-      final response = await _dioClient.get(ApiConfig.ytmusicAuth);
-      return response.data['auth_url'];
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to get YouTube Music auth URL');
-    }
-  }
-
-  @override
   Future<void> connectYTMusic(String code) async {
     try {
       await _dioClient.post(ApiConfig.ytmusicConnect, data: {
@@ -123,17 +106,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to connect YouTube Music');
-    }
-  }
-
-  @override
-  Future<String> getLastFMAuthUrl() async {
-    try {
-      final response = await _dioClient.get(ApiConfig.lastfmAuth);
-      return response.data['auth_url'];
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to get Last.fm auth URL');
     }
   }
 
@@ -150,17 +122,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<String> getMALAuthUrl() async {
-    try {
-      final response = await _dioClient.get(ApiConfig.malAuth);
-      return response.data['auth_url'];
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to get MyAnimeList auth URL');
-    }
-  }
-
-  @override
   Future<void> connectMAL(String code) async {
     try {
       await _dioClient.post(ApiConfig.malConnect, data: {
@@ -173,53 +134,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<List<Map<String, dynamic>>> getConnectedServices() async {
+  Future<void> refreshSpotifyToken() async {
     try {
-      final response = await _dioClient.get(ApiConfig.profileServices);
-      return List<Map<String, dynamic>>.from(response.data);
+      await _dioClient.post(ApiConfig.spotifyRefreshToken);
     } on DioException catch (e) {
       throw ServerException(
-          message: e.message ?? 'Failed to get connected services');
+          message: e.message ?? 'Failed to refresh Spotify token');
     }
   }
 
   @override
-  Future<void> disconnectSpotify() async {
+  Future<void> refreshYTMusicToken() async {
     try {
-      await _dioClient.post(ApiConfig.spotifyDisconnect);
+      await _dioClient.post(ApiConfig.ytmusicRefreshToken);
     } on DioException catch (e) {
       throw ServerException(
-          message: e.message ?? 'Failed to disconnect Spotify');
-    }
-  }
-
-  @override
-  Future<void> disconnectYTMusic() async {
-    try {
-      await _dioClient.post(ApiConfig.ytmusicDisconnect);
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to disconnect YouTube Music');
-    }
-  }
-
-  @override
-  Future<void> disconnectLastFM() async {
-    try {
-      await _dioClient.post(ApiConfig.lastfmDisconnect);
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to disconnect Last.fm');
-    }
-  }
-
-  @override
-  Future<void> disconnectMAL() async {
-    try {
-      await _dioClient.post(ApiConfig.malDisconnect);
-    } on DioException catch (e) {
-      throw ServerException(
-          message: e.message ?? 'Failed to disconnect MyAnimeList');
+          message: e.message ?? 'Failed to refresh YouTube Music token');
     }
   }
 }

@@ -139,7 +139,7 @@ class _HomePageState extends State<HomePage> with PageMixin {
             text: 'Go to Chat',
             onPressed: () {
               // TODO: Implement chat navigation
-              showSnackBar('Chat functionality coming soon!');
+              showInfoSnackBar('Chat functionality coming soon!');
             },
             icon: const Icon(Icons.chat),
             width: double.infinity,
@@ -163,7 +163,7 @@ class _HomePageState extends State<HomePage> with PageMixin {
           text: 'Settings',
           onPressed: () {
             // TODO: Implement settings navigation
-            showSnackBar('Settings functionality coming soon!');
+            showInfoSnackBar('Settings functionality coming soon!');
           },
           icon: const Icon(Icons.settings),
           width: double.infinity,
@@ -176,7 +176,7 @@ class _HomePageState extends State<HomePage> with PageMixin {
           text: 'Help & Support',
           onPressed: () {
             // TODO: Implement help navigation
-            showSnackBar('Help functionality coming soon!');
+            showInfoSnackBar('Help functionality coming soon!');
           },
           icon: const Icon(Icons.help),
           width: double.infinity,

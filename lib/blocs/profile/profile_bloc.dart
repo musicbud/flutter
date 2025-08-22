@@ -25,6 +25,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ProfileLikedItemsRequested>(_onProfileLikedItemsRequested);
     on<ProfileBudsRequested>(_onProfileBudsRequested);
     on<ProfileConnectedServicesRequested>(_onProfileConnectedServicesRequested);
+    on<ProfileRefreshRequested>(_onProfileRefreshRequested);
+    on<ProfileStatsRequested>(_onProfileStatsRequested);
+    on<ProfilePreferencesRequested>(_onProfilePreferencesRequested);
   }
 
   Future<void> _onProfileRequested(
@@ -134,12 +137,60 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     try {
-      // final services = await _profileRepository.getConnectedServices();
-      emit(ProfileConnectedServicesLoaded(services: []));
+      final services = await profileRepository.getConnectedServices();
+      emit(ProfileConnectedServicesLoaded(services: services));
     } catch (e) {
       emit(ProfileFailure(error: e.toString()));
     }
+  }
 
+  Future<void> _onProfileRefreshRequested(
+    ProfileRefreshRequested event,
+    Emitter<ProfileState> emit,
+  ) async {
+    try {
+      emit(ProfileLoading());
+      final profile = await profileRepository.getUserProfile();
+      final services = await profileRepository.getConnectedServices();
+      emit(ProfileLoaded(profile: profile, services: services));
+    } catch (e) {
+      emit(ProfileFailure(error: e.toString()));
+    }
+  }
+
+  Future<void> _onProfileStatsRequested(
+    ProfileStatsRequested event,
+    Emitter<ProfileState> emit,
+  ) async {
+    try {
+      // This would need to be implemented in the repository
+      final stats = <String, dynamic>{
+        'totalTracks': 0,
+        'totalArtists': 0,
+        'totalGenres': 0,
+        'totalBuds': 0,
+      };
+      emit(ProfileStatsLoaded(stats: stats));
+    } catch (e) {
+      emit(ProfileFailure(error: e.toString()));
+    }
+  }
+
+  Future<void> _onProfilePreferencesRequested(
+    ProfilePreferencesRequested event,
+    Emitter<ProfileState> emit,
+  ) async {
+    try {
+      // This would need to be implemented in the repository
+      final preferences = <String, dynamic>{
+        'notifications': true,
+        'privacy': 'public',
+        'language': 'en',
+      };
+      emit(ProfilePreferencesLoaded(preferences: preferences));
+    } catch (e) {
+      emit(ProfileFailure(error: e.toString()));
+    }
   }
 
   Future<List<BudMatch>> _getBudsByCategory(String category) async {

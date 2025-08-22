@@ -1,364 +1,485 @@
+import '../../domain/repositories/content_repository.dart';
 import '../../domain/models/common_track.dart';
-import '../../domain/models/spotify_device.dart';
 import '../../domain/models/common_artist.dart';
 import '../../domain/models/common_genre.dart';
 import '../../domain/models/common_album.dart';
 import '../../domain/models/common_anime.dart';
 import '../../domain/models/common_manga.dart';
-import '../../domain/repositories/content_repository.dart';
-import '../data_sources/remote/content_remote_data_source.dart';
+import '../../domain/models/spotify_device.dart';
 import '../../domain/models/track.dart';
-import '../network/dio_client.dart';
-import '../data_sources/remote/user_remote_data_source.dart';
+import '../data_sources/remote/content_remote_data_source.dart';
+import '../../core/error/exceptions.dart';
+import '../../core/error/failures.dart';
 
 class ContentRepositoryImpl implements ContentRepository {
-  final DioClient dioClient;
-  final ContentRemoteDataSource remoteDataSource;
+  final ContentRemoteDataSource _remoteDataSource;
 
-  ContentRepositoryImpl({
-    required this.dioClient,
-    required this.remoteDataSource,
-  });
+  ContentRepositoryImpl({required ContentRemoteDataSource remoteDataSource})
+      : _remoteDataSource = remoteDataSource;
 
   @override
-  Future<List<Track>> getPlayedTracks() async {
-    final response = await dioClient.get('/tracks/played');
-    return (response.data as List).map((json) => Track.fromJson(json)).toList();
+  Future<List<CommonTrack>> getMyLikedTracks() async {
+    try {
+      return await _remoteDataSource.getMyLikedTracks();
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
   @override
-  Future<List<Track>> getPlayedTracksWithLocation() async {
-    final response = await dioClient.get('/tracks/played/location');
-    return (response.data as List).map((json) => Track.fromJson(json)).toList();
+  Future<List<CommonArtist>> getMyLikedArtists() async {
+    try {
+      return await _remoteDataSource.getMyLikedArtists();
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
   @override
-  Future<List<SpotifyDevice>> getSpotifyDevices() async {
-    final response = await dioClient.get('/spotify/devices');
-    return (response.data as List)
-        .map((json) => SpotifyDevice.fromJson(json))
-        .toList();
+  Future<List<CommonGenre>> getMyLikedGenres() async {
+    try {
+      return await _remoteDataSource.getMyLikedGenres();
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
   @override
-  Future<void> controlSpotifyPlayback(String command, String deviceId) async {
-    await dioClient.post('/spotify/playback/$command', data: {
-      'device_id': deviceId,
-    });
+  Future<List<CommonAlbum>> getMyLikedAlbums() async {
+    try {
+      return await _remoteDataSource.getMyLikedAlbums();
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
   @override
-  Future<void> setSpotifyVolume(String deviceId, int volume) async {
-    await dioClient.put('/spotify/volume', data: {
-      'device_id': deviceId,
-      'volume': volume,
-    });
+  Future<List<CommonTrack>> getMyTopTracks() async {
+    try {
+      return await _remoteDataSource.getMyTopTracks();
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
   @override
-  Future<void> saveTrackLocation(
-      String trackId, double latitude, double longitude) async {
-    await dioClient.post('/tracks/$trackId/location', data: {
-      'latitude': latitude,
-      'longitude': longitude,
-    });
+  Future<List<CommonArtist>> getMyTopArtists() async {
+    try {
+      return await _remoteDataSource.getMyTopArtists();
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
   @override
-  Future<void> playTrack(String trackId, String deviceId) async {
-    await dioClient.post('/spotify/play', data: {
-      'track_id': trackId,
-      'device_id': deviceId,
-    });
+  Future<List<CommonGenre>> getMyTopGenres() async {
+    try {
+      return await _remoteDataSource.getMyTopGenres();
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
   @override
-  Future<void> playTrackWithLocation(String trackId, String deviceId,
-      double latitude, double longitude) async {
-    await dioClient.post('/spotify/play', data: {
-      'track_id': trackId,
-      'device_id': deviceId,
-      'latitude': latitude,
-      'longitude': longitude,
-    });
+  Future<List<CommonAnime>> getMyTopAnime() async {
+    // TODO: Implement when ContentRemoteDataSource supports anime
+    return [];
   }
 
   @override
-  Future<void> savePlayedTrack(String trackId) async {
-    await dioClient.post('/tracks/$trackId/played');
+  Future<List<CommonManga>> getMyTopManga() async {
+    // TODO: Implement when ContentRemoteDataSource supports manga
+    return [];
   }
 
   @override
-  Future<List<CommonTrack>> getTopTracks() async {
-    final response = await dioClient.get('/tracks/top');
-    return (response.data as List)
-        .map((json) => CommonTrack.fromJson(json))
-        .toList();
-  }
-
-  @override
-  Future<List<CommonArtist>> getTopArtists() async {
-    final response = await dioClient.get('/artists/top');
-    return (response.data as List)
-        .map((json) => CommonArtist.fromJson(json))
-        .toList();
-  }
-
-  @override
-  Future<List<CommonGenre>> getTopGenres() async {
-    final response = await dioClient.get('/genres/top');
-    return (response.data as List)
-        .map((json) => CommonGenre.fromJson(json))
-        .toList();
-  }
-
-  @override
-  Future<List<CommonAnime>> getTopAnime() async {
-    final response = await dioClient.get('/anime/top');
-    return (response.data as List)
-        .map((json) => CommonAnime.fromJson(json))
-        .toList();
-  }
-
-  @override
-  Future<List<CommonManga>> getTopManga() async {
-    final response = await dioClient.get('/manga/top');
-    return (response.data as List)
-        .map((json) => CommonManga.fromJson(json))
-        .toList();
-  }
-
-  @override
-  Future<List<CommonTrack>> getLikedTracks() async {
-    return await remoteDataSource.getLikedTracks();
-  }
-
-  @override
-  Future<List<CommonArtist>> getLikedArtists() async {
-    return await remoteDataSource.getLikedArtists();
-  }
-
-  @override
-  Future<List<CommonAlbum>> getLikedAlbums() async {
-    return await remoteDataSource.getLikedAlbums();
-  }
-
-  @override
-  Future<List<CommonGenre>> getLikedGenres() async {
-    return await remoteDataSource.getLikedGenres();
+  Future<List<CommonTrack>> getMyPlayedTracks() async {
+    try {
+      return await _remoteDataSource.getMyPlayedTracks();
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
   @override
   Future<void> likeTrack(String trackId) async {
-    await remoteDataSource.likeTrack(trackId);
-  }
-
-  @override
-  Future<void> unlikeTrack(String trackId) async {
-    await remoteDataSource.unlikeTrack(trackId);
+    try {
+      await _remoteDataSource.toggleLike(trackId, 'track');
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
   @override
   Future<void> likeArtist(String artistId) async {
-    await remoteDataSource.likeArtist(artistId);
-  }
-
-  @override
-  Future<void> unlikeArtist(String artistId) async {
-    await remoteDataSource.unlikeArtist(artistId);
-  }
-
-  @override
-  Future<void> likeAlbum(String albumId) async {
-    await remoteDataSource.likeAlbum(albumId);
-  }
-
-  @override
-  Future<void> unlikeAlbum(String albumId) async {
-    await remoteDataSource.unlikeAlbum(albumId);
+    try {
+      await _remoteDataSource.toggleLike(artistId, 'artist');
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
   @override
   Future<void> likeGenre(String genreId) async {
-    await remoteDataSource.likeGenre(genreId);
+    try {
+      await _remoteDataSource.toggleLike(genreId, 'genre');
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
   @override
-  Future<void> unlikeGenre(String genreId) async {
-    await remoteDataSource.unlikeGenre(genreId);
+  Future<void> likeAlbum(String albumId) async {
+    try {
+      await _remoteDataSource.toggleLike(albumId, 'album');
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
   @override
   Future<void> likeAnime(String animeId) async {
-    await remoteDataSource.likeAnime(animeId);
-  }
-
-  @override
-  Future<void> unlikeAnime(String animeId) async {
-    await remoteDataSource.unlikeAnime(animeId);
+    // TODO: Implement when ContentRemoteDataSource supports anime
   }
 
   @override
   Future<void> likeManga(String mangaId) async {
-    await remoteDataSource.likeManga(mangaId);
+    // TODO: Implement when ContentRemoteDataSource supports manga
+  }
+
+  // Placeholder implementations for missing methods
+  @override
+  Future<List<Track>> getPlayedTracks() async {
+    // TODO: Implement actual logic
+    return [];
   }
 
   @override
-  Future<void> unlikeManga(String mangaId) async {
-    await remoteDataSource.unlikeManga(mangaId);
+  Future<List<Track>> getPlayedTracksWithLocation() async {
+    // TODO: Implement actual logic
+    return [];
   }
 
   @override
-  Future<List<CommonTrack>> searchTracks(String query) async {
-    return await remoteDataSource.searchTracks(query);
+  Future<List<SpotifyDevice>> getSpotifyDevices() async {
+    // TODO: Implement actual logic
+    return [];
   }
 
   @override
-  Future<List<CommonArtist>> searchArtists(String query) async {
-    return await remoteDataSource.searchArtists(query);
+  Future<void> controlSpotifyPlayback(String command, String deviceId) async {
+    // TODO: Implement actual logic
   }
 
   @override
-  Future<List<CommonAlbum>> searchAlbums(String query) async {
-    return await remoteDataSource.searchAlbums(query);
+  Future<void> setSpotifyVolume(String deviceId, int volume) async {
+    // TODO: Implement actual logic
   }
 
   @override
-  Future<List<CommonGenre>> searchGenres(String query) async {
-    return await remoteDataSource.searchGenres(query);
+  Future<void> saveTrackLocation(String trackId, double latitude, double longitude) async {
+    // TODO: Implement actual logic
   }
 
   @override
-  Future<List<CommonAnime>> searchAnime(String query) async {
-    return await remoteDataSource.searchAnime(query);
-  }
-
-  @override
-  Future<List<CommonManga>> searchManga(String query) async {
-    return await remoteDataSource.searchManga(query);
-  }
-
-  @override
-  Future<CommonTrack> getTrackDetails(String trackId) async {
-    return await remoteDataSource.getTrackDetails(trackId);
-  }
-
-  @override
-  Future<CommonArtist> getArtistDetails(String artistId) async {
-    return await remoteDataSource.getArtistDetails(artistId);
-  }
-
-  @override
-  Future<CommonAlbum> getAlbumDetails(String albumId) async {
-    return await remoteDataSource.getAlbumDetails(albumId);
-  }
-
-  @override
-  Future<CommonGenre> getGenreDetails(String genreId) async {
-    return await remoteDataSource.getGenreDetails(genreId);
-  }
-
-  @override
-  Future<CommonAnime> getAnimeDetails(String animeId) async {
-    return await remoteDataSource.getAnimeDetails(animeId);
-  }
-
-  @override
-  Future<CommonManga> getMangaDetails(String mangaId) async {
-    return await remoteDataSource.getMangaDetails(mangaId);
-  }
-
-  @override
-  Future<List<dynamic>> getTopItems(String category) async {
-    switch (category) {
-      case 'tracks':
-        return await getTopTracks();
-      case 'artists':
-        return await getTopArtists();
-      case 'genres':
-        return await getTopGenres();
-      case 'anime':
-        return await getTopAnime();
-      case 'manga':
-        return await getTopManga();
-      default:
-        throw Exception('Invalid category: $category');
+  Future<void> playTrack(String trackId, String deviceId) async {
+    try {
+      await _remoteDataSource.playTrack(trackId, deviceId);
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
     }
   }
 
   @override
-  Future<List<dynamic>> getLikedItems(String category) async {
-    switch (category) {
-      case 'tracks':
-        return await getLikedTracks();
-      case 'artists':
-        return await getLikedArtists();
-      case 'albums':
-        return await getLikedAlbums();
-      case 'genres':
-        return await getLikedGenres();
-      default:
-        throw Exception('Invalid category: $category');
-    }
+  Future<void> playTrackWithLocation(String trackId, String deviceId, double latitude, double longitude) async {
+    // TODO: Implement actual logic
+  }
+
+  @override
+  Future<void> savePlayedTrack(String trackId) async {
+    // TODO: Implement actual logic
   }
 
   @override
   Future<List<CommonTrack>> getPopularTracks() async {
-    return await remoteDataSource.getPopularTracks();
+    // TODO: Implement actual logic
+    return [];
   }
 
   @override
   Future<List<CommonArtist>> getPopularArtists() async {
-    return await remoteDataSource.getPopularArtists();
+    // TODO: Implement actual logic
+    return [];
   }
 
   @override
   Future<List<CommonAlbum>> getPopularAlbums() async {
-    return await remoteDataSource.getPopularAlbums();
+    // TODO: Implement actual logic
+    return [];
   }
 
   @override
   Future<List<CommonAnime>> getPopularAnime() async {
-    return await remoteDataSource.getPopularAnime();
+    // TODO: Implement actual logic
+    return [];
   }
 
   @override
   Future<List<CommonManga>> getPopularManga() async {
-    return await remoteDataSource.getPopularManga();
+    // TODO: Implement actual logic
+    return [];
   }
 
   @override
-  Future<void> toggleTrackLike(String trackId) async {
-    await remoteDataSource.toggleTrackLike(trackId);
+  Future<List<CommonTrack>> getTopTracks() async {
+    return await getMyTopTracks();
   }
 
   @override
-  Future<void> toggleArtistLike(String artistId) async {
-    await remoteDataSource.toggleArtistLike(artistId);
+  Future<List<CommonArtist>> getTopArtists() async {
+    return await getMyTopArtists();
   }
 
   @override
-  Future<void> toggleAlbumLike(String albumId) async {
-    await remoteDataSource.toggleAlbumLike(albumId);
+  Future<List<CommonGenre>> getTopGenres() async {
+    return await getMyTopGenres();
   }
 
   @override
-  Future<void> toggleGenreLike(String genreId) async {
-    await remoteDataSource.toggleGenreLike(genreId);
+  Future<List<CommonAnime>> getTopAnime() async {
+    return await getMyTopAnime();
+  }
+
+  @override
+  Future<List<CommonManga>> getTopManga() async {
+    return await getMyTopManga();
+  }
+
+  @override
+  Future<List<CommonTrack>> getLikedTracks() async {
+    return await getMyLikedTracks();
+  }
+
+  @override
+  Future<List<CommonArtist>> getLikedArtists() async {
+    return await getMyLikedArtists();
+  }
+
+  @override
+  Future<List<CommonGenre>> getLikedGenres() async {
+    return await getMyLikedGenres();
+  }
+
+  @override
+  Future<List<CommonAlbum>> getLikedAlbums() async {
+    return await getMyLikedAlbums();
+  }
+
+  @override
+  Future<void> unlikeTrack(String trackId) async {
+    // TODO: Implement actual unlike logic
+    await likeTrack(trackId);
+  }
+
+  @override
+  Future<void> unlikeArtist(String artistId) async {
+    // TODO: Implement actual unlike logic
+    await likeArtist(artistId);
+  }
+
+  @override
+  Future<void> unlikeGenre(String genreId) async {
+    // TODO: Implement actual unlike logic
+    await likeGenre(genreId);
+  }
+
+  @override
+  Future<void> unlikeAlbum(String albumId) async {
+    // TODO: Implement actual unlike logic
+    await likeAlbum(albumId);
+  }
+
+  @override
+  Future<void> unlikeAnime(String animeId) async {
+    // TODO: Implement actual unlike logic
+    await likeAnime(animeId);
+  }
+
+  @override
+  Future<void> unlikeManga(String mangaId) async {
+    // TODO: Implement actual unlike logic
+    await likeManga(mangaId);
+  }
+
+  @override
+  Future<CommonTrack> getTrackDetails(String trackId) async {
+    // TODO: Implement actual logic
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<CommonArtist> getArtistDetails(String artistId) async {
+    // TODO: Implement actual logic
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<CommonAlbum> getAlbumDetails(String albumId) async {
+    // TODO: Implement actual logic
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<CommonGenre> getGenreDetails(String genreId) async {
+    // TODO: Implement actual logic
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<CommonAnime> getAnimeDetails(String animeId) async {
+    // TODO: Implement actual logic
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<CommonManga> getMangaDetails(String mangaId) async {
+    // TODO: Implement actual logic
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<CommonTrack>> searchTracks(String query) async {
+    // TODO: Implement actual logic
+    return [];
+  }
+
+  @override
+  Future<List<CommonArtist>> searchArtists(String query) async {
+    // TODO: Implement actual logic
+    return [];
+  }
+
+  @override
+  Future<List<CommonAlbum>> searchAlbums(String query) async {
+    // TODO: Implement actual logic
+    return [];
+  }
+
+  @override
+  Future<List<CommonGenre>> searchGenres(String query) async {
+    // TODO: Implement actual logic
+    return [];
+  }
+
+  @override
+  Future<List<CommonAnime>> searchAnime(String query) async {
+    // TODO: Implement actual logic
+    return [];
+  }
+
+  @override
+  Future<List<CommonManga>> searchManga(String query) async {
+    // TODO: Implement actual logic
+    return [];
+  }
+
+  @override
+  Future<List<dynamic>> getTopItems(String category) async {
+    // TODO: Implement actual logic
+    return [];
+  }
+
+  @override
+  Future<List<dynamic>> getLikedItems(String category) async {
+    // TODO: Implement actual logic
+    return [];
   }
 
   @override
   Future<void> toggleAnimeLike(String animeId) async {
-    await remoteDataSource.toggleAnimeLike(animeId);
+    // TODO: Implement actual logic
   }
 
   @override
   Future<void> toggleMangaLike(String mangaId) async {
-    await remoteDataSource.toggleMangaLike(mangaId);
+    // TODO: Implement actual logic
   }
 
   @override
   Future<void> updateLikes(String type, String id, bool isLiked) async {
-    await remoteDataSource.updateLikes(type, id, isLiked);
+    // TODO: Implement actual logic
+  }
+
+  // Toggle methods implementation
+  @override
+  Future<void> toggleTrackLike(String trackId) async {
+    await likeTrack(trackId);
+  }
+
+  @override
+  Future<void> toggleArtistLike(String artistId) async {
+    await likeArtist(artistId);
+  }
+
+  @override
+  Future<void> toggleAlbumLike(String albumId) async {
+    await likeAlbum(albumId);
+  }
+
+  @override
+  Future<void> toggleGenreLike(String genreId) async {
+    await likeGenre(genreId);
+  }
+
+  @override
+  Future<void> toggleLike(String id, String type) async {
+    switch (type.toLowerCase()) {
+      case 'track':
+        await toggleTrackLike(id);
+        break;
+      case 'artist':
+        await toggleArtistLike(id);
+        break;
+      case 'album':
+        await toggleAlbumLike(id);
+        break;
+      case 'genre':
+        await toggleGenreLike(id);
+        break;
+      case 'anime':
+        await toggleAnimeLike(id);
+        break;
+      case 'manga':
+        await toggleMangaLike(id);
+        break;
+      default:
+        throw ArgumentError('Unsupported content type: $type');
+    }
   }
 }
