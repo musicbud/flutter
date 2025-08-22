@@ -30,9 +30,46 @@ import '../../constants/app_constants.dart';
 import '../../mixins/page_mixin.dart';
 import '../../../injection_container.dart' as di;
 
+// Import the new pages from the main pages directory
+import '../home_page.dart';
+import '../search_page.dart';
+import '../chat_page.dart';
+import '../library_page.dart';
+import '../discover_page.dart';
+import '../profile_page.dart' as MainProfilePage;
+import '../event_page.dart' as MainEventPage;
+import '../settings_page.dart' as MainSettingsPage;
+import '../welcome_page.dart';
+
+// Import auth pages
+import '../auth/login_page.dart';
+import '../auth/signup_page.dart';
+import '../auth/forgot_password_page.dart';
+import '../auth/otp_verification_page.dart';
+import '../auth/change_password_page.dart';
+
+// Import onboarding pages
+import '../onboarding/onboarding_first_name_page.dart';
+import '../onboarding/onboarding_birthday_page.dart';
+import '../onboarding/onboarding_gender_page.dart';
+import '../onboarding/onboarding_interests_page.dart';
+
+// Import social pages
+import '../social/match_recommendations_page.dart';
+import '../social/watch_party_detail_page.dart';
+
+// Import demo pages
+import '../demo/user_profile_demo_page.dart';
+
+// Import the stories page from new_pages directory
+import 'stories_page.dart';
+
+// Import new_pages versions with aliases
+import 'profile_page.dart' as NewProfilePage;
+import 'event_page.dart' as NewEventPage;
+import 'settings_page.dart' as NewSettingsPage;
+
 import 'chat_screen.dart';
-import 'search.dart';
-import 'sories.dart';
 import 'profile_page.dart';
 import 'service_connection_page.dart';
 import 'user_management_page.dart';
@@ -62,37 +99,131 @@ class _NewMainScreenState extends State<NewMainScreen> with PageMixin {
     // Don't initialize MainScreenBloc immediately - wait for authentication
   }
 
-  // Enhanced navigation items configuration with all legacy functionality
+  // Enhanced navigation items configuration with all newly created pages
   static const List<NavigationItem> _navigationItems = [
+    // Main Navigation Pages
     NavigationItem(
       icon: Icons.home_outlined,
       label: 'Home',
-      page: HomeTab(),
+      page: HomePage(),
     ),
     NavigationItem(
       icon: Icons.search,
       label: 'Search',
-      page: SearchTab(),
+      page: SearchPage(),
     ),
     NavigationItem(
-      icon: Icons.headphones,
-      label: 'Stories',
-      page: StoriesTab(),
+      icon: Icons.people,
+      label: 'Discover',
+      page: DiscoverPage(),
     ),
     NavigationItem(
       icon: Icons.chat_bubble_outline,
       label: 'Chat',
-      page: ChatTab(),
+      page: ChatPage(),
     ),
     NavigationItem(
       icon: Icons.music_note,
-      label: 'Music',
-      page: MusicTab(),
+      label: 'Library',
+      page: LibraryPage(),
     ),
     NavigationItem(
-      icon: Icons.people,
-      label: 'Buds',
-      page: BudsTab(),
+      icon: Icons.person,
+      label: 'Profile',
+      page: MainProfilePage.ProfilePage(),
+    ),
+  ];
+
+  // Additional pages for testing - accessible via navigation drawer or buttons
+  static const List<NavigationItem> _additionalPages = [
+    // Auth Pages
+    NavigationItem(
+      icon: Icons.login,
+      label: 'Login',
+      page: LoginPage(),
+    ),
+    NavigationItem(
+      icon: Icons.person_add,
+      label: 'Sign Up',
+      page: SignupPage(),
+    ),
+    NavigationItem(
+      icon: Icons.lock_reset,
+      label: 'Forgot Password',
+      page: ForgotPasswordPage(),
+    ),
+    NavigationItem(
+      icon: Icons.verified,
+      label: 'OTP Verification',
+      page: OtpVerificationPage(),
+    ),
+    NavigationItem(
+      icon: Icons.password,
+      label: 'Change Password',
+      page: ChangePasswordPage(),
+    ),
+
+    // Onboarding Pages
+    NavigationItem(
+      icon: Icons.badge,
+      label: 'First Name',
+      page: OnboardingFirstNamePage(),
+    ),
+    NavigationItem(
+      icon: Icons.cake,
+      label: 'Birthday',
+      page: OnboardingBirthdayPage(),
+    ),
+    NavigationItem(
+      icon: Icons.wc,
+      label: 'Gender',
+      page: OnboardingGenderPage(),
+    ),
+    NavigationItem(
+      icon: Icons.interests,
+      label: 'Interests',
+      page: OnboardingInterestsPage(),
+    ),
+
+    // Social Pages
+    NavigationItem(
+      icon: Icons.favorite,
+      label: 'Match Recommendations',
+      page: MatchRecommendationsPage(),
+    ),
+    NavigationItem(
+      icon: Icons.tv,
+      label: 'Watch Party Detail',
+      page: WatchPartyDetailPage(),
+    ),
+
+    // Demo Pages
+    NavigationItem(
+      icon: Icons.account_circle,
+      label: 'User Profile Demo',
+      page: UserProfileDemoPage(),
+    ),
+
+    // Other Pages
+    NavigationItem(
+      icon: Icons.event,
+      label: 'Events',
+      page: MainEventPage.EventPage(),
+    ),
+    NavigationItem(
+      icon: Icons.settings,
+      label: 'Settings',
+      page: MainSettingsPage.SettingsPage(),
+    ),
+    NavigationItem(
+      icon: Icons.waving_hand,
+      label: 'Welcome',
+      page: WelcomePage(),
+    ),
+    NavigationItem(
+      icon: Icons.headphones,
+      label: 'Stories',
+      page: StoriesPage(),
     ),
   ];
 
@@ -124,11 +255,221 @@ class _NewMainScreenState extends State<NewMainScreen> with PageMixin {
   }
 
   Widget _buildAuthenticatedScreen() {
-    return MainNavigationScaffold(
-      body: _navigationItems[_selectedIndex].page,
-      currentIndex: _selectedIndex,
-      onNavigationTap: _onNavigationItemTapped,
-      navigationItems: _navigationItems,
+    return Scaffold(
+      drawer: _buildNavigationDrawer(),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFFE2C54), // Primary red color
+        foregroundColor: Colors.white,
+        title: const Text(
+          'MusicBud',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_outlined),
+            onPressed: () {
+              // Handle notifications
+            },
+          ),
+        ],
+      ),
+      body: MainNavigationScaffold(
+        body: _navigationItems[_selectedIndex].page,
+        currentIndex: _selectedIndex,
+        onNavigationTap: _onNavigationItemTapped,
+        navigationItems: _navigationItems,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Scaffold.of(context).openDrawer();
+        },
+        backgroundColor: const Color(0xFFFE2C54),
+        child: const Icon(
+          Icons.menu,
+          color: Colors.white,
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+    );
+  }
+
+  Widget _buildNavigationDrawer() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          const DrawerHeader(
+            decoration: BoxDecoration(
+              color: Color(0xFFFE2C54), // Primary red color
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.menu,
+                      color: Colors.white,
+                      size: 32,
+                    ),
+                    SizedBox(width: 12),
+                    Text(
+                      'MusicBud',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 16),
+                Text(
+                  '🍔 HAMBURGER MENU OPENED! 🍔',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  'All Test Pages Available Below ↓',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Main Navigation Section
+          Container(
+            margin: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(12.0),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFE2C54).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color: const Color(0xFFFE2C54),
+                width: 2,
+              ),
+            ),
+            child: const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '🍔 MAIN NAVIGATION 🍔',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFFFE2C54),
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Tap any item below to navigate',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          ..._navigationItems.map((item) => ListTile(
+            leading: Icon(item.icon),
+            title: Text(item.label),
+            onTap: () {
+              Navigator.pop(context);
+              int index = _navigationItems.indexOf(item);
+              _onNavigationItemTapped(index);
+            },
+          )),
+
+          const Divider(),
+
+          // Auth Pages Section
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              'Auth Pages',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          ..._additionalPages.take(5).map((item) => ListTile(
+            leading: Icon(item.icon, size: 20),
+            title: Text(item.label, style: const TextStyle(fontSize: 14)),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => item.page),
+              );
+            },
+          )),
+
+          const Divider(),
+
+          // Onboarding Pages Section
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              'Onboarding Pages',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          ..._additionalPages.skip(5).take(4).map((item) => ListTile(
+            leading: Icon(item.icon, size: 20),
+            title: Text(item.label, style: const TextStyle(fontSize: 14)),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => item.page),
+              );
+            },
+          )),
+
+          const Divider(),
+
+          // Other Pages Section
+          const Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text(
+              'Other Pages',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          ..._additionalPages.skip(9).map((item) => ListTile(
+            leading: Icon(item.icon, size: 20),
+            title: Text(item.label, style: const TextStyle(fontSize: 14)),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => item.page),
+              );
+            },
+          )),
+        ],
+      ),
     );
   }
 
@@ -151,17 +492,17 @@ class _NewMainScreenState extends State<NewMainScreen> with PageMixin {
       case 1: // Search
         // Search data loaded on demand
         break;
-      case 2: // Stories
-        // Stories data loaded on demand
+      case 2: // Discover
+        // Discover/Buds data loaded by the discover page
         break;
       case 3: // Chat
         context.read<ChatBloc>().add(ChatUserListRequested());
         break;
-      case 4: // Music
-        // Music data loaded by the dynamic music page
+      case 4: // Library/Music
+        // Music data loaded by the library page
         break;
-      case 5: // Buds
-        // Buds data loaded by the dynamic buds page
+      case 5: // Profile
+        // Profile data loaded by the profile page
         break;
     }
   }

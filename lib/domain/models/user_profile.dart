@@ -136,3 +136,51 @@ class UserProfile extends Equatable {
         isAuthenticated,
       ];
 }
+
+/// A model class for updating user profile information
+class UserProfileUpdateRequest extends Equatable {
+  final String? firstName;
+  final String? lastName;
+  final String? bio;
+  final String? displayName;
+  final String? location;
+
+  const UserProfileUpdateRequest({
+    this.firstName,
+    this.lastName,
+    this.bio,
+    this.displayName,
+    this.location,
+  });
+
+  /// Creates a [UserProfileUpdateRequest] from a JSON map
+  factory UserProfileUpdateRequest.fromJson(Map<String, dynamic> json) {
+    return UserProfileUpdateRequest(
+      firstName: json['first_name']?.toString(),
+      lastName: json['last_name']?.toString(),
+      bio: json['bio']?.toString(),
+      displayName: json['display_name']?.toString(),
+      location: json['location']?.toString(),
+    );
+  }
+
+  /// Converts this [UserProfileUpdateRequest] to a JSON map
+  Map<String, dynamic> toJson() {
+    return {
+      if (firstName != null) 'first_name': firstName,
+      if (lastName != null) 'last_name': lastName,
+      if (bio != null) 'bio': bio,
+      if (displayName != null) 'display_name': displayName,
+      if (location != null) 'location': location,
+    };
+  }
+
+  @override
+  List<Object?> get props => [
+        firstName,
+        lastName,
+        bio,
+        displayName,
+        location,
+      ];
+}

@@ -1,271 +1,300 @@
-# MusicBud Design System
+# MusicBud Flutter Design System
 
-A comprehensive Flutter design system based on Figma designs, providing reusable components, consistent theming, and design tokens for the MusicBud application.
+A comprehensive design system for the MusicBud Flutter application, providing reusable components, consistent theming, and design tokens for building beautiful and maintainable user interfaces.
 
-## 🎨 Overview
+## Overview
 
-This design system transforms the Figma-to-Flutter code into organized, maintainable, and reusable Flutter components. It follows Material Design 3 principles while maintaining the unique visual identity of MusicBud.
+This design system transforms raw Figma-generated Flutter code into a well-organized, maintainable, and reusable Flutter design system. It provides:
 
-## 🏗️ Architecture
+- **Design Tokens**: Colors, typography, spacing, shadows, and gradients
+- **Reusable Components**: Buttons, cards, input fields, and typography components
+- **Theme System**: Light/dark themes with Material 3 integration
+- **Refactored Pages**: All main application pages using the design system
+
+## Architecture
 
 ```
-lib/presentation/
-├── constants/
-│   └── app_theme.dart          # Theme constants and design tokens
-├── widgets/
-│   └── common/                 # Reusable component library
-│       ├── app_button.dart     # Button components
-│       ├── app_card.dart       # Card components
-│       ├── app_input_field.dart # Input field components
-│       └── app_typography.dart # Typography showcase
-└── pages/
-    └── theme_showcase_page.dart # Component demonstration
+lib/
+├── presentation/
+│   ├── constants/
+│   │   └── app_theme.dart          # Core design tokens and theme
+│   ├── widgets/
+│   │   └── common/
+│   │       ├── app_button.dart     # Reusable button components
+│   │       ├── app_card.dart       # Reusable card components
+│   │       ├── app_input_field.dart # Reusable input components
+│   │       ├── app_typography.dart # Typography showcase components
+│   │       └── index.dart          # Common widgets export
+│   ├── pages/
+│   │   ├── home_page.dart          # Refactored home page
+│   │   ├── profile_page.dart       # Refactored profile page
+│   │   ├── search_page.dart        # Refactored search page
+│   │   ├── library_page.dart       # Refactored library page
+│   │   ├── chat_page.dart          # Refactored chat page
+│   │   ├── event_page.dart         # Refactored event page
+│   │   ├── settings_page.dart      # Refactored settings page
+│   │   ├── theme_showcase_page.dart # Design system showcase
+│   │   └── index.dart              # Pages export
+│   └── main.dart                   # Application entry point
 ```
 
-## 🎯 Design Tokens
+## Design Tokens
 
 ### Colors
 
-The design system uses a carefully crafted color palette:
+The color system provides a comprehensive palette:
 
-#### Primary Colors
-- `primaryPink` (#FF6B8F) - Main brand color
-- `primaryPinkDark` (#FF265A) - Darker variant
-- `primaryPinkLight` (#D08A96) - Lighter variant
+```dart
+final appTheme = AppTheme();
 
-#### Secondary Colors
-- `secondaryBlue` (#4B4685) - Secondary brand color
-- `secondaryPurple` (#5B5D9F) - Purple accent
-- `secondaryNavy` (#222C4D) - Navy accent
+// Primary colors
+appTheme.colors.primary        // Main brand color
+appTheme.colors.secondary      // Secondary brand color
+appTheme.colors.accent         // Accent color for highlights
 
-#### Neutral Colors
-- `neutralWhite` (#FFFFFF) - Pure white
-- `neutralLightGray` (#CFD0FD) - Light gray
-- `neutralGray` (#CED0FC) - Medium gray
-- `neutralDarkGray` (#18181F) - Dark gray
-- `neutralBlack` (#0E0D11) - Pure black
-- `neutralText` (#1D1D34) - Text color
+// Neutral colors (0-900 scale)
+appTheme.colors.neutral[50]    // Lightest
+appTheme.colors.neutral[900]   // Darkest
 
-#### Status Colors
-- `successGreen` (#1B3719) - Success states
-- `warningOrange` (#684D3F) - Warning states
-- `errorRed` (#FF265A) - Error states
+// Status colors
+appTheme.colors.success        // Success states
+appTheme.colors.warning        // Warning states
+appTheme.colors.error          // Error states
+appTheme.colors.info           // Information states
+```
 
 ### Typography
 
-The typography system uses the **Josefin Sans** font family with a mathematical scale of 1.250:
+Typography system using 'Josefin Sans' font with mathematical scale:
 
-#### Display Text
-- `displayH1` - 107px, Weight 500
-- `displayH2` - 86px, Weight 500
-- `displayH3` - 69px, Weight 500
-- `displayH4` - 55px, Weight 500
-- `displayH5` - 44px, Weight 500
+```dart
+// Display styles
+appTheme.typography.displayH1  // Large display text
+appTheme.typography.displayH2  // Medium display text
 
-#### Headline Text
-- `headlineH6` - 35px, Weight 400
-- `headlineH7` - 28px, Weight 400
+// Headline styles
+appTheme.typography.headlineH4 // Large headlines
+appTheme.typography.headlineH6 // Medium headlines
 
-#### Body Text
-- `bodyH8` - 23px, Weight 400, Height 1.30
-- `bodyH9` - 18px, Weight 400, Height 1.67
-- `bodyH10` - 14px, Weight 400, Height 1.79
+// Body styles
+appTheme.typography.bodyH8     // Regular body text
+appTheme.typography.bodyH9     // Small body text
 
-#### Special Text
-- `titleLarge` - 90px, Weight 400
-- `titleMedium` - 50px, Weight 600
-- `titleSmall` - 22px, Weight 500
-- `caption` - 12px, Weight 400
-- `overline` - 10px, Weight 400
+// Special styles
+appTheme.typography.titleLarge // Large titles
+appTheme.typography.titleMedium // Medium titles
+```
 
 ### Spacing
 
-The spacing system uses an 8px base unit:
+8px-based spacing system:
 
-- `spacingXS` - 4px
-- `spacingS` - 8px
-- `spacingM` - 12px
-- `spacingL` - 16px
-- `spacingXL` - 24px
-- `spacingXXL` - 32px
-- `spacingXXXL` - 48px
-- `spacingHuge` - 72px
-- `spacingMassive` - 96px
+```dart
+appTheme.spacing.xs    // 4px
+appTheme.spacing.s     // 8px
+appTheme.spacing.m     // 16px
+appTheme.spacing.l     // 24px
+appTheme.spacing.xl    // 32px
+appTheme.spacing.xxl   // 48px
+```
 
 ### Border Radius
 
-- `radiusXS` - 4px
-- `radiusS` - 8px
-- `radiusM` - 12px
-- `radiusL` - 16px
-- `radiusXL` - 24px
-- `radiusXXL` - 40px
-- `radiusCircular` - 50px
+Consistent border radius system:
 
-## 🧩 Components
+```dart
+appTheme.radius.s        // 4px
+appTheme.radius.m        // 8px
+appTheme.radius.l        // 12px
+appTheme.radius.xl       // 16px
+appTheme.radius.circular // 50%
+```
+
+### Shadows
+
+Elevation and depth system:
+
+```dart
+appTheme.shadows.shadowSmall   // Subtle elevation
+appTheme.shadows.shadowMedium  // Medium elevation
+appTheme.shadows.shadowLarge   // Strong elevation
+appTheme.shadows.shadowText    // Text shadows
+```
+
+### Gradients
+
+Predefined gradient combinations:
+
+```dart
+appTheme.gradients.gradientPrimary    // Primary brand gradient
+appTheme.gradients.gradientSecondary  // Secondary gradient
+appTheme.gradients.gradientBackground // Background gradient
+```
+
+## Reusable Components
 
 ### AppButton
 
-A versatile button component with multiple variants and sizes.
+Flexible button component with multiple variants and sizes:
 
 ```dart
 // Basic usage
 AppButton(
   text: 'Click Me',
-  onPressed: () => print('Button pressed'),
-)
-
-// With variant and size
-AppButton(
-  text: 'Primary Button',
+  onPressed: () {},
   variant: AppButtonVariant.primary,
-  size: AppButtonSize.large,
-  onPressed: () => print('Button pressed'),
+  size: AppButtonSize.medium,
 )
 
-// Predefined button styles
-AppButtons.primary(
-  text: 'Primary',
-  onPressed: () => print('Primary pressed'),
-)
-
-AppButtons.matchNow(
-  text: 'Match Now',
-  onPressed: () => print('Match now pressed'),
-)
-
-AppButtons.tag(
-  text: 'Music',
-  onPressed: () => print('Tag pressed'),
-)
+// Predefined styles
+AppButtons.primary(text: 'Primary', onPressed: () {})
+AppButtons.secondary(text: 'Secondary', onPressed: () {})
+AppButtons.ghost(text: 'Ghost', onPressed: () {})
+AppButtons.tag(text: 'Tag', onPressed: () {})
+AppButtons.matchNow(text: 'Match Now', onPressed: () {})
 ```
 
-#### Button Variants
-- `primary` - Filled button with primary color
-- `secondary` - Outlined button with primary color
-- `text` - Text button with primary color
-- `ghost` - Semi-transparent button with border
-
-#### Button Sizes
-- `small` - 80x32px
-- `medium` - 120x40px
-- `large` - 160x48px
-- `xlarge` - 200x56px
+**Variants**: `primary`, `secondary`, `text`, `ghost`
+**Sizes**: `small`, `medium`, `large`, `xlarge`
 
 ### AppCard
 
-A flexible card component with multiple variants and styling options.
+Flexible card component with multiple variants:
 
 ```dart
 // Basic usage
 AppCard(
   child: Text('Card content'),
+  variant: AppCardVariant.defaultCard,
 )
 
-// With variant
-AppCard(
-  variant: AppCardVariant.gradient,
-  child: Text('Gradient card'),
-)
-
-// Predefined card styles
+// Predefined styles
 AppCards.musicTrack(
-  child: AppCardComponents.musicTrackCard(
-    imageUrl: 'https://example.com/image.jpg',
-    title: 'Song Title',
-    artist: 'Artist Name',
-  ),
+  title: 'Track Title',
+  subtitle: 'Artist Name',
+  imageUrl: 'image.jpg',
+  onTap: () {},
 )
-
 AppCards.profile(
-  child: AppCardComponents.profileCard(
-    imageUrl: 'https://example.com/avatar.jpg',
-    name: 'John Doe',
-    age: '25',
-    location: 'New York',
-  ),
+  title: 'Profile Name',
+  subtitle: 'Profile Description',
+  imageUrl: 'avatar.jpg',
+  onTap: () {},
+)
+AppCards.event(
+  title: 'Event Title',
+  subtitle: 'Event Description',
+  date: 'Date',
+  location: 'Location',
+  imageUrl: 'event.jpg',
+  onTap: () {},
 )
 ```
 
-#### Card Variants
-- `default_` - Standard card with dark background
-- `white` - White card with shadow
-- `transparent` - Transparent background
-- `glass` - Semi-transparent with border
-- `gradient` - Gradient background
-- `outlined` - Outlined border
-- `bordered` - Colored border
+**Variants**: `default`, `white`, `transparent`, `glass`, `gradient`, `outlined`, `bordered`
 
 ### AppInputField
 
-A comprehensive input field component with various styles and states.
+Robust input field component:
 
 ```dart
 // Basic usage
 AppInputField(
-  hintText: 'Enter text here',
-  onChanged: (value) => print('Input: $value'),
+  hintText: 'Enter text...',
+  onChanged: (value) {},
+  variant: AppInputVariant.default,
+  size: AppInputSize.medium,
 )
 
-// With label and validation
-AppInputField(
-  label: 'Email',
-  hintText: 'Enter your email',
-  keyboardType: TextInputType.emailAddress,
-  validator: (value) {
-    if (value?.isEmpty ?? true) return 'Email is required';
-    return null;
-  },
-)
-
-// Predefined input styles
+// Predefined styles
 AppInputs.search(
-  hintText: 'Search for music...',
-  onChanged: (value) => print('Searching: $value'),
+  hintText: 'Search...',
+  onChanged: (value) {},
 )
-
 AppInputs.chat(
   hintText: 'Type a message...',
-  onSubmitted: (value) => print('Message: $value'),
+  onSubmitted: (value) {},
 )
 ```
 
-#### Input Variants
-- `default_` - Dark background with transparent border
-- `light` - Light background with gray border
-- `transparent` - Transparent background
-- `glass` - Semi-transparent background
-
-#### Input Sizes
-- `small` - 40px height
-- `medium` - 48px height
-- `large` - 56px height
-- `xlarge` - 64px height
+**Variants**: `default`, `light`, `transparent`, `glass`
+**Sizes**: `small`, `medium`, `large`, `xlarge`
 
 ### AppTypography
 
-A showcase component for displaying all typography styles.
+Components to showcase the design system:
 
 ```dart
-// Show all typography styles
+// Typography showcase
 AppTypography()
 
-// Show typography scale
-TypographyScale(
-  baseSize: 18.0,
-  scale: 1.250,
-  levels: 10,
-)
+// Color palette
+ColorPalette()
+
+// Spacing system
+SpacingSystem()
+
+// Border radius system
+BorderRadiusSystem()
 ```
 
-## 🎨 Theme Usage
+## Refactored Pages
 
-### Light Theme
+All main application pages have been refactored to use the design system:
+
+### HomePage
+- Welcome header with user profile
+- Search functionality
+- Quick action buttons
+- Featured content sections
+- Recent activity feed
+
+### ProfilePage
+- Profile header with gradient background
+- User statistics
+- Profile actions (edit, share)
+- Information sections (personal, music preferences, settings)
+- Account management options
+
+### SearchPage
+- Search input with suggestions
+- Category filtering
+- Search results by type
+- Popular searches and trending content
+
+### LibraryPage
+- Tabbed interface (Playlists, Tracks, Albums, Artists)
+- Quick actions for creating content
+- Featured and personal content
+- Statistics and filtering options
+
+### ChatPage
+- Chat interface with message bubbles
+- User profile in header
+- Message input with attachments
+- Typing indicators
+- Message timestamps
+
+### EventPage
+- Event categories and filtering
+- Featured event showcase
+- Upcoming events list
+- Create event call-to-action
+
+### SettingsPage
+- User profile section
+- Organized settings categories
+- Interactive controls (switches, dropdowns)
+- Support and about information
+
+## Theme Application
+
+### Light Theme (Default)
 
 ```dart
 MaterialApp(
-  theme: AppTheme.lightTheme,
-  home: MyHomePage(),
+  theme: AppTheme().lightTheme,
+  home: HomePage(),
 )
 ```
 
@@ -273,223 +302,191 @@ MaterialApp(
 
 ```dart
 MaterialApp(
-  theme: AppTheme.darkTheme,
-  home: MyHomePage(),
+  theme: AppTheme().darkTheme,
+  home: HomePage(),
 )
 ```
 
 ### Custom Theme
 
 ```dart
-ThemeData(
-  useMaterial3: true,
-  fontFamily: AppTheme.fontFamily,
-  primaryColor: AppTheme.primaryPink,
-  scaffoldBackgroundColor: AppTheme.neutralBlack,
-  // ... other theme properties
+MaterialApp(
+  theme: AppTheme().lightTheme.copyWith(
+    primaryColor: Colors.red,
+    // Custom overrides
+  ),
+  home: HomePage(),
 )
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
-### 1. Import the Theme
-
+1. **Import the design system**:
 ```dart
 import 'package:musicbud_flutter/presentation/constants/app_theme.dart';
+import 'package:musicbud_flutter/presentation/widgets/common/index.dart';
 ```
 
-### 2. Use Design Tokens
-
+2. **Use the theme**:
 ```dart
-Container(
-  color: AppTheme.primaryPink,
-  padding: EdgeInsets.all(AppTheme.spacingL),
-  child: Text(
-    'Hello World',
-    style: AppTheme.titleSmall,
-  ),
+final appTheme = AppTheme();
+// Access colors, typography, spacing, etc.
+```
+
+3. **Use reusable components**:
+```dart
+AppButton(
+  text: 'Click Me',
+  onPressed: () {},
+  variant: AppButtonVariant.primary,
 )
 ```
 
-### 3. Use Components
-
+4. **Apply consistent spacing**:
 ```dart
-import 'package:musicbud_flutter/presentation/widgets/common/app_button.dart';
-import 'package:musicbud_flutter/presentation/widgets/common/app_card.dart';
-
-// In your widget
-Column(
-  children: [
-    AppButton(
-      text: 'Get Started',
-      onPressed: () => print('Started'),
-    ),
-    AppCard(
-      child: Text('Welcome to MusicBud!'),
-    ),
-  ],
-)
+SizedBox(height: appTheme.spacing.l)
 ```
 
-## 📱 Component Showcase
+## Customization
 
-To see all components in action, navigate to the `ThemeShowcasePage`:
-
-```dart
-Navigator.push(
-  context,
-  MaterialPageRoute(
-    builder: (context) => const ThemeShowcasePage(),
-  ),
-);
-```
-
-This page demonstrates:
-- All typography styles
-- Color palette
-- Button variants and sizes
-- Card components
-- Input field styles
-- Spacing and border radius systems
-
-## 🔧 Customization
-
-### Extending the Theme
+### Adding New Colors
 
 ```dart
-class CustomTheme extends AppTheme {
+// In app_theme.dart
+class AppColors {
+  // Add new color
   static const Color customColor = Color(0xFF123456);
 
-  static ThemeData get customTheme => ThemeData(
-    useMaterial3: true,
-    fontFamily: fontFamily,
-    primaryColor: customColor,
-    // ... other customizations
-  );
+  // Add to getter
+  Color get customColor => customColor;
 }
 ```
 
-### Creating Custom Components
+### Adding New Component Variants
 
 ```dart
-class CustomButton extends StatelessWidget {
-  final String text;
-  final VoidCallback? onPressed;
-
-  const CustomButton({
-    super.key,
-    required this.text,
-    this.onPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return AppButton(
-      text: text,
-      onPressed: onPressed,
-      variant: AppButtonVariant.primary,
-      size: AppButtonSize.large,
-      // Add custom styling
-      backgroundColor: AppTheme.customColor,
-    );
-  }
+// In app_button.dart
+enum AppButtonVariant {
+  primary,
+  secondary,
+  custom, // New variant
 }
+
+// Implement in build method
+case AppButtonVariant.custom:
+  // Custom styling
+  break;
 ```
 
-## 📋 Best Practices
+### Creating New Components
 
-### 1. Use Design Tokens
-Always use the predefined design tokens instead of hardcoded values:
+1. Create the component file in `widgets/common/`
+2. Follow the established naming convention (`AppComponentName`)
+3. Use design tokens from `AppTheme`
+4. Add to the `index.dart` export file
+5. Document usage in this README
 
-```dart
-// ✅ Good
-padding: EdgeInsets.all(AppTheme.spacingL)
-color: AppTheme.primaryPink
+## Best Practices
 
-// ❌ Bad
-padding: EdgeInsets.all(16.0)
-color: Color(0xFFFF6B8F)
-```
+1. **Always use design tokens** instead of hardcoded values
+2. **Prefer reusable components** over custom implementations
+3. **Maintain consistency** across all pages and components
+4. **Use semantic naming** for colors and spacing
+5. **Test components** in the theme showcase page
+6. **Document changes** when adding new variants or components
 
-### 2. Leverage Predefined Components
-Use the predefined component styles when possible:
-
-```dart
-// ✅ Good
-AppButtons.primary(text: 'Submit', onPressed: submit)
-AppCards.musicTrack(child: musicContent)
-
-// ❌ Bad
-AppButton(variant: AppButtonVariant.primary, ...)
-AppCard(variant: AppCardVariant.outlined, ...)
-```
-
-### 3. Maintain Consistency
-Use consistent spacing, typography, and colors throughout your app:
-
-```dart
-Column(
-  children: [
-    Text('Title', style: AppTheme.titleSmall),
-    SizedBox(height: AppTheme.spacingM), // Consistent spacing
-    Text('Content', style: AppTheme.caption),
-  ],
-)
-```
-
-### 4. Responsive Design
-Use the spacing system for responsive layouts:
-
-```dart
-Container(
-  padding: EdgeInsets.symmetric(
-    horizontal: AppTheme.spacingXL,
-    vertical: AppTheme.spacingL,
-  ),
-  child: child,
-)
-```
-
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
-1. **Font not loading**: Ensure Josefin Sans is included in your `pubspec.yaml`
-2. **Colors not matching**: Verify you're using the correct theme (light vs dark)
-3. **Component not rendering**: Check that all required parameters are provided
+1. **Component not found**: Ensure it's exported in `index.dart`
+2. **Theme not applied**: Check that `AppTheme()` is instantiated
+3. **Styling inconsistent**: Verify all values use design tokens
+4. **Import errors**: Check file paths and export statements
 
-### Debug Mode
+### Debugging
 
-Enable debug mode to see component boundaries:
+Use the `ThemeShowcasePage` to:
+- Verify component rendering
+- Test different variants
+- Check design token values
+- Validate spacing and typography
 
+## Contributing
+
+1. **Follow the established patterns** for new components
+2. **Use design tokens** consistently
+3. **Test components** in the showcase page
+4. **Update documentation** for new features
+5. **Maintain backward compatibility** when possible
+
+## Migration Guide
+
+### From Hardcoded Values
+
+**Before**:
 ```dart
-// In your main.dart
-void main() {
-  runApp(
-    MaterialApp(
-      debugShowCheckedModeBanner: true,
-      home: MyApp(),
-    ),
-  );
-}
+Container(
+  padding: EdgeInsets.all(16),
+  color: Colors.blue,
+  child: Text(
+    'Hello',
+    style: TextStyle(fontSize: 18, color: Colors.white),
+  ),
+)
 ```
 
-## 🤝 Contributing
+**After**:
+```dart
+Container(
+  padding: EdgeInsets.all(appTheme.spacing.m),
+  color: appTheme.colors.primary,
+  child: Text(
+    'Hello',
+    style: appTheme.typography.headlineH6.copyWith(
+      color: appTheme.colors.white,
+    ),
+  ),
+)
+```
 
-When adding new components or modifying existing ones:
+### From Custom Components
 
-1. Follow the existing naming conventions
-2. Use the design tokens consistently
-3. Add comprehensive documentation
-4. Include examples in the showcase page
-5. Test across different screen sizes
+**Before**:
+```dart
+ElevatedButton(
+  onPressed: () {},
+  child: Text('Button'),
+  style: ElevatedButton.styleFrom(
+    backgroundColor: Colors.blue,
+    foregroundColor: Colors.white,
+  ),
+)
+```
 
-## 📚 Additional Resources
+**After**:
+```dart
+AppButtons.primary(
+  text: 'Button',
+  onPressed: () {},
+)
+```
 
-- [Flutter Material Design](https://docs.flutter.dev/ui/material)
-- [Material Design 3](https://m3.material.io/)
-- [Figma Design Tokens](https://www.figma.com/developers/design-tokens)
+## Performance Considerations
 
-## 📄 License
+- **Theme instantiation**: `AppTheme()` is lightweight and safe to instantiate multiple times
+- **Component reuse**: Reusable components are optimized for performance
+- **Memory usage**: Design tokens are static constants with minimal memory footprint
+- **Rebuild optimization**: Components use `const` constructors where possible
 
-This design system is part of the MusicBud application and follows the same licensing terms.
+## Future Enhancements
+
+- **Animation system**: Predefined animations and transitions
+- **Responsive design**: Breakpoint-based responsive components
+- **Accessibility**: Enhanced accessibility features and testing
+- **Internationalization**: Multi-language support for design tokens
+- **Component testing**: Automated testing for component variants
+
+---
+
+This design system provides a solid foundation for building consistent, maintainable, and beautiful user interfaces in the MusicBud Flutter application. By following the established patterns and using the provided components, developers can create high-quality features while maintaining design consistency across the entire application.

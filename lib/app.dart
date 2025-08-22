@@ -4,17 +4,11 @@ import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // BLoCs
-import 'blocs/auth/auth_bloc.dart';
 import 'blocs/auth/login/login_bloc.dart';
 import 'blocs/auth/register/register_bloc.dart';
-import 'blocs/main/main_screen_bloc.dart';
-import 'blocs/profile/profile_bloc.dart';
 
 // Repositories
 import 'domain/repositories/auth_repository.dart';
-import 'domain/repositories/bud_repository.dart';
-import 'domain/repositories/content_repository.dart';
-import 'domain/repositories/profile_repository.dart';
 
 // Pages
 import 'presentation/pages/home_page.dart';
@@ -47,33 +41,12 @@ class App extends StatelessWidget {
     final sl = GetIt.instance;
 
     return [
-      // Core BLoCs
-      BlocProvider<ProfileBloc>(
-        create: (context) => ProfileBloc(
-          profileRepository: sl<ProfileRepository>(),
-          contentRepository: sl<ContentRepository>(),
-          budRepository: sl<BudRepository>(),
-        ),
-      ),
-
-      // Authentication BLoCs
-      BlocProvider<AuthBloc>(
-        create: (context) => AuthBloc(authRepository: sl<AuthRepository>()),
-      ),
+      // Authentication BLoCs (only the ones not provided in main.dart)
       BlocProvider<LoginBloc>(
         create: (context) => LoginBloc(authRepository: sl<AuthRepository>()),
       ),
       BlocProvider<RegisterBloc>(
         create: (context) => RegisterBloc(authRepository: sl<AuthRepository>()),
-      ),
-
-      // Service Connection is now handled by the centralized AuthBloc
-
-      // Main Screen BLoC
-      BlocProvider<MainScreenBloc>(
-        create: (context) => MainScreenBloc(
-          profileRepository: sl<ProfileRepository>(),
-        ),
       ),
     ];
   }

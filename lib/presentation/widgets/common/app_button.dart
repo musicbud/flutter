@@ -1,274 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_theme.dart';
 
-/// Reusable Button Component based on Figma Design
-class AppButton extends StatelessWidget {
-  final String text;
-  final VoidCallback? onPressed;
-  final AppButtonVariant variant;
-  final AppButtonSize size;
-  final bool isLoading;
-  final Widget? icon;
-  final bool isFullWidth;
-  final EdgeInsetsGeometry? padding;
-  final double? borderRadius;
-
-  const AppButton({
-    super.key,
-    required this.text,
-    this.onPressed,
-    this.variant = AppButtonVariant.primary,
-    this.size = AppButtonSize.medium,
-    this.isLoading = false,
-    this.icon,
-    this.isFullWidth = false,
-    this.padding,
-    this.borderRadius,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: isFullWidth ? double.infinity : null,
-      child: _buildButton(),
-    );
-  }
-
-  Widget _buildButton() {
-    final buttonStyle = _getButtonStyle();
-    final buttonSize = _getButtonSize();
-
-    if (isLoading) {
-      return _buildLoadingButton(buttonStyle, buttonSize);
-    }
-
-    switch (variant) {
-      case AppButtonVariant.primary:
-        return ElevatedButton(
-          onPressed: onPressed,
-          style: buttonStyle,
-          child: _buildButtonContent(),
-        );
-      case AppButtonVariant.secondary:
-        return OutlinedButton(
-          onPressed: onPressed,
-          style: buttonStyle,
-          child: _buildButtonContent(),
-        );
-      case AppButtonVariant.text:
-        return TextButton(
-          onPressed: onPressed,
-          style: buttonStyle,
-          child: _buildButtonContent(),
-        );
-      case AppButtonVariant.ghost:
-        return _buildGhostButton(buttonStyle);
-    }
-  }
-
-  Widget _buildLoadingButton(ButtonStyle buttonStyle, Size buttonSize) {
-    return SizedBox(
-      height: buttonSize.height,
-      child: ElevatedButton(
-        onPressed: null,
-        style: buttonStyle,
-        child: SizedBox(
-          width: 20,
-          height: 20,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(
-              variant == AppButtonVariant.primary
-                  ? AppTheme.neutralWhite
-                  : AppTheme.primaryPink,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGhostButton(ButtonStyle buttonStyle) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppTheme.transparentWhite,
-        borderRadius: BorderRadius.circular(
-          borderRadius ?? AppTheme.radiusM,
-        ),
-        border: Border.all(
-          color: AppTheme.transparentWhite,
-          width: 1,
-        ),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onPressed,
-          borderRadius: BorderRadius.circular(
-            borderRadius ?? AppTheme.radiusM,
-          ),
-          child: Container(
-            padding: padding ?? _getDefaultPadding(),
-            child: _buildButtonContent(),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildButtonContent() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        if (icon != null) ...[
-          icon!,
-          SizedBox(width: AppTheme.spacingS),
-        ],
-        Text(
-          text,
-          style: _getTextStyle(),
-          textAlign: TextAlign.center,
-        ),
-      ],
-    );
-  }
-
-  ButtonStyle _getButtonStyle() {
-    final buttonSize = _getButtonSize();
-    final defaultPadding = _getDefaultPadding();
-
-    switch (variant) {
-      case AppButtonVariant.primary:
-        return ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.primaryPink,
-          foregroundColor: AppTheme.neutralWhite,
-          padding: padding ?? defaultPadding,
-          minimumSize: buttonSize,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              borderRadius ?? AppTheme.radiusM,
-            ),
-          ),
-          elevation: 0,
-          shadowColor: Colors.transparent,
-        );
-      case AppButtonVariant.secondary:
-        return OutlinedButton.styleFrom(
-          foregroundColor: AppTheme.primaryPink,
-          side: const BorderSide(
-            color: AppTheme.primaryPink,
-            width: 1,
-          ),
-          padding: padding ?? defaultPadding,
-          minimumSize: buttonSize,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              borderRadius ?? AppTheme.radiusM,
-            ),
-          ),
-        );
-      case AppButtonVariant.text:
-        return TextButton.styleFrom(
-          foregroundColor: AppTheme.primaryPink,
-          padding: padding ?? defaultPadding,
-          minimumSize: buttonSize,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              borderRadius ?? AppTheme.radiusM,
-            ),
-          ),
-        );
-      case AppButtonVariant.ghost:
-        return ButtonStyle(
-          padding: MaterialStateProperty.all(
-            padding ?? defaultPadding,
-          ),
-          minimumSize: MaterialStateProperty.all(buttonSize),
-          shape: MaterialStateProperty.all(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                borderRadius ?? AppTheme.radiusM,
-              ),
-            ),
-          ),
-        );
-    }
-  }
-
-  Size _getButtonSize() {
-    switch (size) {
-      case AppButtonSize.small:
-        return const Size(80, 32);
-      case AppButtonSize.medium:
-        return const Size(120, 40);
-      case AppButtonSize.large:
-        return const Size(160, 48);
-      case AppButtonSize.xlarge:
-        return const Size(200, 56);
-    }
-  }
-
-  EdgeInsetsGeometry _getDefaultPadding() {
-    switch (size) {
-      case AppButtonSize.small:
-        return const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingM,
-          vertical: AppTheme.spacingS,
-        );
-      case AppButtonSize.medium:
-        return const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingXL,
-          vertical: AppTheme.spacingM,
-        );
-      case AppButtonSize.large:
-        return const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingXXL,
-          vertical: AppTheme.spacingL,
-        );
-      case AppButtonSize.xlarge:
-        return const EdgeInsets.symmetric(
-          horizontal: AppTheme.spacingXXXL,
-          vertical: AppTheme.spacingXL,
-        );
-    }
-  }
-
-  TextStyle _getTextStyle() {
-    switch (size) {
-      case AppButtonSize.small:
-        return AppTheme.overline.copyWith(
-          color: _getTextColor(),
-        );
-      case AppButtonSize.medium:
-        return AppTheme.caption.copyWith(
-          color: _getTextColor(),
-        );
-      case AppButtonSize.large:
-        return AppTheme.bodyH10.copyWith(
-          color: _getTextColor(),
-        );
-      case AppButtonSize.xlarge:
-        return AppTheme.bodyH9.copyWith(
-          color: _getTextColor(),
-        );
-    }
-  }
-
-  Color _getTextColor() {
-    switch (variant) {
-      case AppButtonVariant.primary:
-        return AppTheme.neutralWhite;
-      case AppButtonVariant.secondary:
-      case AppButtonVariant.text:
-        return AppTheme.primaryPink;
-      case AppButtonVariant.ghost:
-        return AppTheme.neutralWhite;
-    }
-  }
-}
-
-/// Button Variants
 enum AppButtonVariant {
   primary,
   secondary,
@@ -276,7 +8,6 @@ enum AppButtonVariant {
   ghost,
 }
 
-/// Button Sizes
 enum AppButtonSize {
   small,
   medium,
@@ -284,107 +15,379 @@ enum AppButtonSize {
   xlarge,
 }
 
-/// Predefined Button Styles for Common Use Cases
-class AppButtons {
+/// Reusable Button Component based on Figma Design
+class AppButton extends StatelessWidget {
+  final String text;
+  final VoidCallback? onPressed;
+  final AppButtonVariant variant;
+  final AppButtonSize size;
+  final IconData? icon;
+  final bool isLoading;
+  final bool isDisabled;
+  final double? width;
+  final Color? textColor;
+  final Color? borderColor;
+  final Color? backgroundColor;
+  final bool isOutlined;
+
+  const AppButton({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    this.variant = AppButtonVariant.primary,
+    this.size = AppButtonSize.medium,
+    this.icon,
+    this.isLoading = false,
+    this.isDisabled = false,
+    this.width,
+    this.textColor,
+    this.borderColor,
+    this.backgroundColor,
+    this.isOutlined = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final appTheme = AppTheme.of(context);
+
+    return SizedBox(
+      width: width,
+      height: _getHeight(),
+      child: ElevatedButton(
+        onPressed: (isDisabled || isLoading) ? null : onPressed,
+        style: _getButtonStyle(appTheme),
+        child: _buildContent(appTheme),
+      ),
+    );
+  }
+
+  double _getHeight() {
+    switch (size) {
+      case AppButtonSize.small:
+        return 40;
+      case AppButtonSize.medium:
+        return 48;
+      case AppButtonSize.large:
+        return 56;
+      case AppButtonSize.xlarge:
+        return 64;
+    }
+  }
+
+  ButtonStyle _getButtonStyle(AppTheme appTheme) {
+    Color? buttonColor;
+    Color? buttonTextColor;
+    Color? buttonBorderColor;
+    EdgeInsetsGeometry? padding;
+
+    // Set colors based on variant
+    switch (variant) {
+      case AppButtonVariant.primary:
+        buttonColor = backgroundColor ?? appTheme.colors.primaryRed;
+        buttonTextColor = textColor ?? appTheme.colors.white;
+        buttonBorderColor = borderColor ?? appTheme.colors.primaryRed;
+        break;
+      case AppButtonVariant.secondary:
+        buttonColor = backgroundColor ?? appTheme.colors.transparent;
+        buttonTextColor = textColor ?? appTheme.colors.primaryRed;
+        buttonBorderColor = borderColor ?? appTheme.colors.primaryRed;
+        break;
+      case AppButtonVariant.text:
+        buttonColor = backgroundColor ?? appTheme.colors.transparent;
+        buttonTextColor = textColor ?? appTheme.colors.primaryRed;
+        buttonBorderColor = borderColor ?? appTheme.colors.transparent;
+        break;
+      case AppButtonVariant.ghost:
+        buttonColor = backgroundColor ?? appTheme.colors.transparent;
+        buttonTextColor = textColor ?? appTheme.colors.white;
+        buttonBorderColor = borderColor ?? appTheme.colors.lightGray;
+        break;
+    }
+
+    // Set padding based on size
+    switch (size) {
+      case AppButtonSize.small:
+        padding = EdgeInsets.symmetric(
+          horizontal: appTheme.spacing.md,
+          vertical: appTheme.spacing.sm,
+        );
+        break;
+      case AppButtonSize.medium:
+        padding = EdgeInsets.symmetric(
+          horizontal: appTheme.spacing.lg,
+          vertical: appTheme.spacing.md,
+        );
+        break;
+      case AppButtonSize.large:
+        padding = EdgeInsets.symmetric(
+          horizontal: appTheme.spacing.xl,
+          vertical: appTheme.spacing.lg,
+        );
+        break;
+      case AppButtonSize.xlarge:
+        padding = EdgeInsets.symmetric(
+          horizontal: appTheme.spacing.xxl,
+          vertical: appTheme.spacing.xl,
+        );
+        break;
+    }
+
+    return ElevatedButton.styleFrom(
+      backgroundColor: isOutlined ? appTheme.colors.transparent : buttonColor,
+      foregroundColor: buttonTextColor,
+      side: isOutlined || buttonBorderColor != appTheme.colors.transparent
+          ? BorderSide(color: buttonBorderColor!, width: 2)
+          : null,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(appTheme.radius.md),
+      ),
+      padding: padding,
+      elevation: isOutlined ? 0 : (variant == AppButtonVariant.primary ? 4 : 0),
+      shadowColor: isOutlined ? null : appTheme.colors.primaryRed.withValues(alpha: 0.3),
+    );
+  }
+
+  Widget _buildContent(AppTheme appTheme) {
+    if (isLoading) {
+      return SizedBox(
+        width: 20,
+        height: 20,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          valueColor: AlwaysStoppedAnimation<Color>(
+            variant == AppButtonVariant.primary
+                ? appTheme.colors.white
+                : appTheme.colors.primaryRed,
+          ),
+        ),
+      );
+    }
+
+    final List<Widget> children = [];
+
+    if (icon != null) {
+      children.add(Icon(icon, size: _getIconSize()));
+      children.add(SizedBox(width: appTheme.spacing.sm));
+    }
+
+    children.add(Text(
+      text,
+      style: _getTextStyle(appTheme),
+    ));
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: children,
+    );
+  }
+
+  double _getIconSize() {
+    switch (size) {
+      case AppButtonSize.small:
+        return 16;
+      case AppButtonSize.medium:
+        return 20;
+      case AppButtonSize.large:
+        return 24;
+      case AppButtonSize.xlarge:
+        return 28;
+    }
+  }
+
+  TextStyle _getTextStyle(AppTheme appTheme) {
+    switch (size) {
+      case AppButtonSize.small:
+        return appTheme.typography.titleSmall.copyWith(
+          fontWeight: FontWeight.w600,
+        );
+      case AppButtonSize.medium:
+        return appTheme.typography.titleMedium.copyWith(
+          fontWeight: FontWeight.w600,
+        );
+      case AppButtonSize.large:
+        return appTheme.typography.titleLarge.copyWith(
+          fontWeight: FontWeight.w600,
+        );
+      case AppButtonSize.xlarge:
+        return appTheme.typography.headlineH7.copyWith(
+          fontWeight: FontWeight.w600,
+        );
+    }
+  }
+
+  // Helper methods for common button styles
   static AppButton primary({
-    Key? key,
     required String text,
-    VoidCallback? onPressed,
+    required VoidCallback? onPressed,
     AppButtonSize size = AppButtonSize.medium,
+    IconData? icon,
     bool isLoading = false,
-    Widget? icon,
-    bool isFullWidth = false,
+    double? width,
   }) {
     return AppButton(
-      key: key,
       text: text,
       onPressed: onPressed,
       variant: AppButtonVariant.primary,
       size: size,
-      isLoading: isLoading,
       icon: icon,
-      isFullWidth: isFullWidth,
+      isLoading: isLoading,
+      width: width,
     );
   }
 
   static AppButton secondary({
-    Key? key,
     required String text,
-    VoidCallback? onPressed,
+    required VoidCallback? onPressed,
     AppButtonSize size = AppButtonSize.medium,
+    IconData? icon,
     bool isLoading = false,
-    Widget? icon,
-    bool isFullWidth = false,
+    double? width,
   }) {
     return AppButton(
-      key: key,
       text: text,
       onPressed: onPressed,
       variant: AppButtonVariant.secondary,
       size: size,
-      isLoading: isLoading,
       icon: icon,
-      isFullWidth: isFullWidth,
+      isLoading: isLoading,
+      width: width,
     );
   }
 
   static AppButton ghost({
-    Key? key,
     required String text,
-    VoidCallback? onPressed,
+    required VoidCallback? onPressed,
     AppButtonSize size = AppButtonSize.medium,
+    IconData? icon,
     bool isLoading = false,
-    Widget? icon,
-    bool isFullWidth = false,
+    double? width,
+    Color? textColor,
+    Color? borderColor,
   }) {
     return AppButton(
-      key: key,
       text: text,
       onPressed: onPressed,
       variant: AppButtonVariant.ghost,
       size: size,
-      isLoading: isLoading,
       icon: icon,
-      isFullWidth: isFullWidth,
-    );
-  }
-
-  static AppButton matchNow({
-    Key? key,
-    required String text,
-    VoidCallback? onPressed,
-    bool isLoading = false,
-  }) {
-    return AppButton(
-      key: key,
-      text: text,
-      onPressed: onPressed,
-      variant: AppButtonVariant.primary,
-      size: AppButtonSize.small,
       isLoading: isLoading,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingS,
-        vertical: AppTheme.spacingM,
-      ),
+      width: width,
+      textColor: textColor,
+      borderColor: borderColor,
     );
   }
 
   static AppButton tag({
-    Key? key,
     required String text,
-    VoidCallback? onPressed,
+    required VoidCallback? onPressed,
+    IconData? icon,
   }) {
     return AppButton(
-      key: key,
       text: text,
       onPressed: onPressed,
-      variant: AppButtonVariant.ghost,
+      variant: AppButtonVariant.secondary,
       size: AppButtonSize.small,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingS,
-        vertical: AppTheme.spacingM,
-      ),
-      borderRadius: AppTheme.radiusM,
+      icon: icon,
+    );
+  }
+
+  static AppButton matchNow({
+    required String text,
+    required VoidCallback? onPressed,
+    IconData? icon,
+  }) {
+    return AppButton(
+      text: text,
+      onPressed: onPressed,
+      variant: AppButtonVariant.primary,
+      size: AppButtonSize.large,
+      icon: icon,
+    );
+  }
+}
+
+// Convenience class for common button patterns
+class AppButtons {
+  static AppButton primary({
+    required String text,
+    required VoidCallback? onPressed,
+    AppButtonSize size = AppButtonSize.medium,
+    IconData? icon,
+    bool isLoading = false,
+    double? width,
+  }) {
+    return AppButton.primary(
+      text: text,
+      onPressed: onPressed,
+      size: size,
+      icon: icon,
+      isLoading: isLoading,
+      width: width,
+    );
+  }
+
+  static AppButton secondary({
+    required String text,
+    required VoidCallback? onPressed,
+    AppButtonSize size = AppButtonSize.medium,
+    IconData? icon,
+    bool isLoading = false,
+    double? width,
+  }) {
+    return AppButton.secondary(
+      text: text,
+      onPressed: onPressed,
+      size: size,
+      icon: icon,
+      isLoading: isLoading,
+      width: width,
+    );
+  }
+
+  static AppButton ghost({
+    required String text,
+    required VoidCallback? onPressed,
+    AppButtonSize size = AppButtonSize.medium,
+    IconData? icon,
+    bool isLoading = false,
+    double? width,
+    Color? textColor,
+    Color? borderColor,
+  }) {
+    return AppButton.ghost(
+      text: text,
+      onPressed: onPressed,
+      size: size,
+      icon: icon,
+      isLoading: isLoading,
+      width: width,
+      textColor: textColor,
+      borderColor: borderColor,
+    );
+  }
+
+  static AppButton tag({
+    required String text,
+    required VoidCallback? onPressed,
+    IconData? icon,
+  }) {
+    return AppButton.tag(
+      text: text,
+      onPressed: onPressed,
+      icon: icon,
+    );
+  }
+
+  static AppButton matchNow({
+    required String text,
+    required VoidCallback? onPressed,
+    IconData? icon,
+  }) {
+    return AppButton.matchNow(
+      text: text,
+      onPressed: onPressed,
+      icon: icon,
     );
   }
 }

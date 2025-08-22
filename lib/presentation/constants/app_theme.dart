@@ -1,383 +1,455 @@
 import 'package:flutter/material.dart';
 
-/// App Theme Constants based on Figma Design
 class AppTheme {
-  // Private constructor to prevent instantiation
+  static AppTheme? _instance;
+
+  static AppTheme of(BuildContext context) {
+    _instance ??= AppTheme._();
+    return _instance!;
+  }
+
   AppTheme._();
 
-  // ==================== COLOR PALETTE ====================
+  // Font Families
+  static const String fontFamilyPrimary = 'Cairo';
+  static const String fontFamilySecondary = 'Josefin Sans';
+  static const String fontFamilyArabic = 'Almarai';
 
-  /// Primary Colors
-  static const Color primaryPink = Color(0xFFFF6B8F);
-  static const Color primaryPinkDark = Color(0xFFFF265A);
-  static const Color primaryPinkLight = Color(0xFFD08A96);
+  // Colors
+  static const Color primaryRed = Color(0xFFFE2C54);
+  static const Color secondaryRed = Color(0xFFFF2D55);
+  static const Color darkTone = Color(0xFF0F0E12);
+  static const Color lightGray = Color(0xFFCCCCCC);
+  static const Color pureWhite = Color(0xFFFFFFFF);
+  static const Color transparent = Color(0x00000000);
 
-  /// Secondary Colors
-  static const Color secondaryBlue = Color(0xFF4B4685);
-  static const Color secondaryPurple = Color(0xFF5B5D9F);
-  static const Color secondaryNavy = Color(0xFF222C4D);
+  // Color Palette
+  static const Color primary = primaryRed;
+  static const Color secondary = secondaryRed;
+  static const Color accent = secondaryRed;
+  static const Color background = darkTone;
+  static const Color surface = darkTone;
+  static const Color white = pureWhite;
+  static const Color black = darkTone;
+  static const Color error = primaryRed;
+  static const Color warning = Color(0xFFFFA500);
+  static const Color success = Color(0xFF4CAF50);
+  static const Color info = Color(0xFF2196F3);
 
-  /// Neutral Colors
-  static const Color neutralWhite = Color(0xFFFFFFFF);
-  static const Color neutralLightGray = Color(0xFFCFD0FD);
-  static const Color neutralGray = Color(0xFFCED0FC);
-  static const Color neutralDarkGray = Color(0xFF18181F);
-  static const Color neutralBlack = Color(0xFF0E0D11);
-  static const Color neutralText = Color(0xFF1D1D34);
+  // Neutral Colors (0-900 scale)
+  static const Map<int, Color> neutral = {
+    50: Color(0xFFFAFAFA),
+    100: Color(0xFFF5F5F5),
+    200: Color(0xFFEEEEEE),
+    300: Color(0xFFE0E0E0),
+    400: Color(0xFFBDBDBD),
+    500: lightGray,
+    600: Color(0xFF757575),
+    700: Color(0xFF616161),
+    800: Color(0xFF424242),
+    900: darkTone,
+  };
 
-  /// Accent Colors
-  static const Color accentRed = Color(0xFFAD0742);
-  static const Color accentGreen = Color(0xFF1B3719);
-  static const Color accentBrown = Color(0xFF684D3F);
-
-  /// Status Colors
-  static const Color successGreen = Color(0xFF1B3719);
-  static const Color warningOrange = Color(0xFF684D3F);
-  static const Color errorRed = Color(0xFFFF265A);
-
-  /// Transparent Colors
-  static const Color transparentWhite = Color(0x20FFFFFF);
-  static const Color transparentBlack = Color(0x00000000);
-  static const Color semiTransparentBlack = Color(0xCC09090B);
-  static const Color semiTransparentWhite = Color(0x7F0E0D11);
-
-  // ==================== TYPOGRAPHY ====================
-
-  /// Font Family
-  static const String fontFamily = 'Josefin Sans';
-
-  /// Typography Scale (Mathematical Scale 1.250)
-  static const double baseFontSize = 18.0;
-
-  /// Display Text Styles
+  // Typography
   static const TextStyle displayH1 = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 107.0,
-    fontWeight: FontWeight.w500,
-    height: 1.21,
-    color: neutralText,
+    fontFamily: fontFamilyPrimary,
+    fontSize: 60,
+    fontWeight: FontWeight.w900,
+    letterSpacing: 2.40,
+    color: primaryRed,
   );
 
   static const TextStyle displayH2 = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 86.0,
-    fontWeight: FontWeight.w500,
-    color: neutralText,
+    fontFamily: fontFamilyPrimary,
+    fontSize: 48,
+    fontWeight: FontWeight.w900,
+    letterSpacing: 2.0,
+    color: primaryRed,
   );
 
   static const TextStyle displayH3 = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 69.0,
-    fontWeight: FontWeight.w500,
-    color: neutralText,
+    fontFamily: fontFamilyPrimary,
+    fontSize: 40,
+    fontWeight: FontWeight.w800,
+    letterSpacing: 1.6,
+    color: primaryRed,
   );
 
-  static const TextStyle displayH4 = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 55.0,
-    fontWeight: FontWeight.w500,
-    color: neutralText,
+  static const TextStyle headlineH4 = TextStyle(
+    fontFamily: fontFamilyPrimary,
+    fontSize: 32,
+    fontWeight: FontWeight.w700,
+    height: 1.50,
+    color: lightGray,
   );
 
-  static const TextStyle displayH5 = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 44.0,
-    fontWeight: FontWeight.w500,
-    color: neutralText,
+  static const TextStyle headlineH5 = TextStyle(
+    fontFamily: fontFamilyPrimary,
+    fontSize: 28,
+    fontWeight: FontWeight.w700,
+    height: 1.40,
+    color: lightGray,
   );
 
-  /// Headline Text Styles
   static const TextStyle headlineH6 = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 35.0,
-    fontWeight: FontWeight.w400,
-    color: neutralText,
+    fontFamily: fontFamilyPrimary,
+    fontSize: 24,
+    fontWeight: FontWeight.w600,
+    height: 1.35,
+    color: white,
   );
 
   static const TextStyle headlineH7 = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 28.0,
-    fontWeight: FontWeight.w400,
-    color: neutralText,
+    fontFamily: fontFamilyPrimary,
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
+    height: 1.30,
+    color: white,
   );
 
-  /// Body Text Styles
   static const TextStyle bodyH8 = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 23.0,
+    fontFamily: fontFamilySecondary,
+    fontSize: 18,
     fontWeight: FontWeight.w400,
-    height: 1.30,
-    color: neutralText,
+    height: 1.35,
+    color: white,
   );
 
   static const TextStyle bodyH9 = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 18.0,
+    fontFamily: fontFamilySecondary,
+    fontSize: 16,
     fontWeight: FontWeight.w400,
-    height: 1.67,
-    color: neutralText,
+    height: 1.40,
+    color: white,
   );
 
   static const TextStyle bodyH10 = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 14.0,
+    fontFamily: fontFamilySecondary,
+    fontSize: 14,
     fontWeight: FontWeight.w400,
-    height: 1.79,
-    color: neutralText,
+    height: 1.50,
+    color: lightGray,
   );
 
-  /// Special Text Styles
   static const TextStyle titleLarge = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 90.0,
-    fontWeight: FontWeight.w400,
-    color: neutralWhite,
+    fontFamily: fontFamilyPrimary,
+    fontSize: 22,
+    fontWeight: FontWeight.w700,
+    height: 1.30,
+    color: white,
   );
 
   static const TextStyle titleMedium = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 50.0,
+    fontFamily: fontFamilyPrimary,
+    fontSize: 18,
     fontWeight: FontWeight.w600,
-    color: primaryPink,
+    height: 1.35,
+    color: white,
   );
 
   static const TextStyle titleSmall = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 22.0,
-    fontWeight: FontWeight.w500,
-    letterSpacing: -0.66,
-    color: neutralWhite,
+    fontFamily: fontFamilyPrimary,
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    height: 1.40,
+    color: white,
   );
 
   static const TextStyle caption = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 12.0,
+    fontFamily: fontFamilySecondary,
+    fontSize: 12,
     fontWeight: FontWeight.w400,
-    color: neutralLightGray,
+    height: 1.50,
+    color: lightGray,
   );
 
   static const TextStyle overline = TextStyle(
-    fontFamily: fontFamily,
-    fontSize: 10.0,
+    fontFamily: fontFamilySecondary,
+    fontSize: 10,
     fontWeight: FontWeight.w400,
-    color: neutralGray,
+    height: 1.60,
+    color: lightGray,
   );
 
-  // ==================== SPACING SYSTEM ====================
+  // Special Typography for Arabic Text
+  static const TextStyle arabicText = TextStyle(
+    fontFamily: fontFamilyArabic,
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    height: 1.35,
+    color: white,
+  );
 
-  /// Base spacing unit (8px)
-  static const double spacingUnit = 8.0;
+  // Spacing System (8px base unit)
+  static const double spacingXS = 4.0;
+  static const double spacingS = 8.0;
+  static const double spacingM = 16.0;
+  static const double spacingL = 24.0;
+  static const double spacingXL = 32.0;
+  static const double spacingXXL = 48.0;
+  static const double spacingXXXL = 64.0;
+  static const double spacingHuge = 96.0;
 
-  /// Spacing values
-  static const double spacingXS = spacingUnit * 0.5;    // 4px
-  static const double spacingS = spacingUnit;            // 8px
-  static const double spacingM = spacingUnit * 1.5;      // 12px
-  static const double spacingL = spacingUnit * 2;        // 16px
-  static const double spacingXL = spacingUnit * 3;       // 24px
-  static const double spacingXXL = spacingUnit * 4;      // 32px
-  static const double spacingXXXL = spacingUnit * 6;     // 48px
-  static const double spacingHuge = spacingUnit * 9;     // 72px
-  static const double spacingMassive = spacingUnit * 12; // 96px
-
-  // ==================== BORDER RADIUS ====================
-
+  // Border Radius
   static const double radiusXS = 4.0;
   static const double radiusS = 8.0;
-  static const double radiusM = 12.0;
-  static const double radiusL = 16.0;
-  static const double radiusXL = 24.0;
+  static const double radiusM = 16.0;
+  static const double radiusL = 24.0;
+  static const double radiusXL = 31.0; // From Figma design
   static const double radiusXXL = 40.0;
   static const double radiusCircular = 50.0;
 
-  // ==================== SHADOWS ====================
-
+  // Shadows
   static const List<BoxShadow> shadowSmall = [
     BoxShadow(
-      color: Color(0xFF000000),
-      blurRadius: 0,
-      offset: Offset(4, 4),
+      color: Color(0x1A000000),
+      offset: Offset(0, 2),
+      blurRadius: 4,
       spreadRadius: 0,
     ),
   ];
 
   static const List<BoxShadow> shadowMedium = [
     BoxShadow(
-      color: Color(0xFF000000),
-      blurRadius: 0,
-      offset: Offset(8, 8),
+      color: Color(0x33000000),
+      offset: Offset(0, 4),
+      blurRadius: 8,
       spreadRadius: 0,
     ),
   ];
 
   static const List<BoxShadow> shadowLarge = [
     BoxShadow(
-      color: Color(0xFF000000),
-      blurRadius: 0,
-      offset: Offset(16, 16),
+      color: Color(0x4D000000),
+      offset: Offset(0, 8),
+      blurRadius: 16,
       spreadRadius: 0,
     ),
   ];
 
   static const List<BoxShadow> shadowText = [
-    Shadow(
-      offset: Offset(0, 4),
+    BoxShadow(
+      color: Color(0x80000000),
+      offset: Offset(0, 2),
       blurRadius: 4,
-      color: Color(0x40000000),
+      spreadRadius: 0,
     ),
   ];
 
-  // ==================== GRADIENTS ====================
-
+  // Gradients
   static const LinearGradient gradientPrimary = LinearGradient(
-    begin: Alignment(0.50, 0.23),
-    end: Alignment(0.50, 1.08),
-    colors: [
-      Color(0x0009090B),
-      Color(0x0009090B),
-      Color(0xCC09090B),
-    ],
+    begin: Alignment(0.50, -0.00),
+    end: Alignment(0.50, 1.00),
+    colors: [transparent, secondaryRed],
+  );
+
+  static const LinearGradient gradientSecondary = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [primaryRed, secondaryRed],
   );
 
   static const LinearGradient gradientBackground = LinearGradient(
-    begin: Alignment(0.50, -0.00),
-    end: Alignment(0.50, 1.00),
-    colors: [
-      Color(0x00000000),
-      Color(0xB3000000),
-      Color(0xFF0E0D11),
-    ],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [darkTone, Color(0xFF1A1A1A)],
   );
 
-  static const LinearGradient gradientCard = LinearGradient(
-    begin: Alignment(0.50, 0.42),
-    end: Alignment(0.50, 1.07),
-    colors: [
-      Color(0x00000000),
-      Color(0xFF000000),
-    ],
-  );
+  // Instance-based getters for components
+  AppColors get colors => AppColors();
+  AppTypography get typography => AppTypography();
+  AppSpacing get spacing => AppSpacing();
+  AppRadius get radius => AppRadius();
+  AppShadows get shadows => AppShadows();
+  AppGradients get gradients => AppGradients();
 
-  // ==================== COMPONENT THEMES ====================
-
-  /// Card Theme
-  static final CardTheme cardTheme = CardTheme(
-    color: neutralBlack,
+  // Component Themes
+  CardThemeData get cardTheme => CardThemeData(
+    color: surface,
     elevation: 0,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(radiusXL),
-      side: const BorderSide(
-        color: transparentWhite,
-        width: 0.5,
-      ),
     ),
+    margin: EdgeInsets.all(spacingM),
   );
 
-  /// Button Theme
-  static final ButtonThemeData buttonTheme = ButtonThemeData(
+  ButtonThemeData get buttonTheme => ButtonThemeData(
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(radiusM),
     ),
-    buttonColor: primaryPink,
-    textTheme: ButtonTextTheme.primary,
+    padding: EdgeInsets.symmetric(
+      horizontal: spacingL,
+      vertical: spacingM,
+    ),
   );
 
-  /// Input Decoration Theme
-  static final InputDecorationTheme inputDecorationTheme = InputDecorationTheme(
+  InputDecorationTheme get inputDecorationTheme => InputDecorationTheme(
     border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(radiusXL),
-      borderSide: const BorderSide(
-        color: transparentWhite,
-        width: 0.5,
-      ),
+      borderRadius: BorderRadius.circular(radiusM),
+      borderSide: BorderSide(color: lightGray),
     ),
     enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(radiusXL),
-      borderSide: const BorderSide(
-        color: transparentWhite,
-        width: 0.5,
-      ),
+      borderRadius: BorderRadius.circular(radiusM),
+      borderSide: BorderSide(color: lightGray),
     ),
     focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(radiusXL),
-      borderSide: const BorderSide(
-        color: primaryPink,
-        width: 1.0,
-      ),
+      borderRadius: BorderRadius.circular(radiusM),
+      borderSide: BorderSide(color: primaryRed, width: 2),
+    ),
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(radiusM),
+      borderSide: BorderSide(color: error),
     ),
     filled: true,
-    fillColor: neutralBlack,
-    contentPadding: const EdgeInsets.symmetric(
-      horizontal: spacingXL,
-      vertical: spacingXL,
+    fillColor: surface,
+    contentPadding: EdgeInsets.symmetric(
+      horizontal: spacingM,
+      vertical: spacingM,
     ),
   );
 
-  /// App Bar Theme
-  static final AppBarTheme appBarTheme = AppBarTheme(
-    backgroundColor: neutralBlack,
-    foregroundColor: neutralWhite,
+  AppBarTheme get appBarTheme => AppBarTheme(
+    backgroundColor: surface,
     elevation: 0,
     centerTitle: true,
-    titleTextStyle: titleSmall,
+    titleTextStyle: headlineH6.copyWith(
+      color: white,
+      fontWeight: FontWeight.w600,
+    ),
+    iconTheme: IconThemeData(color: white),
   );
 
-  /// Bottom Navigation Bar Theme
-  static final BottomNavigationBarThemeData bottomNavigationBarTheme =
-      BottomNavigationBarThemeData(
-    backgroundColor: neutralBlack,
-    selectedItemColor: primaryPink,
-    unselectedItemColor: neutralLightGray,
+  BottomNavigationBarThemeData get bottomNavigationBarTheme => BottomNavigationBarThemeData(
+    backgroundColor: surface,
+    selectedItemColor: primaryRed,
+    unselectedItemColor: lightGray,
     type: BottomNavigationBarType.fixed,
-    elevation: 0,
+    elevation: 8,
   );
 
-  // ==================== MAIN THEME DATA ====================
-
-  static ThemeData get lightTheme => ThemeData(
+  // Theme Data
+  ThemeData get lightTheme => ThemeData(
     useMaterial3: true,
-    fontFamily: fontFamily,
-    primaryColor: primaryPink,
-    scaffoldBackgroundColor: neutralWhite,
+    fontFamily: fontFamilySecondary,
+    primaryColor: primaryRed,
+    scaffoldBackgroundColor: white,
+    cardTheme: cardTheme,
+    buttonTheme: buttonTheme,
+    inputDecorationTheme: inputDecorationTheme,
+    appBarTheme: appBarTheme.copyWith(
+      backgroundColor: white,
+      titleTextStyle: headlineH6.copyWith(color: darkTone),
+      iconTheme: IconThemeData(color: darkTone),
+    ),
+    bottomNavigationBarTheme: bottomNavigationBarTheme.copyWith(
+      backgroundColor: white,
+      selectedItemColor: primaryRed,
+      unselectedItemColor: neutral[600]!,
+    ),
+  );
+
+  ThemeData get darkTheme => ThemeData(
+    useMaterial3: true,
+    fontFamily: fontFamilySecondary,
+    primaryColor: primaryRed,
+    scaffoldBackgroundColor: darkTone,
     cardTheme: cardTheme,
     buttonTheme: buttonTheme,
     inputDecorationTheme: inputDecorationTheme,
     appBarTheme: appBarTheme,
     bottomNavigationBarTheme: bottomNavigationBarTheme,
-    colorScheme: const ColorScheme.light(
-      primary: primaryPink,
-      secondary: secondaryBlue,
-      surface: neutralWhite,
-      background: neutralWhite,
-      error: errorRed,
-      onPrimary: neutralWhite,
-      onSecondary: neutralWhite,
-      onSurface: neutralText,
-      onBackground: neutralText,
-      onError: neutralWhite,
-    ),
   );
+}
 
-  static ThemeData get darkTheme => ThemeData(
-    useMaterial3: true,
-    fontFamily: fontFamily,
-    primaryColor: primaryPink,
-    scaffoldBackgroundColor: neutralBlack,
-    cardTheme: cardTheme,
-    buttonTheme: buttonTheme,
-    inputDecorationTheme: inputDecorationTheme,
-    appBarTheme: appBarTheme,
-    bottomNavigationBarTheme: bottomNavigationBarTheme,
-    colorScheme: const ColorScheme.dark(
-      primary: primaryPink,
-      secondary: secondaryBlue,
-      surface: neutralBlack,
-      background: neutralBlack,
-      error: errorRed,
-      onPrimary: neutralWhite,
-      onSecondary: neutralWhite,
-      onSurface: neutralWhite,
-      onBackground: neutralWhite,
-      onError: neutralWhite,
-    ),
-  );
+// Helper classes for instance-based access
+class AppColors {
+  Color get primaryRed => AppTheme.primaryRed;
+  Color get secondaryRed => AppTheme.secondaryRed;
+  Color get darkTone => AppTheme.darkTone;
+  Color get lightGray => AppTheme.lightGray;
+  Color get white => AppTheme.white;
+  Color get pureWhite => AppTheme.pureWhite;
+  Color get black => AppTheme.black;
+  Color get transparent => AppTheme.transparent;
+  Color get primary => AppTheme.primary;
+  Color get secondary => AppTheme.secondary;
+  Color get accent => AppTheme.accent;
+  Color get background => AppTheme.background;
+  Color get surface => AppTheme.surface;
+  Color get error => AppTheme.error;
+  Color get warning => AppTheme.warning;
+  Color get success => AppTheme.success;
+  Color get info => AppTheme.info;
+  Map<int, Color> get neutral => AppTheme.neutral;
+
+  // Additional colors for pages
+  Color get textPrimary => AppTheme.white;
+  Color get textSecondary => AppTheme.lightGray;
+  Color get neutralGray => AppTheme.lightGray;
+  Color get infoBlue => AppTheme.info;
+  Color get successGreen => AppTheme.success;
+  Color get errorRed => AppTheme.error;
+}
+
+class AppTypography {
+  TextStyle get displayH1 => AppTheme.displayH1;
+  TextStyle get displayH2 => AppTheme.displayH2;
+  TextStyle get displayH3 => AppTheme.displayH3;
+  TextStyle get headlineH4 => AppTheme.headlineH4;
+  TextStyle get headlineH5 => AppTheme.headlineH5;
+  TextStyle get headlineH6 => AppTheme.headlineH6;
+  TextStyle get headlineH7 => AppTheme.headlineH7;
+  TextStyle get bodyH8 => AppTheme.bodyH8;
+  TextStyle get bodyH9 => AppTheme.bodyH9;
+  TextStyle get bodyH10 => AppTheme.bodyH10;
+  TextStyle get bodyMedium => AppTheme.bodyH9; // Alias for bodyH9
+  TextStyle get titleLarge => AppTheme.titleLarge;
+  TextStyle get titleMedium => AppTheme.titleMedium;
+  TextStyle get titleSmall => AppTheme.titleSmall;
+  TextStyle get caption => AppTheme.caption;
+  TextStyle get overline => AppTheme.overline;
+  TextStyle get arabicText => AppTheme.arabicText;
+  String get fontFamilyPrimary => AppTheme.fontFamilyPrimary;
+  String get fontFamilySecondary => AppTheme.fontFamilySecondary;
+  String get fontFamilyArabic => AppTheme.fontFamilyArabic;
+
+  // Additional typography for pages
+  TextStyle get bodySmall => AppTheme.bodyH10;
+}
+
+class AppSpacing {
+  double get xs => AppTheme.spacingXS;
+  double get sm => AppTheme.spacingS;
+  double get md => AppTheme.spacingM;
+  double get lg => AppTheme.spacingL;
+  double get xl => AppTheme.spacingXL;
+  double get xxl => AppTheme.spacingXXL;
+  double get xxxl => AppTheme.spacingXXXL;
+  double get huge => AppTheme.spacingHuge;
+
+  // Padding aliases
+  double get paddingMedium => AppTheme.spacingM;
+}
+
+class AppRadius {
+  double get xs => AppTheme.radiusXS;
+  double get sm => AppTheme.radiusS;
+  double get md => AppTheme.radiusM;
+  double get lg => AppTheme.radiusL;
+  double get xl => AppTheme.radiusXL;
+  double get xxl => AppTheme.radiusXXL;
+  double get circular => AppTheme.radiusCircular;
+}
+
+class AppShadows {
+  List<BoxShadow> get shadowSmall => AppTheme.shadowSmall;
+  List<BoxShadow> get shadowMedium => AppTheme.shadowMedium;
+  List<BoxShadow> get shadowLarge => AppTheme.shadowLarge;
+  List<BoxShadow> get shadowText => AppTheme.shadowText;
+}
+
+class AppGradients {
+  LinearGradient get primaryGradient => AppTheme.gradientPrimary;
+  LinearGradient get secondaryGradient => AppTheme.gradientSecondary;
+  LinearGradient get backgroundGradient => AppTheme.gradientBackground;
 }

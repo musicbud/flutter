@@ -1,607 +1,441 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_theme.dart';
 
-/// Reusable Card Component based on Figma Design
+enum AppCardVariant {
+  primary,
+  secondary,
+  outline,
+  elevated,
+  musicTrack,
+  profile,
+  event,
+  gradient,
+  transparent,
+}
+
 class AppCard extends StatelessWidget {
-  final Widget child;
   final AppCardVariant variant;
+  final Widget? child;
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
-  final double? borderRadius;
-  final Color? backgroundColor;
-  final Color? borderColor;
-  final double? borderWidth;
-  final List<BoxShadow>? shadows;
   final VoidCallback? onTap;
-  final bool isInteractive;
   final double? width;
   final double? height;
-  final AlignmentGeometry? alignment;
-  final Clip? clipBehavior;
+  final BorderRadius? borderRadius;
+  final BoxShadow? shadow;
 
   const AppCard({
     super.key,
-    required this.child,
-    this.variant = AppCardVariant.default_,
+    this.variant = AppCardVariant.primary,
+    this.child,
     this.padding,
     this.margin,
-    this.borderRadius,
-    this.backgroundColor,
-    this.borderColor,
-    this.borderWidth,
-    this.shadows,
     this.onTap,
-    this.isInteractive = false,
     this.width,
     this.height,
-    this.alignment,
-    this.clipBehavior,
+    this.borderRadius,
+    this.shadow,
   });
 
   @override
   Widget build(BuildContext context) {
-    final cardDecoration = _getCardDecoration();
-    final cardPadding = padding ?? _getDefaultPadding();
-    final cardMargin = margin ?? _getDefaultMargin();
+    final appTheme = AppTheme.of(context);
 
-    Widget cardContent = Container(
-      width: width,
-      height: height,
-      padding: cardPadding,
-      margin: cardMargin,
-      decoration: cardDecoration,
-      alignment: alignment,
-      clipBehavior: clipBehavior ?? Clip.antiAlias,
-      child: child,
-    );
-
-    if (onTap != null || isInteractive) {
-      cardContent = Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(
-            borderRadius ?? _getDefaultBorderRadius(),
-          ),
-          child: cardContent,
-        ),
-      );
-    }
-
-    return cardContent;
-  }
-
-  BoxDecoration _getCardDecoration() {
-    final baseDecoration = BoxDecoration(
-      color: backgroundColor ?? _getDefaultBackgroundColor(),
-      borderRadius: BorderRadius.circular(
-        borderRadius ?? _getDefaultBorderRadius(),
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: width,
+        height: height,
+        margin: margin,
+        padding: padding ?? EdgeInsets.all(appTheme.spacing.md),
+        decoration: _getDecoration(appTheme),
+        child: child,
       ),
-      border: _getBorder(),
-      boxShadow: shadows ?? _getDefaultShadows(),
     );
+  }
 
-    // Add gradient for specific variants
+  BoxDecoration _getDecoration(AppTheme appTheme) {
     switch (variant) {
-      case AppCardVariant.gradient:
-        return baseDecoration.copyWith(
-          gradient: AppTheme.gradientCard,
-        );
-      case AppCardVariant.glass:
-        return baseDecoration.copyWith(
-          color: AppTheme.semiTransparentWhite,
+      case AppCardVariant.primary:
+        return BoxDecoration(
+          color: appTheme.colors.darkTone,
+          borderRadius: BorderRadius.circular(appTheme.radius.lg),
           border: Border.all(
-            color: AppTheme.transparentWhite,
-            width: 0.5,
+            color: appTheme.colors.lightGray.withValues(alpha: 0.2),
           ),
         );
-      default:
-        return baseDecoration;
-    }
-  }
-
-  Border? _getBorder() {
-    if (borderColor == null && borderWidth == null) {
-      return _getDefaultBorder();
-    }
-
-    return Border.all(
-      color: borderColor ?? _getDefaultBorderColor(),
-      width: borderWidth ?? 1.0,
-    );
-  }
-
-  Border _getDefaultBorder() {
-    switch (variant) {
-      case AppCardVariant.outlined:
-        return Border.all(
-          color: AppTheme.transparentWhite,
-          width: 0.5,
+      case AppCardVariant.secondary:
+        return BoxDecoration(
+          color: appTheme.colors.darkTone,
+          borderRadius: BorderRadius.circular(appTheme.radius.lg),
+          border: Border.all(
+            color: appTheme.colors.primaryRed.withValues(alpha: 0.3),
+          ),
         );
-      case AppCardVariant.bordered:
-        return Border.all(
-          color: AppTheme.primaryPink,
-          width: 1.0,
+      case AppCardVariant.outline:
+        return BoxDecoration(
+          color: appTheme.colors.darkTone,
+          borderRadius: BorderRadius.circular(appTheme.radius.lg),
+          border: Border.all(
+            color: appTheme.colors.lightGray.withValues(alpha: 0.3),
+          ),
         );
-      default:
-        return Border.all(
-          color: Colors.transparent,
-          width: 0,
+      case AppCardVariant.elevated:
+        return BoxDecoration(
+          color: appTheme.colors.darkTone,
+          borderRadius: BorderRadius.circular(appTheme.radius.lg),
+          boxShadow: [
+            BoxShadow(
+              color: appTheme.colors.darkTone.withValues(alpha: 0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        );
+      case AppCardVariant.musicTrack:
+        return BoxDecoration(
+          color: appTheme.colors.darkTone,
+          borderRadius: BorderRadius.circular(appTheme.radius.lg),
+          border: Border.all(
+            color: appTheme.colors.lightGray.withValues(alpha: 0.2),
+          ),
+        );
+      case AppCardVariant.profile:
+        return BoxDecoration(
+          color: appTheme.colors.darkTone,
+          borderRadius: BorderRadius.circular(appTheme.radius.lg),
+          border: Border.all(
+            color: appTheme.colors.lightGray.withValues(alpha: 0.2),
+          ),
+        );
+      case AppCardVariant.event:
+        return BoxDecoration(
+          color: appTheme.colors.darkTone,
+          borderRadius: BorderRadius.circular(appTheme.radius.lg),
+          border: Border.all(
+            color: appTheme.colors.lightGray.withValues(alpha: 0.2),
+          ),
+        );
+      case AppCardVariant.gradient:
+        return BoxDecoration(
+          gradient: appTheme.gradients.primaryGradient,
+          borderRadius: BorderRadius.circular(appTheme.radius.lg),
+        );
+      case AppCardVariant.transparent:
+        return BoxDecoration(
+          color: appTheme.colors.transparent,
+          borderRadius: BorderRadius.circular(appTheme.radius.lg),
         );
     }
   }
 
-  Color _getDefaultBackgroundColor() {
+  BorderRadius _getBorderRadius(AppTheme appTheme) {
     switch (variant) {
-      case AppCardVariant.default_:
-        return AppTheme.neutralBlack;
-      case AppCardVariant.white:
-        return AppTheme.neutralWhite;
-      case AppCardVariant.transparent:
-        return Colors.transparent;
-      case AppCardVariant.glass:
-        return AppTheme.semiTransparentWhite;
       case AppCardVariant.gradient:
-        return AppTheme.neutralBlack;
-      case AppCardVariant.outlined:
-        return AppTheme.neutralBlack;
-      case AppCardVariant.bordered:
-        return AppTheme.neutralBlack;
-    }
-  }
-
-  Color _getDefaultBorderColor() {
-    switch (variant) {
-      case AppCardVariant.outlined:
-        return AppTheme.transparentWhite;
-      case AppCardVariant.bordered:
-        return AppTheme.primaryPink;
+        return BorderRadius.circular(appTheme.radius.xl);
       default:
-        return Colors.transparent;
-    }
-  }
-
-  double _getDefaultBorderRadius() {
-    switch (variant) {
-      case AppCardVariant.default_:
-        return AppTheme.radiusXL;
-      case AppCardVariant.white:
-        return AppTheme.radiusXXL;
-      case AppCardVariant.transparent:
-        return AppTheme.radiusM;
-      case AppCardVariant.glass:
-        return AppTheme.radiusM;
-      case AppCardVariant.gradient:
-        return AppTheme.radiusXL;
-      case AppCardVariant.outlined:
-        return AppTheme.radiusXL;
-      case AppCardVariant.bordered:
-        return AppTheme.radiusM;
-    }
-  }
-
-  EdgeInsetsGeometry _getDefaultPadding() {
-    switch (variant) {
-      case AppCardVariant.default_:
-        return const EdgeInsets.all(AppTheme.spacingXL);
-      case AppCardVariant.white:
-        return const EdgeInsets.all(AppTheme.spacingMassive);
-      case AppCardVariant.transparent:
-        return const EdgeInsets.all(AppTheme.spacingM);
-      case AppCardVariant.glass:
-        return const EdgeInsets.all(AppTheme.spacingL);
-      case AppCardVariant.gradient:
-        return const EdgeInsets.all(AppTheme.spacingM);
-      case AppCardVariant.outlined:
-        return const EdgeInsets.all(AppTheme.spacingXL);
-      case AppCardVariant.bordered:
-        return const EdgeInsets.all(AppTheme.spacingL);
-    }
-  }
-
-  EdgeInsetsGeometry _getDefaultMargin() {
-    switch (variant) {
-      case AppCardVariant.default_:
-        return const EdgeInsets.all(AppTheme.spacingM);
-      case AppCardVariant.white:
-        return const EdgeInsets.all(AppTheme.spacingL);
-      case AppCardVariant.transparent:
-        return EdgeInsets.zero;
-      case AppCardVariant.glass:
-        return const EdgeInsets.all(AppTheme.spacingS);
-      case AppCardVariant.gradient:
-        return const EdgeInsets.all(AppTheme.spacingM);
-      case AppCardVariant.outlined:
-        return const EdgeInsets.all(AppTheme.spacingM);
-      case AppCardVariant.bordered:
-        return const EdgeInsets.all(AppTheme.spacingS);
-    }
-  }
-
-  List<BoxShadow> _getDefaultShadows() {
-    switch (variant) {
-      case AppCardVariant.white:
-        return AppTheme.shadowLarge;
-      case AppCardVariant.default_:
-      case AppCardVariant.transparent:
-      case AppCardVariant.glass:
-      case AppCardVariant.gradient:
-      case AppCardVariant.outlined:
-      case AppCardVariant.bordered:
-        return [];
+        return BorderRadius.circular(appTheme.radius.lg);
     }
   }
 }
 
-/// Card Variants
-enum AppCardVariant {
-  default_,
-  white,
-  transparent,
-  glass,
-  gradient,
-  outlined,
-  bordered,
-}
-
-/// Predefined Card Styles for Common Use Cases
+// Factory constructors for common card types
 class AppCards {
-  /// Music Track Card
   static AppCard musicTrack({
     Key? key,
-    required Widget child,
-    VoidCallback? onTap,
-    EdgeInsetsGeometry? padding,
-    EdgeInsetsGeometry? margin,
-  }) {
-    return AppCard(
-      key: key,
-      child: child,
-      variant: AppCardVariant.outlined,
-      onTap: onTap,
-      padding: padding ?? const EdgeInsets.all(AppTheme.spacingL),
-      margin: margin ?? const EdgeInsets.symmetric(vertical: AppTheme.spacingS),
-      borderRadius: AppTheme.radiusM,
-    );
-  }
-
-  /// Profile Card
-  static AppCard profile({
-    Key? key,
-    required Widget child,
-    VoidCallback? onTap,
-    EdgeInsetsGeometry? padding,
-    EdgeInsetsGeometry? margin,
-  }) {
-    return AppCard(
-      key: key,
-      child: child,
-      variant: AppCardVariant.gradient,
-      onTap: onTap,
-      padding: padding ?? const EdgeInsets.all(AppTheme.spacingXL),
-      margin: margin ?? const EdgeInsets.all(AppTheme.spacingM),
-    );
-  }
-
-  /// Event Card
-  static AppCard event({
-    Key? key,
-    required Widget child,
-    VoidCallback? onTap,
-    EdgeInsetsGeometry? padding,
-    EdgeInsetsGeometry? margin,
-  }) {
-    return AppCard(
-      key: key,
-      child: child,
-      variant: AppCardVariant.outlined,
-      onTap: onTap,
-      padding: padding ?? const EdgeInsets.all(AppTheme.spacingL),
-      margin: margin ?? const EdgeInsets.all(AppTheme.spacingM),
-    );
-  }
-
-  /// Search Input Card
-  static AppCard searchInput({
-    Key? key,
-    required Widget child,
-    EdgeInsetsGeometry? padding,
-    EdgeInsetsGeometry? margin,
-  }) {
-    return AppCard(
-      key: key,
-      child: child,
-      variant: AppCardVariant.outlined,
-      padding: padding ?? const EdgeInsets.symmetric(
-        horizontal: AppTheme.spacingXL,
-        vertical: AppTheme.spacingXL,
-      ),
-      margin: margin ?? const EdgeInsets.all(AppTheme.spacingM),
-    );
-  }
-
-  /// Glass Card for Overlays
-  static AppCard glass({
-    Key? key,
-    required Widget child,
-    VoidCallback? onTap,
-    EdgeInsetsGeometry? padding,
-    EdgeInsetsGeometry? margin,
-  }) {
-    return AppCard(
-      key: key,
-      child: child,
-      variant: AppCardVariant.glass,
-      onTap: onTap,
-      padding: padding ?? const EdgeInsets.all(AppTheme.spacingL),
-      margin: margin ?? const EdgeInsets.all(AppTheme.spacingS),
-    );
-  }
-
-  /// White Card with Shadow
-  static AppCard white({
-    Key? key,
-    required Widget child,
-    VoidCallback? onTap,
-    EdgeInsetsGeometry? padding,
-    EdgeInsetsGeometry? margin,
-  }) {
-    return AppCard(
-      key: key,
-      child: child,
-      variant: AppCardVariant.white,
-      onTap: onTap,
-      padding: padding ?? const EdgeInsets.all(AppTheme.spacingMassive),
-      margin: margin ?? const EdgeInsets.all(AppTheme.spacingL),
-    );
-  }
-}
-
-/// Specialized Card Components
-class AppCardComponents {
-  /// Music Track Card with Image, Title, and Artist
-  static Widget musicTrackCard({
-    Key? key,
-    required String imageUrl,
     required String title,
     required String artist,
-    String? subtitle,
+    required String album,
+    required String imageUrl,
+    required String duration,
+    bool isLiked = false,
     VoidCallback? onTap,
-    bool isPlaying = false,
+    VoidCallback? onLike,
   }) {
-    return AppCards.musicTrack(
+    return AppCard(
       key: key,
-      onTap: onTap,
+      variant: AppCardVariant.musicTrack,
       child: Row(
         children: [
           Container(
-            width: 70,
-            height: 70,
+            width: 60,
+            height: 60,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(AppTheme.radiusM),
+              borderRadius: BorderRadius.circular(8),
               image: DecorationImage(
                 image: NetworkImage(imageUrl),
                 fit: BoxFit.cover,
               ),
             ),
           ),
-          SizedBox(width: AppTheme.spacingM),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: AppTheme.caption.copyWith(
-                    color: AppTheme.neutralWhite,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
-                if (subtitle != null) ...[
-                  SizedBox(height: AppTheme.spacingS),
-                  Text(
-                    subtitle,
-                    style: AppTheme.overline.copyWith(
-                      color: AppTheme.neutralGray,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-                SizedBox(height: AppTheme.spacingS),
+                const SizedBox(height: 4),
                 Text(
-                  artist,
-                  style: AppTheme.overline.copyWith(
-                    color: AppTheme.neutralGray,
+                  '$artist • $album',
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
-          if (isPlaying)
-            Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                color: AppTheme.primaryPink,
-                borderRadius: BorderRadius.circular(AppTheme.radiusCircular),
-              ),
-              child: const Icon(
-                Icons.play_arrow,
-                color: AppTheme.neutralWhite,
-                size: 16,
-              ),
+          IconButton(
+            icon: Icon(
+              isLiked ? Icons.favorite : Icons.favorite_border,
+              color: isLiked ? Colors.red : Colors.grey,
             ),
+            onPressed: onLike,
+          ),
         ],
       ),
+      onTap: onTap,
     );
   }
 
-  /// Profile Card with Image, Name, and Details
-  static Widget profileCard({
+  static AppCard profile({
     Key? key,
-    required String imageUrl,
     required String name,
-    required String age,
-    String? location,
-    String? description,
+    required String role,
+    required String imageUrl,
+    bool isOnline = false,
     VoidCallback? onTap,
   }) {
-    return AppCards.profile(
+    return AppCard(
       key: key,
-      onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      variant: AppCardVariant.profile,
+      child: Row(
         children: [
-          Text(
-            name,
-            style: AppTheme.titleSmall,
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: AppTheme.spacingS),
-          Text(
-            'Age: $age',
-            style: AppTheme.bodyH10.copyWith(
-              color: AppTheme.neutralWhite,
-            ),
-          ),
-          if (location != null) ...[
-            SizedBox(height: AppTheme.spacingS),
-            Row(
-              children: [
-                Icon(
-                  Icons.location_on,
-                  color: AppTheme.neutralLightGray,
-                  size: 16,
-                ),
-                SizedBox(width: AppTheme.spacingS),
-                Text(
-                  location,
-                  style: AppTheme.caption.copyWith(
-                    color: AppTheme.neutralLightGray,
+          Stack(
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25),
+                  image: DecorationImage(
+                    image: NetworkImage(imageUrl),
+                    fit: BoxFit.cover,
                   ),
                 ),
-              ],
-            ),
-          ],
-          if (description != null) ...[
-            SizedBox(height: AppTheme.spacingM),
-            Text(
-              description,
-              style: AppTheme.caption.copyWith(
-                color: AppTheme.neutralLightGray,
-                height: 1.2,
               ),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  /// Event Card with Title, Date, and Actions
-  static Widget eventCard({
-    Key? key,
-    required String title,
-    required String date,
-    required String location,
-    String? description,
-    required List<String> attendees,
-    VoidCallback? onTap,
-    VoidCallback? onGoing,
-    VoidCallback? onInterested,
-  }) {
-    return AppCards.event(
-      key: key,
-      onTap: onTap,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: AppTheme.titleSmall,
-          ),
-          SizedBox(height: AppTheme.spacingS),
-          Text(
-            date,
-            style: AppTheme.caption.copyWith(
-              color: AppTheme.neutralLightGray,
-            ),
-          ),
-          SizedBox(height: AppTheme.spacingS),
-          Text(
-            location,
-            style: AppTheme.caption.copyWith(
-              color: AppTheme.neutralLightGray,
-            ),
-          ),
-          if (description != null) ...[
-            SizedBox(height: AppTheme.spacingM),
-            Text(
-              description,
-              style: AppTheme.caption.copyWith(
-                color: AppTheme.neutralWhite,
-                height: 1.27,
-              ),
-              maxLines: 4,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-          SizedBox(height: AppTheme.spacingM),
-          Row(
-            children: [
-              Expanded(
-                child: AppButtons.primary(
-                  text: 'I\'m going',
-                  onPressed: onGoing,
-                  size: AppButtonSize.small,
+              if (isOnline)
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.white, width: 2),
+                    ),
+                  ),
                 ),
-              ),
-              SizedBox(width: AppTheme.spacingM),
-              Expanded(
-                child: AppButtons.ghost(
-                  text: 'I\'m interested',
-                  onPressed: onInterested,
-                  size: AppButtonSize.small,
-                ),
-              ),
             ],
           ),
-          if (attendees.isNotEmpty) ...[
-            SizedBox(height: AppTheme.spacingM),
-            Row(
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ...attendees.take(5).map((attendee) => Container(
-                  margin: EdgeInsets.only(right: AppTheme.spacingS),
-                  child: CircleAvatar(
-                    radius: 20,
-                    backgroundImage: NetworkImage(attendee),
+                Text(
+                  name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
                   ),
-                )),
-                if (attendees.length > 5)
-                  Container(
-                    margin: EdgeInsets.only(right: AppTheme.spacingS),
-                    child: CircleAvatar(
-                      radius: 20,
-                      backgroundColor: AppTheme.primaryPink,
-                      child: Text(
-                        '+${attendees.length - 5}',
-                        style: AppTheme.overline.copyWith(
-                          color: AppTheme.neutralWhite,
-                        ),
-                      ),
-                    ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  role,
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14,
                   ),
+                ),
               ],
             ),
-          ],
+          ),
         ],
       ),
+      onTap: onTap,
+    );
+  }
+
+  static AppCard event({
+    Key? key,
+    required String title,
+    required String subtitle,
+    required String date,
+    required String location,
+    required String imageUrl,
+    VoidCallback? onTap,
+  }) {
+    return AppCard(
+      key: key,
+      variant: AppCardVariant.event,
+      child: Row(
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              image: DecorationImage(
+                image: NetworkImage(imageUrl),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  date,
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  location,
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+      onTap: onTap,
+    );
+  }
+
+  static AppCard gradient({
+    Key? key,
+    required Widget child,
+    VoidCallback? onTap,
+  }) {
+    return AppCard(
+      key: key,
+      variant: AppCardVariant.gradient,
+      child: child,
+      onTap: onTap,
+    );
+  }
+
+  static AppCard defaultCard({
+    Key? key,
+    required Widget child,
+    VoidCallback? onTap,
+  }) {
+    return AppCard(
+      key: key,
+      variant: AppCardVariant.primary,
+      child: child,
+      onTap: onTap,
+    );
+  }
+
+  static AppCard white({
+    Key? key,
+    required Widget child,
+    VoidCallback? onTap,
+  }) {
+    return AppCard(
+      key: key,
+      variant: AppCardVariant.primary,
+      child: child,
+      onTap: onTap,
+    );
+  }
+
+  static AppCard transparent({
+    Key? key,
+    required Widget child,
+    VoidCallback? onTap,
+  }) {
+    return AppCard(
+      key: key,
+      variant: AppCardVariant.transparent,
+      child: child,
+      onTap: onTap,
+    );
+  }
+
+  static AppCard glass({
+    Key? key,
+    required Widget child,
+    VoidCallback? onTap,
+  }) {
+    return AppCard(
+      key: key,
+      variant: AppCardVariant.transparent,
+      child: child,
+      onTap: onTap,
+    );
+  }
+
+  static AppCard outlined({
+    Key? key,
+    required Widget child,
+    VoidCallback? onTap,
+  }) {
+    return AppCard(
+      key: key,
+      variant: AppCardVariant.outline,
+      child: child,
+      onTap: onTap,
+    );
+  }
+
+  static AppCard bordered({
+    Key? key,
+    required Widget child,
+    VoidCallback? onTap,
+  }) {
+    return AppCard(
+      key: key,
+      variant: AppCardVariant.outline,
+      child: child,
+      onTap: onTap,
     );
   }
 }

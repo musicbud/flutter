@@ -103,6 +103,26 @@ class ApiConfig {
   static const String chatDeleteMessage = '/chat/delete_message/';
   static const String chatHandleInvitation = '/chat/handle_invitation/';
 
+  // Additional chat endpoints for comprehensive chat
+  static const String chatGetChannels = '/chat/channels/';
+  static const String chatGetChannelMessages = '/chat/channel/messages/';
+  static const String chatSendChannelMessage = '/chat/channel/send_message/';
+  static const String chatSendUserMessage = '/chat/user/send_message/';
+  static const String chatGetChannelUsers = '/chat/channel/users/';
+  static const String chatJoinChannel = '/chat/channel/join/';
+  static const String chatLeaveChannel = '/chat/channel/leave/';
+  static const String chatRequestJoin = '/chat/channel/request_join/';
+  static const String channelDetails = '/chat/channel/details/';
+
+  // Additional endpoints for comprehensive chat
+  static const String channelDashboard = '/chat/channel/dashboard/';
+  static const String users = '/users/';
+  static const String userProfile = '/users/profile/';
+  static const String spotifyDisconnect = '/spotify/disconnect/';
+  static const String lastfmDisconnect = '/lastfm/disconnect/';
+  static const String ytmusicDisconnect = '/ytmusic/disconnect/';
+  static const String malDisconnect = '/mal/disconnect/';
+
   // Admin & Utility endpoints
   static const String admin = '/admin/';
   static const String spotifySeedUserCreate = '/spotify/seed/user/create';

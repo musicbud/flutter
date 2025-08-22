@@ -7,13 +7,15 @@ import 'blocs/user/user_event.dart';
 import 'blocs/chat/chat_bloc.dart';
 import 'blocs/content/content_bloc.dart';
 import 'blocs/bud/bud_bloc.dart';
+import 'blocs/user_profile/user_profile_bloc.dart';
+import 'blocs/bud_matching/bud_matching_bloc.dart';
+import 'blocs/chat/chat_management_bloc.dart';
 import 'data/providers/token_provider.dart';
 import 'domain/repositories/auth_repository.dart';
 import 'app.dart';
 import 'injection_container.dart' as di;
 import 'blocs/profile/profile_bloc.dart';
 import 'utils/api_endpoint_validator.dart';
-import 'presentation/constants/app_constants.dart';
 import 'blocs/main/main_screen_bloc.dart';
 
 /// Main entry point of the MusicBud Flutter application
@@ -51,6 +53,20 @@ class MusicBudApp extends StatelessWidget {
         create: (context) => di.sl<ProfileBloc>(),
       ),
 
+      // User Profile BLoC for user profile management
+      BlocProvider<UserProfileBloc>(
+        create: (context) => di.sl<UserProfileBloc>(),
+      ),
+
+      // Bud Matching BLoC for discover page
+      BlocProvider<BudMatchingBloc>(
+        create: (context) => di.sl<BudMatchingBloc>(),
+      ),
+
+      // Chat Management BLoC for chat page
+      BlocProvider<ChatManagementBloc>(
+        create: (context) => di.sl<ChatManagementBloc>(),
+      ),
 
       // Main Screen BLoC for authentication status
       BlocProvider<MainScreenBloc>(

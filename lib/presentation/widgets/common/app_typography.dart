@@ -1,469 +1,686 @@
 import 'package:flutter/material.dart';
 import '../../constants/app_theme.dart';
 
-/// Typography Showcase Component based on Figma Design
 class AppTypography extends StatelessWidget {
-  final bool showLabels;
-  final bool showColors;
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? margin;
-
-  const AppTypography({
-    super.key,
-    this.showLabels = true,
-    this.showColors = true,
-    this.padding,
-    this.margin,
-  });
+  const AppTypography({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: padding ?? const EdgeInsets.all(AppTheme.spacingMassive),
-      margin: margin ?? const EdgeInsets.all(AppTheme.spacingL),
-      decoration: BoxDecoration(
-        color: AppTheme.neutralWhite,
-        borderRadius: BorderRadius.circular(AppTheme.radiusXXL),
-        border: Border.all(
-          color: AppTheme.neutralBlack,
-          width: 10,
-        ),
-        boxShadow: AppTheme.shadowLarge,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(),
-          SizedBox(height: AppTheme.spacingHuge),
-          _buildDisplayTexts(),
-          SizedBox(height: AppTheme.spacingHuge),
-          _buildHeadlineTexts(),
-          SizedBox(height: AppTheme.spacingHuge),
-          _buildBodyTexts(),
-          SizedBox(height: AppTheme.spacingHuge),
-          _buildSpecialTexts(),
-        ],
-      ),
-    );
-  }
+    final appTheme = AppTheme.of(context);
 
-  Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Mathematic Scale',
-          style: AppTheme.displayH1.copyWith(
-            color: AppTheme.neutralText,
+    return Scaffold(
+      backgroundColor: appTheme.colors.darkTone,
+      appBar: AppBar(
+        title: Text(
+          'Typography System',
+          style: appTheme.typography.headlineH4.copyWith(
+            color: appTheme.colors.white,
           ),
         ),
-        Text(
-          ' 1.250 — Major Third - Base size 18px',
-          style: AppTheme.displayH2.copyWith(
-            color: AppTheme.accentRed,
-            height: 1.21,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDisplayTexts() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildTextRow('Display Text H1', AppTheme.displayH1, 'H1'),
-        SizedBox(height: AppTheme.spacingHuge),
-        _buildTextRow('Display Text H2', AppTheme.displayH2, 'H2'),
-        SizedBox(height: AppTheme.spacingHuge),
-        _buildTextRow('Display Text H3', AppTheme.displayH3, 'H3'),
-        SizedBox(height: AppTheme.spacingHuge),
-        _buildTextRow('Display Text H4', AppTheme.displayH4, 'H4'),
-        SizedBox(height: AppTheme.spacingHuge),
-        _buildTextRow('Display Text H5', AppTheme.displayH5, 'H5'),
-      ],
-    );
-  }
-
-  Widget _buildHeadlineTexts() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildTextRow('Headline Text H6', AppTheme.headlineH6, 'H6'),
-        SizedBox(height: AppTheme.spacingHuge),
-        _buildTextRow('Headline Text H7', AppTheme.headlineH7, 'H7'),
-      ],
-    );
-  }
-
-  Widget _buildBodyTexts() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildTextRow('Body text H8', AppTheme.bodyH8, 'H8'),
-        SizedBox(height: AppTheme.spacingHuge),
-        _buildTextRow('Body text H9', AppTheme.bodyH9, 'H9'),
-        SizedBox(height: AppTheme.spacingHuge),
-        _buildTextRow('Body text H10', AppTheme.bodyH10, 'H10'),
-      ],
-    );
-  }
-
-  Widget _buildSpecialTexts() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildTextRow('Title Large', AppTheme.titleLarge, 'Title'),
-        SizedBox(height: AppTheme.spacingHuge),
-        _buildTextRow('Title Medium', AppTheme.titleMedium, 'Title'),
-        SizedBox(height: AppTheme.spacingHuge),
-        _buildTextRow('Title Small', AppTheme.titleSmall, 'Title'),
-        SizedBox(height: AppTheme.spacingHuge),
-        _buildTextRow('Caption', AppTheme.caption, 'Caption'),
-        SizedBox(height: AppTheme.spacingHuge),
-        _buildTextRow('Overline', AppTheme.overline, 'Overline'),
-      ],
-    );
-  }
-
-  Widget _buildTextRow(String label, TextStyle style, String highlight) {
-    return SizedBox(
-      width: 951,
-      child: RichText(
-        text: TextSpan(
+        backgroundColor: appTheme.colors.darkTone,
+        foregroundColor: appTheme.colors.white,
+      ),
+      body: SingleChildScrollView(
+        padding: EdgeInsets.all(appTheme.spacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextSpan(
-              text: '$label\n',
-              style: style.copyWith(
-                color: AppTheme.neutralText,
-              ),
+            _buildTypographySection(
+              context,
+              'Display Typography',
+              [
+                _buildTypographyExample(
+                  context,
+                  'Display H1',
+                  appTheme.typography.displayH1.copyWith(
+                    color: appTheme.colors.primaryRed,
+                  ),
+                ),
+                _buildTypographyExample(
+                  context,
+                  'Display H2',
+                  appTheme.typography.displayH2.copyWith(
+                    color: appTheme.colors.primaryRed,
+                  ),
+                ),
+                _buildTypographyExample(
+                  context,
+                  'Display H3',
+                  appTheme.typography.displayH3.copyWith(
+                    color: appTheme.colors.primaryRed,
+                  ),
+                ),
+              ],
             ),
-            TextSpan(
-              text: ' $highlight',
-              style: style.copyWith(
-                color: AppTheme.secondaryBlue,
-              ),
+            SizedBox(height: appTheme.spacing.xl),
+            _buildTypographySection(
+              context,
+              'Headline Typography',
+              [
+                _buildTypographyExample(
+                  context,
+                  'Headline H4',
+                  appTheme.typography.headlineH4.copyWith(
+                    color: appTheme.colors.white,
+                  ),
+                ),
+                _buildTypographyExample(
+                  context,
+                  'Headline H5',
+                  appTheme.typography.headlineH5.copyWith(
+                    color: appTheme.colors.white,
+                  ),
+                ),
+                _buildTypographyExample(
+                  context,
+                  'Headline H6',
+                  appTheme.typography.headlineH6.copyWith(
+                    color: appTheme.colors.white,
+                  ),
+                ),
+                _buildTypographyExample(
+                  context,
+                  'Headline H7',
+                  appTheme.typography.headlineH7.copyWith(
+                    color: appTheme.colors.white,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: appTheme.spacing.xl),
+            _buildTypographySection(
+              context,
+              'Body Typography',
+              [
+                _buildTypographyExample(
+                  context,
+                  'Body H8',
+                  appTheme.typography.bodyH8.copyWith(
+                    color: appTheme.colors.white,
+                  ),
+                ),
+                _buildTypographyExample(
+                  context,
+                  'Body H9',
+                  appTheme.typography.bodyH9.copyWith(
+                    color: appTheme.colors.white,
+                  ),
+                ),
+                _buildTypographyExample(
+                  context,
+                  'Body H10',
+                  appTheme.typography.bodyH10.copyWith(
+                    color: appTheme.colors.white,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: appTheme.spacing.xl),
+            _buildTypographySection(
+              context,
+              'Title Typography',
+              [
+                _buildTypographyExample(
+                  context,
+                  'Title Large',
+                  appTheme.typography.titleLarge.copyWith(
+                    color: appTheme.colors.white,
+                  ),
+                ),
+                _buildTypographyExample(
+                  context,
+                  'Title Medium',
+                  appTheme.typography.titleMedium.copyWith(
+                    color: appTheme.colors.white,
+                  ),
+                ),
+                _buildTypographyExample(
+                  context,
+                  'Title Small',
+                  appTheme.typography.titleSmall.copyWith(
+                    color: appTheme.colors.white,
+                  ),
+                ),
+                _buildTypographyExample(
+                  context,
+                  'Caption',
+                  appTheme.typography.caption.copyWith(
+                    color: appTheme.colors.lightGray,
+                  ),
+                ),
+                _buildTypographyExample(
+                  context,
+                  'Overline',
+                  appTheme.typography.overline.copyWith(
+                    color: appTheme.colors.lightGray,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: appTheme.spacing.xl),
+            _buildTypographySection(
+              context,
+              'Arabic Typography',
+              [
+                _buildTypographyExample(
+                  context,
+                  'Arabic Text',
+                  appTheme.typography.arabicText.copyWith(
+                    color: appTheme.colors.white,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: appTheme.spacing.xl),
+            _buildTypographySection(
+              context,
+              'Font Families',
+              [
+                _buildFontFamilyExample(
+                  context,
+                  'Primary Font',
+                  appTheme.typography.fontFamilyPrimary,
+                  appTheme.colors.white,
+                ),
+                _buildFontFamilyExample(
+                  context,
+                  'Secondary Font',
+                  appTheme.typography.fontFamilySecondary,
+                  appTheme.colors.white,
+                ),
+                _buildFontFamilyExample(
+                  context,
+                  'Arabic Font',
+                  appTheme.typography.fontFamilyArabic,
+                  appTheme.colors.white,
+                ),
+              ],
+            ),
+            SizedBox(height: appTheme.spacing.xl),
+            _buildTypographySection(
+              context,
+              'Color Palette',
+              [
+                _buildColorExample(
+                  context,
+                  'Primary Red',
+                  appTheme.colors.primaryRed,
+                ),
+                _buildColorExample(
+                  context,
+                  'Secondary Red',
+                  appTheme.colors.secondaryRed,
+                ),
+                _buildColorExample(
+                  context,
+                  'Accent',
+                  appTheme.colors.accent,
+                ),
+              ],
+            ),
+            SizedBox(height: appTheme.spacing.xl),
+            _buildTypographySection(
+              context,
+              'Neutral Colors',
+              [
+                _buildColorExample(
+                  context,
+                  'Dark Tone',
+                  appTheme.colors.darkTone,
+                ),
+                _buildColorExample(
+                  context,
+                  'Light Gray',
+                  appTheme.colors.lightGray,
+                ),
+                _buildColorExample(
+                  context,
+                  'White',
+                  appTheme.colors.white,
+                ),
+                _buildColorExample(
+                  context,
+                  'Black',
+                  appTheme.colors.black,
+                ),
+              ],
+            ),
+            SizedBox(height: appTheme.spacing.xl),
+            _buildTypographySection(
+              context,
+              'Semantic Colors',
+              [
+                _buildColorExample(
+                  context,
+                  'Success',
+                  appTheme.colors.success,
+                ),
+                _buildColorExample(
+                  context,
+                  'Warning',
+                  appTheme.colors.warning,
+                ),
+                _buildColorExample(
+                  context,
+                  'Error',
+                  appTheme.colors.error,
+                ),
+                _buildColorExample(
+                  context,
+                  'Info',
+                  appTheme.colors.info,
+                ),
+              ],
+            ),
+            SizedBox(height: appTheme.spacing.xl),
+            _buildTypographySection(
+              context,
+              'Neutral Palette',
+              [
+                _buildColorExample(
+                  context,
+                  'Neutral 50',
+                  appTheme.colors.neutral[50]!,
+                ),
+                _buildColorExample(
+                  context,
+                  'Neutral 100',
+                  appTheme.colors.neutral[100]!,
+                ),
+                _buildColorExample(
+                  context,
+                  'Neutral 200',
+                  appTheme.colors.neutral[200]!,
+                ),
+                _buildColorExample(
+                  context,
+                  'Neutral 300',
+                  appTheme.colors.neutral[300]!,
+                ),
+                _buildColorExample(
+                  context,
+                  'Neutral 400',
+                  appTheme.colors.neutral[400]!,
+                ),
+                _buildColorExample(
+                  context,
+                  'Neutral 500',
+                  appTheme.colors.neutral[500]!,
+                ),
+                _buildColorExample(
+                  context,
+                  'Neutral 600',
+                  appTheme.colors.neutral[600]!,
+                ),
+                _buildColorExample(
+                  context,
+                  'Neutral 700',
+                  appTheme.colors.neutral[700]!,
+                ),
+                _buildColorExample(
+                  context,
+                  'Neutral 800',
+                  appTheme.colors.neutral[800]!,
+                ),
+                _buildColorExample(
+                  context,
+                  'Neutral 900',
+                  appTheme.colors.neutral[900]!,
+                ),
+              ],
+            ),
+            SizedBox(height: appTheme.spacing.xl),
+            _buildTypographySection(
+              context,
+              'Spacing System',
+              [
+                _buildSpacingExample(
+                  context,
+                  'Spacing XS',
+                  appTheme.spacing.xs,
+                ),
+                _buildSpacingExample(
+                  context,
+                  'Spacing S',
+                  appTheme.spacing.sm,
+                ),
+                _buildSpacingExample(
+                  context,
+                  'Spacing M',
+                  appTheme.spacing.md,
+                ),
+                _buildSpacingExample(
+                  context,
+                  'Spacing L',
+                  appTheme.spacing.lg,
+                ),
+                _buildSpacingExample(
+                  context,
+                  'Spacing XL',
+                  appTheme.spacing.xl,
+                ),
+                _buildSpacingExample(
+                  context,
+                  'Spacing XXL',
+                  appTheme.spacing.xxl,
+                ),
+                _buildSpacingExample(
+                  context,
+                  'Spacing XXXL',
+                  appTheme.spacing.xxxl,
+                ),
+                _buildSpacingExample(
+                  context,
+                  'Spacing Huge',
+                  appTheme.spacing.huge,
+                ),
+              ],
+            ),
+            SizedBox(height: appTheme.spacing.xl),
+            _buildTypographySection(
+              context,
+              'Border Radius',
+              [
+                _buildRadiusExample(
+                  context,
+                  'Radius XS',
+                  appTheme.radius.xs,
+                ),
+                _buildRadiusExample(
+                  context,
+                  'Radius S',
+                  appTheme.radius.sm,
+                ),
+                _buildRadiusExample(
+                  context,
+                  'Radius M',
+                  appTheme.radius.md,
+                ),
+                _buildRadiusExample(
+                  context,
+                  'Radius L',
+                  appTheme.radius.lg,
+                ),
+                _buildRadiusExample(
+                  context,
+                  'Radius XL',
+                  appTheme.radius.xl,
+                ),
+                _buildRadiusExample(
+                  context,
+                  'Radius XXL',
+                  appTheme.radius.xxl,
+                ),
+                _buildRadiusExample(
+                  context,
+                  'Radius Circular',
+                  appTheme.radius.circular,
+                ),
+              ],
+            ),
+            SizedBox(height: appTheme.spacing.xl),
+            _buildTypographySection(
+              context,
+              'Shadows',
+              [
+                _buildShadowExample(
+                  context,
+                  'Shadow Small',
+                  appTheme.shadows.shadowSmall,
+                ),
+                _buildShadowExample(
+                  context,
+                  'Shadow Medium',
+                  appTheme.shadows.shadowMedium,
+                ),
+                _buildShadowExample(
+                  context,
+                  'Shadow Large',
+                  appTheme.shadows.shadowLarge,
+                ),
+              ],
             ),
           ],
         ),
       ),
     );
   }
-}
 
-/// Typography Scale Component
-class TypographyScale extends StatelessWidget {
-  final double baseSize;
-  final double scale;
-  final int levels;
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? margin;
+  Widget _buildTypographySection(
+    BuildContext context,
+    String title,
+    List<Widget> children,
+  ) {
+    final appTheme = AppTheme.of(context);
 
-  const TypographyScale({
-    super.key,
-    this.baseSize = 18.0,
-    this.scale = 1.250,
-    this.levels = 10,
-    this.padding,
-    this.margin,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: padding ?? const EdgeInsets.all(AppTheme.spacingXL),
-      margin: margin ?? const EdgeInsets.all(AppTheme.spacingM),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Typography Scale',
-            style: AppTheme.titleSmall.copyWith(
-              color: AppTheme.neutralWhite,
-            ),
-          ),
-          SizedBox(height: AppTheme.spacingL),
-          ...List.generate(levels, (index) {
-            final fontSize = baseSize * (scale * (index + 1));
-            return Padding(
-              padding: EdgeInsets.only(bottom: AppTheme.spacingM),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 80,
-                    child: Text(
-                      'Level ${index + 1}',
-                      style: AppTheme.caption.copyWith(
-                        color: AppTheme.neutralLightGray,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: AppTheme.spacingL),
-                  Text(
-                    '${fontSize.toStringAsFixed(1)}px',
-                    style: AppTheme.caption.copyWith(
-                      color: AppTheme.primaryPink,
-                    ),
-                  ),
-                  SizedBox(width: AppTheme.spacingXL),
-                  Expanded(
-                    child: Text(
-                      'Sample Text for Level ${index + 1}',
-                      style: TextStyle(
-                        fontFamily: AppTheme.fontFamily,
-                        fontSize: fontSize,
-                        fontWeight: FontWeight.w400,
-                        color: AppTheme.neutralWhite,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
-}
-
-/// Color Palette Component
-class ColorPalette extends StatelessWidget {
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? margin;
-
-  const ColorPalette({
-    super.key,
-    this.padding,
-    this.margin,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: padding ?? const EdgeInsets.all(AppTheme.spacingXL),
-      margin: margin ?? const EdgeInsets.all(AppTheme.spacingM),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Color Palette',
-            style: AppTheme.titleSmall.copyWith(
-              color: AppTheme.neutralWhite,
-            ),
-          ),
-          SizedBox(height: AppTheme.spacingL),
-          Wrap(
-            spacing: AppTheme.spacingL,
-            runSpacing: AppTheme.spacingL,
-            children: [
-              _buildColorSwatch('Primary Pink', AppTheme.primaryPink),
-              _buildColorSwatch('Primary Pink Dark', AppTheme.primaryPinkDark),
-              _buildColorSwatch('Primary Pink Light', AppTheme.primaryPinkLight),
-              _buildColorSwatch('Secondary Blue', AppTheme.secondaryBlue),
-              _buildColorSwatch('Secondary Purple', AppTheme.secondaryPurple),
-              _buildColorSwatch('Secondary Navy', AppTheme.secondaryNavy),
-              _buildColorSwatch('Neutral White', AppTheme.neutralWhite),
-              _buildColorSwatch('Neutral Light Gray', AppTheme.neutralLightGray),
-              _buildColorSwatch('Neutral Gray', AppTheme.neutralGray),
-              _buildColorSwatch('Neutral Dark Gray', AppTheme.neutralDarkGray),
-              _buildColorSwatch('Neutral Black', AppTheme.neutralBlack),
-              _buildColorSwatch('Neutral Text', AppTheme.neutralText),
-              _buildColorSwatch('Accent Red', AppTheme.accentRed),
-              _buildColorSwatch('Accent Green', AppTheme.accentGreen),
-              _buildColorSwatch('Accent Brown', AppTheme.accentBrown),
-              _buildColorSwatch('Success Green', AppTheme.successGreen),
-              _buildColorSwatch('Warning Orange', AppTheme.warningOrange),
-              _buildColorSwatch('Error Red', AppTheme.errorRed),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildColorSwatch(String name, Color color) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        Text(
+          title,
+          style: appTheme.typography.headlineH6.copyWith(
+            color: appTheme.colors.primaryRed,
+          ),
+        ),
+        SizedBox(height: appTheme.spacing.md),
         Container(
-          width: 100,
-          height: 100,
+          padding: EdgeInsets.all(appTheme.spacing.md),
           decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
+            color: appTheme.colors.surface,
+            borderRadius: BorderRadius.circular(appTheme.radius.md),
             border: Border.all(
-              color: AppTheme.neutralBlack,
-              width: 5,
+              color: appTheme.colors.lightGray.withValues(alpha: 0.2),
             ),
-            boxShadow: AppTheme.shadowLarge,
           ),
-        ),
-        SizedBox(height: AppTheme.spacingS),
-        Text(
-          name,
-          style: AppTheme.overline.copyWith(
-            color: AppTheme.neutralWhite,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: children,
           ),
-          textAlign: TextAlign.center,
-        ),
-        SizedBox(height: AppTheme.spacingS),
-        Text(
-          '#${color.value.toRadixString(16).substring(2).toUpperCase()}',
-          style: AppTheme.overline.copyWith(
-            color: AppTheme.neutralLightGray,
-          ),
-          textAlign: TextAlign.center,
         ),
       ],
     );
   }
-}
 
-/// Spacing System Component
-class SpacingSystem extends StatelessWidget {
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? margin;
+  Widget _buildTypographyExample(
+    BuildContext context,
+    String label,
+    TextStyle style,
+  ) {
+    final appTheme = AppTheme.of(context);
 
-  const SpacingSystem({
-    super.key,
-    this.padding,
-    this.margin,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: padding ?? const EdgeInsets.all(AppTheme.spacingXL),
-      margin: margin ?? const EdgeInsets.all(AppTheme.spacingM),
+    return Padding(
+      padding: EdgeInsets.only(bottom: appTheme.spacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Spacing System',
-            style: AppTheme.titleSmall.copyWith(
-              color: AppTheme.neutralWhite,
+            label,
+            style: appTheme.typography.caption.copyWith(
+              color: appTheme.colors.lightGray,
             ),
           ),
-          SizedBox(height: AppTheme.spacingL),
-          _buildSpacingRow('XS', AppTheme.spacingXS),
-          _buildSpacingRow('S', AppTheme.spacingS),
-          _buildSpacingRow('M', AppTheme.spacingM),
-          _buildSpacingRow('L', AppTheme.spacingL),
-          _buildSpacingRow('XL', AppTheme.spacingXL),
-          _buildSpacingRow('XXL', AppTheme.spacingXXL),
-          _buildSpacingRow('XXXL', AppTheme.spacingXXXL),
-          _buildSpacingRow('Huge', AppTheme.spacingHuge),
-          _buildSpacingRow('Massive', AppTheme.spacingMassive),
+          SizedBox(height: appTheme.spacing.sm),
+          Text(
+            'The quick brown fox jumps over the lazy dog',
+            style: style,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSpacingRow(String label, double spacing) {
+  Widget _buildFontFamilyExample(
+    BuildContext context,
+    String label,
+    String fontFamily,
+    Color color,
+  ) {
+    final appTheme = AppTheme.of(context);
+
     return Padding(
-      padding: EdgeInsets.only(bottom: AppTheme.spacingM),
+      padding: EdgeInsets.only(bottom: appTheme.spacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: appTheme.typography.caption.copyWith(
+              color: appTheme.colors.lightGray,
+            ),
+          ),
+          SizedBox(height: appTheme.spacing.sm),
+          Text(
+            'Sample text with $fontFamily',
+            style: TextStyle(
+              fontFamily: fontFamily,
+              fontSize: 16,
+              color: color,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildColorExample(
+    BuildContext context,
+    String label,
+    Color color,
+  ) {
+    final appTheme = AppTheme.of(context);
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: appTheme.spacing.md),
       child: Row(
         children: [
-          SizedBox(
-            width: 80,
-            child: Text(
-              label,
-              style: AppTheme.caption.copyWith(
-                color: AppTheme.neutralLightGray,
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(appTheme.radius.sm),
+              border: Border.all(
+                color: appTheme.colors.lightGray.withValues(alpha: 0.3),
               ),
             ),
           ),
-          SizedBox(width: AppTheme.spacingL),
-          Text(
-            '${spacing.toStringAsFixed(1)}px',
-            style: AppTheme.caption.copyWith(
-              color: AppTheme.primaryPink,
+          SizedBox(width: appTheme.spacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: appTheme.typography.bodyH9.copyWith(
+                    color: appTheme.colors.white,
+                  ),
+                ),
+                Text(
+                  '#${color.value.toRadixString(16).toUpperCase()}',
+                  style: appTheme.typography.caption.copyWith(
+                    color: appTheme.colors.lightGray,
+                  ),
+                ),
+              ],
             ),
           ),
-          SizedBox(width: AppTheme.spacingXL),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSpacingExample(
+    BuildContext context,
+    String label,
+    double spacing,
+  ) {
+    final appTheme = AppTheme.of(context);
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: appTheme.spacing.md),
+      child: Row(
+        children: [
           Container(
             width: spacing,
             height: 20,
             decoration: BoxDecoration(
-              color: AppTheme.primaryPink,
-              borderRadius: BorderRadius.circular(AppTheme.radiusS),
+              color: appTheme.colors.primaryRed,
+              borderRadius: BorderRadius.circular(appTheme.radius.sm),
+            ),
+          ),
+          SizedBox(width: appTheme.spacing.md),
+          Text(
+            '$label: ${spacing.toStringAsFixed(0)}px',
+            style: appTheme.typography.caption.copyWith(
+              color: appTheme.colors.lightGray,
             ),
           ),
         ],
       ),
     );
   }
-}
 
-/// Border Radius Component
-class BorderRadiusSystem extends StatelessWidget {
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? margin;
+  Widget _buildRadiusExample(
+    BuildContext context,
+    String label,
+    double radius,
+  ) {
+    final appTheme = AppTheme.of(context);
 
-  const BorderRadiusSystem({
-    super.key,
-    this.padding,
-    this.margin,
-  });
+    return Padding(
+      padding: EdgeInsets.only(bottom: appTheme.spacing.md),
+      child: Row(
+        children: [
+          Container(
+            width: 60,
+            height: 40,
+            decoration: BoxDecoration(
+              color: appTheme.colors.primaryRed,
+              borderRadius: BorderRadius.circular(radius),
+            ),
+          ),
+          SizedBox(width: appTheme.spacing.md),
+          Text(
+            '$label: ${radius.toStringAsFixed(0)}px',
+            style: appTheme.typography.caption.copyWith(
+              color: appTheme.colors.lightGray,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: padding ?? const EdgeInsets.all(AppTheme.spacingXL),
-      margin: margin ?? const EdgeInsets.all(AppTheme.spacingM),
+  Widget _buildShadowExample(
+    BuildContext context,
+    String label,
+    List<BoxShadow> shadows,
+  ) {
+    final appTheme = AppTheme.of(context);
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: appTheme.spacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Border Radius System',
-            style: AppTheme.titleSmall.copyWith(
-              color: AppTheme.neutralWhite,
+            label,
+            style: appTheme.typography.caption.copyWith(
+              color: appTheme.colors.lightGray,
             ),
           ),
-          SizedBox(height: AppTheme.spacingL),
-          Wrap(
-            spacing: AppTheme.spacingL,
-            runSpacing: AppTheme.spacingL,
-            children: [
-              _buildRadiusExample('XS', AppTheme.radiusXS),
-              _buildRadiusExample('S', AppTheme.radiusS),
-              _buildRadiusExample('M', AppTheme.radiusM),
-              _buildRadiusExample('L', AppTheme.radiusL),
-              _buildRadiusExample('XL', AppTheme.radiusXL),
-              _buildRadiusExample('XXL', AppTheme.radiusXXL),
-              _buildRadiusExample('Circular', AppTheme.radiusCircular),
-            ],
+          SizedBox(height: appTheme.spacing.sm),
+          Container(
+            width: 80,
+            height: 40,
+            decoration: BoxDecoration(
+              color: appTheme.colors.white,
+              borderRadius: BorderRadius.circular(appTheme.radius.md),
+              boxShadow: shadows,
+            ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildRadiusExample(String label, double radius) {
-    return Column(
-      children: [
-        Container(
-          width: 80,
-          height: 80,
-          decoration: BoxDecoration(
-            color: AppTheme.primaryPink,
-            borderRadius: BorderRadius.circular(radius),
-          ),
-        ),
-        SizedBox(height: AppTheme.spacingS),
-        Text(
-          label,
-          style: AppTheme.overline.copyWith(
-            color: AppTheme.neutralWhite,
-          ),
-        ),
-        Text(
-          '${radius.toStringAsFixed(1)}px',
-          style: AppTheme.overline.copyWith(
-            color: AppTheme.neutralLightGray,
-          ),
-        ),
-      ],
     );
   }
 }
