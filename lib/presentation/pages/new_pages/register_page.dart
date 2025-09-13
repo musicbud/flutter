@@ -91,7 +91,7 @@ class _RegisterPageState extends State<RegisterPage> with PageMixin {
         if (state is RegisterServerStatus && !state.isReachable) {
           return state.message ?? 'Server is unreachable';
         }
-        return null;
+        return 'An error occurred';
       },
       getSuccessMessage: (state) => 'Registration successful! Welcome to MusicBud!',
       onSuccess: () {
@@ -142,7 +142,7 @@ class _RegisterPageState extends State<RegisterPage> with PageMixin {
         if (state is RegisterServerStatus && !state.isReachable) {
           return _buildServerError(state.message);
         }
-        return null;
+        return Container(); // Return empty container instead of null
       },
     );
   }
@@ -209,7 +209,7 @@ class _RegisterPageState extends State<RegisterPage> with PageMixin {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
-                Icons.server_disabled,
+                Icons.cloud_off,
                 size: 64,
                 color: AppConstants.errorColor,
               ),

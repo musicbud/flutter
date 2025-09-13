@@ -9,7 +9,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
   MainScreenBloc({
     required ProfileRepository profileRepository,
   })  : _profileRepository = profileRepository,
-        super(MainScreenInitial()) {
+        super(const MainScreenInitial()) {
     on<MainScreenInitialized>(_onMainScreenInitialized);
     on<MainScreenAuthStatusChecked>(_onMainScreenAuthStatusChecked);
     on<MainScreenRefreshRequested>(_onRefreshRequested);
@@ -20,7 +20,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     Emitter<MainScreenState> emit,
   ) async {
     try {
-      emit(MainScreenLoading());
+      emit(const MainScreenLoading());
 
       // Check if we have a token first
       final profile = await _profileRepository.getMyProfile();
@@ -33,12 +33,12 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
           error.toString().contains('unauthorized') ||
           error.toString().contains('token') ||
           error.toString().contains('authentication')) {
-        emit(MainScreenUnauthenticated());
+        emit(const MainScreenUnauthenticated());
       } else {
         // For other errors, still try to show the main screen with limited functionality
         emit(MainScreenAuthenticated(
           username: 'User',
-          userProfile: {'username': 'User', 'id': 'user'},
+          userProfile: const {'username': 'User', 'id': 'user'},
         ));
       }
     }
@@ -55,7 +55,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     MainScreenRefreshRequested event,
     Emitter<MainScreenState> emit,
   ) async {
-    emit(MainScreenLoading());
+    emit(const MainScreenLoading());
     try {
       final profile = await _profileRepository.getMyProfile();
       emit(MainScreenAuthenticated(
@@ -65,7 +65,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     } catch (error) {
       if (error.toString().contains('401') ||
           error.toString().contains('unauthorized')) {
-        emit(MainScreenUnauthenticated());
+        emit(const MainScreenUnauthenticated());
       } else {
         emit(MainScreenFailure(error.toString()));
       }
@@ -82,7 +82,7 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     } catch (error) {
       if (error.toString().contains('401') ||
           error.toString().contains('unauthorized')) {
-        emit(MainScreenUnauthenticated());
+        emit(const MainScreenUnauthenticated());
       } else {
         emit(MainScreenFailure(error.toString()));
       }

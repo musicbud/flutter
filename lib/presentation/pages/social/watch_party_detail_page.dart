@@ -76,7 +76,7 @@ class _WatchPartyDetailPageState extends State<WatchPartyDetailPage> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      appTheme.colors.primaryRed.withOpacity(0.8),
+                      appTheme.colors.primaryRed.withValues(alpha: 0.8),
                       appTheme.colors.darkTone,
                     ],
                   ),
@@ -87,7 +87,7 @@ class _WatchPartyDetailPageState extends State<WatchPartyDetailPage> {
                     Positioned.fill(
                       child: Container(
                         decoration: BoxDecoration(
-                          color: appTheme.colors.primaryRed.withOpacity(0.1),
+                          color: appTheme.colors.primaryRed.withValues(alpha: 0.1),
                         ),
                         child: CustomPaint(
                           painter: WatchPartyMusicNotePainter(),
@@ -107,7 +107,7 @@ class _WatchPartyDetailPageState extends State<WatchPartyDetailPage> {
                             end: Alignment.bottomCenter,
                             colors: [
                               Colors.transparent,
-                              appTheme.colors.darkTone.withOpacity(0.8),
+                              appTheme.colors.darkTone.withValues(alpha: 0.8),
                               appTheme.colors.darkTone,
                             ],
                           ),
@@ -261,10 +261,10 @@ class _WatchPartyDetailPageState extends State<WatchPartyDetailPage> {
                           vertical: appTheme.spacing.xs,
                         ),
                         decoration: BoxDecoration(
-                          color: appTheme.colors.primaryRed.withOpacity(0.1),
+                          color: appTheme.colors.primaryRed.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(appTheme.radius.sm),
                           border: Border.all(
-                            color: appTheme.colors.primaryRed.withOpacity(0.3),
+                            color: appTheme.colors.primaryRed.withValues(alpha: 0.3),
                           ),
                         ),
                         child: Text(
@@ -394,7 +394,7 @@ class _WatchPartyDetailPageState extends State<WatchPartyDetailPage> {
           color: appTheme.colors.darkTone,
           border: Border(
             top: BorderSide(
-              color: appTheme.colors.lightGray.withOpacity(0.2),
+              color: appTheme.colors.lightGray.withValues(alpha: 0.2),
             ),
           ),
         ),
@@ -406,7 +406,7 @@ class _WatchPartyDetailPageState extends State<WatchPartyDetailPage> {
                 color: appTheme.colors.darkTone,
                 borderRadius: BorderRadius.circular(appTheme.radius.md),
                 border: Border.all(
-                  color: appTheme.colors.lightGray.withOpacity(0.3),
+                  color: appTheme.colors.lightGray.withValues(alpha: 0.3),
                 ),
               ),
               child: IconButton(
@@ -464,7 +464,7 @@ class _WatchPartyDetailPageState extends State<WatchPartyDetailPage> {
         color: appTheme.colors.darkTone,
         borderRadius: BorderRadius.circular(appTheme.radius.md),
         border: Border.all(
-          color: appTheme.colors.lightGray.withOpacity(0.2),
+          color: appTheme.colors.lightGray.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -503,7 +503,7 @@ class WatchPartyMusicNotePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.05)
+      ..color = Colors.white.withValues(alpha: 0.05)
       ..style = PaintingStyle.fill;
 
     // Draw some simple music note shapes

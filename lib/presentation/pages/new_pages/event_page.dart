@@ -176,7 +176,7 @@ class _EventPageState extends State<EventPage> with PageMixin, TickerProviderSta
       decoration: BoxDecoration(
         color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: AppConstants.borderColor.withOpacity(0.3)),
+        border: Border.all(color: AppConstants.borderColor.withValues(alpha: 0.3)),
       ),
       child: TabBar(
         controller: _tabController,
@@ -267,7 +267,7 @@ class _EventPageState extends State<EventPage> with PageMixin, TickerProviderSta
       decoration: BoxDecoration(
         color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppConstants.borderColor.withOpacity(0.3)),
+        border: Border.all(color: AppConstants.borderColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,7 +275,7 @@ class _EventPageState extends State<EventPage> with PageMixin, TickerProviderSta
           Container(
             height: 120,
             decoration: BoxDecoration(
-              color: AppConstants.primaryColor.withOpacity(0.3),
+              color: AppConstants.primaryColor.withValues(alpha: 0.3),
               borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
             ),
             child: const Center(
@@ -344,10 +344,10 @@ class _EventPageState extends State<EventPage> with PageMixin, TickerProviderSta
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            color: AppConstants.primaryColor.withOpacity(0.3),
+            color: AppConstants.primaryColor.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.event,
             color: Colors.white70,
             size: 20,
@@ -407,8 +407,8 @@ class _EventPageState extends State<EventPage> with PageMixin, TickerProviderSta
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                AppConstants.primaryColor.withOpacity(0.3),
-                AppConstants.primaryColor.withOpacity(0.1),
+                AppConstants.primaryColor.withValues(alpha: 0.3),
+                AppConstants.primaryColor.withValues(alpha: 0.1),
               ],
             ),
           ),
@@ -488,15 +488,15 @@ class _EventPageState extends State<EventPage> with PageMixin, TickerProviderSta
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppConstants.primaryColor.withOpacity(0.3),
-            AppConstants.primaryColor.withOpacity(0.1),
+            AppConstants.primaryColor.withValues(alpha: 0.3),
+            AppConstants.primaryColor.withValues(alpha: 0.1),
           ],
         ),
       ),
       child: Row(
         children: [
           CircleAvatar(
-            backgroundColor: AppConstants.primaryColor.withOpacity(0.3),
+            backgroundColor: AppConstants.primaryColor.withValues(alpha: 0.3),
             backgroundImage: event.organizerAvatarUrl != null
                 ? NetworkImage(event.organizerAvatarUrl!)
                 : null,
@@ -584,7 +584,7 @@ class _EventPageState extends State<EventPage> with PageMixin, TickerProviderSta
                   tag,
                   style: const TextStyle(fontSize: 10),
                 ),
-                backgroundColor: AppConstants.primaryColor.withOpacity(0.2),
+                backgroundColor: AppConstants.primaryColor.withValues(alpha: 0.2),
                 labelStyle: const TextStyle(color: Colors.white),
               )).toList(),
             ),
@@ -642,7 +642,7 @@ class _EventPageState extends State<EventPage> with PageMixin, TickerProviderSta
           const SizedBox(width: 12),
           IconButton(
             onPressed: () => _shareEvent(event.id),
-            icon: const Icon(
+            icon: Icon(
               Icons.share,
               color: Colors.white70,
             ),
@@ -690,7 +690,7 @@ class _EventPageState extends State<EventPage> with PageMixin, TickerProviderSta
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.error_outline,
             size: 64,
             color: Colors.red,

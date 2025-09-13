@@ -10,6 +10,7 @@ class AppScaffold extends StatelessWidget {
   final bool? resizeToAvoidBottomInset;
   final EdgeInsetsGeometry? padding;
   final bool useSafeArea;
+  final Widget? drawer;
 
   const AppScaffold({
     Key? key,
@@ -21,6 +22,7 @@ class AppScaffold extends StatelessWidget {
     this.resizeToAvoidBottomInset,
     this.padding,
     this.useSafeArea = true,
+    this.drawer,
   }) : super(key: key);
 
   @override
@@ -28,6 +30,7 @@ class AppScaffold extends StatelessWidget {
     return Scaffold(
       backgroundColor: backgroundColor ?? Colors.black,
       appBar: appBar,
+      drawer: drawer,
       body: useSafeArea
           ? SafeArea(
               child: padding != null

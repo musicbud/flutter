@@ -99,10 +99,10 @@ class _MatchRecommendationsPageState extends State<MatchRecommendationsPage> {
                   child: Container(
                     padding: EdgeInsets.all(appTheme.spacing.md),
                     decoration: BoxDecoration(
-                      color: appTheme.colors.primaryRed.withOpacity(0.1),
+                      color: appTheme.colors.primaryRed.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(appTheme.radius.md),
                       border: Border.all(
-                        color: appTheme.colors.primaryRed.withOpacity(0.3),
+                        color: appTheme.colors.primaryRed.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Column(
@@ -129,10 +129,10 @@ class _MatchRecommendationsPageState extends State<MatchRecommendationsPage> {
                   child: Container(
                     padding: EdgeInsets.all(appTheme.spacing.md),
                     decoration: BoxDecoration(
-                      color: appTheme.colors.primaryRed.withOpacity(0.1),
+                      color: appTheme.colors.primaryRed.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(appTheme.radius.md),
                       border: Border.all(
-                        color: appTheme.colors.primaryRed.withOpacity(0.3),
+                        color: appTheme.colors.primaryRed.withValues(alpha: 0.3),
                       ),
                     ),
                     child: Column(
@@ -295,10 +295,10 @@ class _MatchRecommendationsPageState extends State<MatchRecommendationsPage> {
                                 vertical: appTheme.spacing.xs,
                               ),
                               decoration: BoxDecoration(
-                                color: appTheme.colors.primaryRed.withOpacity(0.1),
+                                color: appTheme.colors.primaryRed.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(appTheme.radius.sm),
                                 border: Border.all(
-                                  color: appTheme.colors.primaryRed.withOpacity(0.3),
+                                  color: appTheme.colors.primaryRed.withValues(alpha: 0.3),
                                 ),
                               ),
                               child: Text(

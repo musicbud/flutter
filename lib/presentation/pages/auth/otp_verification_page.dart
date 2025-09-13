@@ -161,14 +161,14 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                           borderSide: BorderSide(
                             color: _currentIndex == index
                                 ? appTheme.colors.primaryRed
-                                : appTheme.colors.lightGray.withOpacity(0.3),
+                                : appTheme.colors.lightGray.withValues(alpha: 0.3),
                             width: 2,
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(appTheme.radius.md),
                           borderSide: BorderSide(
-                            color: appTheme.colors.lightGray.withOpacity(0.3),
+                            color: appTheme.colors.lightGray.withValues(alpha: 0.3),
                             width: 2,
                           ),
                         ),
@@ -227,7 +227,7 @@ class _OtpVerificationPageState extends State<OtpVerificationPage> {
                         style: appTheme.typography.bodyH8.copyWith(
                           color: _isResendEnabled
                               ? appTheme.colors.primaryRed
-                              : appTheme.colors.lightGray.withOpacity(0.5),
+                              : appTheme.colors.lightGray.withValues(alpha: 0.5),
                         ),
                       ),
                     ),

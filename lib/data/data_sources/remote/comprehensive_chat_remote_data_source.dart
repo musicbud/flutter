@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import '../../../core/error/exceptions.dart';
 import '../../../config/api_config.dart';
-import '../../../domain/models/chat.dart';
 import '../../../domain/models/message.dart';
 import '../../../domain/models/channel.dart';
 import '../../../domain/models/chat_message.dart';

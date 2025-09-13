@@ -63,7 +63,7 @@ class StoriesPage extends StatelessWidget {
                             //   fit: BoxFit.cover,
                             // ),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.person,
                             color: Colors.white,
                             size: 20,
@@ -88,7 +88,7 @@ class StoriesPage extends StatelessWidget {
                             shape: BoxShape.circle,
                             border: Border.all(color: Colors.white24),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.camera_alt_outlined,
                             color: Colors.white,
                             size: 20,
@@ -209,7 +209,7 @@ class StoriesPage extends StatelessWidget {
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.black, width: 1),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.add,
                       color: Colors.white,
                       size: 14,

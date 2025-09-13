@@ -9,10 +9,6 @@ import '../../../blocs/spotify_control/spotify_control_state.dart';
 import '../../../blocs/likes/likes_bloc.dart';
 import '../../../blocs/likes/likes_event.dart';
 import '../../../blocs/likes/likes_state.dart';
-import '../../../domain/models/track.dart';
-import '../../../domain/models/common_artist.dart';
-import '../../../domain/models/common_album.dart';
-import '../../../domain/models/common_track.dart';
 import '../../widgets/loading_indicator.dart';
 import '../../constants/app_constants.dart';
 import '../../mixins/page_mixin.dart';
@@ -109,7 +105,7 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
             children: [
               IconButton(
                 onPressed: _showNowPlaying,
-                icon: const Icon(
+                icon: Icon(
                   Icons.play_circle_filled,
                   color: AppConstants.primaryColor,
                   size: 32,
@@ -117,7 +113,7 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
               ),
               IconButton(
                 onPressed: _showMusicSettings,
-                icon: const Icon(
+                icon: Icon(
                   Icons.settings,
                   color: AppConstants.textColor,
                   size: 24,
@@ -260,8 +256,8 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppConstants.primaryColor.withOpacity(0.8),
-            AppConstants.primaryColor.withOpacity(0.4),
+            AppConstants.primaryColor.withValues(alpha: 0.8),
+            AppConstants.primaryColor.withValues(alpha: 0.4),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
@@ -317,7 +313,7 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
                     ),
                     IconButton(
                       onPressed: _skipToPrevious,
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.skip_previous,
                         color: Colors.white,
                         size: 24,
@@ -325,7 +321,7 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
                     ),
                     IconButton(
                       onPressed: _skipToNext,
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.skip_next,
                         color: Colors.white,
                         size: 24,
@@ -451,9 +447,9 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.2),
+          color: color.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.5)),
+          border: Border.all(color: color.withValues(alpha: 0.5)),
         ),
         child: Column(
           children: [
@@ -805,7 +801,7 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.7),
+                        Colors.black.withValues(alpha: 0.7),
                       ],
                     ),
                   ),

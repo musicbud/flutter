@@ -68,9 +68,9 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.1),
+        color: Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.orange.withOpacity(0.3)),
+        border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -124,7 +124,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
           color: isActive ? AppConstants.primaryColor : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isActive ? AppConstants.primaryColor : AppConstants.borderColor.withOpacity(0.3),
+            color: isActive ? AppConstants.primaryColor : AppConstants.borderColor.withValues(alpha: 0.3),
           ),
         ),
         child: Text(
@@ -166,9 +166,9 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
                     padding: const EdgeInsets.all(16),
                     margin: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.1),
+                      color: Colors.orange.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.orange.withOpacity(0.3)),
+                      border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
                     ),
                     child: Text(
                       'The server is experiencing issues. This is not a problem with your app.',
@@ -254,7 +254,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
       decoration: BoxDecoration(
         color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppConstants.borderColor.withOpacity(0.3)),
+        border: Border.all(color: AppConstants.borderColor.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -263,7 +263,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
             width: 50,
             height: 50,
             decoration: BoxDecoration(
-              color: AppConstants.primaryColor.withOpacity(0.2),
+              color: AppConstants.primaryColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -294,8 +294,8 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: channel.type == 'private'
-                            ? Colors.orange.withOpacity(0.2)
-                            : Colors.green.withOpacity(0.2),
+                            ? Colors.orange.withValues(alpha: 0.2)
+                            : Colors.green.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
                           color: channel.type == 'private' ? Colors.orange : Colors.green,
@@ -332,7 +332,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppConstants.primaryColor.withOpacity(0.2),
+                  color: AppConstants.primaryColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: AppConstants.primaryColor),
                 ),

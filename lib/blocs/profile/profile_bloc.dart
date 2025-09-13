@@ -15,7 +15,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required this.profileRepository,
     required this.contentRepository,
     required this.budRepository,
-  }) : super(ProfileInitial()) {
+  }) : super(const ProfileInitial()) {
     on<ProfileRequested>(_onProfileRequested);
     on<ProfileUpdateRequested>(_onProfileUpdateRequested);
     on<ProfileAvatarUpdateRequested>(_onProfileAvatarUpdateRequested);
@@ -35,14 +35,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     try {
-      print('ProfileBloc: Requesting user profile');
-      emit(ProfileLoading());
+      emit(const ProfileLoading());
       final profile = await profileRepository.getUserProfile();
-      print('ProfileBloc: Received profile data: $profile');
       emit(ProfileLoaded(profile: profile));
-    } catch (e, stackTrace) {
-      print('ProfileBloc: Error getting profile: $e');
-      print('ProfileBloc: Stack trace: $stackTrace');
+    } catch (e) {
       emit(ProfileFailure(error: e.toString()));
     }
   }
@@ -90,7 +86,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     try {
       await profileRepository.logout();
-      emit(ProfileLogoutSuccess());
+      emit(const ProfileLogoutSuccess());
     } catch (e) {
       emit(ProfileFailure(error: e.toString()));
     }

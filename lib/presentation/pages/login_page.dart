@@ -103,7 +103,9 @@ class LoginPageState extends State<LoginPage> with PageMixin {
 
     if (state is Authenticated) {
       debugPrint('Auth Success - Token: ${state.token}');
-      replaceRoute(AppConstants.homeRoute);
+      if (mounted) {
+        replaceRoute(AppConstants.homeRoute);
+      }
     } else if (state is AuthError) {
       debugPrint('Auth Error: ${state.message}');
       showErrorSnackBar(state.message);

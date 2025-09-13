@@ -126,7 +126,7 @@ class _OnboardingGenderPageState extends State<OnboardingGenderPage> {
                       height: 2,
                       margin: EdgeInsets.symmetric(horizontal: appTheme.spacing.sm),
                       decoration: BoxDecoration(
-                        color: appTheme.colors.lightGray.withOpacity(0.3),
+                        color: appTheme.colors.lightGray.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(1),
                       ),
                     ),
@@ -135,7 +135,7 @@ class _OnboardingGenderPageState extends State<OnboardingGenderPage> {
                     width: 30,
                     height: 30,
                     decoration: BoxDecoration(
-                      color: appTheme.colors.lightGray.withOpacity(0.3),
+                      color: appTheme.colors.lightGray.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(15),
                     ),
                     child: Icon(
@@ -189,13 +189,13 @@ class _OnboardingGenderPageState extends State<OnboardingGenderPage> {
                           padding: EdgeInsets.all(appTheme.spacing.lg),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? appTheme.colors.primaryRed.withOpacity(0.1)
+                                ? appTheme.colors.primaryRed.withValues(alpha: 0.1)
                                 : appTheme.colors.darkTone,
                             borderRadius: BorderRadius.circular(appTheme.radius.lg),
                             border: Border.all(
                               color: isSelected
                                   ? appTheme.colors.primaryRed
-                                  : appTheme.colors.lightGray.withOpacity(0.3),
+                                  : appTheme.colors.lightGray.withValues(alpha: 0.3),
                               width: isSelected ? 2 : 1,
                             ),
                           ),
@@ -207,7 +207,7 @@ class _OnboardingGenderPageState extends State<OnboardingGenderPage> {
                                 decoration: BoxDecoration(
                                   color: isSelected
                                       ? appTheme.colors.primaryRed
-                                      : appTheme.colors.lightGray.withOpacity(0.2),
+                                      : appTheme.colors.lightGray.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(appTheme.radius.md),
                                 ),
                                 child: Icon(

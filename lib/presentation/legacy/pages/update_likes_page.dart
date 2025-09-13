@@ -80,7 +80,7 @@ class _UpdateLikesPageState extends State<UpdateLikesPage> {
                     const SizedBox(height: 16),
                     const Text('Updating likes...'),
                   ] else if (state is LikesUpdateSuccess) ...[
-                    const Icon(
+                    Icon(
                       Icons.check_circle_outline,
                       color: Colors.green,
                       size: 48,
@@ -93,7 +93,7 @@ class _UpdateLikesPageState extends State<UpdateLikesPage> {
                       child: const Text('Update Again'),
                     ),
                   ] else if (state is LikesUpdateFailure) ...[
-                    const Icon(
+                    Icon(
                       Icons.error_outline,
                       color: Colors.red,
                       size: 48,

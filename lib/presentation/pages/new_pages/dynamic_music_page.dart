@@ -205,7 +205,7 @@ class _DynamicMusicPageState extends State<DynamicMusicPage> with PageMixin {
         color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(AppConstants.defaultBorderRadius),
         border: Border.all(
-          color: AppConstants.borderColor.withOpacity(0.2),
+          color: AppConstants.borderColor.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -222,7 +222,7 @@ class _DynamicMusicPageState extends State<DynamicMusicPage> with PageMixin {
                 height: 50,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  color: AppConstants.primaryColor.withOpacity(0.2),
+                  color: AppConstants.primaryColor.withValues(alpha: 0.2),
                   image: track.imageUrl != null
                       ? DecorationImage(
                           image: NetworkImage(track.imageUrl!),
@@ -308,7 +308,7 @@ class _DynamicMusicPageState extends State<DynamicMusicPage> with PageMixin {
         color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(AppConstants.defaultBorderRadius),
         border: Border.all(
-          color: AppConstants.borderColor.withOpacity(0.2),
+          color: AppConstants.borderColor.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -325,7 +325,7 @@ class _DynamicMusicPageState extends State<DynamicMusicPage> with PageMixin {
                 height: 50,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppConstants.primaryColor.withOpacity(0.2),
+                  color: AppConstants.primaryColor.withValues(alpha: 0.2),
                   image: artist.imageUrl != null
                       ? DecorationImage(
                           image: NetworkImage(artist.imageUrl!),
@@ -389,7 +389,7 @@ class _DynamicMusicPageState extends State<DynamicMusicPage> with PageMixin {
         color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(AppConstants.defaultBorderRadius),
         border: Border.all(
-          color: AppConstants.borderColor.withOpacity(0.2),
+          color: AppConstants.borderColor.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -406,7 +406,7 @@ class _DynamicMusicPageState extends State<DynamicMusicPage> with PageMixin {
                 height: 50,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(8),
-                  color: AppConstants.primaryColor.withOpacity(0.2),
+                  color: AppConstants.primaryColor.withValues(alpha: 0.2),
                 ),
                 child: Icon(
                   Icons.category,

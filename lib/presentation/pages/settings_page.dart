@@ -11,11 +11,26 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool _notificationsEnabled = true;
-  bool _darkModeEnabled = false;
-  bool _autoPlayEnabled = true;
-  bool _highQualityAudio = false;
+  bool _darkModeEnabled = true;
+  bool _autoPlayEnabled = false;
+  bool _highQualityEnabled = true;
   String _selectedLanguage = 'English';
-  String _selectedRegion = 'United States';
+  String _selectedTheme = 'Dark';
+
+  final List<String> _languages = [
+    'English',
+    'Spanish',
+    'French',
+    'German',
+    'Italian',
+    'Portuguese',
+  ];
+
+  final List<String> _themes = [
+    'Light',
+    'Dark',
+    'Auto',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -23,499 +38,656 @@ class _SettingsPageState extends State<SettingsPage> {
 
     return Scaffold(
       backgroundColor: appTheme.colors.background,
-      appBar: AppBar(
-        backgroundColor: appTheme.colors.background,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: appTheme.colors.textPrimary,
-          ),
-          onPressed: () => Navigator.of(context).pop(),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: appTheme.gradients.backgroundGradient,
         ),
-        title: Text(
-          'Settings',
-          style: appTheme.typography.headlineH6.copyWith(
-            color: appTheme.colors.textPrimary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(appTheme.spacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Account Settings
-            _buildSectionHeader('Account', Icons.person, appTheme),
-            SizedBox(height: appTheme.spacing.md),
-            _buildSettingTile(
-              'Edit Profile',
-              'Update your personal information',
-              Icons.edit,
-              () {},
-              appTheme,
-            ),
-            _buildSettingTile(
-              'Privacy Settings',
-              'Control your privacy and security',
-              Icons.privacy_tip,
-              () {},
-              appTheme,
-            ),
-            _buildSettingTile(
-              'Connected Services',
-              'Manage your music service connections',
-              Icons.link,
-              () {},
-              appTheme,
-            ),
-
-            SizedBox(height: appTheme.spacing.xl),
-
-            // App Settings
-            _buildSectionHeader('App Settings', Icons.settings, appTheme),
-            SizedBox(height: appTheme.spacing.md),
-            _buildSwitchTile(
-              'Notifications',
-              'Receive push notifications',
-              Icons.notifications,
-              _notificationsEnabled,
-              (value) {
-                setState(() {
-                  _notificationsEnabled = value;
-                });
-              },
-              appTheme,
-            ),
-            _buildSwitchTile(
-              'Dark Mode',
-              'Use dark theme',
-              Icons.dark_mode,
-              _darkModeEnabled,
-              (value) {
-                setState(() {
-                  _darkModeEnabled = value;
-                });
-              },
-              appTheme,
-            ),
-            _buildSwitchTile(
-              'Auto-play',
-              'Automatically play next track',
-              Icons.play_circle,
-              _autoPlayEnabled,
-              (value) {
-                setState(() {
-                  _autoPlayEnabled = value;
-                });
-              },
-              appTheme,
-            ),
-            _buildSwitchTile(
-              'High Quality Audio',
-              'Stream in high quality (uses more data)',
-              Icons.high_quality,
-              _highQualityAudio,
-              (value) {
-                setState(() {
-                  _highQualityAudio = value;
-                });
-              },
-              appTheme,
-            ),
-
-            SizedBox(height: appTheme.spacing.xl),
-
-            // Language & Region
-            _buildSectionHeader('Language & Region', Icons.language, appTheme),
-            SizedBox(height: appTheme.spacing.md),
-            _buildDropdownTile(
-              'Language',
-              _selectedLanguage,
-              ['English', 'Spanish', 'French', 'German', 'Japanese'],
-              (value) {
-                setState(() {
-                  _selectedLanguage = value!;
-                });
-              },
-              appTheme,
-            ),
-            _buildDropdownTile(
-              'Region',
-              _selectedRegion,
-              ['United States', 'United Kingdom', 'Canada', 'Australia', 'Germany'],
-              (value) {
-                setState(() {
-                  _selectedRegion = value!;
-                });
-              },
-              appTheme,
-            ),
-
-            SizedBox(height: appTheme.spacing.xl),
-
-            // Support & About
-            _buildSectionHeader('Support & About', Icons.help, appTheme),
-            SizedBox(height: appTheme.spacing.md),
-            _buildSettingTile(
-              'Help & Support',
-              'Get help and contact support',
-              Icons.help_outline,
-              () {},
-              appTheme,
-            ),
-            _buildSettingTile(
-              'Terms of Service',
-              'Read our terms and conditions',
-              Icons.description,
-              () {},
-              appTheme,
-            ),
-            _buildSettingTile(
-              'Privacy Policy',
-              'Read our privacy policy',
-              Icons.privacy_tip_outlined,
-              () {},
-              appTheme,
-            ),
-            _buildSettingTile(
-              'About MusicBud',
-              'App version and information',
-              Icons.info_outline,
-              () {},
-              appTheme,
-            ),
-
-            SizedBox(height: appTheme.spacing.xl),
-
-            // Danger Zone
-            _buildSectionHeader('Danger Zone', Icons.warning, appTheme),
-            SizedBox(height: appTheme.spacing.md),
-            _buildDangerTile(
-              'Delete Account',
-              'Permanently delete your account and data',
-              Icons.delete_forever,
-              () {
-                _showDeleteAccountDialog(context, appTheme);
-              },
-              appTheme,
-            ),
-
-            SizedBox(height: appTheme.spacing.xl),
-
-            // Logout Button
-            SizedBox(
-              width: double.infinity,
-              child: AppButton(
-                onPressed: () {
-                  _showLogoutDialog(context, appTheme);
-                },
-                text: 'Logout',
-                variant: AppButtonVariant.secondary,
-                size: AppButtonSize.large,
-                icon: Icons.logout,
+        child: CustomScrollView(
+          slivers: [
+            // Header Section
+            SliverToBoxAdapter(
+              child: Container(
+                padding: EdgeInsets.all(appTheme.spacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Settings',
+                      style: appTheme.typography.headlineH5.copyWith(
+                        color: appTheme.colors.textPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: appTheme.spacing.sm),
+                    Text(
+                      'Customize your MusicBud experience',
+                      style: appTheme.typography.bodyMedium.copyWith(
+                        color: appTheme.colors.textMuted,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
+
+            // Account Settings Section
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Account',
+                      style: appTheme.typography.headlineH7.copyWith(
+                        color: appTheme.colors.textPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: appTheme.spacing.md),
+
+                    _buildSettingsCard(
+                      'Profile Settings',
+                      'Manage your account and profile information',
+                      Icons.person,
+                      appTheme.colors.accentBlue,
+                      () {
+                        // Navigate to profile settings
+                      },
+                      appTheme,
+                    ),
+                    SizedBox(height: appTheme.spacing.sm),
+
+                    _buildSettingsCard(
+                      'Privacy & Security',
+                      'Control your privacy settings and security options',
+                      Icons.privacy_tip,
+                      appTheme.colors.accentGreen,
+                      () {
+                        // Navigate to privacy settings
+                      },
+                      appTheme,
+                    ),
+                    SizedBox(height: appTheme.spacing.sm),
+
+                    _buildSettingsCard(
+                      'Subscription',
+                      'Manage your premium subscription and billing',
+                      Icons.star,
+                      appTheme.colors.accentOrange,
+                      () {
+                        // Navigate to subscription
+                      },
+                      appTheme,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            SizedBox(height: appTheme.spacing.xl),
+
+            // Preferences Section
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Preferences',
+                      style: appTheme.typography.headlineH7.copyWith(
+                        color: appTheme.colors.textPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: appTheme.spacing.md),
+
+                    _buildToggleCard(
+                      'Notifications',
+                      'Receive push notifications for new music and updates',
+                      Icons.notifications,
+                      appTheme.colors.primaryRed,
+                      _notificationsEnabled,
+                      (value) {
+                        setState(() {
+                          _notificationsEnabled = value;
+                        });
+                      },
+                      appTheme,
+                    ),
+                    SizedBox(height: appTheme.spacing.sm),
+
+                    _buildToggleCard(
+                      'Dark Mode',
+                      'Use dark theme for better viewing experience',
+                      Icons.dark_mode,
+                      appTheme.colors.accentPurple,
+                      _darkModeEnabled,
+                      (value) {
+                        setState(() {
+                          _darkModeEnabled = value;
+                        });
+                      },
+                      appTheme,
+                    ),
+                    SizedBox(height: appTheme.spacing.sm),
+
+                    _buildToggleCard(
+                      'Auto Play',
+                      'Automatically play next track in queue',
+                      Icons.play_circle,
+                      appTheme.colors.accentBlue,
+                      _autoPlayEnabled,
+                      (value) {
+                        setState(() {
+                          _autoPlayEnabled = value;
+                        });
+                      },
+                      appTheme,
+                    ),
+                    SizedBox(height: appTheme.spacing.sm),
+
+                    _buildToggleCard(
+                      'High Quality Audio',
+                      'Stream music in high quality (uses more data)',
+                      Icons.high_quality,
+                      appTheme.colors.accentGreen,
+                      _highQualityEnabled,
+                      (value) {
+                        setState(() {
+                          _highQualityEnabled = value;
+                        });
+                      },
+                      appTheme,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            SizedBox(height: appTheme.spacing.xl),
+
+            // Appearance Section
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Appearance',
+                      style: appTheme.typography.headlineH7.copyWith(
+                        color: appTheme.colors.textPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: appTheme.spacing.md),
+
+                    _buildSelectionCard(
+                      'Language',
+                      'Choose your preferred language',
+                      Icons.language,
+                      appTheme.colors.accentBlue,
+                      _selectedLanguage,
+                      _languages,
+                      (value) {
+                        setState(() {
+                          _selectedLanguage = value;
+                        });
+                      },
+                      appTheme,
+                    ),
+                    SizedBox(height: appTheme.spacing.sm),
+
+                    _buildSelectionCard(
+                      'Theme',
+                      'Select your preferred app theme',
+                      Icons.palette,
+                      appTheme.colors.accentPurple,
+                      _selectedTheme,
+                      _themes,
+                      (value) {
+                        setState(() {
+                          _selectedTheme = value;
+                        });
+                      },
+                      appTheme,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            SizedBox(height: appTheme.spacing.xl),
+
+            // Storage Section
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Storage & Data',
+                      style: appTheme.typography.headlineH7.copyWith(
+                        color: appTheme.colors.textPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: appTheme.spacing.md),
+
+                    _buildSettingsCard(
+                      'Storage Usage',
+                      'Manage your downloaded music and cache',
+                      Icons.storage,
+                      appTheme.colors.accentOrange,
+                      () {
+                        // Navigate to storage settings
+                      },
+                      appTheme,
+                    ),
+                    SizedBox(height: appTheme.spacing.sm),
+
+                    _buildSettingsCard(
+                      'Data Usage',
+                      'Monitor and control your data consumption',
+                      Icons.data_usage,
+                      appTheme.colors.accentGreen,
+                      () {
+                        // Navigate to data usage
+                      },
+                      appTheme,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            SizedBox(height: appTheme.spacing.xl),
+
+            // Support Section
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Support & Feedback',
+                      style: appTheme.typography.headlineH7.copyWith(
+                        color: appTheme.colors.textPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: appTheme.spacing.md),
+
+                    _buildSettingsCard(
+                      'Help Center',
+                      'Get help and find answers to common questions',
+                      Icons.help,
+                      appTheme.colors.accentBlue,
+                      () {
+                        // Navigate to help center
+                      },
+                      appTheme,
+                    ),
+                    SizedBox(height: appTheme.spacing.sm),
+
+                    _buildSettingsCard(
+                      'Contact Support',
+                      'Get in touch with our support team',
+                      Icons.support_agent,
+                      appTheme.colors.accentGreen,
+                      () {
+                        // Navigate to contact support
+                      },
+                      appTheme,
+                    ),
+                    SizedBox(height: appTheme.spacing.sm),
+
+                    _buildSettingsCard(
+                      'Send Feedback',
+                      'Help us improve by sending your feedback',
+                      Icons.feedback,
+                      appTheme.colors.accentPurple,
+                      () {
+                        // Navigate to feedback
+                      },
+                      appTheme,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            SizedBox(height: appTheme.spacing.xl),
+
+            // About Section
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'About',
+                      style: appTheme.typography.headlineH7.copyWith(
+                        color: appTheme.colors.textPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    SizedBox(height: appTheme.spacing.md),
+
+                    _buildSettingsCard(
+                      'App Version',
+                      'MusicBud v2.1.0',
+                      Icons.info,
+                      appTheme.colors.textMuted,
+                      () {
+                        // Show version info
+                      },
+                      appTheme,
+                    ),
+                    SizedBox(height: appTheme.spacing.sm),
+
+                    _buildSettingsCard(
+                      'Terms of Service',
+                      'Read our terms and conditions',
+                      Icons.description,
+                      appTheme.colors.textMuted,
+                      () {
+                        // Navigate to terms
+                      },
+                      appTheme,
+                    ),
+                    SizedBox(height: appTheme.spacing.sm),
+
+                    _buildSettingsCard(
+                      'Privacy Policy',
+                      'Learn about our privacy practices',
+                      Icons.policy,
+                      appTheme.colors.textMuted,
+                      () {
+                        // Navigate to privacy policy
+                      },
+                      appTheme,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            SizedBox(height: appTheme.spacing.xl),
+
+            // Logout Section
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+                child: OutlineButton(
+                  text: 'Logout',
+                  onPressed: () {
+                    // Handle logout
+                  },
+                  icon: Icons.logout,
+                  size: ModernButtonSize.large,
+                  isFullWidth: true,
+                ),
+              ),
+            ),
+
+            SizedBox(height: appTheme.spacing.xl),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title, IconData icon, AppTheme appTheme) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          color: appTheme.colors.primaryRed,
-          size: 24,
-        ),
-        SizedBox(width: appTheme.spacing.sm),
-        Text(
-          title,
-          style: appTheme.typography.titleMedium.copyWith(
-            color: appTheme.colors.textPrimary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSettingTile(
+  Widget _buildSettingsCard(
     String title,
     String subtitle,
     IconData icon,
+    Color accentColor,
     VoidCallback onTap,
     AppTheme appTheme,
   ) {
-    return Container(
-      margin: EdgeInsets.only(bottom: appTheme.spacing.sm),
-      child: ListTile(
-        leading: Container(
-          padding: EdgeInsets.all(appTheme.spacing.sm),
-          decoration: BoxDecoration(
-            color: appTheme.colors.primaryRed.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(appTheme.radius.md),
+    return ModernCard(
+      variant: ModernCardVariant.secondary,
+      onTap: onTap,
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(appTheme.spacing.sm),
+            decoration: BoxDecoration(
+              color: accentColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(appTheme.radius.md),
+            ),
+            child: Icon(
+              icon,
+              color: accentColor,
+              size: 24,
+            ),
           ),
-          child: Icon(
-            icon,
-            color: appTheme.colors.primaryRed,
+          SizedBox(width: appTheme.spacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: appTheme.typography.titleSmall.copyWith(
+                    color: appTheme.colors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: appTheme.spacing.xs),
+                Text(
+                  subtitle,
+                  style: appTheme.typography.bodySmall.copyWith(
+                    color: appTheme.colors.textMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.chevron_right,
+            color: appTheme.colors.textSecondary,
             size: 20,
           ),
-        ),
-        title: Text(
-          title,
-          style: appTheme.typography.bodyMedium.copyWith(
-            color: appTheme.colors.textPrimary,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: appTheme.typography.bodySmall.copyWith(
-            color: appTheme.colors.textSecondary,
-          ),
-        ),
-        trailing: Icon(
-          Icons.chevron_right,
-          color: appTheme.colors.textSecondary,
-          size: 20,
-        ),
-        onTap: onTap,
+        ],
       ),
     );
   }
 
-  Widget _buildSwitchTile(
+  Widget _buildToggleCard(
     String title,
     String subtitle,
     IconData icon,
+    Color accentColor,
     bool value,
     ValueChanged<bool> onChanged,
     AppTheme appTheme,
   ) {
-    return Container(
-      margin: EdgeInsets.only(bottom: appTheme.spacing.sm),
-      child: ListTile(
-        leading: Container(
-          padding: EdgeInsets.all(appTheme.spacing.sm),
-          decoration: BoxDecoration(
-            color: appTheme.colors.primaryRed.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(appTheme.radius.md),
+    return ModernCard(
+      variant: ModernCardVariant.secondary,
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(appTheme.spacing.sm),
+            decoration: BoxDecoration(
+              color: accentColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(appTheme.radius.md),
+            ),
+            child: Icon(
+              icon,
+              color: accentColor,
+              size: 24,
+            ),
           ),
-          child: Icon(
-            icon,
-            color: appTheme.colors.primaryRed,
-            size: 20,
+          SizedBox(width: appTheme.spacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: appTheme.typography.titleSmall.copyWith(
+                    color: appTheme.colors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: appTheme.spacing.xs),
+                Text(
+                  subtitle,
+                  style: appTheme.typography.bodySmall.copyWith(
+                    color: appTheme.colors.textMuted,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        title: Text(
-          title,
-          style: appTheme.typography.bodyMedium.copyWith(
-            color: appTheme.colors.textPrimary,
-            fontWeight: FontWeight.w500,
+          Switch(
+            value: value,
+            onChanged: onChanged,
+            activeColor: appTheme.colors.primaryRed,
+            activeTrackColor: appTheme.colors.primaryRed.withValues(alpha: 0.3),
+            inactiveThumbColor: appTheme.colors.textMuted,
+            inactiveTrackColor: appTheme.colors.surfaceLight,
           ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: appTheme.typography.bodySmall.copyWith(
-            color: appTheme.colors.textSecondary,
-          ),
-        ),
-        trailing: Switch(
-          value: value,
-          onChanged: onChanged,
-          activeColor: appTheme.colors.primaryRed,
-        ),
+        ],
       ),
     );
   }
 
-  Widget _buildDropdownTile(
-    String title,
-    String value,
-    List<String> options,
-    ValueChanged<String?> onChanged,
-    AppTheme appTheme,
-  ) {
-    return Container(
-      margin: EdgeInsets.only(bottom: appTheme.spacing.sm),
-      child: ListTile(
-        leading: Container(
-          padding: EdgeInsets.all(appTheme.spacing.sm),
-          decoration: BoxDecoration(
-            color: appTheme.colors.primaryRed.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(appTheme.radius.md),
-          ),
-          child: Icon(
-            Icons.language,
-            color: appTheme.colors.primaryRed,
-            size: 20,
-          ),
-        ),
-        title: Text(
-          title,
-          style: appTheme.typography.bodyMedium.copyWith(
-            color: appTheme.colors.textPrimary,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        subtitle: Text(
-          value,
-          style: appTheme.typography.bodySmall.copyWith(
-            color: appTheme.colors.textSecondary,
-          ),
-        ),
-        trailing: DropdownButton<String>(
-          value: value,
-          onChanged: onChanged,
-          items: options.map((String option) {
-            return DropdownMenuItem<String>(
-              value: option,
-              child: Text(option),
-            );
-          }).toList(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDangerTile(
+  Widget _buildSelectionCard(
     String title,
     String subtitle,
     IconData icon,
-    VoidCallback onTap,
+    Color accentColor,
+    String selectedValue,
+    List<String> options,
+    ValueChanged<String> onChanged,
     AppTheme appTheme,
   ) {
-    return Container(
-      margin: EdgeInsets.only(bottom: appTheme.spacing.sm),
-      child: ListTile(
-        leading: Container(
-          padding: EdgeInsets.all(appTheme.spacing.sm),
-          decoration: BoxDecoration(
-            color: appTheme.colors.error.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(appTheme.radius.md),
+    return ModernCard(
+      variant: ModernCardVariant.secondary,
+      onTap: () {
+        _showSelectionDialog(title, options, selectedValue, onChanged, appTheme);
+      },
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(appTheme.spacing.sm),
+            decoration: BoxDecoration(
+              color: accentColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(appTheme.radius.md),
+            ),
+            child: Icon(
+              icon,
+              color: accentColor,
+              size: 24,
+            ),
           ),
-          child: Icon(
-            icon,
-            color: appTheme.colors.error,
-            size: 20,
+          SizedBox(width: appTheme.spacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: appTheme.typography.titleSmall.copyWith(
+                    color: appTheme.colors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: appTheme.spacing.xs),
+                Text(
+                  subtitle,
+                  style: appTheme.typography.bodySmall.copyWith(
+                    color: appTheme.colors.textMuted,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        title: Text(
-          title,
-          style: appTheme.typography.bodyMedium.copyWith(
-            color: appTheme.colors.error,
-            fontWeight: FontWeight.w500,
+          Row(
+            children: [
+              Text(
+                selectedValue,
+                style: appTheme.typography.bodySmall.copyWith(
+                  color: appTheme.colors.textSecondary,
+                ),
+              ),
+              SizedBox(width: appTheme.spacing.xs),
+              Icon(
+                Icons.chevron_right,
+                color: appTheme.colors.textSecondary,
+                size: 20,
+              ),
+            ],
           ),
-        ),
-        subtitle: Text(
-          subtitle,
-          style: appTheme.typography.bodySmall.copyWith(
-            color: appTheme.colors.textSecondary,
-          ),
-        ),
-        trailing: Icon(
-          Icons.chevron_right,
-          color: appTheme.colors.error,
-          size: 20,
-        ),
-        onTap: onTap,
+        ],
       ),
     );
   }
 
-  void _showDeleteAccountDialog(BuildContext context, AppTheme appTheme) {
+  void _showSelectionDialog(
+    String title,
+    List<String> options,
+    String selectedValue,
+    ValueChanged<String> onChanged,
+    AppTheme appTheme,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: appTheme.colors.background,
+          backgroundColor: appTheme.colors.surfaceDark,
           title: Text(
-            'Delete Account',
-            style: appTheme.typography.headlineH6.copyWith(
-              color: appTheme.colors.error,
-            ),
-          ),
-          content: Text(
-            'Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently lost.',
-            style: appTheme.typography.bodyMedium.copyWith(
+            title,
+            style: appTheme.typography.titleMedium.copyWith(
               color: appTheme.colors.textPrimary,
             ),
           ),
-          actions: [
-            TextButton(
-              child: Text(
-                'Cancel',
-                style: appTheme.typography.bodyMedium.copyWith(
-                  color: appTheme.colors.textSecondary,
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text(
-                'Delete',
-                style: appTheme.typography.bodyMedium.copyWith(
-                  color: appTheme.colors.error,
-                ),
-              ),
-              onPressed: () {
-                // Handle account deletion
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
+          content: SizedBox(
+            width: double.maxFinite,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: options.length,
+              itemBuilder: (context, index) {
+                final option = options[index];
+                final isSelected = option == selectedValue;
 
-  void _showLogoutDialog(BuildContext context, AppTheme appTheme) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: appTheme.colors.background,
-          title: Text(
-            'Logout',
-            style: appTheme.typography.headlineH6.copyWith(
-              color: appTheme.colors.textPrimary,
-            ),
-          ),
-          content: Text(
-            'Are you sure you want to logout?',
-            style: appTheme.typography.bodyMedium.copyWith(
-              color: appTheme.colors.textPrimary,
+                return ListTile(
+                  title: Text(
+                    option,
+                    style: appTheme.typography.bodyMedium.copyWith(
+                      color: isSelected
+                          ? appTheme.colors.primaryRed
+                          : appTheme.colors.textPrimary,
+                      fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                    ),
+                  ),
+                  trailing: isSelected
+                      ? Icon(
+                          Icons.check,
+                          color: appTheme.colors.primaryRed,
+                        )
+                      : null,
+                  onTap: () {
+                    onChanged(option);
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
             ),
           ),
           actions: [
-            TextButton(
-              child: Text(
-                'Cancel',
-                style: appTheme.typography.bodyMedium.copyWith(
-                  color: appTheme.colors.textSecondary,
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text(
-                'Logout',
-                style: appTheme.typography.bodyMedium.copyWith(
-                  color: appTheme.colors.primaryRed,
-                ),
-              ),
-              onPressed: () {
-                // Handle logout
-                Navigator.of(context).pop();
-              },
+            ModernTextButton(
+              text: 'Cancel',
+              onPressed: () => Navigator.of(context).pop(),
+              size: ModernButtonSize.small,
             ),
           ],
         );

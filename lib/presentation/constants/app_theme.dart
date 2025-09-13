@@ -15,13 +15,25 @@ class AppTheme {
   static const String fontFamilySecondary = 'Josefin Sans';
   static const String fontFamilyArabic = 'Almarai';
 
-  // Colors
+  // Enhanced Color Palette from Figma Design
   static const Color primaryRed = Color(0xFFFE2C54);
   static const Color secondaryRed = Color(0xFFFF2D55);
   static const Color darkTone = Color(0xFF0F0E12);
   static const Color lightGray = Color(0xFFCCCCCC);
   static const Color pureWhite = Color(0xFFFFFFFF);
   static const Color transparent = Color(0x00000000);
+
+  // Additional colors from UI design
+  static const Color cardBackground = Color(0xFF1A1A1A);
+  static const Color surfaceDark = Color(0xFF1E1E1E);
+  static const Color surfaceLight = Color(0xFF2A2A2A);
+  static const Color accentBlue = Color(0xFF4A90E2);
+  static const Color accentPurple = Color(0xFF9B59B6);
+  static const Color accentGreen = Color(0xFF2ECC71);
+  static const Color accentOrange = Color(0xFFE67E22);
+  static const Color textMuted = Color(0xFF8E8E93);
+  static const Color borderColor = Color(0xFF3A3A3A);
+  static const Color overlayColor = Color(0x80000000);
 
   // Color Palette
   static const Color primary = primaryRed;
@@ -50,7 +62,7 @@ class AppTheme {
     900: darkTone,
   };
 
-  // Typography
+  // Enhanced Typography with better hierarchy
   static const TextStyle displayH1 = TextStyle(
     fontFamily: fontFamilyPrimary,
     fontSize: 60,
@@ -180,7 +192,7 @@ class AppTheme {
     color: white,
   );
 
-  // Spacing System (8px base unit)
+  // Enhanced Spacing System (8px base unit)
   static const double spacingXS = 4.0;
   static const double spacingS = 8.0;
   static const double spacingM = 16.0;
@@ -190,7 +202,7 @@ class AppTheme {
   static const double spacingXXXL = 64.0;
   static const double spacingHuge = 96.0;
 
-  // Border Radius
+  // Enhanced Border Radius
   static const double radiusXS = 4.0;
   static const double radiusS = 8.0;
   static const double radiusM = 16.0;
@@ -199,7 +211,7 @@ class AppTheme {
   static const double radiusXXL = 40.0;
   static const double radiusCircular = 50.0;
 
-  // Shadows
+  // Enhanced Shadows with better depth
   static const List<BoxShadow> shadowSmall = [
     BoxShadow(
       color: Color(0x1A000000),
@@ -236,7 +248,26 @@ class AppTheme {
     ),
   ];
 
-  // Gradients
+  // Enhanced card shadows
+  static const List<BoxShadow> shadowCard = [
+    BoxShadow(
+      color: Color(0x1A000000),
+      offset: Offset(0, 4),
+      blurRadius: 12,
+      spreadRadius: 0,
+    ),
+  ];
+
+  static const List<BoxShadow> shadowCardHover = [
+    BoxShadow(
+      color: Color(0x33000000),
+      offset: Offset(0, 8),
+      blurRadius: 24,
+      spreadRadius: 0,
+    ),
+  ];
+
+  // Enhanced Gradients from UI design
   static const LinearGradient gradientPrimary = LinearGradient(
     begin: Alignment(0.50, -0.00),
     end: Alignment(0.50, 1.00),
@@ -255,6 +286,25 @@ class AppTheme {
     colors: [darkTone, Color(0xFF1A1A1A)],
   );
 
+  // New gradients from UI design
+  static const LinearGradient gradientCard = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [cardBackground, surfaceDark],
+  );
+
+  static const LinearGradient gradientOverlay = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [transparent, overlayColor],
+  );
+
+  static const LinearGradient gradientAccent = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [accentBlue, accentPurple],
+  );
+
   // Instance-based getters for components
   AppColors get colors => AppColors();
   AppTypography get typography => AppTypography();
@@ -263,14 +313,15 @@ class AppTheme {
   AppShadows get shadows => AppShadows();
   AppGradients get gradients => AppGradients();
 
-  // Component Themes
-  CardThemeData get cardTheme => CardThemeData(
-    color: surface,
+  // Enhanced Component Themes
+  CardTheme get cardTheme => CardTheme(
+    color: cardBackground,
     elevation: 0,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(radiusXL),
     ),
     margin: EdgeInsets.all(spacingM),
+    shadowColor: Colors.black,
   );
 
   ButtonThemeData get buttonTheme => ButtonThemeData(
@@ -286,11 +337,11 @@ class AppTheme {
   InputDecorationTheme get inputDecorationTheme => InputDecorationTheme(
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(radiusM),
-      borderSide: BorderSide(color: lightGray),
+      borderSide: BorderSide(color: borderColor),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(radiusM),
-      borderSide: BorderSide(color: lightGray),
+      borderSide: BorderSide(color: borderColor),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(radiusM),
@@ -301,7 +352,7 @@ class AppTheme {
       borderSide: BorderSide(color: error),
     ),
     filled: true,
-    fillColor: surface,
+    fillColor: surfaceDark,
     contentPadding: EdgeInsets.symmetric(
       horizontal: spacingM,
       vertical: spacingM,
@@ -333,7 +384,15 @@ class AppTheme {
     fontFamily: fontFamilySecondary,
     primaryColor: primaryRed,
     scaffoldBackgroundColor: white,
-    cardTheme: cardTheme,
+    cardTheme: CardThemeData(
+      color: cardBackground,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(radiusXL),
+      ),
+      margin: EdgeInsets.all(spacingM),
+      shadowColor: Colors.black,
+    ),
     buttonTheme: buttonTheme,
     inputDecorationTheme: inputDecorationTheme,
     appBarTheme: appBarTheme.copyWith(
@@ -353,7 +412,15 @@ class AppTheme {
     fontFamily: fontFamilySecondary,
     primaryColor: primaryRed,
     scaffoldBackgroundColor: darkTone,
-    cardTheme: cardTheme,
+    cardTheme: CardThemeData(
+      color: cardBackground,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(radiusXL),
+      ),
+      margin: EdgeInsets.all(spacingM),
+      shadowColor: Colors.black,
+    ),
     buttonTheme: buttonTheme,
     inputDecorationTheme: inputDecorationTheme,
     appBarTheme: appBarTheme,
@@ -361,7 +428,7 @@ class AppTheme {
   );
 }
 
-// Helper classes for instance-based access
+// Enhanced Helper classes for instance-based access
 class AppColors {
   Color get primaryRed => AppTheme.primaryRed;
   Color get secondaryRed => AppTheme.secondaryRed;
@@ -382,13 +449,23 @@ class AppColors {
   Color get info => AppTheme.info;
   Map<int, Color> get neutral => AppTheme.neutral;
 
-  // Additional colors for pages
+  // Enhanced colors from UI design
   Color get textPrimary => AppTheme.white;
   Color get textSecondary => AppTheme.lightGray;
+  Color get textMuted => AppTheme.textMuted;
   Color get neutralGray => AppTheme.lightGray;
   Color get infoBlue => AppTheme.info;
   Color get successGreen => AppTheme.success;
   Color get errorRed => AppTheme.error;
+  Color get cardBackground => AppTheme.cardBackground;
+  Color get surfaceDark => AppTheme.surfaceDark;
+  Color get surfaceLight => AppTheme.surfaceLight;
+  Color get accentBlue => AppTheme.accentBlue;
+  Color get accentPurple => AppTheme.accentPurple;
+  Color get accentGreen => AppTheme.accentGreen;
+  Color get accentOrange => AppTheme.accentOrange;
+  Color get borderColor => AppTheme.borderColor;
+  Color get overlayColor => AppTheme.overlayColor;
 }
 
 class AppTypography {
@@ -446,10 +523,15 @@ class AppShadows {
   List<BoxShadow> get shadowMedium => AppTheme.shadowMedium;
   List<BoxShadow> get shadowLarge => AppTheme.shadowLarge;
   List<BoxShadow> get shadowText => AppTheme.shadowText;
+  List<BoxShadow> get shadowCard => AppTheme.shadowCard;
+  List<BoxShadow> get shadowCardHover => AppTheme.shadowCardHover;
 }
 
 class AppGradients {
   LinearGradient get primaryGradient => AppTheme.gradientPrimary;
   LinearGradient get secondaryGradient => AppTheme.gradientSecondary;
   LinearGradient get backgroundGradient => AppTheme.gradientBackground;
+  LinearGradient get cardGradient => AppTheme.gradientCard;
+  LinearGradient get overlayGradient => AppTheme.gradientOverlay;
+  LinearGradient get accentGradient => AppTheme.gradientAccent;
 }

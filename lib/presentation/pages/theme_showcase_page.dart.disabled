@@ -28,7 +28,7 @@ class _ThemeShowcasePageState extends State<ThemeShowcasePage>
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme();
+    final appTheme = AppTheme.of(context);
 
     return Scaffold(
       backgroundColor: appTheme.colors.background,

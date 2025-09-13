@@ -5,20 +5,13 @@ import '../../../blocs/profile/profile_bloc.dart';
 import '../../../blocs/profile/profile_event.dart';
 import '../../../blocs/profile/profile_state.dart';
 import '../../../blocs/auth/auth_bloc.dart';
+import '../../../blocs/auth/auth_event.dart';
 import '../../../domain/models/user_profile.dart';
-import '../../../domain/models/common_track.dart';
-import '../../../domain/models/common_artist.dart';
-import '../../../domain/models/common_genre.dart';
-import '../../../domain/models/common_album.dart';
-import '../../../domain/models/common_anime.dart';
-import '../../../domain/models/common_manga.dart';
 import '../../../domain/models/content_service.dart';
 import '../../constants/app_constants.dart';
-import '../../widgets/common/app_scaffold.dart';
-import '../../widgets/common/app_app_bar.dart';
-import '../../widgets/common/app_button.dart';
-import '../../widgets/common/app_text_field.dart';
 import '../../mixins/page_mixin.dart';
+import '../../widgets/common/index.dart';
+import '../../widgets/modern/modern_input_field.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -29,6 +22,8 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> with PageMixin, TickerProviderStateMixin {
   late TabController _tabController;
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _bioController = TextEditingController();
   final TextEditingController _displayNameController = TextEditingController();
   final TextEditingController _locationController = TextEditingController();
@@ -49,6 +44,8 @@ class _ProfilePageState extends State<ProfilePage> with PageMixin, TickerProvide
   @override
   void dispose() {
     _tabController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _bioController.dispose();
     _displayNameController.dispose();
     _locationController.dispose();
@@ -80,19 +77,11 @@ class _ProfilePageState extends State<ProfilePage> with PageMixin, TickerProvide
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      appBar: AppAppBar(
-        title: 'Profile',
-        actions: [
-          IconButton(
-            icon: Icon(_isEditing ? Icons.save : Icons.edit),
-            onPressed: _isEditing ? _saveProfile : _toggleEdit,
-          ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => navigateTo('/settings'),
-          ),
-        ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Profile'),
+        backgroundColor: AppConstants.backgroundColor,
+        elevation: 0,
       ),
       body: BlocConsumer<ProfileBloc, ProfileState>(
         listener: (context, state) {
@@ -216,18 +205,24 @@ class _ProfilePageState extends State<ProfilePage> with PageMixin, TickerProvide
     return Column(
       children: [
         if (_isEditing) ...[
-                      AppTextField(
-              controller: _displayNameController,
-              labelText: 'Display Name',
-              hintText: 'Enter your display name',
-            ),
-          const SizedBox(height: 12),
-                      AppTextField(
-              controller: _bioController,
-              labelText: 'Bio',
-              hintText: 'Tell us about yourself',
-              maxLines: 3,
-            ),
+                      ModernInputField(
+                        controller: _firstNameController,
+                        hintText: 'First Name',
+                        variant: ModernInputVariant.filled,
+                      ),
+                      const SizedBox(height: 16),
+                      ModernInputField(
+                        controller: _lastNameController,
+                        hintText: 'Last Name',
+                        variant: ModernInputVariant.filled,
+                      ),
+                      const SizedBox(height: 16),
+                      ModernInputField(
+                        controller: _bioController,
+                        hintText: 'Bio',
+                        variant: ModernInputVariant.filled,
+                        maxLines: 3,
+                      ),
           const SizedBox(height: 12),
                       AppTextField(
               controller: _locationController,

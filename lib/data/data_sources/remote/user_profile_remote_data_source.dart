@@ -34,7 +34,7 @@ class UserProfileRemoteDataSourceImpl implements UserProfileRemoteDataSource {
   @override
   Future<Map<String, dynamic>> getMyProfile() async {
     try {
-      final response = await _dioClient.get(ApiConfig.myProfile);
+      final response = await _dioClient.post(ApiConfig.myProfile);
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to get my profile: $e');

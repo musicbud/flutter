@@ -31,9 +31,6 @@ class UserProfile extends Equatable {
   /// Creates a [UserProfile] from a JSON map
   factory UserProfile.fromJson(Map<String, dynamic> json) {
     try {
-      print('UserProfile.fromJson: Input json: $json');
-      print('UserProfile.fromJson: json type: ${json.runtimeType}');
-
       // Handle case where API response doesn't include id field
       // Use username as id if id is missing (common in some API responses)
       final id = json['id']?.toString() ?? json['username']?.toString() ?? '';
@@ -43,12 +40,10 @@ class UserProfile extends Equatable {
       final bio = json['bio']?.toString();
       final displayName = json['display_name']?.toString();
       final location = json['location']?.toString();
-      final followersCount = json['followers_count'] as int? ?? 0;
-      final followingCount = json['following_count'] as int? ?? 0;
-      final isActive = json['is_active'] as bool? ?? true;
-      final isAuthenticated = json['is_authenticated'] as bool? ?? true;
-
-      print('UserProfile.fromJson: Parsed values - id: $id, username: $username, email: $email');
+      final followersCount = _parseInt(json['followers_count']) ?? 0;
+      final followingCount = _parseInt(json['following_count']) ?? 0;
+      final isActive = _parseBool(json['is_active']) ?? true;
+      final isAuthenticated = _parseBool(json['is_authenticated']) ?? true;
 
       // Validate that we have at least an id or username
       if (id.isEmpty) {
@@ -68,9 +63,7 @@ class UserProfile extends Equatable {
         isActive: isActive,
         isAuthenticated: isAuthenticated,
       );
-    } catch (e, stackTrace) {
-      print('UserProfile.fromJson: Error parsing json: $e');
-      print('UserProfile.fromJson: Stack trace: $stackTrace');
+    } catch (e) {
       rethrow;
     }
   }
@@ -119,6 +112,34 @@ class UserProfile extends Equatable {
       isActive: isActive ?? this.isActive,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
     );
+  }
+
+  /// Helper method to safely parse integers from JSON
+  static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is String) {
+      final parsed = int.tryParse(value);
+      return parsed;
+    }
+    if (value is double) return value.toInt();
+    return null;
+  }
+
+  /// Helper method to safely parse booleans from JSON
+  static bool? _parseBool(dynamic value) {
+    if (value == null) return null;
+    if (value is bool) return value;
+    if (value is String) {
+      final lower = value.toLowerCase();
+      if (lower == 'true') return true;
+      if (lower == 'false') return false;
+    }
+    if (value is int) {
+      if (value == 1) return true;
+      if (value == 0) return false;
+    }
+    return null;
   }
 
   @override

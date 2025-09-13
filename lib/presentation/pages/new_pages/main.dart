@@ -65,12 +65,12 @@ import '../demo/user_profile_demo_page.dart';
 import 'stories_page.dart';
 
 // Import new_pages versions with aliases
-import 'profile_page.dart' as NewProfilePage;
-import 'event_page.dart' as NewEventPage;
-import 'settings_page.dart' as NewSettingsPage;
+// import 'profile_page.dart' as NewProfilePage;
+// import 'event_page.dart' as NewEventPage;
+// import 'settings_page.dart' as NewSettingsPage;
 
 import 'chat_screen.dart';
-import 'profile_page.dart';
+// import 'profile_page.dart';
 import 'service_connection_page.dart';
 import 'user_management_page.dart';
 import 'admin_dashboard_page.dart';
@@ -90,6 +90,7 @@ class NewMainScreen extends StatefulWidget {
 }
 
 class _NewMainScreenState extends State<NewMainScreen> with PageMixin {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedIndex = 0;
   bool _isLoading = false;
 
@@ -100,130 +101,130 @@ class _NewMainScreenState extends State<NewMainScreen> with PageMixin {
   }
 
   // Enhanced navigation items configuration with all newly created pages
-  static const List<NavigationItem> _navigationItems = [
+  static final List<NavigationItem> _navigationItems = [
     // Main Navigation Pages
     NavigationItem(
       icon: Icons.home_outlined,
       label: 'Home',
-      page: HomePage(),
+      pageBuilder: (context) => const HomePage(),
     ),
     NavigationItem(
       icon: Icons.search,
       label: 'Search',
-      page: SearchPage(),
+      pageBuilder: (context) => const SearchPage(),
     ),
     NavigationItem(
       icon: Icons.people,
       label: 'Discover',
-      page: DiscoverPage(),
+      pageBuilder: (context) => const DiscoverPage(),
     ),
     NavigationItem(
       icon: Icons.chat_bubble_outline,
       label: 'Chat',
-      page: ChatPage(),
+      pageBuilder: (context) => const ChatPage(),
     ),
     NavigationItem(
       icon: Icons.music_note,
       label: 'Library',
-      page: LibraryPage(),
+      pageBuilder: (context) => const LibraryPage(),
     ),
     NavigationItem(
       icon: Icons.person,
       label: 'Profile',
-      page: MainProfilePage.ProfilePage(),
+      pageBuilder: (context) => const MainProfilePage.ProfilePage(),
     ),
   ];
 
   // Additional pages for testing - accessible via navigation drawer or buttons
-  static const List<NavigationItem> _additionalPages = [
+  static final List<NavigationItem> _additionalPages = [
     // Auth Pages
     NavigationItem(
       icon: Icons.login,
       label: 'Login',
-      page: LoginPage(),
+      pageBuilder: (context) => const LoginPage(),
     ),
     NavigationItem(
       icon: Icons.person_add,
       label: 'Sign Up',
-      page: SignupPage(),
+      pageBuilder: (context) => const SignupPage(),
     ),
     NavigationItem(
       icon: Icons.lock_reset,
       label: 'Forgot Password',
-      page: ForgotPasswordPage(),
+      pageBuilder: (context) => const ForgotPasswordPage(),
     ),
     NavigationItem(
       icon: Icons.verified,
       label: 'OTP Verification',
-      page: OtpVerificationPage(),
+      pageBuilder: (context) => const OtpVerificationPage(),
     ),
     NavigationItem(
       icon: Icons.password,
       label: 'Change Password',
-      page: ChangePasswordPage(),
+      pageBuilder: (context) => const ChangePasswordPage(),
     ),
 
     // Onboarding Pages
     NavigationItem(
       icon: Icons.badge,
       label: 'First Name',
-      page: OnboardingFirstNamePage(),
+      pageBuilder: (context) => const OnboardingFirstNamePage(),
     ),
     NavigationItem(
       icon: Icons.cake,
       label: 'Birthday',
-      page: OnboardingBirthdayPage(),
+      pageBuilder: (context) => const OnboardingBirthdayPage(),
     ),
     NavigationItem(
       icon: Icons.wc,
       label: 'Gender',
-      page: OnboardingGenderPage(),
+      pageBuilder: (context) => const OnboardingGenderPage(),
     ),
     NavigationItem(
       icon: Icons.interests,
       label: 'Interests',
-      page: OnboardingInterestsPage(),
+      pageBuilder: (context) => const OnboardingInterestsPage(),
     ),
 
     // Social Pages
     NavigationItem(
       icon: Icons.favorite,
       label: 'Match Recommendations',
-      page: MatchRecommendationsPage(),
+      pageBuilder: (context) => const MatchRecommendationsPage(),
     ),
     NavigationItem(
       icon: Icons.tv,
       label: 'Watch Party Detail',
-      page: WatchPartyDetailPage(),
+      pageBuilder: (context) => const WatchPartyDetailPage(),
     ),
 
     // Demo Pages
     NavigationItem(
       icon: Icons.account_circle,
       label: 'User Profile Demo',
-      page: UserProfileDemoPage(),
+      pageBuilder: (context) => const UserProfileDemoPage(),
     ),
 
     // Other Pages
     NavigationItem(
       icon: Icons.event,
       label: 'Events',
-      page: MainEventPage.EventPage(),
+      pageBuilder: (context) => const MainEventPage.EventPage(),
     ),
     NavigationItem(
       icon: Icons.settings,
       label: 'Settings',
-      page: MainSettingsPage.SettingsPage(),
+      pageBuilder: (context) => const MainSettingsPage.SettingsPage(),
     ),
     NavigationItem(
       icon: Icons.waving_hand,
       label: 'Welcome',
-      page: WelcomePage(),
+      pageBuilder: (context) => const WelcomePage(),
     ),
     NavigationItem(
       icon: Icons.headphones,
       label: 'Stories',
-      page: StoriesPage(),
+      pageBuilder: (context) => const StoriesPage(),
     ),
   ];
 
@@ -256,43 +257,55 @@ class _NewMainScreenState extends State<NewMainScreen> with PageMixin {
 
   Widget _buildAuthenticatedScreen() {
     return Scaffold(
+      key: _scaffoldKey,
       drawer: _buildNavigationDrawer(),
-      appBar: AppBar(
-        backgroundColor: const Color(0xFFFE2C54), // Primary red color
-        foregroundColor: Colors.white,
-        title: const Text(
-          'MusicBud',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+      backgroundColor: Colors.black,
+      body: Column(
+        children: [
+          // App Bar
+          Container(
+            color: const Color(0xFFFE2C54), // Primary red color
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: SafeArea(
+              child: Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.menu, color: Colors.white),
+                    onPressed: () {
+                      _scaffoldKey.currentState?.openDrawer();
+                    },
+                  ),
+                  const Expanded(
+                    child: Text(
+                      'MusicBud',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+                    onPressed: () {
+                      // Handle notifications
+                    },
+                  ),
+                ],
+              ),
+            ),
           ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {
-              // Handle notifications
-            },
+          // Main Navigation Content
+          Expanded(
+            child: MainNavigationScaffold(
+              body: _navigationItems[_selectedIndex].pageBuilder(context),
+              currentIndex: _selectedIndex,
+              onNavigationTap: _onNavigationItemTapped,
+              navigationItems: _navigationItems,
+            ),
           ),
         ],
       ),
-      body: MainNavigationScaffold(
-        body: _navigationItems[_selectedIndex].page,
-        currentIndex: _selectedIndex,
-        onNavigationTap: _onNavigationItemTapped,
-        navigationItems: _navigationItems,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Scaffold.of(context).openDrawer();
-        },
-        backgroundColor: const Color(0xFFFE2C54),
-        child: const Icon(
-          Icons.menu,
-          color: Colors.white,
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
     );
   }
 
@@ -352,7 +365,7 @@ class _NewMainScreenState extends State<NewMainScreen> with PageMixin {
             margin: const EdgeInsets.all(16.0),
             padding: const EdgeInsets.all(12.0),
             decoration: BoxDecoration(
-              color: const Color(0xFFFE2C54).withOpacity(0.1),
+              color: const Color(0xFFFE2C54).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: const Color(0xFFFE2C54),
@@ -412,7 +425,7 @@ class _NewMainScreenState extends State<NewMainScreen> with PageMixin {
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => item.page),
+                MaterialPageRoute(builder: (context) => item.pageBuilder(context)),
               );
             },
           )),
@@ -438,7 +451,7 @@ class _NewMainScreenState extends State<NewMainScreen> with PageMixin {
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => item.page),
+                MaterialPageRoute(builder: (context) => item.pageBuilder(context)),
               );
             },
           )),
@@ -464,7 +477,7 @@ class _NewMainScreenState extends State<NewMainScreen> with PageMixin {
               Navigator.pop(context);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => item.page),
+                MaterialPageRoute(builder: (context) => item.pageBuilder(context)),
               );
             },
           )),
@@ -577,6 +590,9 @@ class _HomeTabState extends State<HomeTab> with PageMixin {
           ),
         ],
       ),
+      currentIndex: 0, // Dummy value since bottom nav is not shown
+      onNavigationTap: (index) {}, // Dummy empty callback
+      navigationItems: const [], // Dummy empty list
     );
   }
 
@@ -604,7 +620,7 @@ class _HomeTabState extends State<HomeTab> with PageMixin {
             children: [
               IconButton(
                 onPressed: () => navigateTo('/notifications'),
-                icon: const Icon(
+                icon: Icon(
                   Icons.notifications_outlined,
                   color: AppConstants.textColor,
                   size: 24,
@@ -612,7 +628,7 @@ class _HomeTabState extends State<HomeTab> with PageMixin {
               ),
               IconButton(
                 onPressed: () => navigateTo(AppConstants.profileRoute),
-                icon: const Icon(
+                icon: Icon(
                   Icons.person_outline,
                   color: AppConstants.textColor,
                   size: 24,
@@ -700,7 +716,7 @@ class _HomeTabState extends State<HomeTab> with PageMixin {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppConstants.primaryColor.withOpacity(0.2),
+              color: AppConstants.primaryColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -790,7 +806,7 @@ class _HomeTabState extends State<HomeTab> with PageMixin {
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: AppConstants.primaryColor.withOpacity(0.2),
+                        color: AppConstants.primaryColor.withValues(alpha: 0.2),
                         borderRadius: const BorderRadius.vertical(
                           top: Radius.circular(12),
                         ),

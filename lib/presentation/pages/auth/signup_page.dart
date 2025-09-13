@@ -234,7 +234,7 @@ class _SignupPageState extends State<SignupPage> {
                   children: [
                     Expanded(
                       child: Divider(
-                        color: appTheme.colors.lightGray.withOpacity(0.3),
+                        color: appTheme.colors.lightGray.withValues(alpha: 0.3),
                         thickness: 1,
                       ),
                     ),
@@ -249,7 +249,7 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                     Expanded(
                       child: Divider(
-                        color: appTheme.colors.lightGray.withOpacity(0.3),
+                        color: appTheme.colors.lightGray.withValues(alpha: 0.3),
                         thickness: 1,
                       ),
                     ),

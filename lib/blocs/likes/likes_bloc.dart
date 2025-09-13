@@ -1,18 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/content_repository.dart';
-import '../../domain/repositories/auth_repository.dart';
 import 'likes_event.dart';
 import 'likes_state.dart';
 
 class LikesBloc extends Bloc<LikesEvent, LikesState> {
   final ContentRepository _contentRepository;
-  final AuthRepository _authRepository;
 
   LikesBloc({
     required ContentRepository contentRepository,
-    required AuthRepository authRepository,
   })  : _contentRepository = contentRepository,
-        _authRepository = authRepository,
         super(const LikesInitial()) {
     on<LikesUpdateRequested>(_onLikesUpdateRequested);
     on<SpotifyConnectionRequested>(_onSpotifyConnectionRequested);
@@ -53,7 +49,7 @@ class LikesBloc extends Bloc<LikesEvent, LikesState> {
       // Use the service connection page instead
       emit(const LikesUpdateSuccess('Please connect your Spotify account from the service connection page'));
     } catch (e) {
-      emit(LikesUpdateFailure(
+      emit(const LikesUpdateFailure(
         error: 'Spotify connection is now handled centrally. Please use the service connection page.',
       ));
     }

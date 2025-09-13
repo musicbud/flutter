@@ -126,7 +126,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
       decoration: BoxDecoration(
         color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppConstants.borderColor.withOpacity(0.3)),
+        border: Border.all(color: AppConstants.borderColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,7 +153,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
   Widget _buildServiceChip(ContentService service) {
     return Chip(
       avatar: CircleAvatar(
-        backgroundColor: _getServiceColor(service.name).withOpacity(0.2),
+        backgroundColor: _getServiceColor(service.name).withValues(alpha: 0.2),
         child: Icon(
           _getServiceIcon(service.name),
           color: _getServiceColor(service.name),
@@ -165,7 +165,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
         style: const TextStyle(color: Colors.white),
       ),
       backgroundColor: service.isConnected
-          ? _getServiceColor(service.name).withOpacity(0.3)
+          ? _getServiceColor(service.name).withValues(alpha: 0.3)
           : AppConstants.surfaceColor,
       side: BorderSide(
         color: _getServiceColor(service.name),
@@ -180,7 +180,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
       decoration: BoxDecoration(
         color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: AppConstants.borderColor.withOpacity(0.3)),
+        border: Border.all(color: AppConstants.borderColor.withValues(alpha: 0.3)),
       ),
       child: TabBar(
         controller: _tabController,
@@ -340,9 +340,9 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.3)),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
@@ -380,7 +380,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
       decoration: BoxDecoration(
         color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppConstants.borderColor.withOpacity(0.3)),
+        border: Border.all(color: AppConstants.borderColor.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -450,9 +450,9 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: Colors.orange.withOpacity(0.1),
+            color: Colors.orange.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: Colors.orange.withOpacity(0.3)),
+            border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
           ),
           child: Row(
             children: [
@@ -501,7 +501,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
       decoration: BoxDecoration(
         color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppConstants.borderColor.withOpacity(0.3)),
+        border: Border.all(color: AppConstants.borderColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -548,7 +548,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
       decoration: BoxDecoration(
         color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppConstants.borderColor.withOpacity(0.3)),
+        border: Border.all(color: AppConstants.borderColor.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -593,9 +593,9 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.red.withOpacity(0.1),
+        color: Colors.red.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.red.withOpacity(0.3)),
+        border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

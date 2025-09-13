@@ -109,7 +109,7 @@ class _PulsingLoadingIndicatorState extends State<PulsingLoadingIndicator>
                   color: widget.color ?? AppConstants.primaryColor,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.music_note,
                   color: Colors.white,
                   size: 24,
@@ -193,7 +193,7 @@ class _ShimmerLoadingIndicatorState extends State<ShimmerLoadingIndicator>
               end: Alignment.centerRight,
               colors: [
                 widget.baseColor ?? AppConstants.surfaceColor,
-                widget.highlightColor ?? AppConstants.primaryColor.withOpacity(0.5),
+                widget.highlightColor ?? AppConstants.primaryColor.withValues(alpha: 0.5),
                 widget.baseColor ?? AppConstants.surfaceColor,
               ],
               stops: [
@@ -229,14 +229,14 @@ class MusicLoadingIndicator extends StatelessWidget {
           width: 80,
           height: 80,
           decoration: BoxDecoration(
-            color: AppConstants.primaryColor.withOpacity(0.2),
+            color: AppConstants.primaryColor.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(40),
             border: Border.all(
-              color: AppConstants.primaryColor.withOpacity(0.3),
+              color: AppConstants.primaryColor.withValues(alpha: 0.3),
               width: 2,
             ),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.music_note,
             color: AppConstants.primaryColor,
             size: 40,

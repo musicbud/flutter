@@ -143,7 +143,7 @@ class AppButton extends StatelessWidget {
       ),
       padding: padding,
       elevation: isOutlined ? 0 : (variant == AppButtonVariant.primary ? 4 : 0),
-      shadowColor: isOutlined ? null : appTheme.colors.primaryRed.withValues(alpha: 0.3),
+      shadowColor: isOutlined ? null : appTheme.colors.primaryRed.withValues(alpha:  0.3),
     );
   }
 

@@ -172,7 +172,7 @@ class _DynamicBudsPageState extends State<DynamicBudsPage> with PageMixin {
         color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(AppConstants.defaultBorderRadius),
         border: Border.all(
-          color: AppConstants.borderColor.withOpacity(0.2),
+          color: AppConstants.borderColor.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -189,7 +189,7 @@ class _DynamicBudsPageState extends State<DynamicBudsPage> with PageMixin {
                 height: 60,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppConstants.primaryColor.withOpacity(0.2),
+                  color: AppConstants.primaryColor.withValues(alpha: 0.2),
                   image: bud.avatarUrl != null
                       ? DecorationImage(
                           image: NetworkImage(bud.avatarUrl!),
@@ -250,10 +250,10 @@ class _DynamicBudsPageState extends State<DynamicBudsPage> with PageMixin {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppConstants.primaryColor.withOpacity(0.1),
+                  color: AppConstants.primaryColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: AppConstants.primaryColor.withOpacity(0.3),
+                    color: AppConstants.primaryColor.withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
@@ -421,7 +421,7 @@ class _DynamicBudsPageState extends State<DynamicBudsPage> with PageMixin {
               height: 80,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppConstants.primaryColor.withOpacity(0.2),
+                color: AppConstants.primaryColor.withValues(alpha: 0.2),
                 image: bud.avatarUrl != null
                     ? DecorationImage(
                         image: NetworkImage(bud.avatarUrl!),

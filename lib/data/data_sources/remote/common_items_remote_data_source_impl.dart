@@ -206,7 +206,6 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
       final likedArtists = await getCommonLikedArtists(username);
       final likedTracks = await getCommonLikedTracks(username);
       final likedAlbums = await getCommonLikedAlbums(username);
-      final topArtists = await getCommonTopArtists(username);
       final topGenres = await getCommonTopGenres(username);
       final topAnime = await getCommonTopAnime(username);
       final topManga = await getCommonTopManga(username);

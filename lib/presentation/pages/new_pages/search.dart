@@ -74,6 +74,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
           ),
         ],
       ),
+      drawer: _buildNavigationDrawer(),
       body: Column(
         children: [
           _buildSearchBar(),
@@ -115,9 +116,9 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.orange.withOpacity(0.1),
+        color: Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.orange.withOpacity(0.3)),
+        border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -143,7 +144,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       decoration: BoxDecoration(
         color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(25),
-        border: Border.all(color: AppConstants.borderColor.withOpacity(0.3)),
+        border: Border.all(color: AppConstants.borderColor.withValues(alpha: 0.3)),
       ),
       child: TabBar(
         controller: _tabController,
@@ -315,7 +316,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: AppConstants.primaryColor.withOpacity(0.2),
+          backgroundColor: AppConstants.primaryColor.withValues(alpha: 0.2),
           child: Icon(Icons.music_note, color: AppConstants.primaryColor),
         ),
         title: Text(
@@ -342,7 +343,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: AppConstants.primaryColor.withOpacity(0.2),
+          backgroundColor: AppConstants.primaryColor.withValues(alpha: 0.2),
           child: Icon(Icons.person, color: AppConstants.primaryColor),
         ),
         title: Text(
@@ -369,7 +370,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: AppConstants.primaryColor.withOpacity(0.2),
+          backgroundColor: AppConstants.primaryColor.withValues(alpha: 0.2),
           child: Icon(Icons.album, color: AppConstants.primaryColor),
         ),
         title: Text(
@@ -396,7 +397,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: AppConstants.primaryColor.withOpacity(0.2),
+          backgroundColor: AppConstants.primaryColor.withValues(alpha: 0.2),
           child: Icon(Icons.category, color: AppConstants.primaryColor),
         ),
         title: Text(
@@ -423,7 +424,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: AppConstants.primaryColor.withOpacity(0.2),
+          backgroundColor: AppConstants.primaryColor.withValues(alpha: 0.2),
           child: Icon(Icons.animation, color: AppConstants.primaryColor),
         ),
         title: Text(
@@ -450,7 +451,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: AppConstants.primaryColor.withOpacity(0.2),
+          backgroundColor: AppConstants.primaryColor.withValues(alpha: 0.2),
           child: Icon(Icons.book, color: AppConstants.primaryColor),
         ),
         title: Text(
@@ -477,7 +478,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: AppConstants.primaryColor.withOpacity(0.2),
+          backgroundColor: AppConstants.primaryColor.withValues(alpha: 0.2),
           child: Icon(Icons.person, color: AppConstants.primaryColor),
         ),
         title: Text(
@@ -574,6 +575,120 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
         content: Text(message),
         backgroundColor: Colors.red,
       ),
+    );
+  }
+
+  Widget _buildNavigationDrawer() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: AppConstants.primaryColor,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CircleAvatar(
+                  radius: 40,
+                  backgroundColor: Colors.white,
+                  child: Icon(
+                    Icons.person,
+                    size: 40,
+                    color: AppConstants.primaryColor,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Guest',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'guest@example.com',
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          _buildDrawerItem(
+            icon: Icons.home,
+            text: 'Home',
+            onTap: () {
+              Navigator.pop(context);
+              // Navigate to Home
+            },
+          ),
+          _buildDrawerItem(
+            icon: Icons.search,
+            text: 'Search',
+            onTap: () {
+              Navigator.pop(context);
+              // Already on Search page
+            },
+          ),
+          _buildDrawerItem(
+            icon: Icons.favorite,
+            text: 'Favorites',
+            onTap: () {
+              Navigator.pop(context);
+              // Navigate to Favorites
+            },
+          ),
+          _buildDrawerItem(
+            icon: Icons.history,
+            text: 'History',
+            onTap: () {
+              Navigator.pop(context);
+              // Navigate to History
+            },
+          ),
+          _buildDrawerItem(
+            icon: Icons.settings,
+            text: 'Settings',
+            onTap: () {
+              Navigator.pop(context);
+              // Navigate to Settings
+            },
+          ),
+          const SizedBox(height: 8),
+          Divider(color: Colors.grey),
+          const SizedBox(height: 8),
+          _buildDrawerItem(
+            icon: Icons.logout,
+            text: 'Logout',
+            onTap: () {
+              Navigator.pop(context);
+              // Perform logout
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerItem({
+    required IconData icon,
+    required String text,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: AppConstants.primaryColor),
+      title: Text(
+        text,
+        style: TextStyle(
+          color: AppConstants.textColor,
+          fontSize: 16,
+        ),
+      ),
+      onTap: onTap,
     );
   }
 }

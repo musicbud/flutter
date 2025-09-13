@@ -198,7 +198,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     color: appTheme.colors.darkTone,
                     borderRadius: BorderRadius.circular(appTheme.radius.md),
                     border: Border.all(
-                      color: appTheme.colors.lightGray.withOpacity(0.3),
+                      color: appTheme.colors.lightGray.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Column(

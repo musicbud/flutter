@@ -9,19 +9,21 @@ class LibraryPage extends StatefulWidget {
   State<LibraryPage> createState() => _LibraryPageState();
 }
 
-class _LibraryPageState extends State<LibraryPage> with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  int _selectedIndex = 2; // Library tab
+class _LibraryPageState extends State<LibraryPage> {
+  final TextEditingController _searchController = TextEditingController();
+  String _selectedTab = 'Playlists';
+  int _selectedIndex = 0;
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 4, vsync: this);
-  }
+  final List<String> _tabs = [
+    'Playlists',
+    'Liked Songs',
+    'Downloads',
+    'Recently Played',
+  ];
 
   @override
   void dispose() {
-    _tabController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -29,328 +31,739 @@ class _LibraryPageState extends State<LibraryPage> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     final appTheme = AppTheme.of(context);
 
-    return Scaffold(
-      backgroundColor: appTheme.colors.background,
-      appBar: AppBar(
-        backgroundColor: appTheme.colors.white,
-        elevation: 0,
-        title: Text(
-          'My Library',
-          style: appTheme.typography.headlineH6.copyWith(
-            color: appTheme.colors.neutral[900],
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add, color: appTheme.colors.primary),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(Icons.search, color: appTheme.colors.neutral[700]),
-            onPressed: () {},
-          ),
-        ],
-        bottom: TabBar(
-          controller: _tabController,
-          labelColor: appTheme.colors.primary,
-          unselectedLabelColor: appTheme.colors.neutral[600],
-          indicatorColor: appTheme.colors.primary,
-          tabs: [
-            Tab(text: 'Playlists'),
-            Tab(text: 'Tracks'),
-            Tab(text: 'Albums'),
-            Tab(text: 'Artists'),
-          ],
-        ),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: appTheme.gradients.backgroundGradient,
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildPlaylistsTab(),
-          _buildTracksTab(),
-          _buildAlbumsTab(),
-          _buildArtistsTab(),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: (index) => setState(() => _selectedIndex = index),
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: appTheme.colors.white,
-        selectedItemColor: appTheme.colors.primary,
-        unselectedItemColor: appTheme.colors.neutral[400],
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
+      child: CustomScrollView(
+        slivers: [
+          // Header Section
+          SliverToBoxAdapter(
+            child: Container(
+              padding: EdgeInsets.all(appTheme.spacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'My Library',
+                    style: appTheme.typography.headlineH5.copyWith(
+                      color: appTheme.colors.textPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  SizedBox(height: appTheme.spacing.sm),
+                  Text(
+                    'Your personal music collection',
+                    style: appTheme.typography.bodyMedium.copyWith(
+                      color: appTheme.colors.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
+
+          // Search Section
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+              child: ModernInputField(
+                hintText: 'Search your library...',
+                controller: _searchController,
+                onChanged: (value) {
+                  // Handle search
+                },
+                size: ModernInputFieldSize.large,
+              ),
+            ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.library_music),
-            label: 'Library',
+
+          SliverToBoxAdapter(
+            child: SizedBox(height: appTheme.spacing.lg),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+
+          // Tabs Section
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+              child: Container(
+                height: 50,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _tabs.length,
+                  itemBuilder: (context, index) {
+                    final tab = _tabs[index];
+                    final isSelected = index == _selectedIndex;
+
+                    return Container(
+                      margin: EdgeInsets.only(
+                        right: index < _tabs.length - 1 ? appTheme.spacing.md : 0,
+                      ),
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _selectedIndex = index;
+                            _selectedTab = tab;
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: appTheme.spacing.lg,
+                            vertical: appTheme.spacing.sm,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? appTheme.colors.primaryRed
+                                : appTheme.colors.surfaceDark,
+                            borderRadius: BorderRadius.circular(appTheme.radius.circular),
+                            border: Border.all(
+                              color: isSelected
+                                  ? appTheme.colors.primaryRed
+                                  : appTheme.colors.borderColor,
+                              width: 1.5,
+                            ),
+                            boxShadow: isSelected
+                                ? appTheme.shadows.shadowMedium
+                                : appTheme.shadows.shadowSmall,
+                          ),
+                          child: Center(
+                            child: Text(
+                              tab,
+                              style: appTheme.typography.bodySmall.copyWith(
+                                color: isSelected
+                                    ? appTheme.colors.white
+                                    : appTheme.colors.textSecondary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+
+          SliverToBoxAdapter(
+            child: SizedBox(height: appTheme.spacing.xl),
+          ),
+
+          // Content based on selected tab
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+              child: _buildTabContent(appTheme),
+            ),
+          ),
+
+          SliverToBoxAdapter(
+            child: SizedBox(height: appTheme.spacing.xl),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildPlaylistsTab() {
-    final appTheme = AppTheme.of(context);
+  Widget _buildTabContent(AppTheme appTheme) {
+    switch (_selectedTab) {
+      case 'Playlists':
+        return _buildPlaylistsContent(appTheme);
+      case 'Liked Songs':
+        return _buildLikedSongsContent(appTheme);
+      case 'Downloads':
+        return _buildDownloadsContent(appTheme);
+      case 'Recently Played':
+        return _buildRecentlyPlayedContent(appTheme);
+      default:
+        return _buildPlaylistsContent(appTheme);
+    }
+  }
 
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(appTheme.spacing.lg),
+  Widget _buildPlaylistsContent(AppTheme appTheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Your Playlists',
+              style: appTheme.typography.headlineH7.copyWith(
+                color: appTheme.colors.textPrimary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            PrimaryButton(
+              text: 'Create New',
+              onPressed: () {
+                // Navigate to create playlist
+              },
+              icon: Icons.add,
+              size: ModernButtonSize.small,
+            ),
+          ],
+        ),
+        SizedBox(height: appTheme.spacing.md),
+
+        // Playlists Grid
+        GridView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: appTheme.spacing.md,
+            mainAxisSpacing: appTheme.spacing.md,
+            childAspectRatio: 0.8,
+          ),
+          itemCount: 6,
+          itemBuilder: (context, index) {
+            return _buildPlaylistCard(
+              'Chill Vibes ${index + 1}',
+              '${(index + 1) * 12} tracks',
+              'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop',
+              appTheme.colors.accentBlue,
+              appTheme,
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLikedSongsContent(AppTheme appTheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Liked Songs',
+          style: appTheme.typography.headlineH7.copyWith(
+            color: appTheme.colors.textPrimary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        SizedBox(height: appTheme.spacing.md),
+
+        // Liked Songs List
+        Column(
+          children: [
+            _buildLikedSongCard(
+              'Midnight Dreams',
+              'Luna Echo',
+              'Electronic',
+              'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop',
+              appTheme.colors.accentBlue,
+              appTheme,
+            ),
+            SizedBox(height: appTheme.spacing.md),
+            _buildLikedSongCard(
+              'Ocean Waves',
+              'Coastal Vibes',
+              'Chill',
+              'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop',
+              appTheme.colors.accentPurple,
+              appTheme,
+            ),
+            SizedBox(height: appTheme.spacing.md),
+            _buildLikedSongCard(
+              'Urban Nights',
+              'City Pulse',
+              'Hip Hop',
+              'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop',
+              appTheme.colors.accentGreen,
+              appTheme,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDownloadsContent(AppTheme appTheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Downloaded Music',
+          style: appTheme.typography.headlineH7.copyWith(
+            color: appTheme.colors.textPrimary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        SizedBox(height: appTheme.spacing.md),
+
+        // Downloads Grid
+        GridView.builder(
+          shrinkWrap: true,
+          physics: NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: appTheme.spacing.md,
+            mainAxisSpacing: appTheme.spacing.md,
+            childAspectRatio: 0.8,
+          ),
+          itemCount: 4,
+          itemBuilder: (context, index) {
+            return _buildDownloadCard(
+              'Album ${index + 1}',
+              'Artist ${index + 1}',
+              '${(index + 1) * 8} tracks',
+              'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop',
+              appTheme.colors.accentOrange,
+              appTheme,
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRecentlyPlayedContent(AppTheme appTheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Recently Played',
+          style: appTheme.typography.headlineH7.copyWith(
+            color: appTheme.colors.textPrimary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        SizedBox(height: appTheme.spacing.md),
+
+        // Recently Played List
+        Column(
+          children: [
+            _buildRecentlyPlayedCard(
+              'Electric Storm',
+              'Luna Echo',
+              '2 hours ago',
+              'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop',
+              appTheme.colors.primaryRed,
+              appTheme,
+            ),
+            SizedBox(height: appTheme.spacing.md),
+            _buildRecentlyPlayedCard(
+              'Chill Vibes',
+              'Coastal Vibes',
+              '1 day ago',
+              'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop',
+              appTheme.colors.accentBlue,
+              appTheme,
+            ),
+            SizedBox(height: appTheme.spacing.md),
+            _buildRecentlyPlayedCard(
+              'Urban Flow',
+              'City Pulse',
+              '3 days ago',
+              'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop',
+              appTheme.colors.accentPurple,
+              appTheme,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPlaylistCard(
+    String title,
+    String trackCount,
+    String imageUrl,
+    Color accentColor,
+    AppTheme appTheme,
+  ) {
+    return ModernCard(
+      variant: ModernCardVariant.primary,
+      onTap: () {
+        // Navigate to playlist
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Quick Actions
+          // Playlist Image
+          Container(
+            height: 120,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(appTheme.radius.lg),
+              color: accentColor.withValues(alpha: 0.1),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(appTheme.radius.lg),
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(
+                    Icons.playlist_play,
+                    color: accentColor,
+                    size: 48,
+                  );
+                },
+              ),
+            ),
+          ),
+
+          SizedBox(height: appTheme.spacing.md),
+
+          // Playlist Info
+          Text(
+            title,
+            style: appTheme.typography.titleSmall.copyWith(
+              color: appTheme.colors.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: appTheme.spacing.xs),
+          Text(
+            trackCount,
+            style: appTheme.typography.caption.copyWith(
+              color: appTheme.colors.textMuted,
+            ),
+          ),
+          SizedBox(height: appTheme.spacing.md),
+
+          // Action Row
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Expanded(
-                child: AppButtons.primary(
-                  text: 'Create Playlist',
-                  onPressed: () {},
-                  icon: Icons.add,
+              Container(
+                padding: EdgeInsets.all(appTheme.spacing.sm),
+                decoration: BoxDecoration(
+                  color: appTheme.colors.primaryRed,
+                  borderRadius: BorderRadius.circular(appTheme.radius.circular),
+                ),
+                child: Icon(
+                  Icons.play_arrow,
+                  color: appTheme.colors.white,
+                  size: 20,
                 ),
               ),
-              SizedBox(width: appTheme.spacing.md),
-              Expanded(
-                child: AppButtons.secondary(
-                  text: 'Import',
-                  onPressed: () {},
-                  icon: Icons.file_upload,
-                ),
+              Icon(
+                Icons.more_vert,
+                color: appTheme.colors.textMuted,
+                size: 20,
               ),
             ],
           ),
-
-          SizedBox(height: appTheme.spacing.xl),
-
-          // Featured Playlists
-          Text(
-            'Featured Playlists',
-            style: appTheme.typography.headlineH6.copyWith(
-              color: appTheme.colors.neutral[900],
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          SizedBox(height: appTheme.spacing.md),
-
-          SizedBox(
-            height: 200,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 5,
-              itemBuilder: (context, index) {
-                return Container(
-                  width: 160,
-                  margin: EdgeInsets.only(right: appTheme.spacing.md),
-                  child: AppCards.musicTrack(
-                    title: 'Featured Playlist ${index + 1}',
-                    artist: 'Various Artists',
-                    album: 'Playlist Collection',
-                    imageUrl: 'https://via.placeholder.com/160x120',
-                    duration: '${20 + index * 5} tracks',
-                    onTap: () {},
-                  ),
-                );
-              },
-            ),
-          ),
-
-          SizedBox(height: appTheme.spacing.xl),
-
-          // My Playlists
-          Text(
-            'My Playlists',
-            style: appTheme.typography.headlineH6.copyWith(
-              color: appTheme.colors.neutral[900],
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          SizedBox(height: appTheme.spacing.md),
-
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: 8,
-            itemBuilder: (context, index) {
-              return Container(
-                margin: EdgeInsets.only(bottom: appTheme.spacing.md),
-                child: AppCards.profile(
-                  name: 'My Playlist ${index + 1}',
-                  role: '${15 + index * 3} tracks • Created ${index + 1} days ago',
-                  imageUrl: 'https://via.placeholder.com/50x50',
-                  onTap: () {},
-                ),
-              );
-            },
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildTracksTab() {
-    final appTheme = AppTheme.of(context);
-
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(appTheme.spacing.lg),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildLikedSongCard(
+    String title,
+    String artist,
+    String genre,
+    String imageUrl,
+    Color accentColor,
+    AppTheme appTheme,
+  ) {
+    return ModernCard(
+      variant: ModernCardVariant.primary,
+      onTap: () {
+        // Navigate to song
+      },
+      child: Row(
         children: [
-          // Track Stats
-          AppCards.defaultCard(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+          // Song Image
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(appTheme.radius.md),
+              color: accentColor.withValues(alpha: 0.1),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(appTheme.radius.md),
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(
+                    Icons.music_note,
+                    color: accentColor,
+                    size: 30,
+                  );
+                },
+              ),
+            ),
+          ),
+
+          SizedBox(width: appTheme.spacing.md),
+
+          // Song Info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildStatItem('Total Tracks', '1,247'),
-                _buildStatItem('Liked', '89'),
-                _buildStatItem('Downloaded', '156'),
+                Text(
+                  title,
+                  style: appTheme.typography.titleSmall.copyWith(
+                    color: appTheme.colors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: appTheme.spacing.xs),
+                Text(
+                  artist,
+                  style: appTheme.typography.bodySmall.copyWith(
+                    color: appTheme.colors.textSecondary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: appTheme.spacing.sm,
+                    vertical: appTheme.spacing.xs,
+                  ),
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(appTheme.radius.sm),
+                  ),
+                  child: Text(
+                    genre,
+                    style: appTheme.typography.caption.copyWith(
+                      color: accentColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
 
-          SizedBox(height: appTheme.spacing.lg),
-
-          // Sort Options
+          // Action Buttons
           Row(
             children: [
-              Expanded(
-                child: AppButtons.secondary(
-                  text: 'Sort by',
-                  onPressed: () {},
-                  icon: Icons.sort,
+              Container(
+                padding: EdgeInsets.all(appTheme.spacing.sm),
+                decoration: BoxDecoration(
+                  color: appTheme.colors.primaryRed,
+                  borderRadius: BorderRadius.circular(appTheme.radius.circular),
+                ),
+                child: Icon(
+                  Icons.play_arrow,
+                  color: appTheme.colors.white,
+                  size: 20,
                 ),
               ),
-              SizedBox(width: appTheme.spacing.md),
-              Expanded(
-                child: AppButtons.secondary(
-                  text: 'Filter',
-                  onPressed: () {},
-                  icon: Icons.filter_list,
-                ),
+              SizedBox(width: appTheme.spacing.sm),
+              Icon(
+                Icons.favorite,
+                color: appTheme.colors.primaryRed,
+                size: 24,
               ),
             ],
           ),
-
-          SizedBox(height: appTheme.spacing.lg),
-
-          // Tracks List
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: 20,
-            itemBuilder: (context, index) {
-              return Container(
-                margin: EdgeInsets.only(bottom: appTheme.spacing.sm),
-                child: AppCards.musicTrack(
-                  title: 'Track ${index + 1}',
-                  artist: 'Artist ${index + 1}',
-                  album: 'Album ${index + 1}',
-                  imageUrl: 'https://via.placeholder.com/50x50',
-                  duration: '3:45',
-                  onTap: () {},
-                ),
-              );
-            },
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildAlbumsTab() {
-    final appTheme = AppTheme.of(context);
-
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(appTheme.spacing.lg),
+  Widget _buildDownloadCard(
+    String title,
+    String artist,
+    String trackCount,
+    String imageUrl,
+    Color accentColor,
+    AppTheme appTheme,
+  ) {
+    return ModernCard(
+      variant: ModernCardVariant.primary,
+      onTap: () {
+        // Navigate to album
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Album Grid
-          GridView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.8,
-              crossAxisSpacing: appTheme.spacing.md,
-              mainAxisSpacing: appTheme.spacing.md,
+          // Album Image
+          Container(
+            height: 120,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(appTheme.radius.lg),
+              color: accentColor.withValues(alpha: 0.1),
             ),
-            itemCount: 12,
-            itemBuilder: (context, index) {
-              return AppCards.musicTrack(
-                title: 'Album ${index + 1}',
-                artist: 'Artist ${index + 1}',
-                album: 'Album Collection',
-                imageUrl: 'https://via.placeholder.com/150x150',
-                duration: '45:30',
-                onTap: () {},
-              );
-            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(appTheme.radius.lg),
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(
+                    Icons.album,
+                    color: accentColor,
+                    size: 48,
+                  );
+                },
+              ),
+            ),
           ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildArtistsTab() {
-    final appTheme = AppTheme.of(context);
+          SizedBox(height: appTheme.spacing.md),
 
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(appTheme.spacing.lg),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Artists List
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: 15,
-            itemBuilder: (context, index) {
-              return Container(
-                margin: EdgeInsets.only(bottom: appTheme.spacing.md),
-                child: AppCards.profile(
-                  name: 'Artist ${index + 1}',
-                  role: '${25 + index * 5} tracks • ${10 + index * 2} albums',
-                  imageUrl: 'https://via.placeholder.com/60x60',
-                  onTap: () {},
+          // Album Info
+          Text(
+            title,
+            style: appTheme.typography.titleSmall.copyWith(
+              color: appTheme.colors.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          SizedBox(height: appTheme.spacing.xs),
+          Text(
+            artist,
+            style: appTheme.typography.bodySmall.copyWith(
+              color: appTheme.colors.textSecondary,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Text(
+            trackCount,
+            style: appTheme.typography.caption.copyWith(
+              color: appTheme.colors.textMuted,
+            ),
+          ),
+          SizedBox(height: appTheme.spacing.md),
+
+          // Action Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: EdgeInsets.all(appTheme.spacing.sm),
+                decoration: BoxDecoration(
+                  color: appTheme.colors.primaryRed,
+                  borderRadius: BorderRadius.circular(appTheme.radius.circular),
                 ),
-              );
-            },
+                child: Icon(
+                  Icons.play_arrow,
+                  color: appTheme.colors.white,
+                  size: 20,
+                ),
+              ),
+              Icon(
+                Icons.download_done,
+                color: appTheme.colors.accentGreen,
+                size: 24,
+              ),
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildStatItem(String label, String value) {
-    final appTheme = AppTheme.of(context);
+  Widget _buildRecentlyPlayedCard(
+    String title,
+    String artist,
+    String timeAgo,
+    String imageUrl,
+    Color accentColor,
+    AppTheme appTheme,
+  ) {
+    return ModernCard(
+      variant: ModernCardVariant.primary,
+      onTap: () {
+        // Navigate to song
+      },
+      child: Row(
+        children: [
+          // Song Image
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(appTheme.radius.md),
+              color: accentColor.withValues(alpha: 0.1),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(appTheme.radius.md),
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(
+                    Icons.music_note,
+                    color: accentColor,
+                    size: 30,
+                  );
+                },
+              ),
+            ),
+          ),
 
-    return Column(
-      children: [
-        Text(
-          value,
-          style: appTheme.typography.headlineH5.copyWith(
-            color: appTheme.colors.primary,
-            fontWeight: FontWeight.w700,
+          SizedBox(width: appTheme.spacing.md),
+
+          // Song Info
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: appTheme.typography.titleSmall.copyWith(
+                    color: appTheme.colors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                SizedBox(height: appTheme.spacing.xs),
+                Text(
+                  artist,
+                  style: appTheme.typography.bodySmall.copyWith(
+                    color: appTheme.colors.textSecondary,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  timeAgo,
+                  style: appTheme.typography.caption.copyWith(
+                    color: appTheme.colors.textMuted,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        Text(
-          label,
-          style: appTheme.typography.bodyH8.copyWith(
-            color: appTheme.colors.neutral[600],
+
+          // Action Buttons
+          Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(appTheme.spacing.sm),
+                decoration: BoxDecoration(
+                  color: appTheme.colors.primaryRed,
+                  borderRadius: BorderRadius.circular(appTheme.radius.circular),
+                ),
+                child: Icon(
+                  Icons.play_arrow,
+                  color: appTheme.colors.white,
+                  size: 20,
+                ),
+              ),
+              SizedBox(width: appTheme.spacing.sm),
+              Icon(
+                Icons.history,
+                color: appTheme.colors.textMuted,
+                size: 24,
+              ),
+            ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

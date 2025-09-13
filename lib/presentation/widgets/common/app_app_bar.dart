@@ -29,6 +29,7 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasDrawer = Scaffold.maybeOf(context)?.hasDrawer ?? false;
     return AppBar(
       title: titleWidget ?? Text(
         title,
@@ -39,7 +40,14 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       actions: actions,
-      leading: leading,
+      leading: leading ?? (
+        hasDrawer && automaticallyImplyLeading
+          ? IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+            )
+          : null
+      ),
       automaticallyImplyLeading: automaticallyImplyLeading,
       backgroundColor: backgroundColor ?? Colors.black87,
       foregroundColor: foregroundColor ?? Colors.white,

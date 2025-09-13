@@ -1,28 +1,45 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
-import 'package:google_fonts/google_fonts.dart';
+import "package:flutter/material.dart";
+import "package:flutter_bloc/flutter_bloc.dart";
+import "package:get_it/get_it.dart";
+import "package:google_fonts/google_fonts.dart";
 
 // BLoCs
-import 'blocs/auth/login/login_bloc.dart';
-import 'blocs/auth/register/register_bloc.dart';
+import "blocs/auth/login/login_bloc.dart";
+import "blocs/auth/register/register_bloc.dart";
+import "blocs/likes/likes_bloc.dart";
 
 // Repositories
-import 'domain/repositories/auth_repository.dart';
+import "domain/repositories/auth_repository.dart";
+import "domain/repositories/content_repository.dart";
 
 // Pages
-import 'presentation/pages/home_page.dart';
-import 'presentation/pages/login_page.dart';
-import 'presentation/pages/new_pages/main.dart';
-import 'presentation/pages/new_pages/profile_page.dart';
-import 'presentation/pages/new_pages/service_connection_page.dart';
-import 'presentation/pages/new_pages/settings_page.dart';
-import 'presentation/pages/new_pages/admin_dashboard_page.dart';
-import 'presentation/pages/new_pages/event_page.dart';
+import "presentation/pages/home_page.dart";
+import "presentation/pages/login_page.dart";
+import "presentation/pages/new_pages/main.dart";
+import "presentation/pages/new_pages/service_connection_page.dart";
+import "presentation/pages/new_pages/settings_page.dart";
+import "presentation/pages/new_pages/admin_dashboard_page.dart";
+import "presentation/pages/new_pages/event_page.dart";
+import "presentation/pages/new_pages/music_page.dart";
+import "presentation/pages/new_pages/modern_music_page.dart";
+import "presentation/pages/new_pages/dynamic_music_page.dart";
+import "presentation/pages/new_pages/buds_page.dart";
+import "presentation/pages/new_pages/modern_buds_page.dart";
+import "presentation/pages/new_pages/dynamic_buds_page.dart";
+import "presentation/pages/new_pages/user_management_page.dart";
+import "presentation/pages/new_pages/channel_management_page.dart";
+import "presentation/pages/new_pages/analytics_page.dart";
+import "presentation/pages/new_pages/chat_screen.dart";
+import "presentation/pages/new_pages/search.dart";
+import "presentation/pages/new_pages/stories_page.dart";
+import "presentation/pages/new_pages/register_page.dart";
+import "presentation/pages/new_pages/top_profile.dart";
+import "presentation/pages/new_pages/cards.dart";
+import "presentation/pages/new_pages/main_navigation_page.dart";
 
 // Utilities
-import 'utils/colors.dart';
-import 'presentation/constants/app_constants.dart';
+import "utils/colors.dart";
+import "presentation/constants/app_constants.dart";
 
 /// Main application widget for MusicBud
 class App extends StatelessWidget {
@@ -41,12 +58,15 @@ class App extends StatelessWidget {
     final sl = GetIt.instance;
 
     return [
-      // Authentication BLoCs (only the ones not provided in main.dart)
+      // Authentication BLoCs
       BlocProvider<LoginBloc>(
         create: (context) => LoginBloc(authRepository: sl<AuthRepository>()),
       ),
       BlocProvider<RegisterBloc>(
         create: (context) => RegisterBloc(authRepository: sl<AuthRepository>()),
+      ),
+      BlocProvider<LikesBloc>(
+        create: (context) => LikesBloc(contentRepository: sl<ContentRepository>()),
       ),
     ];
   }
@@ -70,7 +90,6 @@ class App extends StatelessWidget {
       textTheme: GoogleFonts.josefinSansTextTheme(
         ThemeData.light().textTheme,
       ),
-      // Additional theme customizations
       appBarTheme: const AppBarTheme(
         backgroundColor: AppConstants.backgroundColor,
         foregroundColor: AppConstants.textColor,
@@ -87,29 +106,27 @@ class App extends StatelessWidget {
       AppConstants.homeRoute: (context) => const NewMainScreen(),
       AppConstants.loginRoute: (context) => const LoginPage(),
       AppConstants.homePageRoute: (context) => const HomePage(),
-      AppConstants.profileRoute: (context) => const ProfilePage(),
-      '/services': (context) => const ServiceConnectionPage(),
-      '/settings': (context) => const SettingsPage(),
-      '/admin': (context) => const AdminDashboardPage(),
-      '/events': (context) => const EventPage(),
+      "/services": (context) => const ServiceConnectionPage(),
+      "/settings": (context) => const SettingsPage(),
+      "/admin": (context) => const AdminDashboardPage(),
+      "/events": (context) => const EventPage(),
+      "/music": (context) => const MusicPage(),
+      "/music/modern": (context) => const ModernMusicPage(),
+      "/music/dynamic": (context) => const DynamicMusicPage(),
+      "/buds": (context) => const BudsPage(),
+      "/buds/modern": (context) => const ModernBudsPage(),
+      "/buds/dynamic": (context) => const DynamicBudsPage(),
+      "/cards": (context) => CardsScreen(),
+      "/profile": (context) => const ProfilePage(),
+      "/users": (context) => const UserManagementPage(),
+      "/admin/users": (context) => const UserManagementPage(),
+      "/admin/channels": (context) => const ChannelManagementPage(),
+      "/admin/analytics": (context) => const AnalyticsPage(),
+      "/chat": (context) => const ChatListScreen(),
+      "/search": (context) => const SearchPage(),
+      "/stories": (context) => const StoriesPage(),
+      "/register": (context) => const RegisterPage(),
+      "/navigation": (context) => const MainNavigationPage(),
     };
   }
-}
-
-/// Application configuration and constants
-class AppConfig {
-  /// Application name
-  static const String appName = 'MusicBud';
-
-  /// Application version
-  static const String appVersion = '1.0.0';
-
-  /// Application description
-  static const String appDescription = 'Connect through music';
-
-  /// Build number
-  static const String buildNumber = '1';
-
-  /// Minimum supported Flutter version
-  static const String minFlutterVersion = '3.0.0';
 }

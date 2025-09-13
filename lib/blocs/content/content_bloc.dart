@@ -22,7 +22,7 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     Emitter<ContentState> emit,
   ) async {
     try {
-      emit(ContentLoading());
+      emit(const ContentLoading());
       final topTracks = await _contentRepository.getTopTracks();
       final topArtists = await _contentRepository.getTopArtists();
       final topGenres = await _contentRepository.getTopGenres();
@@ -46,7 +46,7 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     Emitter<ContentState> emit,
   ) async {
     try {
-      emit(ContentLoading());
+      emit(const ContentLoading());
       final likedTracks = await _contentRepository.getLikedTracks();
       final likedArtists = await _contentRepository.getLikedArtists();
       final likedAlbums = await _contentRepository.getLikedAlbums();
@@ -82,7 +82,7 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     Emitter<ContentState> emit,
   ) async {
     try {
-      emit(ContentLoading());
+      emit(const ContentLoading());
       final playedTracks = await _contentRepository.getPlayedTracks();
 
       if (state is ContentLoaded) {
@@ -132,7 +132,7 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     Emitter<ContentState> emit,
   ) async {
     try {
-      emit(ContentLoading());
+      emit(const ContentLoading());
       // Search functionality is not directly supported by the API endpoints
       // We'll use the existing content loading methods
       switch (event.type) {
@@ -179,11 +179,11 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
           break;
         case 'anime':
           // Anime search is not supported by the API
-          emit(ContentError('Anime search not supported by API'));
+          emit(const ContentError('Anime search not supported by API'));
           break;
         case 'manga':
           // Manga search is not supported by the API
-          emit(ContentError('Manga search not supported by API'));
+          emit(const ContentError('Manga search not supported by API'));
           break;
       }
     } catch (e) {

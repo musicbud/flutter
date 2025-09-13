@@ -50,10 +50,10 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
       body: _pages[_currentIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.9),
+                  color: Colors.black.withValues(alpha:  0.9),
         border: Border(
           top: BorderSide(
-            color: Colors.white.withValues(alpha: 0.2),
+            color: Colors.white.withValues(alpha:  0.2),
             width: 0.5,
           ),
         ),
@@ -68,14 +68,14 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.transparent,
           selectedItemColor: Colors.pinkAccent,
-                  unselectedItemColor: Colors.white.withValues(alpha: 0.6),
+                  unselectedItemColor: Colors.white.withValues(alpha:  0.6),
         selectedLabelStyle: const TextStyle(
           color: Colors.pinkAccent,
           fontSize: 12,
           fontWeight: FontWeight.w600,
         ),
         unselectedLabelStyle: TextStyle(
-          color: Colors.white.withValues(alpha: 0.6),
+          color: Colors.white.withValues(alpha:  0.6),
           fontSize: 12,
           fontWeight: FontWeight.w400,
         ),
@@ -198,9 +198,9 @@ class EnhancedChatListScreen extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
+                  color: color.withValues(alpha:  0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withValues(alpha:  0.3)),
         ),
         child: Column(
           children: [
@@ -414,7 +414,7 @@ class MatchNowButton extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 4),
-              const Icon(
+              Icon(
                 Icons.arrow_forward_ios,
                 size: 14,
                 color: Colors.black,

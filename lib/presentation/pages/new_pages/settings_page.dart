@@ -56,9 +56,9 @@ class SettingsPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white.withValues(alpha:  0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+        border: Border.all(color: Colors.white.withValues(alpha:  0.2)),
       ),
       child: Row(
         children: [
@@ -99,7 +99,7 @@ class SettingsPage extends StatelessWidget {
                 Text(
                   'liam.carter@email.com',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: Colors.white.withValues(alpha:  0.7),
                     fontSize: 14,
                   ),
                 ),
@@ -274,9 +274,9 @@ class SettingsPage extends StatelessWidget {
         const SizedBox(height: 16),
         Container(
           decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.05),
+                    color: Colors.white.withValues(alpha:  0.05),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+        border: Border.all(color: Colors.white.withValues(alpha:  0.1)),
           ),
           child: Column(
             children: items.map((item) => _buildSettingsItem(item)).toList(),
@@ -291,7 +291,7 @@ class SettingsPage extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-            color: Colors.white.withValues(alpha: 0.1),
+            color: Colors.white.withValues(alpha:  0.1),
             width: 0.5,
           ),
         ),
@@ -301,7 +301,7 @@ class SettingsPage extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: item.color.withValues(alpha: 0.2),
+            color: item.color.withValues(alpha:  0.2),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(item.icon, color: item.color, size: 20),
@@ -317,11 +317,11 @@ class SettingsPage extends StatelessWidget {
         subtitle: Text(
           item.description,
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.6),
+            color: Colors.white.withValues(alpha:  0.6),
             fontSize: 14,
           ),
         ),
-        trailing: const Icon(
+        trailing: Icon(
           Icons.arrow_forward_ios,
           color: Colors.white30,
           size: 16,
@@ -346,9 +346,9 @@ class SettingsPage extends StatelessWidget {
         const SizedBox(height: 16),
         Container(
           decoration: BoxDecoration(
-                    color: Colors.red.withValues(alpha: 0.1),
+                    color: Colors.red.withValues(alpha:  0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
+        border: Border.all(color: Colors.red.withValues(alpha:  0.3)),
           ),
           child: Column(
             children: [
@@ -357,7 +357,7 @@ class SettingsPage extends StatelessWidget {
                 leading: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.red.withValues(alpha: 0.2),
+                    color: Colors.red.withValues(alpha:  0.2),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(Icons.delete_forever, color: Colors.red, size: 20),
@@ -377,7 +377,7 @@ class SettingsPage extends StatelessWidget {
                     fontSize: 14,
                   ),
                 ),
-                trailing: const Icon(
+                trailing: Icon(
                   Icons.arrow_forward_ios,
                   color: Colors.red,
                   size: 16,
@@ -397,13 +397,13 @@ class SettingsPage extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () => _showLogoutDialog(),
         style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white.withValues(alpha: 0.1),
+                  backgroundColor: Colors.white.withValues(alpha:  0.1),
         foregroundColor: Colors.white,
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-        side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
+        side: BorderSide(color: Colors.white.withValues(alpha:  0.3)),
         ),
         child: const Text(
           'Logout',

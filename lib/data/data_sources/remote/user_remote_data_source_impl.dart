@@ -35,7 +35,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     final response = await _dioClient.post(ApiConfig.myProfile);
 
     if (response.statusCode == 200) {
-      return UserProfile.fromJson(json.decode(response.data));
+      return UserProfile.fromJson(response.data);
     } else {
       debugPrint('Failed to get profile. Status: ${response.statusCode}');
       debugPrint('Response body: ${response.data}');
@@ -98,7 +98,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     });
 
     if (response.statusCode == 200) {
-      return UserProfile.fromJson(json.decode(response.data));
+      return UserProfile.fromJson(response.data);
     } else {
       throw ServerException(message: 'Failed to get bud profile');
     }

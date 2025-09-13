@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../../domain/repositories/auth_repository.dart';
@@ -21,8 +22,27 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   ) async {
     emit(LoginLoading());
     try {
-      // Check connectivity first
-      final connectivityResult = await Connectivity().checkConnectivity();
+      // Check connectivity first - skip on Linux desktop to avoid D-Bus issues
+      ConnectivityResult connectivityResult;
+      
+      if (Platform.isLinux) {
+        // Skip connectivity check on Linux desktop (development mode)
+        print('Skipping connectivity check on Linux desktop - assuming connected');
+        connectivityResult = ConnectivityResult.wifi;
+      } else {
+        try {
+          // Add timeout to prevent hanging on D-Bus issues
+          connectivityResult = await Connectivity().checkConnectivity()
+              .timeout(const Duration(seconds: 3));
+        } catch (e) {
+          // If D-Bus connectivity check fails, assume we have connectivity
+          // This handles cases where D-Bus is not available (e.g., in Nix shell)
+          print('Connectivity check failed (likely D-Bus unavailable): $e');
+          print('Assuming network connectivity is available...');
+          connectivityResult = ConnectivityResult.wifi;
+        }
+      }
+      
       if (connectivityResult == ConnectivityResult.none) {
         emit(const LoginFailure(
             'No internet connection. Please check your network settings.'));
@@ -54,7 +74,25 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   ) async {
     emit(LoginLoading());
     try {
-      final connectivityResult = await Connectivity().checkConnectivity();
+      ConnectivityResult connectivityResult;
+      
+      if (Platform.isLinux) {
+        // Skip connectivity check on Linux desktop (development mode)
+        print('Skipping connectivity check on Linux desktop - assuming connected');
+        connectivityResult = ConnectivityResult.wifi;
+      } else {
+        try {
+          // Add timeout to prevent hanging on D-Bus issues
+          connectivityResult = await Connectivity().checkConnectivity()
+              .timeout(const Duration(seconds: 3));
+        } catch (e) {
+          // If D-Bus connectivity check fails, assume we have connectivity
+          print('Connectivity check failed (likely D-Bus unavailable): $e');
+          print('Assuming network connectivity is available...');
+          connectivityResult = ConnectivityResult.wifi;
+        }
+      }
+      
       emit(LoginConnectivityStatus(
         isConnected: connectivityResult != ConnectivityResult.none,
       ));

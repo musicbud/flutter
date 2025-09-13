@@ -1,12 +1,8 @@
-import 'package:dio/dio.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../domain/models/user_profile.dart';
 import '../../domain/models/content_service.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../network/dio_client.dart';
-import '../../utils/json_helper.dart';
-import 'dart:convert';
-import '../models/user_profile_model.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {
   final DioClient _dioClient;
@@ -18,18 +14,15 @@ class ProfileRepositoryImpl implements ProfileRepository {
   @override
   Future<UserProfile> getMyProfile() async {
     try {
-      print('ProfileRepository: Getting my profile');
+      // Getting my profile
       final response = await _dioClient.post('/me/profile');
       if (response.data == null) {
         throw Exception('Profile not found');
       }
-      print('ProfileRepository: Response data: ${response.data}');
-      print('ProfileRepository: Response data type: ${response.data.runtimeType}');
-      print('ProfileRepository: Response data keys: ${response.data.keys.toList()}');
+      // Response data received
       return UserProfile.fromJson(response.data);
-    } catch (e, stackTrace) {
-      print('ProfileRepository: Error getting profile: $e');
-      print('ProfileRepository: Stack trace: $stackTrace');
+    } catch (e) {
+      // Error getting profile: $e
       rethrow;
     }
   }
@@ -59,7 +52,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
       // Use the correct logout endpoint
       await _dioClient.get('/logout/');
     } catch (e) {
-      print('ProfileRepository: Logout failed: $e');
+      // Logout failed: $e
       // Don't rethrow - logout should not fail the app
     }
   }

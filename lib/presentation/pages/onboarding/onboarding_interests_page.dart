@@ -253,13 +253,13 @@ class _OnboardingInterestsPageState extends State<OnboardingInterestsPage> {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? appTheme.colors.primaryRed.withOpacity(0.1)
+                                      ? appTheme.colors.primaryRed.withValues(alpha: 0.1)
                                       : appTheme.colors.darkTone,
                                   borderRadius: BorderRadius.circular(appTheme.radius.md),
                                   border: Border.all(
                                     color: isSelected
                                         ? appTheme.colors.primaryRed
-                                        : appTheme.colors.lightGray.withOpacity(0.3),
+                                        : appTheme.colors.lightGray.withValues(alpha: 0.3),
                                     width: isSelected ? 2 : 1,
                                   ),
                                 ),

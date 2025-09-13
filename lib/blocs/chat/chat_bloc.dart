@@ -1,11 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/chat_repository.dart';
-import '../../domain/models/channel_user.dart';
-import '../../domain/models/channel_details.dart';
-import '../../domain/models/channel_dashboard.dart';
-import '../../domain/models/channel_invitation.dart';
-import '../../domain/models/channel_statistics.dart';
-import '../../domain/models/user_profile.dart';
 import '../../domain/models/message.dart';
 import 'chat_event.dart';
 import 'chat_state.dart';
@@ -75,7 +69,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(ChatLoading());
     try {
       // This functionality is not supported by the API
-      emit(ChatError('Get channel users not supported by API'));
+      emit(const ChatError('Get channel users not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -124,7 +118,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         event.channelId.toString(),
         event.messageId.toString(),
       );
-      emit(ChatMessageDeletedSuccess());
+      emit(const ChatMessageDeletedSuccess());
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -154,7 +148,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(ChatLoading());
     try {
       // This functionality is not supported by the API
-      emit(ChatError('Join channel not supported by API'));
+      emit(const ChatError('Join channel not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -166,7 +160,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     try {
       // This functionality is not supported by the API
-      emit(ChatError('Request join channel not supported by API'));
+      emit(const ChatError('Request join channel not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -178,9 +172,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      final details = await _chatRepository.getChannelDetails(event.channelId);
-      final channelDetails = ChannelDetails.fromJson(details);
-      emit(ChatChannelDetailsLoaded(channelDetails));
+      // This functionality is not supported by the API
+      emit(const ChatError('Get channel details not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -192,10 +185,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ) async {
     emit(ChatLoading());
     try {
-      final dashboard =
-          await _chatRepository.getChannelDashboardData(event.channelId);
-      final channelDashboard = ChannelDashboard.fromJson(dashboard);
-      emit(ChatChannelDashboardLoaded(channelDashboard));
+      // This functionality is not supported by the API
+      emit(const ChatError('Get channel dashboard not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -208,7 +199,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(ChatLoading());
     try {
       // This functionality is not supported by the API
-      emit(ChatError('Check channel roles not supported by API'));
+      emit(const ChatError('Check channel roles not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -224,7 +215,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         event.action,
         event.userId.toString(),
       );
-      emit(ChatAdminActionSuccess());
+      emit(const ChatAdminActionSuccess());
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -237,7 +228,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(ChatLoading());
     try {
       // This functionality is not supported by the API
-      emit(ChatError('Get channel invitations not supported by API'));
+      emit(const ChatError('Get channel invitations not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -250,7 +241,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(ChatLoading());
     try {
       // This functionality is not supported by the API
-      emit(ChatError('Get channel blocked users not supported by API'));
+      emit(const ChatError('Get channel blocked users not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -263,7 +254,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(ChatLoading());
     try {
       // This functionality is not supported by the API
-      emit(ChatError('Get user invitations not supported by API'));
+      emit(const ChatError('Get user invitations not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }
@@ -321,7 +312,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     emit(ChatLoading());
     try {
       // This functionality is not supported by the API
-      emit(ChatError('Get channel statistics not supported by API'));
+      emit(const ChatError('Get channel statistics not supported by API'));
     } catch (e) {
       emit(ChatError(e.toString()));
     }

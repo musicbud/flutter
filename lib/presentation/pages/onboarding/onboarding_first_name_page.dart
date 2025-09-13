@@ -67,7 +67,7 @@ class _OnboardingFirstNamePageState extends State<OnboardingFirstNamePage> {
                         height: 2,
                         margin: EdgeInsets.symmetric(horizontal: appTheme.spacing.sm),
                         decoration: BoxDecoration(
-                          color: appTheme.colors.lightGray.withOpacity(0.3),
+                          color: appTheme.colors.lightGray.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(1),
                         ),
                       ),
@@ -90,7 +90,7 @@ class _OnboardingFirstNamePageState extends State<OnboardingFirstNamePage> {
                         height: 2,
                         margin: EdgeInsets.symmetric(horizontal: appTheme.spacing.sm),
                         decoration: BoxDecoration(
-                          color: appTheme.colors.lightGray.withOpacity(0.3),
+                          color: appTheme.colors.lightGray.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(1),
                         ),
                       ),
@@ -99,7 +99,7 @@ class _OnboardingFirstNamePageState extends State<OnboardingFirstNamePage> {
                       width: 30,
                       height: 30,
                       decoration: BoxDecoration(
-                        color: appTheme.colors.lightGray.withOpacity(0.3),
+                        color: appTheme.colors.lightGray.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Icon(
@@ -113,7 +113,7 @@ class _OnboardingFirstNamePageState extends State<OnboardingFirstNamePage> {
                         height: 2,
                         margin: EdgeInsets.symmetric(horizontal: appTheme.spacing.sm),
                         decoration: BoxDecoration(
-                          color: appTheme.colors.lightGray.withOpacity(0.3),
+                          color: appTheme.colors.lightGray.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(1),
                         ),
                       ),
@@ -122,7 +122,7 @@ class _OnboardingFirstNamePageState extends State<OnboardingFirstNamePage> {
                       width: 30,
                       height: 30,
                       decoration: BoxDecoration(
-                        color: appTheme.colors.lightGray.withOpacity(0.3),
+                        color: appTheme.colors.lightGray.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Icon(
@@ -136,7 +136,7 @@ class _OnboardingFirstNamePageState extends State<OnboardingFirstNamePage> {
                         height: 2,
                         margin: EdgeInsets.symmetric(horizontal: appTheme.spacing.sm),
                         decoration: BoxDecoration(
-                          color: appTheme.colors.lightGray.withOpacity(0.3),
+                          color: appTheme.colors.lightGray.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(1),
                         ),
                       ),
@@ -145,7 +145,7 @@ class _OnboardingFirstNamePageState extends State<OnboardingFirstNamePage> {
                       width: 30,
                       height: 30,
                       decoration: BoxDecoration(
-                        color: appTheme.colors.lightGray.withOpacity(0.3),
+                        color: appTheme.colors.lightGray.withValues(alpha: 0.3),
                         borderRadius: BorderRadius.circular(15),
                       ),
                       child: Icon(

@@ -5,10 +5,8 @@ import '../../domain/repositories/services_repository.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/models/channel.dart';
 import '../../domain/models/channel_details.dart';
-import '../../domain/models/message.dart' as message_model;
 import '../../domain/models/channel_dashboard.dart';
 import '../../domain/models/channel_statistics.dart';
-import '../../domain/models/channel_invitation.dart';
 import 'comprehensive_chat_event.dart';
 import 'comprehensive_chat_state.dart';
 
@@ -161,8 +159,8 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
   ) async {
     emit(ComprehensiveChatLoading());
     try {
-      final channelData = await _chatRepository.createChannel(event.name, event.description);
       // TODO: Convert channelData to Channel model when repository returns proper type
+      // final channelData = await _chatRepository.createChannel(event.name, event.description);
       // final channel = Channel.fromJson(channelData);
       emit(ChannelCreatedSuccess(Channel(
         id: 'temp_id',
@@ -227,7 +225,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
         limit: event.limit,
         before: event.before,
       );
-      emit(MessagesLoaded(messages as List<message_model.Message>));
+      emit(MessagesLoaded(messages));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }
@@ -374,8 +372,8 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
   ) async {
     emit(ComprehensiveChatLoading());
     try {
-      final detailsData = await _chatRepository.getChannelDetails(event.channelId);
       // TODO: Convert detailsData to ChannelDetails model when repository returns proper type
+      // final detailsData = await _chatRepository.getChannelDetails(event.channelId);
       // final details = ChannelDetails.fromJson(detailsData);
       emit(ChannelDetailsLoaded(ChannelDetails(
         channel: Channel(
@@ -385,9 +383,9 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         ),
-        members: [],
-        moderators: [],
-        admins: [],
+        members: const [],
+        moderators: const [],
+        admins: const [],
         totalMessages: 0,
         activeMembers: 0,
       )));
@@ -402,10 +400,10 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
   ) async {
     emit(ComprehensiveChatLoading());
     try {
-      final dashboardData = await _chatRepository.getChannelDashboardData(event.channelId);
       // TODO: Convert dashboardData to ChannelDashboard model when repository returns proper type
+      // final dashboardData = await _chatRepository.getChannelDashboardData(event.channelId);
       // final dashboard = ChannelDashboard.fromJson(dashboardData);
-      emit(ChannelDashboardLoaded(ChannelDashboard(
+      emit(const ChannelDashboardLoaded(ChannelDashboard(
         recentMessages: [],
         activeUsers: [],
         messageStats: {},
@@ -422,10 +420,10 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
   ) async {
     emit(ComprehensiveChatLoading());
     try {
-      final statisticsData = await _chatRepository.getChannelStatistics(event.channelId);
       // TODO: Convert statisticsData to ChannelStatistics model when repository returns proper type
+      // final statisticsData = await _chatRepository.getChannelStatistics(event.channelId);
       // final statistics = ChannelStatistics.fromJson(statisticsData);
-      emit(ChannelStatisticsLoaded(ChannelStatistics(
+      emit(const ChannelStatisticsLoaded(ChannelStatistics(
         totalMessages: 0,
         totalMembers: 0,
         activeMembers: 0,
@@ -544,7 +542,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
     try {
       // TODO: Implement get banned users functionality
       // final bannedUsers = await _userRepository.getBannedUsers();
-      emit(BannedUsersLoaded([]));
+      emit(const BannedUsersLoaded([]));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }
@@ -558,7 +556,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
     emit(ComprehensiveChatLoading());
     try {
       await _servicesRepository.connectSpotify('');
-      emit(SpotifyConnectedSuccess({'status': 'connected'}));
+      emit(const SpotifyConnectedSuccess({'status': 'connected'}));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }
@@ -571,7 +569,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
     emit(ComprehensiveChatLoading());
     try {
       await _servicesRepository.disconnectSpotify();
-      emit(SpotifyDisconnectedSuccess({'status': 'disconnected'}));
+      emit(const SpotifyDisconnectedSuccess({'status': 'disconnected'}));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }
@@ -584,7 +582,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
     emit(ComprehensiveChatLoading());
     try {
       await _servicesRepository.connectLastFM('');
-      emit(LastfmConnectedSuccess({'status': 'connected'}));
+      emit(const LastfmConnectedSuccess({'status': 'connected'}));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }
@@ -597,7 +595,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
     emit(ComprehensiveChatLoading());
     try {
       await _servicesRepository.disconnectLastFM();
-      emit(LastfmDisconnectedSuccess({'status': 'disconnected'}));
+      emit(const LastfmDisconnectedSuccess({'status': 'disconnected'}));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }
@@ -610,7 +608,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
     emit(ComprehensiveChatLoading());
     try {
       await _servicesRepository.connectYTMusic('');
-      emit(YtmusicConnectedSuccess({'status': 'connected'}));
+      emit(const YtmusicConnectedSuccess({'status': 'connected'}));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }
@@ -623,7 +621,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
     emit(ComprehensiveChatLoading());
     try {
       await _servicesRepository.disconnectYTMusic();
-      emit(YtmusicDisconnectedSuccess({'status': 'disconnected'}));
+      emit(const YtmusicDisconnectedSuccess({'status': 'disconnected'}));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }
@@ -636,7 +634,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
     emit(ComprehensiveChatLoading());
     try {
       await _servicesRepository.connectMAL('');
-      emit(MalConnectedSuccess({'status': 'connected'}));
+      emit(const MalConnectedSuccess({'status': 'connected'}));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }
@@ -649,7 +647,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
     emit(ComprehensiveChatLoading());
     try {
       await _servicesRepository.disconnectMAL();
-      emit(MalDisconnectedSuccess({'status': 'disconnected'}));
+      emit(const MalDisconnectedSuccess({'status': 'disconnected'}));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }
@@ -664,7 +662,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
     try {
       // TODO: Implement when repository method is available
       // final invitations = await _chatRepository.getChannelInvitations(event.channelId);
-      emit(ChannelInvitationsLoaded([]));
+      emit(const ChannelInvitationsLoaded([]));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }
@@ -678,7 +676,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
     try {
       // TODO: Implement when repository method is available
       // final invitations = await _chatRepository.getUserInvitations(event.userId);
-      emit(UserInvitationsLoaded([]));
+      emit(const UserInvitationsLoaded([]));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }

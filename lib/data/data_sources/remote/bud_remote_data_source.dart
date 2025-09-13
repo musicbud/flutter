@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import '../../../core/error/exceptions.dart';
 import '../../network/dio_client.dart';
-import '../../../models/bud.dart';
 import '../../../domain/models/bud_match.dart';
 import '../../../domain/models/common_track.dart';
 import '../../../domain/models/common_artist.dart';

@@ -77,8 +77,6 @@ class AppService {
         return 'Linux';
       case TargetPlatform.fuchsia:
         return 'Fuchsia';
-      default:
-        return 'Unknown';
     }
   }
 

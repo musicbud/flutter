@@ -13,7 +13,6 @@ class UserProfileModel extends UserProfile {
   });
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
-    print('UserProfileModel: Creating from JSON: $json');
     try {
       return UserProfileModel(
         id: json['id']?.toString() ?? json['uid']?.toString() ?? '',
@@ -25,9 +24,7 @@ class UserProfileModel extends UserProfile {
         isActive: json['is_active'] == true || json['isActive'] == true,
         isAuthenticated: json['is_authenticated'] == true || json['isAuthenticated'] == true,
       );
-    } catch (e, stackTrace) {
-      print('UserProfileModel: Error parsing JSON: $e');
-      print('UserProfileModel: Stack trace: $stackTrace');
+    } catch (e) {
       rethrow;
     }
   }

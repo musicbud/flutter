@@ -43,7 +43,7 @@ class AppBottomNavigationBar extends StatelessWidget {
         borderRadius: borderRadius ?? BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
             spreadRadius: 0,
@@ -64,7 +64,7 @@ class AppBottomNavigationBar extends StatelessWidget {
                       end: Alignment.bottomRight,
                       colors: [
                         backgroundColor ?? const Color.fromARGB(200, 20, 20, 20),
-                        backgroundColor?.withOpacity(0.8) ?? const Color.fromARGB(180, 15, 15, 15),
+                        backgroundColor?.withValues(alpha: 0.8) ?? const Color.fromARGB(180, 15, 15, 15),
                       ],
                     )
                   : null,
@@ -72,11 +72,11 @@ class AppBottomNavigationBar extends StatelessWidget {
               border: borderColor != null
                   ? Border.all(
                       width: 1.5,
-                      color: borderColor!.withOpacity(0.3),
+                      color: borderColor!.withValues(alpha: 0.3),
                     )
                   : Border.all(
                       width: 1.5,
-                      color: Colors.white.withOpacity(0.1),
+                      color: Colors.white.withValues(alpha: 0.1),
                     ),
             ),
             child: _buildNavigationBar(),
@@ -94,7 +94,7 @@ class AppBottomNavigationBar extends StatelessWidget {
       backgroundColor: Colors.transparent,
       elevation: elevation ?? 0,
       selectedItemColor: selectedItemColor ?? const Color(0xFFFF6B8F),
-      unselectedItemColor: unselectedItemColor ?? Colors.white.withOpacity(0.6),
+      unselectedItemColor: unselectedItemColor ?? Colors.white.withValues(alpha: 0.6),
       selectedLabelStyle: const TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.w600,
@@ -124,12 +124,12 @@ class AppBottomNavigationBar extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: isActive
-            ? (selectedItemColor ?? const Color(0xFFFF6B8F)).withOpacity(0.2)
+            ? (selectedItemColor ?? const Color(0xFFFF6B8F)).withValues(alpha: 0.2)
             : Colors.transparent,
         borderRadius: BorderRadius.circular(12),
         border: isActive
             ? Border.all(
-                color: (selectedItemColor ?? const Color(0xFFFF6B8F)).withOpacity(0.3),
+                color: (selectedItemColor ?? const Color(0xFFFF6B8F)).withValues(alpha: 0.3),
                 width: 1,
               )
             : null,
@@ -139,7 +139,7 @@ class AppBottomNavigationBar extends StatelessWidget {
         size: isActive ? 26 : 24,
         color: isActive
             ? (selectedItemColor ?? const Color(0xFFFF6B8F))
-            : (unselectedItemColor ?? Colors.white.withOpacity(0.6)),
+            : (unselectedItemColor ?? Colors.white.withValues(alpha: 0.6)),
       ),
     );
   }
@@ -201,7 +201,7 @@ class FloatingBottomNavigationBar extends StatelessWidget {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: (selectedItemColor ?? const Color(0xFFFF6B8F)).withOpacity(0.4),
+                    color: (selectedItemColor ?? const Color(0xFFFF6B8F)).withValues(alpha: 0.4),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                     spreadRadius: 0,
@@ -217,7 +217,7 @@ class FloatingBottomNavigationBar extends StatelessWidget {
               size: isSelected ? 28 : 24,
               color: isSelected
                   ? Colors.white
-                  : (unselectedItemColor ?? Colors.white.withOpacity(0.6)),
+                  : (unselectedItemColor ?? Colors.white.withValues(alpha: 0.6)),
             ),
             const SizedBox(height: 4),
             Text(
@@ -225,7 +225,7 @@ class FloatingBottomNavigationBar extends StatelessWidget {
               style: TextStyle(
                 color: isSelected
                     ? Colors.white
-                    : (unselectedItemColor ?? Colors.white.withOpacity(0.6)),
+                    : (unselectedItemColor ?? Colors.white.withValues(alpha: 0.6)),
                 fontSize: isSelected ? 12 : 11,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),
@@ -241,12 +241,12 @@ class FloatingBottomNavigationBar extends StatelessWidget {
 class NavigationItem {
   final IconData icon;
   final String label;
-  final Widget page;
+  final WidgetBuilder pageBuilder;
 
   const NavigationItem({
     required this.icon,
     required this.label,
-    required this.page,
+    required this.pageBuilder,
   });
 }
 
@@ -306,13 +306,13 @@ class ModernTabBar extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? (selectedColor ?? const Color(0xFFFF6B8F))
-                : Colors.white.withOpacity(0.2),
+                : Colors.white.withValues(alpha: 0.2),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: (selectedColor ?? const Color(0xFFFF6B8F)).withOpacity(0.3),
+                    color: (selectedColor ?? const Color(0xFFFF6B8F)).withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                     spreadRadius: 0,
@@ -325,7 +325,7 @@ class ModernTabBar extends StatelessWidget {
           style: TextStyle(
             color: isSelected
                 ? Colors.white
-                : (unselectedColor ?? Colors.white.withOpacity(0.7)),
+                : (unselectedColor ?? Colors.white.withValues(alpha: 0.7)),
             fontSize: 14,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             letterSpacing: isSelected ? 0.5 : 0.3,

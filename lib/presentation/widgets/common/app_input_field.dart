@@ -224,7 +224,7 @@ class _AppInputFieldState extends State<AppInputField> {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(appTheme.radius.md),
       borderSide: BorderSide(
-        color: appTheme.colors.primaryRed.withValues(alpha: 0.3),
+        color: appTheme.colors.primaryRed.withValues(alpha:  0.3),
       ),
     );
   }
@@ -253,7 +253,7 @@ class _AppInputFieldState extends State<AppInputField> {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(appTheme.radius.md),
       borderSide: BorderSide(
-        color: appTheme.colors.lightGray.withValues(alpha: 0.3),
+        color: appTheme.colors.lightGray.withValues(alpha:  0.3),
       ),
     );
   }
@@ -262,7 +262,7 @@ class _AppInputFieldState extends State<AppInputField> {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(appTheme.radius.md),
       borderSide: BorderSide(
-        color: appTheme.colors.lightGray.withValues(alpha: 0.2),
+        color: appTheme.colors.lightGray.withValues(alpha:  0.2),
       ),
     );
   }
@@ -272,11 +272,11 @@ class _AppInputFieldState extends State<AppInputField> {
       case AppInputVariant.primary:
         return appTheme.colors.white;
       case AppInputVariant.secondary:
-        return appTheme.colors.lightGray.withValues(alpha: 0.1);
+        return appTheme.colors.lightGray.withValues(alpha:  0.1);
       case AppInputVariant.outline:
         return appTheme.colors.white;
       case AppInputVariant.filled:
-        return appTheme.colors.lightGray.withValues(alpha: 0.1);
+        return appTheme.colors.lightGray.withValues(alpha:  0.1);
       case AppInputVariant.transparent:
         return appTheme.colors.transparent;
       case AppInputVariant.search:

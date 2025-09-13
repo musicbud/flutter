@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/user_profile/user_profile_bloc.dart';
-import '../../domain/models/user_profile.dart';
-import '../../injection_container.dart';
 import '../constants/app_theme.dart';
+import '../widgets/common/index.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -24,438 +23,320 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     final appTheme = AppTheme.of(context);
 
-    return BlocProvider(
-      create: (context) => sl<UserProfileBloc>(),
-      child: BlocListener<UserProfileBloc, UserProfileState>(
-        listener: (context, state) {
-          if (state is UserProfileError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Error: ${state.message}'),
-                backgroundColor: appTheme.colors.error,
-              ),
-            );
-          }
-        },
-        child: BlocBuilder<UserProfileBloc, UserProfileState>(
-          builder: (context, state) {
-            if (state is UserProfileLoading) {
-              return Scaffold(
-                backgroundColor: appTheme.colors.darkTone,
-                body: Center(
-                  child: CircularProgressIndicator(
-                    color: appTheme.colors.primaryRed,
-                  ),
-                ),
-              );
-            }
-
-            if (state is UserProfileLoaded) {
-              return _buildProfileContent(context, state.userProfile);
-            }
-
-            if (state is UserProfileError) {
-              return _buildErrorContent(context, state.message);
-            }
-
-            // Default state - show loading
-            return Scaffold(
-              backgroundColor: appTheme.colors.darkTone,
-              body: Center(
-                child: CircularProgressIndicator(
-                  color: appTheme.colors.primaryRed,
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileContent(BuildContext context, UserProfile profile) {
-    final appTheme = AppTheme.of(context);
-
-    return Scaffold(
-      backgroundColor: appTheme.colors.darkTone,
-      body: CustomScrollView(
-        slivers: [
-          // App Bar with Profile Image
-          SliverAppBar(
-            expandedHeight: 300,
-            backgroundColor: appTheme.colors.darkTone,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      appTheme.colors.primaryRed.withValues(alpha: 0.8),
-                      appTheme.colors.darkTone,
-                    ],
-                  ),
-                ),
-                child: Stack(
-                  children: [
-                    // Background Pattern
-                    Positioned.fill(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: appTheme.colors.primaryRed.withValues(alpha: 0.1),
-                        ),
-                        child: CustomPaint(
-                          painter: ProfileMusicNotePainter(),
-                        ),
-                      ),
-                    ),
-                    // Profile Info Overlay
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        padding: EdgeInsets.all(appTheme.spacing.lg),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              appTheme.colors.darkTone.withValues(alpha: 0.8),
-                              appTheme.colors.darkTone,
-                            ],
+    return BlocListener<UserProfileBloc, UserProfileState>(
+      listener: (context, state) {
+        if (state is UserProfileError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: ${state.message}'),
+              backgroundColor: appTheme.colors.errorRed,
+            ),
+          );
+        }
+      },
+      child: BlocBuilder<UserProfileBloc, UserProfileState>(
+        builder: (context, state) {
+          return Container(
+            decoration: BoxDecoration(
+              gradient: appTheme.gradients.backgroundGradient,
+            ),
+            child: CustomScrollView(
+              slivers: [
+                // Profile Header Section
+                SliverToBoxAdapter(
+                  child: Container(
+                    padding: EdgeInsets.all(appTheme.spacing.lg),
+                    child: Column(
+                      children: [
+                        // Profile Avatar with enhanced styling
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(appTheme.radius.circular),
+                            boxShadow: appTheme.shadows.shadowCardHover,
+                            border: Border.all(
+                              color: appTheme.colors.primaryRed.withValues(alpha: 0.3),
+                              width: 3,
+                            ),
+                          ),
+                          child: CircleAvatar(
+                            radius: 60,
+                            backgroundColor: appTheme.colors.primaryRed,
+                            backgroundImage: state is UserProfileLoaded && state.userProfile.avatarUrl != null
+                                ? NetworkImage(state.userProfile.avatarUrl!)
+                                : null,
+                            child: state is UserProfileLoaded && state.userProfile.avatarUrl == null
+                                ? Icon(
+                                    Icons.person,
+                                    color: appTheme.colors.white,
+                                    size: 60,
+                                  )
+                                : null,
                           ),
                         ),
-                        child: Column(
-                          children: [
-                            // Profile Image
-                            Container(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(appTheme.radius.xl),
-                                border: Border.all(
-                                  color: appTheme.colors.pureWhite,
-                                  width: 4,
-                                ),
-                                image: profile.avatarUrl != null
-                                    ? DecorationImage(
-                                        image: NetworkImage(profile.avatarUrl!),
-                                        fit: BoxFit.cover,
-                                      )
-                                    : null,
-                              ),
-                              child: profile.avatarUrl == null
-                                  ? Icon(
-                                      Icons.person,
-                                      size: 50,
-                                      color: appTheme.colors.pureWhite,
-                                    )
-                                  : null,
+
+                        SizedBox(height: appTheme.spacing.lg),
+
+                        // Profile Info
+                        if (state is UserProfileLoaded) ...[
+                          Text(
+                            state.userProfile.displayName ?? state.userProfile.username,
+                            style: appTheme.typography.headlineH5.copyWith(
+                              color: appTheme.colors.textPrimary,
+                              fontWeight: FontWeight.w700,
                             ),
-                            SizedBox(height: appTheme.spacing.lg),
-                            // Profile Name
+                            textAlign: TextAlign.center,
+                          ),
+
+                          if (state.userProfile.displayName != null) ...[
+                            SizedBox(height: appTheme.spacing.xs),
                             Text(
-                              profile.displayName ?? profile.username,
-                              style: appTheme.typography.displayH1.copyWith(
-                                color: appTheme.colors.pureWhite,
-                                fontSize: 28,
+                              '@${state.userProfile.username}',
+                              style: appTheme.typography.bodyMedium.copyWith(
+                                color: appTheme.colors.textMuted,
                               ),
-                            ),
-                            SizedBox(height: appTheme.spacing.sm),
-                            // Username
-                            Text(
-                              '@${profile.username}',
-                              style: appTheme.typography.bodyH8.copyWith(
-                                color: appTheme.colors.lightGray,
-                              ),
-                            ),
-                            SizedBox(height: appTheme.spacing.md),
-                            // Stats
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                _buildStatItem('Followers', '2.4K', appTheme),
-                                _buildStatItem('Following', '1.2K', appTheme),
-                                _buildStatItem('Tracks', '89', appTheme),
-                              ],
+                              textAlign: TextAlign.center,
                             ),
                           ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            leading: IconButton(
-              icon: Icon(
-                Icons.arrow_back_ios,
-                color: appTheme.colors.pureWhite,
-              ),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            actions: [
-              IconButton(
-                icon: Icon(
-                  Icons.edit,
-                  color: appTheme.colors.pureWhite,
-                ),
-                onPressed: () {
-                  _showEditProfileDialog(context, profile);
-                },
-              ),
-              IconButton(
-                icon: Icon(
-                  Icons.settings,
-                  color: appTheme.colors.pureWhite,
-                ),
-                onPressed: () {
-                  // Handle settings
-                },
-              ),
-            ],
-          ),
 
-          // Profile Content
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.all(appTheme.spacing.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Bio Section
-                  Container(
-                    padding: EdgeInsets.all(appTheme.spacing.lg),
-                    decoration: BoxDecoration(
-                      color: appTheme.colors.darkTone,
-                      borderRadius: BorderRadius.circular(appTheme.radius.lg),
-                      border: Border.all(
-                        color: appTheme.colors.lightGray.withValues(alpha: 0.2),
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'About Me',
-                          style: appTheme.typography.headlineH6.copyWith(
-                            color: appTheme.colors.pureWhite,
-                            fontWeight: FontWeight.w600,
+                          SizedBox(height: appTheme.spacing.md),
+
+                          // Profile Stats
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _buildStatItem('Followers', '1.2K', appTheme),
+                              _buildStatItem('Following', '856', appTheme),
+                              _buildStatItem('Tracks', '324', appTheme),
+                            ],
                           ),
-                        ),
-                        SizedBox(height: appTheme.spacing.md),
-                        Text(
-                          profile.bio ?? 'No bio available. Click edit to add one!',
-                          style: appTheme.typography.bodyH8.copyWith(
-                            color: appTheme.colors.lightGray,
-                            height: 1.5,
+
+                          SizedBox(height: appTheme.spacing.lg),
+
+                          // Edit Profile Button
+                          PrimaryButton(
+                            text: 'Edit Profile',
+                            onPressed: () {
+                              // Navigate to edit profile
+                            },
+                            icon: Icons.edit,
+                            size: ModernButtonSize.large,
+                            isFullWidth: true,
                           ),
-                        ),
+                        ] else if (state is UserProfileLoading) ...[
+                          SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(
+                              color: appTheme.colors.primaryRed,
+                              strokeWidth: 2,
+                            ),
+                          ),
+                        ] else ...[
+                          Text(
+                            'Unable to load profile',
+                            style: appTheme.typography.titleMedium.copyWith(
+                              color: appTheme.colors.textPrimary,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: appTheme.spacing.md),
+                          PrimaryButton(
+                            onPressed: () {
+                              context.read<UserProfileBloc>().add(FetchMyProfile());
+                            },
+                            text: 'Retry',
+                            icon: Icons.refresh,
+                            size: ModernButtonSize.medium,
+                          ),
+                        ],
                       ],
                     ),
                   ),
+                ),
 
-                  SizedBox(height: appTheme.spacing.lg),
+                // Profile Sections
+                if (state is UserProfileLoaded) ...[
+                  // My Music Section
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'My Music',
+                            style: appTheme.typography.headlineH7.copyWith(
+                              color: appTheme.colors.textPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(height: appTheme.spacing.md),
 
-                  // Interests Section
-                  Text(
-                    'Music Interests',
-                    style: appTheme.typography.headlineH6.copyWith(
-                      color: appTheme.colors.pureWhite,
-                      fontWeight: FontWeight.w600,
+                          // Music Categories
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildMusicCategoryCard(
+                                  'Playlists',
+                                  '12',
+                                  Icons.playlist_play,
+                                  appTheme.colors.accentBlue,
+                                  appTheme,
+                                ),
+                              ),
+                              SizedBox(width: appTheme.spacing.md),
+                              Expanded(
+                                child: _buildMusicCategoryCard(
+                                  'Liked Songs',
+                                  '89',
+                                  Icons.favorite,
+                                  appTheme.colors.primaryRed,
+                                  appTheme,
+                                ),
+                              ),
+                              SizedBox(width: appTheme.spacing.md),
+                              Expanded(
+                                child: _buildMusicCategoryCard(
+                                  'Downloads',
+                                  '23',
+                                  Icons.download,
+                                  appTheme.colors.accentGreen,
+                                  appTheme,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  SizedBox(height: appTheme.spacing.md),
-                  Wrap(
-                    spacing: appTheme.spacing.sm,
-                    runSpacing: appTheme.spacing.xs,
-                    children: [
-                      'Electronic', 'DJ', 'Music Production', 'Hip Hop',
-                      'Jazz', 'Classical', 'Rock', 'Pop'
-                    ].map<Widget>((interest) {
-                      return Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: appTheme.spacing.sm,
-                          vertical: appTheme.spacing.xs,
-                        ),
-                        decoration: BoxDecoration(
-                          color: appTheme.colors.primaryRed.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(appTheme.radius.sm),
-                          border: Border.all(
-                            color: appTheme.colors.primaryRed.withValues(alpha: 0.3),
-                          ),
-                        ),
-                        child: Text(
-                          interest,
-                          style: appTheme.typography.bodyH8.copyWith(
-                            color: appTheme.colors.primaryRed,
-                            fontSize: 12,
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
 
-                  SizedBox(height: appTheme.spacing.lg),
+                  SliverToBoxAdapter(child: SizedBox(height: appTheme.spacing.xl)),
 
-                  // Recent Activity
-                  Text(
-                    'Recent Activity',
-                    style: appTheme.typography.headlineH6.copyWith(
-                      color: appTheme.colors.pureWhite,
-                      fontWeight: FontWeight.w600,
+                  // Recent Activity Section
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Recent Activity',
+                            style: appTheme.typography.headlineH7.copyWith(
+                              color: appTheme.colors.textPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(height: appTheme.spacing.md),
+
+                          // Activity Cards
+                          _buildActivityCard(
+                            'New Track Added',
+                            'Added "Midnight Dreams" to your library',
+                            '2 hours ago',
+                            Icons.music_note,
+                            appTheme.colors.primaryRed,
+                            appTheme,
+                          ),
+                          SizedBox(height: appTheme.spacing.md),
+                          _buildActivityCard(
+                            'Playlist Created',
+                            'Created "Chill Vibes" playlist',
+                            '1 day ago',
+                            Icons.playlist_add,
+                            appTheme.colors.accentBlue,
+                            appTheme,
+                          ),
+                          SizedBox(height: appTheme.spacing.md),
+                          _buildActivityCard(
+                            'Bud Connected',
+                            'Sarah Johnson started following you',
+                            '3 days ago',
+                            Icons.person_add,
+                            appTheme.colors.accentGreen,
+                            appTheme,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                  SizedBox(height: appTheme.spacing.md),
 
-                  // Activity Items
-                  _buildActivityItem(
-                    'Liked "Midnight Dreams" by Luna Sky',
-                    '2 hours ago',
-                    Icons.favorite,
-                    appTheme,
-                  ),
-                  _buildActivityItem(
-                    'Added "Electric Storm" to playlist',
-                    '4 hours ago',
-                    Icons.playlist_add,
-                    appTheme,
-                  ),
-                  _buildActivityItem(
-                    'Followed DJ Pulse',
-                    '1 day ago',
-                    Icons.person_add,
-                    appTheme,
+                  SliverToBoxAdapter(child: SizedBox(height: appTheme.spacing.xl)),
+
+                  // Settings Section
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Settings',
+                            style: appTheme.typography.headlineH7.copyWith(
+                              color: appTheme.colors.textPrimary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(height: appTheme.spacing.md),
+
+                          // Settings Options
+                          _buildSettingsOption(
+                            'Account Settings',
+                            'Manage your account preferences',
+                            Icons.settings,
+                            appTheme,
+                          ),
+                          SizedBox(height: appTheme.spacing.sm),
+                          _buildSettingsOption(
+                            'Privacy',
+                            'Control your privacy settings',
+                            Icons.privacy_tip,
+                            appTheme,
+                          ),
+                          SizedBox(height: appTheme.spacing.sm),
+                          _buildSettingsOption(
+                            'Notifications',
+                            'Customize notification preferences',
+                            Icons.notifications,
+                            appTheme,
+                          ),
+                          SizedBox(height: appTheme.spacing.sm),
+                          _buildSettingsOption(
+                            'Help & Support',
+                            'Get help and contact support',
+                            Icons.help,
+                            appTheme,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
 
-                  SizedBox(height: appTheme.spacing.xl),
+                  SliverToBoxAdapter(child: SizedBox(height: appTheme.spacing.xl)),
+
+                  // Logout Section
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+                      child: OutlineButton(
+                        text: 'Logout',
+                        onPressed: () {
+                          // Handle logout
+                        },
+                        icon: Icons.logout,
+                        size: ModernButtonSize.large,
+                        isFullWidth: true,
+                      ),
+                    ),
+                  ),
+
+                  SliverToBoxAdapter(child: SizedBox(height: appTheme.spacing.xl)),
                 ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildErrorContent(BuildContext context, String message) {
-    final appTheme = AppTheme.of(context);
-    return Scaffold(
-      backgroundColor: appTheme.colors.darkTone,
-      body: Center(
-        child: Text(
-          message,
-          style: appTheme.typography.bodyH8.copyWith(
-            color: appTheme.colors.lightGray,
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showEditProfileDialog(BuildContext context, UserProfile profile) {
-    final appTheme = AppTheme.of(context);
-    final displayNameController = TextEditingController(text: profile.displayName ?? '');
-    final bioController = TextEditingController(text: profile.bio ?? '');
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: appTheme.colors.darkTone,
-          title: Text(
-            'Edit Profile',
-            style: appTheme.typography.headlineH6.copyWith(
-              color: appTheme.colors.pureWhite,
-            ),
-          ),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                TextField(
-                  controller: displayNameController,
-                  style: appTheme.typography.bodyH8.copyWith(
-                    color: appTheme.colors.pureWhite,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: 'Display Name',
-                    labelStyle: appTheme.typography.bodyH8.copyWith(
-                      color: appTheme.colors.lightGray,
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: appTheme.colors.lightGray.withValues(alpha: 0.2)),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: appTheme.colors.primaryRed),
-                    ),
-                    hintText: 'Enter your display name',
-                    hintStyle: appTheme.typography.bodyH8.copyWith(
-                      color: appTheme.colors.lightGray,
-                    ),
-                  ),
-                ),
-                SizedBox(height: appTheme.spacing.sm),
-                TextField(
-                  controller: bioController,
-                  style: appTheme.typography.bodyH8.copyWith(
-                    color: appTheme.colors.pureWhite,
-                  ),
-                  decoration: InputDecoration(
-                    labelText: 'Bio',
-                    labelStyle: appTheme.typography.bodyH8.copyWith(
-                      color: appTheme.colors.lightGray,
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: appTheme.colors.lightGray.withValues(alpha: 0.2)),
-                    ),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: appTheme.colors.primaryRed),
-                    ),
-                    hintText: 'Tell us about yourself',
-                    hintStyle: appTheme.typography.bodyH8.copyWith(
-                      color: appTheme.colors.lightGray,
-                    ),
-                  ),
-                  maxLines: 3,
-                ),
               ],
             ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text(
-                'Cancel',
-                style: appTheme.typography.bodyH8.copyWith(
-                  color: appTheme.colors.primaryRed,
-                ),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text(
-                'Save Changes',
-                style: appTheme.typography.bodyH8.copyWith(
-                  color: appTheme.colors.primaryRed,
-                ),
-              ),
-              onPressed: () {
-                final updateRequest = UserProfileUpdateRequest(
-                  displayName: displayNameController.text.isNotEmpty ? displayNameController.text : null,
-                  bio: bioController.text.isNotEmpty ? bioController.text : null,
-                );
-
-                context.read<UserProfileBloc>().add(UpdateUserProfile(updateRequest: updateRequest));
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -464,47 +345,95 @@ class _ProfilePageState extends State<ProfilePage> {
       children: [
         Text(
           value,
-          style: appTheme.typography.headlineH6.copyWith(
-            color: appTheme.colors.pureWhite,
-            fontWeight: FontWeight.w600,
+          style: appTheme.typography.headlineH7.copyWith(
+            color: appTheme.colors.primaryRed,
+            fontWeight: FontWeight.w700,
           ),
         ),
         SizedBox(height: appTheme.spacing.xs),
         Text(
           label,
-          style: appTheme.typography.bodyH8.copyWith(
-            color: appTheme.colors.lightGray,
-            fontSize: 12,
+          style: appTheme.typography.caption.copyWith(
+            color: appTheme.colors.textMuted,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildActivityItem(String text, String time, IconData icon, AppTheme appTheme) {
-    return Container(
-      margin: EdgeInsets.only(bottom: appTheme.spacing.md),
-      padding: EdgeInsets.all(appTheme.spacing.md),
-      decoration: BoxDecoration(
-        color: appTheme.colors.darkTone,
-        borderRadius: BorderRadius.circular(appTheme.radius.md),
-        border: Border.all(
-          color: appTheme.colors.lightGray.withValues(alpha: 0.2),
-        ),
-      ),
-      child: Row(
+  Widget _buildMusicCategoryCard(
+    String title,
+    String count,
+    IconData icon,
+    Color iconColor,
+    AppTheme appTheme,
+  ) {
+    return ModernCard(
+      variant: ModernCardVariant.primary,
+      onTap: () {
+        // Handle category tap
+      },
+      child: Column(
         children: [
           Container(
-            width: 40,
-            height: 40,
+            padding: EdgeInsets.all(appTheme.spacing.md),
             decoration: BoxDecoration(
-              color: appTheme.colors.primaryRed.withValues(alpha: 0.1),
+              color: iconColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(appTheme.radius.md),
             ),
             child: Icon(
               icon,
-              color: appTheme.colors.primaryRed,
-              size: 20,
+              color: iconColor,
+              size: 32,
+            ),
+          ),
+          SizedBox(height: appTheme.spacing.sm),
+          Text(
+            title,
+            style: appTheme.typography.titleSmall.copyWith(
+              color: appTheme.colors.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: appTheme.spacing.xs),
+          Text(
+            count,
+            style: appTheme.typography.caption.copyWith(
+              color: appTheme.colors.textMuted,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActivityCard(
+    String title,
+    String description,
+    String timeAgo,
+    IconData icon,
+    Color iconColor,
+    AppTheme appTheme,
+  ) {
+    return ModernCard(
+      variant: ModernCardVariant.primary,
+      onTap: () {
+        // Handle activity card tap
+      },
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(appTheme.spacing.sm),
+            decoration: BoxDecoration(
+              color: iconColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(appTheme.radius.md),
+            ),
+            child: Icon(
+              icon,
+              color: iconColor,
+              size: 24,
             ),
           ),
           SizedBox(width: appTheme.spacing.md),
@@ -513,51 +442,93 @@ class _ProfilePageState extends State<ProfilePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  text,
-                  style: appTheme.typography.bodyH8.copyWith(
-                    color: appTheme.colors.pureWhite,
+                  title,
+                  style: appTheme.typography.titleSmall.copyWith(
+                    color: appTheme.colors.textPrimary,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 SizedBox(height: appTheme.spacing.xs),
                 Text(
-                  time,
-                  style: appTheme.typography.bodyH8.copyWith(
-                    color: appTheme.colors.lightGray,
-                    fontSize: 12,
+                  description,
+                  style: appTheme.typography.bodySmall.copyWith(
+                    color: appTheme.colors.textMuted,
+                  ),
+                ),
+                SizedBox(height: appTheme.spacing.xs),
+                Text(
+                  timeAgo,
+                  style: appTheme.typography.caption.copyWith(
+                    color: appTheme.colors.textMuted,
                   ),
                 ),
               ],
             ),
           ),
+          Icon(
+            Icons.chevron_right,
+            color: appTheme.colors.textSecondary,
+            size: 20,
+          ),
         ],
       ),
     );
   }
-}
 
-// Custom Painter for Music Notes Background
-class ProfileMusicNotePainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.05)
-      ..style = PaintingStyle.fill;
-
-    // Draw some simple music note shapes
-    for (int i = 0; i < 5; i++) {
-      final x = (size.width / 5) * i + 20;
-      final y = (size.height / 3) * (i % 3) + 50;
-
-      // Draw note head
-      canvas.drawCircle(Offset(x, y), 8, paint);
-      // Draw stem
-      canvas.drawRect(
-        Rect.fromLTWH(x + 8, y - 20, 2, 20),
-        paint,
-      );
-    }
+  Widget _buildSettingsOption(
+    String title,
+    String subtitle,
+    IconData icon,
+    AppTheme appTheme,
+  ) {
+    return ModernCard(
+      variant: ModernCardVariant.secondary,
+      onTap: () {
+        // Handle settings option tap
+      },
+      child: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.all(appTheme.spacing.sm),
+            decoration: BoxDecoration(
+              color: appTheme.colors.surfaceLight,
+              borderRadius: BorderRadius.circular(appTheme.radius.md),
+            ),
+            child: Icon(
+              icon,
+              color: appTheme.colors.textSecondary,
+              size: 24,
+            ),
+          ),
+          SizedBox(width: appTheme.spacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: appTheme.typography.titleSmall.copyWith(
+                    color: appTheme.colors.textPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: appTheme.spacing.xs),
+                Text(
+                  subtitle,
+                  style: appTheme.typography.bodySmall.copyWith(
+                    color: appTheme.colors.textMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.chevron_right,
+            color: appTheme.colors.textSecondary,
+            size: 20,
+          ),
+        ],
+      ),
+    );
   }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

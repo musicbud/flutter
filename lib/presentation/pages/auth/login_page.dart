@@ -163,7 +163,7 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     Expanded(
                       child: Divider(
-                        color: appTheme.colors.lightGray.withOpacity(0.3),
+                        color: appTheme.colors.lightGray.withValues(alpha: 0.3),
                         thickness: 1,
                       ),
                     ),
@@ -178,7 +178,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     Expanded(
                       child: Divider(
-                        color: appTheme.colors.lightGray.withOpacity(0.3),
+                        color: appTheme.colors.lightGray.withValues(alpha: 0.3),
                         thickness: 1,
                       ),
                     ),

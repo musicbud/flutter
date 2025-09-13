@@ -94,295 +94,296 @@ class _ChatPageState extends State<ChatPage> {
       },
       child: BlocBuilder<ChatManagementBloc, ChatManagementState>(
         builder: (context, state) {
-            return Scaffold(
-              backgroundColor: appTheme.colors.darkTone,
-              appBar: AppBar(
-                backgroundColor: appTheme.colors.darkTone,
-                elevation: 0,
-                leading: IconButton(
-                  icon: Icon(Icons.arrow_back_ios, color: appTheme.colors.pureWhite),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                title: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 18,
-                      backgroundColor: appTheme.colors.primaryRed,
-                      backgroundImage: NetworkImage('https://via.placeholder.com/100'),
-                    ),
-                    SizedBox(width: appTheme.spacing.sm),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Sarah Johnson',
-                            style: appTheme.typography.titleMedium.copyWith(
-                              color: appTheme.colors.pureWhite,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            'Online',
-                            style: appTheme.typography.bodySmall.copyWith(
-                              color: appTheme.colors.successGreen,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                actions: [
-                  IconButton(
-                    icon: Icon(Icons.video_call, color: appTheme.colors.pureWhite),
-                    onPressed: () {
-                      // Handle video call
-                    },
+          return Container(
+            decoration: BoxDecoration(
+              gradient: appTheme.gradients.backgroundGradient,
+            ),
+            child: Column(
+              children: [
+                // Enhanced Header
+                Container(
+                  padding: EdgeInsets.all(appTheme.spacing.lg),
+                  decoration: BoxDecoration(
+                    color: appTheme.colors.surfaceDark,
+                    boxShadow: appTheme.shadows.shadowCard,
                   ),
-                  IconButton(
-                    icon: Icon(Icons.call, color: appTheme.colors.pureWhite),
-                    onPressed: () {
-                      // Handle voice call
-                    },
-                  ),
-                  PopupMenuButton<String>(
-                    icon: Icon(Icons.more_vert, color: appTheme.colors.pureWhite),
-                    onSelected: (value) {
-                      switch (value) {
-                        case 'profile':
-                          // Navigate to profile
-                          break;
-                        case 'block':
-                          // Block user
-                          break;
-                        case 'report':
-                          // Report user
-                          break;
-                      }
-                    },
-                    itemBuilder: (context) => [
-                      PopupMenuItem(
-                        value: 'profile',
-                        child: Row(
-                          children: [
-                            Icon(Icons.person, size: 20),
-                            SizedBox(width: appTheme.spacing.sm),
-                            Text('View Profile'),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 'block',
-                        child: Row(
-                          children: [
-                            Icon(Icons.block, size: 20),
-                            SizedBox(width: appTheme.spacing.sm),
-                            Text('Block User'),
-                          ],
-                        ),
-                      ),
-                      PopupMenuItem(
-                        value: 'report',
-                        child: Row(
-                          children: [
-                            Icon(Icons.report, size: 20),
-                            SizedBox(width: appTheme.spacing.sm),
-                            Text('Report'),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              body: Column(
-                children: [
-                  // Chat Messages
-                  Expanded(
-                    child: _messages.isEmpty
-                        ? _buildEmptyChatState(appTheme)
-                        : ListView.builder(
-                            controller: _scrollController,
-                            padding: EdgeInsets.all(appTheme.spacing.md),
-                            itemCount: _messages.length,
-                            itemBuilder: (context, index) {
-                              final message = _messages[index];
-                              return _buildMessageBubble(message, appTheme);
-                            },
-                          ),
-                  ),
-
-                  // Typing Indicator
-                  if (_isTyping)
-                    Container(
-                      padding: EdgeInsets.all(appTheme.spacing.md),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 16,
-                            backgroundColor: appTheme.colors.primaryRed,
-                            backgroundImage: NetworkImage('https://via.placeholder.com/100'),
-                          ),
-                          SizedBox(width: appTheme.spacing.sm),
-                          Container(
-                            padding: EdgeInsets.all(appTheme.spacing.sm),
-                            decoration: BoxDecoration(
-                              color: appTheme.colors.neutralGray.withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(appTheme.radius.lg),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                _buildTypingDot(appTheme, 0),
-                                _buildTypingDot(appTheme, 1),
-                                _buildTypingDot(appTheme, 2),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                  // Message Input
-                  Container(
-                    padding: EdgeInsets.all(appTheme.spacing.md),
-                    decoration: BoxDecoration(
-                      color: appTheme.colors.darkTone,
-                      border: Border(
-                        top: BorderSide(
-                          color: appTheme.colors.lightGray.withOpacity(0.2),
-                        ),
-                      ),
-                    ),
+                  child: SafeArea(
                     child: Row(
                       children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.attach_file,
-                            color: appTheme.colors.lightGray,
+                        // Back Button
+                        Container(
+                          padding: EdgeInsets.all(appTheme.spacing.sm),
+                          decoration: BoxDecoration(
+                            color: appTheme.colors.surfaceLight,
+                            borderRadius: BorderRadius.circular(appTheme.radius.md),
                           ),
-                          onPressed: () {
-                            // Handle file attachment
-                          },
+                          child: Icon(
+                            Icons.arrow_back_ios,
+                            color: appTheme.colors.textPrimary,
+                            size: 20,
+                          ),
                         ),
+
+                        SizedBox(width: appTheme.spacing.md),
+
+                        // Chat Partner Info
                         Expanded(
-                          child: AppInputField(
-                            controller: _messageController,
-                            hintText: 'Type a message...',
-                            variant: AppInputVariant.chat,
-                            onSubmitted: (_) => _sendMessage(),
+                          child: Row(
+                            children: [
+                              // Avatar
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(appTheme.radius.circular),
+                                  border: Border.all(
+                                    color: appTheme.colors.primaryRed.withValues(alpha: 0.3),
+                                    width: 2,
+                                  ),
+                                ),
+                                child: CircleAvatar(
+                                  radius: 24,
+                                  backgroundColor: appTheme.colors.primaryRed,
+                                  backgroundImage: NetworkImage(
+                                    'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
+                                  ),
+                                ),
+                              ),
+
+                              SizedBox(width: appTheme.spacing.md),
+
+                              // Name and Status
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Sarah Johnson',
+                                      style: appTheme.typography.titleMedium.copyWith(
+                                        color: appTheme.colors.textPrimary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          width: 8,
+                                          height: 8,
+                                          decoration: BoxDecoration(
+                                            color: appTheme.colors.accentGreen,
+                                            borderRadius: BorderRadius.circular(4),
+                                          ),
+                                        ),
+                                        SizedBox(width: appTheme.spacing.xs),
+                                        Text(
+                                          'Online',
+                                          style: appTheme.typography.caption.copyWith(
+                                            color: appTheme.colors.textMuted,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        SizedBox(width: appTheme.spacing.sm),
-                        IconButton(
-                          icon: Icon(
-                            Icons.send,
-                            color: appTheme.colors.primaryRed,
-                          ),
-                          onPressed: _sendMessage,
+
+                        // Action Buttons
+                        Row(
+                          children: [
+                            Container(
+                              padding: EdgeInsets.all(appTheme.spacing.sm),
+                              decoration: BoxDecoration(
+                                color: appTheme.colors.surfaceLight,
+                                borderRadius: BorderRadius.circular(appTheme.radius.md),
+                              ),
+                              child: Icon(
+                                Icons.video_call,
+                                color: appTheme.colors.textSecondary,
+                                size: 20,
+                              ),
+                            ),
+                            SizedBox(width: appTheme.spacing.sm),
+                            Container(
+                              padding: EdgeInsets.all(appTheme.spacing.sm),
+                              decoration: BoxDecoration(
+                                color: appTheme.colors.surfaceLight,
+                                borderRadius: BorderRadius.circular(appTheme.radius.md),
+                              ),
+                              child: Icon(
+                                Icons.call,
+                                color: appTheme.colors.textSecondary,
+                                size: 20,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-            );
-          },
-        ),
-      );
-  }
+                ),
 
-  Widget _buildEmptyChatState(AppTheme appTheme) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.chat_bubble_outline,
-            size: 64,
-            color: appTheme.colors.lightGray,
-          ),
-          SizedBox(height: appTheme.spacing.md),
-          Text(
-            'Start a conversation',
-            style: appTheme.typography.titleMedium.copyWith(
-              color: appTheme.colors.pureWhite,
+                // Messages Area
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+                    child: state is ChatHomeLoaded
+                        ? _buildMessagesList(_extractChatsFromState(state.chatHome), appTheme)
+                        : state is ChatManagementLoading
+                            ? _buildLoadingState(appTheme)
+                            : _buildEmptyState(appTheme),
+                  ),
+                ),
+
+                // Message Input Area
+                Container(
+                  padding: EdgeInsets.all(appTheme.spacing.lg),
+                  decoration: BoxDecoration(
+                    color: appTheme.colors.surfaceDark,
+                    boxShadow: appTheme.shadows.shadowCard,
+                  ),
+                  child: SafeArea(
+                    child: Row(
+                      children: [
+                        // Attachment Button
+                        Container(
+                          padding: EdgeInsets.all(appTheme.spacing.sm),
+                          decoration: BoxDecoration(
+                            color: appTheme.colors.surfaceLight,
+                            borderRadius: BorderRadius.circular(appTheme.radius.md),
+                          ),
+                          child: Icon(
+                            Icons.attach_file,
+                            color: appTheme.colors.textSecondary,
+                            size: 20,
+                          ),
+                        ),
+
+                        SizedBox(width: appTheme.spacing.md),
+
+                        // Message Input
+                        Expanded(
+                          child: ModernInputField(
+                            hintText: 'Type a message...',
+                            controller: _messageController,
+                            onChanged: (value) {
+                              // Handle input changes
+                            },
+                            
+                            size: ModernInputFieldSize.medium,
+                            customBackgroundColor: appTheme.colors.surfaceLight,
+                          ),
+                        ),
+
+                        SizedBox(width: appTheme.spacing.md),
+
+                        // Send Button
+                        Container(
+                          padding: EdgeInsets.all(appTheme.spacing.sm),
+                          decoration: BoxDecoration(
+                            color: appTheme.colors.primaryRed,
+                            borderRadius: BorderRadius.circular(appTheme.radius.md),
+                            boxShadow: appTheme.shadows.shadowMedium,
+                          ),
+                          child: Icon(
+                            Icons.send,
+                            color: appTheme.colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-          SizedBox(height: appTheme.spacing.sm),
-          Text(
-            'Send a message to begin chatting',
-            style: appTheme.typography.bodyMedium.copyWith(
-              color: appTheme.colors.lightGray,
-            ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildMessageBubble(ChatMessage message, AppTheme appTheme) {
+  Widget _buildMessagesList(List<dynamic> chats, AppTheme appTheme) {
+    return ListView.builder(
+      controller: _scrollController,
+      padding: EdgeInsets.symmetric(vertical: appTheme.spacing.md),
+      itemCount: chats.length + _messages.length,
+      itemBuilder: (context, index) {
+        if (index < chats.length) {
+          final chat = chats[index];
+          return _buildChatMessage(
+            chat['message'] ?? 'Hello! How are you?',
+            chat['is_me'] ?? false,
+            chat['timestamp'] ?? DateTime.now(),
+            appTheme,
+          );
+        } else {
+          final messageIndex = index - chats.length;
+          final message = _messages[messageIndex];
+          return _buildChatMessage(
+            message.text,
+            message.isMe,
+            message.timestamp,
+            appTheme,
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildChatMessage(String text, bool isMe, DateTime timestamp, AppTheme appTheme) {
     return Container(
       margin: EdgeInsets.only(bottom: appTheme.spacing.md),
       child: Row(
-        mainAxisAlignment: message.isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if (!message.isMe) ...[
-            CircleAvatar(
-              radius: 18,
-              backgroundColor: appTheme.colors.primaryRed,
-              backgroundImage: NetworkImage('https://via.placeholder.com/100'),
+          if (!isMe) ...[
+            // Avatar for other person
+            Container(
+              margin: EdgeInsets.only(right: appTheme.spacing.sm),
+              child: CircleAvatar(
+                radius: 16,
+                backgroundColor: appTheme.colors.primaryRed,
+                backgroundImage: NetworkImage(
+                  'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
+                ),
+              ),
             ),
-            SizedBox(width: appTheme.spacing.sm),
           ],
 
+          // Message Bubble
           Flexible(
             child: Container(
-              constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.7,
+              padding: EdgeInsets.symmetric(
+                horizontal: appTheme.spacing.md,
+                vertical: appTheme.spacing.sm,
               ),
-              padding: EdgeInsets.all(appTheme.spacing.md),
               decoration: BoxDecoration(
-                color: message.isMe
+                color: isMe
                     ? appTheme.colors.primaryRed
-                    : appTheme.colors.darkTone,
+                    : appTheme.colors.surfaceLight,
                 borderRadius: BorderRadius.circular(appTheme.radius.lg),
-                border: message.isMe ? null : Border.all(
-                  color: appTheme.colors.lightGray.withOpacity(0.2),
-                ),
+                boxShadow: appTheme.shadows.shadowSmall,
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (!message.isMe && message.senderName != null)
-                    Text(
-                      message.senderName!,
-                      style: appTheme.typography.bodyH8.copyWith(
-                        color: appTheme.colors.primaryRed,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
-                      ),
-                    ),
-                  if (!message.isMe && message.senderName != null)
-                    SizedBox(height: appTheme.spacing.xs),
                   Text(
-                    message.text,
-                    style: appTheme.typography.bodyH8.copyWith(
-                      color: message.isMe
-                          ? appTheme.colors.pureWhite
-                          : appTheme.colors.lightGray,
+                    text,
+                    style: appTheme.typography.bodyMedium.copyWith(
+                      color: isMe
+                          ? appTheme.colors.white
+                          : appTheme.colors.textPrimary,
                     ),
                   ),
                   SizedBox(height: appTheme.spacing.xs),
                   Text(
-                    _formatTime(message.timestamp),
-                    style: appTheme.typography.bodyH8.copyWith(
-                      color: message.isMe
-                          ? appTheme.colors.pureWhite.withOpacity(0.7)
-                          : appTheme.colors.lightGray.withOpacity(0.7),
+                    _formatTime(timestamp),
+                    style: appTheme.typography.caption.copyWith(
+                      color: isMe
+                          ? appTheme.colors.white.withValues(alpha: 0.7)
+                          : appTheme.colors.textMuted,
                       fontSize: 10,
                     ),
                   ),
@@ -390,30 +391,86 @@ class _ChatPageState extends State<ChatPage> {
               ),
             ),
           ),
+
+          if (isMe) ...[
+            // Avatar for current user
+            Container(
+              margin: EdgeInsets.only(left: appTheme.spacing.sm),
+              child: CircleAvatar(
+                radius: 16,
+                backgroundColor: appTheme.colors.accentBlue,
+                backgroundImage: NetworkImage(
+                  'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildTypingDot(AppTheme appTheme, int index) {
-    return AnimatedContainer(
-      duration: Duration(milliseconds: 600),
-      width: 8,
-      height: 8,
-      decoration: BoxDecoration(
-        color: appTheme.colors.primaryRed,
-        borderRadius: BorderRadius.circular(4),
+  Widget _buildLoadingState(AppTheme appTheme) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.all(appTheme.spacing.lg),
+            decoration: BoxDecoration(
+              color: appTheme.colors.surfaceDark,
+              borderRadius: BorderRadius.circular(appTheme.radius.circular),
+            ),
+            child: CircularProgressIndicator(
+              color: appTheme.colors.primaryRed,
+              strokeWidth: 3,
+            ),
+          ),
+          SizedBox(height: appTheme.spacing.md),
+          Text(
+            'Loading chat...',
+            style: appTheme.typography.bodyMedium.copyWith(
+              color: appTheme.colors.textSecondary,
+            ),
+          ),
+        ],
       ),
-      child: TweenAnimationBuilder<double>(
-        tween: Tween(begin: 0.0, end: 1.0),
-        duration: Duration(milliseconds: 600),
-        builder: (context, value, child) {
-          return Transform.scale(
-            scale: 0.5 + (0.5 * value),
-            child: child,
-          );
-        },
-        child: Container(),
+    );
+  }
+
+  Widget _buildEmptyState(AppTheme appTheme) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.all(appTheme.spacing.xl),
+            decoration: BoxDecoration(
+              color: appTheme.colors.surfaceDark,
+              borderRadius: BorderRadius.circular(appTheme.radius.circular),
+            ),
+            child: Icon(
+              Icons.chat_bubble_outline,
+              size: 64,
+              color: appTheme.colors.textSecondary,
+            ),
+          ),
+          SizedBox(height: appTheme.spacing.md),
+          Text(
+            'No messages yet',
+            style: appTheme.typography.titleMedium.copyWith(
+              color: appTheme.colors.textPrimary,
+            ),
+          ),
+          SizedBox(height: appTheme.spacing.sm),
+          Text(
+            'Start a conversation by typing a message',
+            style: appTheme.typography.bodyMedium.copyWith(
+              color: appTheme.colors.textMuted,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
@@ -423,7 +480,7 @@ class _ChatPageState extends State<ChatPage> {
     final difference = now.difference(timestamp);
 
     if (difference.inMinutes < 1) {
-      return 'now';
+      return 'Now';
     } else if (difference.inMinutes < 60) {
       return '${difference.inMinutes}m ago';
     } else if (difference.inHours < 24) {
@@ -432,18 +489,29 @@ class _ChatPageState extends State<ChatPage> {
       return '${timestamp.day}/${timestamp.month}';
     }
   }
+
+  List<dynamic> _extractChatsFromState(Map<String, dynamic> chatHome) {
+    // Extract chats from the chatHome state
+    // This is a fallback in case the structure is different
+    if (chatHome.containsKey('chats')) {
+      return chatHome['chats'] as List<dynamic>;
+    } else if (chatHome.containsKey('messages')) {
+      return chatHome['messages'] as List<dynamic>;
+    } else {
+      // Return empty list if no chats found
+      return [];
+    }
+  }
 }
 
 class ChatMessage {
   final String text;
   final bool isMe;
   final DateTime timestamp;
-  final String? senderName;
 
   ChatMessage({
     required this.text,
     required this.isMe,
     required this.timestamp,
-    this.senderName,
   });
 }

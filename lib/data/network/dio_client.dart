@@ -85,7 +85,7 @@ class DioClient {
       // Retry once for 500 server errors
       if (e.response?.statusCode == 500) {
         try {
-          await Future.delayed(Duration(seconds: 2)); // Wait 2 seconds before retry
+          await Future.delayed(const Duration(seconds: 2)); // Wait 2 seconds before retry
           return await _dio.get(path, queryParameters: queryParameters);
         } catch (retryError) {
           if (retryError is DioException) {
@@ -107,7 +107,7 @@ class DioClient {
       // Retry once for 500 server errors
       if (e.response?.statusCode == 500) {
         try {
-          await Future.delayed(Duration(seconds: 2)); // Wait 2 seconds before retry
+          await Future.delayed(const Duration(seconds: 2)); // Wait 2 seconds before retry
           return await _dio.post(path, data: data);
         } catch (retryError) {
           if (retryError is DioException) {
@@ -129,7 +129,7 @@ class DioClient {
       // Retry once for 500 server errors
       if (e.response?.statusCode == 500) {
         try {
-          await Future.delayed(Duration(seconds: 2)); // Wait 2 seconds before retry
+          await Future.delayed(const Duration(seconds: 2)); // Wait 2 seconds before retry
           return await _dio.put(path, data: data);
         } catch (retryError) {
           if (retryError is DioException) {
@@ -150,7 +150,7 @@ class DioClient {
       // Retry once for 500 server errors
       if (e.response?.statusCode == 500) {
         try {
-          await Future.delayed(Duration(seconds: 2)); // Wait 2 seconds before retry
+          await Future.delayed(const Duration(seconds: 2)); // Wait 2 seconds before retry
           return await _dio.delete(path, queryParameters: queryParameters);
         } catch (retryError) {
           if (retryError is DioException) {
@@ -166,28 +166,28 @@ class DioClient {
 
   /// Handle Dio exceptions with enhanced error information
   void _handleDioException(DioException e, String method, String path) {
-    final fullUrl = '${_dio.options.baseUrl}$path';
+    // final fullUrl = '${_dio.options.baseUrl}$path';
 
     if (HttpUtils.isNotFoundError(e)) {
-      print('🚨 404 Error detected for $method $fullUrl');
-      print('💡 This endpoint may not exist in the backend API');
-      print('📚 Check the backend repository for correct endpoints: https://github.com/musicbud/backend');
-      print('🔧 Consider updating the API configuration if endpoints have changed');
+      // 🚨 404 Error detected for $method $fullUrl
+      // 💡 This endpoint may not exist in the backend API
+      // 📚 Check the backend repository for correct endpoints: https://github.com/musicbud/backend
+      // 🔧 Consider updating the API configuration if endpoints have changed
     }
 
     if (HttpUtils.isAuthenticationError(e)) {
-      print('🔐 Authentication error for $method $fullUrl');
-      print('💡 Check if the user is properly logged in and token is valid');
+      // 🔐 Authentication error for $method $fullUrl
+      // 💡 Check if the user is properly logged in and token is valid
     }
 
     if (HttpUtils.isServerError(e)) {
-      print('🖥️ Server error for $method $fullUrl');
-      print('💡 The backend server may be experiencing issues');
+      // 🖥️ Server error for $method $fullUrl
+      // 💡 The backend server may be experiencing issues
     }
 
     if (HttpUtils.isNetworkError(e)) {
-      print('🌐 Network error for $method $fullUrl');
-      print('💡 Check internet connection and server availability');
+      // 🌐 Network error for $method $fullUrl
+      // 💡 Check internet connection and server availability
     }
   }
 

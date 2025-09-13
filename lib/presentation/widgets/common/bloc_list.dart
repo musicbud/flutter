@@ -261,7 +261,7 @@ class _BlocListState<TBloc extends Bloc<TEvent, TState>, TState, TEvent, TItem>
 }
 
 /// Simplified list component for basic use cases
-class SimpleBlocList<TBloc extends Bloc<TEvent, TState>, TState, TItem> extends StatelessWidget {
+class SimpleBlocList<TBloc extends Bloc<dynamic, TState>, TState, TItem> extends StatelessWidget {
   final List<TItem> Function(TState state) getItems;
   final bool Function(TState state) isLoading;
   final bool Function(TState state) isError;

@@ -61,7 +61,7 @@ class AppCard extends StatelessWidget {
           color: appTheme.colors.darkTone,
           borderRadius: BorderRadius.circular(appTheme.radius.lg),
           border: Border.all(
-            color: appTheme.colors.lightGray.withValues(alpha: 0.2),
+            color: appTheme.colors.lightGray.withValues(alpha:  0.2),
           ),
         );
       case AppCardVariant.secondary:
@@ -69,7 +69,7 @@ class AppCard extends StatelessWidget {
           color: appTheme.colors.darkTone,
           borderRadius: BorderRadius.circular(appTheme.radius.lg),
           border: Border.all(
-            color: appTheme.colors.primaryRed.withValues(alpha: 0.3),
+            color: appTheme.colors.primaryRed.withValues(alpha:  0.3),
           ),
         );
       case AppCardVariant.outline:
@@ -77,7 +77,7 @@ class AppCard extends StatelessWidget {
           color: appTheme.colors.darkTone,
           borderRadius: BorderRadius.circular(appTheme.radius.lg),
           border: Border.all(
-            color: appTheme.colors.lightGray.withValues(alpha: 0.3),
+            color: appTheme.colors.lightGray.withValues(alpha:  0.3),
           ),
         );
       case AppCardVariant.elevated:
@@ -86,7 +86,7 @@ class AppCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(appTheme.radius.lg),
           boxShadow: [
             BoxShadow(
-              color: appTheme.colors.darkTone.withValues(alpha: 0.3),
+              color: appTheme.colors.darkTone.withValues(alpha:  0.3),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -97,7 +97,7 @@ class AppCard extends StatelessWidget {
           color: appTheme.colors.darkTone,
           borderRadius: BorderRadius.circular(appTheme.radius.lg),
           border: Border.all(
-            color: appTheme.colors.lightGray.withValues(alpha: 0.2),
+            color: appTheme.colors.lightGray.withValues(alpha:  0.2),
           ),
         );
       case AppCardVariant.profile:
@@ -105,7 +105,7 @@ class AppCard extends StatelessWidget {
           color: appTheme.colors.darkTone,
           borderRadius: BorderRadius.circular(appTheme.radius.lg),
           border: Border.all(
-            color: appTheme.colors.lightGray.withValues(alpha: 0.2),
+            color: appTheme.colors.lightGray.withValues(alpha:  0.2),
           ),
         );
       case AppCardVariant.event:
@@ -113,7 +113,7 @@ class AppCard extends StatelessWidget {
           color: appTheme.colors.darkTone,
           borderRadius: BorderRadius.circular(appTheme.radius.lg),
           border: Border.all(
-            color: appTheme.colors.lightGray.withValues(alpha: 0.2),
+            color: appTheme.colors.lightGray.withValues(alpha:  0.2),
           ),
         );
       case AppCardVariant.gradient:

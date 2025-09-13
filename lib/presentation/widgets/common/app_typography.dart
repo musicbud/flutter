@@ -469,7 +469,7 @@ class AppTypography extends StatelessWidget {
             color: appTheme.colors.surface,
             borderRadius: BorderRadius.circular(appTheme.radius.md),
             border: Border.all(
-              color: appTheme.colors.lightGray.withValues(alpha: 0.2),
+              color: appTheme.colors.lightGray.withValues(alpha:  0.2),
             ),
           ),
           child: Column(
@@ -560,7 +560,7 @@ class AppTypography extends StatelessWidget {
               color: color,
               borderRadius: BorderRadius.circular(appTheme.radius.sm),
               border: Border.all(
-                color: appTheme.colors.lightGray.withValues(alpha: 0.3),
+                color: appTheme.colors.lightGray.withValues(alpha:  0.3),
               ),
             ),
           ),

@@ -93,7 +93,9 @@ class ChatMessageSentSuccess extends ChatState {
   List<Object> get props => [message];
 }
 
-class ChatMessageDeletedSuccess extends ChatState {}
+class ChatMessageDeletedSuccess extends ChatState {
+  const ChatMessageDeletedSuccess();
+}
 
 class ChatChannelCreatedSuccess extends ChatState {
   final Channel channel;
@@ -135,7 +137,9 @@ class ChatChannelRolesLoaded extends ChatState {
   List<Object> get props => [roles];
 }
 
-class ChatAdminActionSuccess extends ChatState {}
+class ChatAdminActionSuccess extends ChatState {
+  const ChatAdminActionSuccess();
+}
 
 class ChatChannelInvitationsLoaded extends ChatState {
   final List<ChannelInvitation> invitations;

@@ -1,12 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:musicbud_flutter/data/network/dio_client.dart';
-import 'package:musicbud_flutter/data/providers/token_provider.dart';
 
 class HttpUtils {
-  static const String _tokenKey = 'auth_token';
-  static const String _refreshTokenKey = 'refresh_token';
-  static const String _tokenExpiryKey = 'token_expiry';
 
   /// Handle Dio exceptions and provide meaningful error messages
   static String handleDioException(DioException e) {

@@ -274,7 +274,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<void> addChannelMember(String channelId, String username) async {
     try {
-      final response = await _dioClient.post(ApiConfig.chatAddChannelMember, data: {
+      await _dioClient.post(ApiConfig.chatAddChannelMember, data: {
         'channelId': channelId,
         'username': username,
       });
@@ -319,7 +319,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   @override
   Future<void> deleteMessage(String channelId, String messageId) async {
     try {
-      final response = await _dioClient.post(ApiConfig.chatDeleteMessage, data: {
+      await _dioClient.post(ApiConfig.chatDeleteMessage, data: {
         'messageId': messageId,
       });
     } on DioException catch (e) {
@@ -445,6 +445,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   // Additional methods for compatibility
+  @override
   Future<void> sendMessage({
     required String channelId,
     required String message,
@@ -453,6 +454,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     await sendChannelMessage(channelId, message);
   }
 
+  @override
   Future<List<dynamic>> getMessages({
     required String channelId,
     int? limit,
@@ -463,6 +465,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   // Admin role methods
+  @override
   Future<bool> isChannelAdmin(String channelId) async {
     try {
       final roles = await checkChannelRoles(channelId);
@@ -472,33 +475,40 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     }
   }
 
+  @override
   Future<void> addModerator(String channelId, String userId) async {
     await performAdminAction(channelId, 'add_moderator', userId);
   }
 
+  @override
   Future<void> removeModerator(String channelId, String userId) async {
     // This functionality is not directly supported by the API endpoints
     throw ServerException(message: 'Remove moderator not supported by API');
   }
 
+  @override
   Future<void> makeAdmin(String channelId, String userId) async {
     // This functionality is not directly supported by the API endpoints
     throw ServerException(message: 'Make admin not supported by API');
   }
 
+  @override
   Future<void> removeAdmin(String channelId, String userId) async {
     // This functionality is not directly supported by the API endpoints
     throw ServerException(message: 'Remove admin not supported by API');
   }
 
+  @override
   Future<void> kickUser(String channelId, String userId) async {
     await performAdminAction(channelId, 'kick_user', userId);
   }
 
+  @override
   Future<void> blockUser(String channelId, String userId) async {
     await performAdminAction(channelId, 'block_user', userId);
   }
 
+  @override
   Future<void> unblockUser(String channelId, String userId) async {
     // This functionality is not directly supported by the API endpoints
     throw ServerException(message: 'Unblock user not supported by API');

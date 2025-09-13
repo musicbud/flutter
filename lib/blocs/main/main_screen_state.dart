@@ -7,9 +7,13 @@ abstract class MainScreenState extends Equatable {
   List<Object?> get props => [];
 }
 
-class MainScreenInitial extends MainScreenState {}
+class MainScreenInitial extends MainScreenState {
+  const MainScreenInitial();
+}
 
-class MainScreenLoading extends MainScreenState {}
+class MainScreenLoading extends MainScreenState {
+  const MainScreenLoading();
+}
 
 class MainScreenAuthenticated extends MainScreenState {
   final String username;
@@ -24,7 +28,9 @@ class MainScreenAuthenticated extends MainScreenState {
   List<Object> get props => [username, userProfile];
 }
 
-class MainScreenUnauthenticated extends MainScreenState {}
+class MainScreenUnauthenticated extends MainScreenState {
+  const MainScreenUnauthenticated();
+}
 
 class MainScreenFailure extends MainScreenState {
   final String error;

@@ -9,7 +9,7 @@ import '../loading_indicator.dart';
 
 /// A dynamic form component that integrates with BLoC pattern
 /// Combines the functionality of legacy forms with modern styling
-class BlocForm<TBloc extends BlocBase<TState>, TState, TEvent> extends StatefulWidget {
+class BlocForm<TBloc extends Bloc<TEvent, TState>, TState, TEvent> extends StatefulWidget {
   final String title;
   final List<BlocFormField> fields;
   final String submitButtonText;
@@ -51,7 +51,7 @@ class BlocForm<TBloc extends BlocBase<TState>, TState, TEvent> extends StatefulW
   State<BlocForm<TBloc, TState, TEvent>> createState() => _BlocFormState<TBloc, TState, TEvent>();
 }
 
-class _BlocFormState<TBloc extends BlocBase<TState>, TState, TEvent> extends State<BlocForm<TBloc, TState, TEvent>> with PageMixin {
+class _BlocFormState<TBloc extends Bloc<TEvent, TState>, TState, TEvent> extends State<BlocForm<TBloc, TState, TEvent>> with PageMixin {
   final _formKey = GlobalKey<FormState>();
   late Map<String, TextEditingController> _controllers;
   late Map<String, FocusNode> _focusNodes;

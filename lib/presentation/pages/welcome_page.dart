@@ -75,16 +75,12 @@ class _WelcomePageState extends State<WelcomePage> {
               alignment: Alignment.topRight,
               child: Padding(
                 padding: EdgeInsets.all(appTheme.spacing.lg),
-                child: TextButton(
+                child: ModernTextButton(
+                  text: 'Skip',
                   onPressed: () {
                     // Navigate to login/signup
                   },
-                  child: Text(
-                    'Skip',
-                    style: appTheme.typography.bodyH8.copyWith(
-                      color: appTheme.colors.lightGray,
-                    ),
-                  ),
+                  size: ModernButtonSize.medium,
                 ),
               ),
             ),
@@ -117,7 +113,7 @@ class _WelcomePageState extends State<WelcomePage> {
                               end: Alignment.bottomRight,
                               colors: [
                                 data['color'],
-                                data['color'].withOpacity(0.7),
+                                data['color'].withValues(alpha: 0.7),
                               ],
                             ),
                             borderRadius: BorderRadius.circular(appTheme.radius.xl),
@@ -184,7 +180,7 @@ class _WelcomePageState extends State<WelcomePage> {
                     decoration: BoxDecoration(
                       color: _currentPage == index
                           ? appTheme.colors.primaryRed
-                          : appTheme.colors.lightGray.withOpacity(0.3),
+                          : appTheme.colors.lightGray.withValues(alpha: 0.3),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),

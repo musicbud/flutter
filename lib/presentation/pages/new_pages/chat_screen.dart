@@ -311,7 +311,7 @@ class _ChatListScreenState extends State<ChatListScreen> with PageMixin, TickerP
         color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppConstants.borderColor.withOpacity(0.2),
+          color: AppConstants.borderColor.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -328,7 +328,7 @@ class _ChatListScreenState extends State<ChatListScreen> with PageMixin, TickerP
                 height: 50,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppConstants.primaryColor.withOpacity(0.2),
+                  color: AppConstants.primaryColor.withValues(alpha: 0.2),
                   image: profileImage != null
                       ? DecorationImage(
                           image: NetworkImage(profileImage),
@@ -421,7 +421,7 @@ class _ChatListScreenState extends State<ChatListScreen> with PageMixin, TickerP
         color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppConstants.borderColor.withOpacity(0.2),
+          color: AppConstants.borderColor.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -438,7 +438,7 @@ class _ChatListScreenState extends State<ChatListScreen> with PageMixin, TickerP
                 height: 50,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppConstants.primaryColor.withOpacity(0.2),
+                  color: AppConstants.primaryColor.withValues(alpha: 0.2),
                 ),
                 child: Icon(
                   Icons.group,
@@ -480,7 +480,7 @@ class _ChatListScreenState extends State<ChatListScreen> with PageMixin, TickerP
                         'Last activity: $lastActivity',
                         style: AppConstants.captionStyle.copyWith(
                           fontSize: 12,
-                          color: AppConstants.textSecondaryColor.withOpacity(0.7),
+                          color: AppConstants.textSecondaryColor.withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -507,7 +507,7 @@ class _ChatListScreenState extends State<ChatListScreen> with PageMixin, TickerP
         color: AppConstants.surfaceColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppConstants.borderColor.withOpacity(0.2),
+          color: AppConstants.borderColor.withValues(alpha: 0.2),
           width: 1,
         ),
       ),
@@ -521,7 +521,7 @@ class _ChatListScreenState extends State<ChatListScreen> with PageMixin, TickerP
               height: 50,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppConstants.primaryColor.withOpacity(0.2),
+                color: AppConstants.primaryColor.withValues(alpha: 0.2),
               ),
               child: Icon(
                 Icons.group_add,

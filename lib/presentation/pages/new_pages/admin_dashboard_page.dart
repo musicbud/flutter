@@ -96,9 +96,9 @@ class AdminDashboardPage extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.1),
+        color: Colors.white.withValues(alpha:  0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withValues(alpha:  0.3)),
       ),
       child: Column(
         children: [
@@ -191,9 +191,9 @@ class AdminDashboardPage extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
+                  color: color.withValues(alpha:  0.1),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withValues(alpha: 0.3)),
+        border: Border.all(color: color.withValues(alpha:  0.3)),
         ),
         child: Column(
           children: [
@@ -250,9 +250,9 @@ class AdminDashboardPage extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: Colors.white.withValues(alpha:  0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
+        border: Border.all(color: color.withValues(alpha:  0.2)),
       ),
       child: Row(
         children: [
@@ -280,7 +280,7 @@ class AdminDashboardPage extends StatelessWidget {
                 Text(
                   time,
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.6),
+                    color: Colors.white.withValues(alpha:  0.6),
                     fontSize: 12,
                   ),
                 ),
@@ -289,7 +289,7 @@ class AdminDashboardPage extends StatelessWidget {
           ),
           Icon(
             Icons.arrow_forward_ios,
-            color: Colors.white.withValues(alpha: 0.3),
+            color: Colors.white.withValues(alpha:  0.3),
             size: 16,
           ),
         ],

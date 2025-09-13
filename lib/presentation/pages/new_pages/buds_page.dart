@@ -108,7 +108,7 @@ class _BudsPageState extends State<BudsPage> with PageMixin {
             children: [
               IconButton(
                 onPressed: _showBudRequests,
-                icon: const Icon(
+                icon: Icon(
                   Icons.person_add,
                   color: AppConstants.primaryColor,
                   size: 28,
@@ -116,7 +116,7 @@ class _BudsPageState extends State<BudsPage> with PageMixin {
               ),
               IconButton(
                 onPressed: _showBudSettings,
-                icon: const Icon(
+                icon: Icon(
                   Icons.settings,
                   color: AppConstants.textColor,
                   size: 24,
@@ -306,9 +306,9 @@ class _BudsPageState extends State<BudsPage> with PageMixin {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.2),
+          color: color.withValues(alpha: 0.2),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color.withOpacity(0.5)),
+          border: Border.all(color: color.withValues(alpha: 0.5)),
         ),
         child: Column(
           children: [
@@ -552,7 +552,7 @@ class _BudsPageState extends State<BudsPage> with PageMixin {
               children: [
                 IconButton(
                   onPressed: () => _sendBudRequest(name),
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.person_add,
                     color: AppConstants.primaryColor,
                     size: 24,
@@ -560,7 +560,7 @@ class _BudsPageState extends State<BudsPage> with PageMixin {
                 ),
                 IconButton(
                   onPressed: () => _startChat(name),
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.chat,
                     color: AppConstants.textColor,
                     size: 24,
@@ -578,9 +578,9 @@ class _BudsPageState extends State<BudsPage> with PageMixin {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.5)),
+        border: Border.all(color: color.withValues(alpha: 0.5)),
       ),
       child: Text(
         label,
@@ -722,7 +722,7 @@ class _BudsPageState extends State<BudsPage> with PageMixin {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.7),
+                        Colors.black.withValues(alpha: 0.7),
                       ],
                     ),
                   ),
@@ -762,7 +762,7 @@ class _BudsPageState extends State<BudsPage> with PageMixin {
                     children: [
                       IconButton(
                         onPressed: () => _sendBudRequest(name),
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.person_add,
                           color: AppConstants.primaryColor,
                           size: 20,
@@ -770,7 +770,7 @@ class _BudsPageState extends State<BudsPage> with PageMixin {
                       ),
                       IconButton(
                         onPressed: () => _startChat(name),
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.chat,
                           color: AppConstants.textColor,
                           size: 20,

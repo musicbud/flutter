@@ -16,7 +16,9 @@ abstract class ContentState extends Equatable {
 
 class ContentInitial extends ContentState {}
 
-class ContentLoading extends ContentState {}
+class ContentLoading extends ContentState {
+  const ContentLoading();
+}
 
 class ContentLoaded extends ContentState {
   final List<CommonTrack> topTracks;

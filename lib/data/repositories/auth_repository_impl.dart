@@ -1,6 +1,4 @@
-import 'package:dio/dio.dart';
 import '../../domain/repositories/auth_repository.dart';
-import '../../config/api_config.dart';
 import '../data_sources/remote/auth_remote_data_source.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
