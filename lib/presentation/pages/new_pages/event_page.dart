@@ -1,10 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../blocs/profile/profile_bloc.dart';
-import '../../../blocs/profile/profile_event.dart';
-import '../../../blocs/profile/profile_state.dart';
-import '../../../domain/models/user_profile.dart';
-import '../../../domain/models/channel.dart';
 import '../../constants/app_constants.dart';
 import '../../widgets/common/app_scaffold.dart';
 import '../../widgets/common/app_app_bar.dart';
@@ -347,7 +341,7 @@ class _EventPageState extends State<EventPage> with PageMixin, TickerProviderSta
             color: AppConstants.primaryColor.withValues(alpha: 0.3),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
+          child: const Icon(
             Icons.event,
             color: Colors.white70,
             size: 20,
@@ -357,9 +351,9 @@ class _EventPageState extends State<EventPage> with PageMixin, TickerProviderSta
           event,
           style: const TextStyle(color: Colors.white),
         ),
-        subtitle: Text(
+        subtitle: const Text(
           'This weekend',
-          style: const TextStyle(color: Colors.white70),
+          style: TextStyle(color: Colors.white70),
         ),
         trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white70, size: 16),
         onTap: () => _searchEvents(event),
@@ -642,7 +636,7 @@ class _EventPageState extends State<EventPage> with PageMixin, TickerProviderSta
           const SizedBox(width: 12),
           IconButton(
             onPressed: () => _shareEvent(event.id),
-            icon: Icon(
+            icon: const Icon(
               Icons.share,
               color: Colors.white70,
             ),
@@ -665,14 +659,14 @@ class _EventPageState extends State<EventPage> with PageMixin, TickerProviderSta
           const SizedBox(height: 16),
           Text(
             'No ${_getCategoryDisplayName(category)} found',
-            style: TextStyle(
+            style: const TextStyle(
               color: AppConstants.textColor,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 8),
-          Text(
+          const Text(
             'Try adjusting your search terms or filters',
             style: TextStyle(
               color: AppConstants.textSecondaryColor,
@@ -690,13 +684,13 @@ class _EventPageState extends State<EventPage> with PageMixin, TickerProviderSta
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.error_outline,
             size: 64,
             color: Colors.red,
           ),
           const SizedBox(height: 16),
-          Text(
+          const Text(
             'Error loading events',
             style: TextStyle(
               color: AppConstants.textColor,
@@ -707,7 +701,7 @@ class _EventPageState extends State<EventPage> with PageMixin, TickerProviderSta
           const SizedBox(height: 8),
           Text(
             error,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppConstants.textSecondaryColor,
               fontSize: 14,
             ),
@@ -728,7 +722,7 @@ class _EventPageState extends State<EventPage> with PageMixin, TickerProviderSta
       padding: const EdgeInsets.only(bottom: 16),
       child: Text(
         title,
-        style: TextStyle(
+        style: const TextStyle(
           color: AppConstants.textColor,
           fontSize: 20,
           fontWeight: FontWeight.bold,

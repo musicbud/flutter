@@ -3,10 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/chat/chat_bloc.dart';
 import '../../../blocs/chat/chat_event.dart';
 import '../../../blocs/chat/chat_state.dart';
-import '../../../blocs/chat_room/chat_room_bloc.dart';
-import '../../../blocs/chat_room/chat_room_state.dart';
-import '../../../blocs/profile/profile_bloc.dart';
-import '../../../blocs/profile/profile_state.dart';
 import '../../widgets/common/unified_navigation_scaffold.dart';
 import '../../constants/app_constants.dart';
 import '../../mixins/page_mixin.dart';
@@ -58,7 +54,7 @@ class _ChatListScreenState extends State<ChatListScreen> with PageMixin, TickerP
         context.read<ChatBloc>().add(ChatChannelListRequested());
         break;
       case 2: // Invitations
-        context.read<ChatBloc>().add(ChatUserInvitationsRequested('current_user'));
+        context.read<ChatBloc>().add(const ChatUserInvitationsRequested('current_user'));
         break;
     }
   }
@@ -236,7 +232,7 @@ class _ChatListScreenState extends State<ChatListScreen> with PageMixin, TickerP
               return _buildChannelItem(
                 channel.name,
                 channel.description ?? 'No description',
-                channel.memberCount,
+                channel.memberCount ?? 0,
                 '',
                 () => _openChannel(channel),
               );
@@ -337,7 +333,7 @@ class _ChatListScreenState extends State<ChatListScreen> with PageMixin, TickerP
                       : null,
                 ),
                 child: profileImage == null
-                    ? Icon(
+                    ? const Icon(
                         Icons.person,
                         color: AppConstants.primaryColor,
                         size: 24,
@@ -440,7 +436,7 @@ class _ChatListScreenState extends State<ChatListScreen> with PageMixin, TickerP
                   shape: BoxShape.circle,
                   color: AppConstants.primaryColor.withValues(alpha: 0.2),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.group,
                   color: AppConstants.primaryColor,
                   size: 24,
@@ -523,7 +519,7 @@ class _ChatListScreenState extends State<ChatListScreen> with PageMixin, TickerP
                 shape: BoxShape.circle,
                 color: AppConstants.primaryColor.withValues(alpha: 0.2),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.group_add,
                 color: AppConstants.primaryColor,
                 size: 24,
@@ -582,13 +578,13 @@ class _ChatListScreenState extends State<ChatListScreen> with PageMixin, TickerP
                         child: OutlinedButton(
                           onPressed: onDecline,
                           style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: AppConstants.textSecondaryColor),
+                            side: const BorderSide(color: AppConstants.textSecondaryColor),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 8),
                           ),
-                          child: Text(
+                          child: const Text(
                             'Decline',
                             style: TextStyle(
                               color: AppConstants.textSecondaryColor,
@@ -648,7 +644,7 @@ class _ChatListScreenState extends State<ChatListScreen> with PageMixin, TickerP
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline,
               size: 64,
               color: AppConstants.errorColor,
@@ -705,11 +701,11 @@ class _ChatListScreenState extends State<ChatListScreen> with PageMixin, TickerP
                   hintStyle: AppConstants.captionStyle,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: AppConstants.borderColor),
+                    borderSide: const BorderSide(color: AppConstants.borderColor),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: AppConstants.primaryColor),
+                    borderSide: const BorderSide(color: AppConstants.primaryColor),
                   ),
                 ),
                 onSubmitted: (query) {

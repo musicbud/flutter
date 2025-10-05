@@ -43,7 +43,7 @@ class AppInfo {
   static const bool enableABTesting = true;
 
   // API Configuration
-  static const String apiBaseUrl = 'https://api.musicbud.com';
+  static const String apiBaseUrl = 'http://84.235.170.234/';
   static const String apiVersion = 'v1';
   static const int apiTimeoutSeconds = 30;
   static const int maxRetryAttempts = 3;

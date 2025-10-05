@@ -7,6 +7,8 @@ import "package:google_fonts/google_fonts.dart";
 import "blocs/auth/login/login_bloc.dart";
 import "blocs/auth/register/register_bloc.dart";
 import "blocs/likes/likes_bloc.dart";
+import "blocs/settings/settings_bloc.dart";
+import "blocs/event/event_bloc.dart";
 
 // Repositories
 import "domain/repositories/auth_repository.dart";
@@ -68,6 +70,14 @@ class App extends StatelessWidget {
       BlocProvider<LikesBloc>(
         create: (context) => LikesBloc(contentRepository: sl<ContentRepository>()),
       ),
+      // Settings BLoC
+      BlocProvider<SettingsBloc>(
+        create: (context) => sl<SettingsBloc>(),
+      ),
+      // Event BLoC
+      BlocProvider<EventBloc>(
+        create: (context) => sl<EventBloc>(),
+      ),
     ];
   }
 
@@ -116,7 +126,7 @@ class App extends StatelessWidget {
       "/buds": (context) => const BudsPage(),
       "/buds/modern": (context) => const ModernBudsPage(),
       "/buds/dynamic": (context) => const DynamicBudsPage(),
-      "/cards": (context) => CardsScreen(),
+      "/cards": (context) => const CardsScreen(),
       "/profile": (context) => const ProfilePage(),
       "/users": (context) => const UserManagementPage(),
       "/admin/users": (context) => const UserManagementPage(),

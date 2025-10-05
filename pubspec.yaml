@@ -15,6 +15,7 @@ dependencies:
   dio: ^5.3.2
   get_it: ^7.6.4
   connectivity_plus: ^4.0.2
+  internet_connection_checker: ^1.0.0
   image_picker: ^1.0.4
   shared_preferences: ^2.2.1
   google_maps_flutter: ^2.5.0
@@ -28,7 +29,14 @@ dependencies:
   logging: ^1.2.0
   google_fonts: ^6.2.1
   logger: ^1.4.0
+  fl_chart: ^0.66.2
+  path_provider: ^2.1.1
+  cached_network_image: ^3.3.0
+  json_annotation: ^4.8.1
+  file_selector_linux: ^0.9.3+2
+  url_launcher_linux: ^3.2.1
 
+  bloc: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

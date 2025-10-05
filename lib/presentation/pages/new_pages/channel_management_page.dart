@@ -72,10 +72,10 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
       ),
-      child: Row(
+      child: const Row(
         children: [
           Icon(Icons.info, color: Colors.orange, size: 20),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Expanded(
             child: Text(
               'Channel management is limited. You can only create channels and view basic information. Advanced features like editing, deleting, and member management are not supported by the API.',
@@ -112,7 +112,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
       onTap: () {
         // Filter functionality is not implemented due to API limitations
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text('Filtering is not supported by the API'),
             backgroundColor: Colors.orange,
           ),
@@ -153,11 +153,11 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.error_outline, size: 64, color: Colors.red),
+                const Icon(Icons.error_outline, size: 64, color: Colors.red),
                 const SizedBox(height: 16),
                 Text(
                   _getUserFriendlyErrorMessage(state.error),
-                  style: TextStyle(color: AppConstants.textColor),
+                  style: const TextStyle(color: AppConstants.textColor),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
@@ -170,7 +170,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
                     ),
-                    child: Text(
+                    child: const Text(
                       'The server is experiencing issues. This is not a problem with your app.',
                       style: TextStyle(
                         color: Colors.orange,
@@ -215,13 +215,13 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.chat_bubble_outline,
             size: 64,
             color: AppConstants.textSecondaryColor,
           ),
           const SizedBox(height: 16),
-          Text(
+          const Text(
             'No channels found',
             style: TextStyle(
               color: AppConstants.textColor,
@@ -230,7 +230,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
+          const Text(
             'Create your first channel to get started',
             style: TextStyle(
               color: AppConstants.textSecondaryColor,
@@ -266,7 +266,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
               color: AppConstants.primaryColor.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.chat_bubble_outline,
               color: AppConstants.primaryColor,
               size: 24,
@@ -283,7 +283,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
                   children: [
                     Text(
                       channel.name,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppConstants.textColor,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -293,18 +293,18 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: channel.type == 'private'
+                        color: (channel.type ?? 'public') == 'private'
                             ? Colors.orange.withValues(alpha: 0.2)
                             : Colors.green.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: channel.type == 'private' ? Colors.orange : Colors.green,
+                          color: (channel.type ?? 'public') == 'private' ? Colors.orange : Colors.green,
                         ),
                       ),
                       child: Text(
-                        channel.type == 'private' ? 'Private' : 'Public',
+                        (channel.type ?? 'public') == 'private' ? 'Private' : 'Public',
                         style: TextStyle(
-                          color: channel.type == 'private' ? Colors.orange : Colors.green,
+                          color: (channel.type ?? 'public') == 'private' ? Colors.orange : Colors.green,
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                         ),
@@ -315,7 +315,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
                 const SizedBox(height: 4),
                 Text(
                   channel.description ?? 'No description',
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppConstants.textSecondaryColor,
                     fontSize: 14,
                   ),
@@ -336,7 +336,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: AppConstants.primaryColor),
                 ),
-                child: Text(
+                child: const Text(
                   'View',
                   style: TextStyle(
                     color: AppConstants.primaryColor,
@@ -349,11 +349,11 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
               Row(
                 children: [
                   IconButton(
-                    icon: Icon(Icons.edit, color: AppConstants.textSecondaryColor, size: 20),
+                    icon: const Icon(Icons.edit, color: AppConstants.textSecondaryColor, size: 20),
                     onPressed: () => _showEditNotSupported(),
                   ),
                   IconButton(
-                    icon: Icon(Icons.settings, color: AppConstants.textSecondaryColor, size: 20),
+                    icon: const Icon(Icons.settings, color: AppConstants.textSecondaryColor, size: 20),
                     onPressed: () => _showSettingsNotSupported(),
                   ),
                 ],
@@ -370,7 +370,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppConstants.surfaceColor,
-        title: Text(
+        title: const Text(
           'Create New Channel',
           style: TextStyle(color: AppConstants.textColor),
         ),
@@ -400,7 +400,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
                   },
                   activeColor: AppConstants.primaryColor,
                 ),
-                Text(
+                const Text(
                   'Private Channel',
                   style: TextStyle(color: AppConstants.textColor),
                 ),
@@ -411,7 +411,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
+            child: const Text(
               'Cancel',
               style: TextStyle(color: AppConstants.textSecondaryColor),
             ),
@@ -431,7 +431,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
 
     if (name.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Please enter a channel name'),
           backgroundColor: Colors.red,
         ),
@@ -456,7 +456,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
 
     // Show success message
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Channel created successfully!'),
         backgroundColor: Colors.green,
       ),
@@ -465,7 +465,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
 
   void _showEditNotSupported() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Channel editing is not supported by the API'),
         backgroundColor: Colors.orange,
       ),
@@ -474,7 +474,7 @@ class _ChannelManagementPageState extends State<ChannelManagementPage> {
 
   void _showSettingsNotSupported() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Channel settings are not supported by the API'),
         backgroundColor: Colors.orange,
       ),

@@ -1,0 +1,214 @@
+import 'package:flutter/material.dart';
+
+class AppTheme {
+  final BuildContext context;
+  
+  const AppTheme._(this.context);
+  
+  static AppTheme of(BuildContext context) {
+    return AppTheme._(context);
+  }
+
+  ThemeData get theme => Theme.of(context);
+  
+  static const Color primaryColor = Color(0xFF1DB954);
+  static const Color secondaryColor = Color(0xFF191414);
+  static const Color accentColor = Color(0xFF1ED760);
+  static const Color backgroundColor = Color(0xFF121212);
+  static const Color surfaceColor = Color(0xFF282828);
+  static const Color errorColor = Color(0xFFCF6679);
+  
+  ColorScheme get colors => theme.colorScheme;
+  TextTheme get typography => theme.textTheme;
+  
+  static const spacing = _Spacing();
+  static const radius = _BorderRadius();
+  
+  static const Color textPrimaryColor = Colors.white;
+  static const Color textSecondaryColor = Color(0xB3FFFFFF);
+  static const Color textTertiaryColor = Color(0x80FFFFFF);
+  
+  static ThemeData get darkTheme {
+    return ThemeData(
+      brightness: Brightness.dark,
+      primaryColor: primaryColor,
+      scaffoldBackgroundColor: backgroundColor,
+      colorScheme: ColorScheme.dark(
+        primary: primaryColor,
+        secondary: secondaryColor,
+        surface: surfaceColor, // Changed from backgroundColor to use surface
+        error: errorColor,
+        surfaceContainerHighest: surfaceColor.withAlpha(204), // .8 opacity using withAlpha
+        // Add custom extensions for text colors
+        brightness: Brightness.dark,
+        outline: textSecondaryColor,
+        onSurface: textPrimaryColor,
+      ).copyWith(
+        // We'll use shadow color for textSecondary since it's rarely used
+        shadow: textSecondaryColor,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: backgroundColor,
+        elevation: 0,
+      ),
+      textTheme: const TextTheme(
+        headlineLarge: TextStyle(
+          color: textPrimaryColor,
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+        ),
+        headlineMedium: TextStyle(
+          color: textPrimaryColor,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+        headlineSmall: TextStyle(
+          color: textPrimaryColor,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+        bodyLarge: TextStyle(
+          color: textPrimaryColor,
+          fontSize: 16,
+        ),
+        bodyMedium: TextStyle(
+          color: textSecondaryColor,
+          fontSize: 14,
+        ),
+        bodySmall: TextStyle(
+          color: textTertiaryColor,
+          fontSize: 12,
+        ),
+      ),
+      buttonTheme: ButtonThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
+        buttonColor: primaryColor,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 32,
+            vertical: 16,
+          ),
+        ),
+      ),
+      cardTheme: CardThemeData(
+        color: surfaceColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        elevation: 4,
+      ),
+    );
+  }
+
+  static ThemeData get lightTheme {
+    return ThemeData(
+      brightness: Brightness.light,
+      primaryColor: primaryColor,
+      scaffoldBackgroundColor: Colors.white,
+      colorScheme: const ColorScheme.light(
+        primary: primaryColor,
+        secondary: secondaryColor,
+        surface: Colors.white,
+        error: errorColor,
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.grey[100],
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
+        titleTextStyle: const TextStyle(
+          color: Colors.black,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      textTheme: const TextTheme(
+        headlineLarge: TextStyle(
+          color: Colors.black,
+          fontSize: 32,
+          fontWeight: FontWeight.bold,
+        ),
+        headlineMedium: TextStyle(
+          color: Colors.black,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+        headlineSmall: TextStyle(
+          color: Colors.black,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+        bodyLarge: TextStyle(
+          color: Colors.black,
+          fontSize: 16,
+        ),
+        bodyMedium: TextStyle(
+          color: Colors.black87,
+          fontSize: 14,
+        ),
+        bodySmall: TextStyle(
+          color: Colors.black54,
+          fontSize: 12,
+        ),
+      ),
+      buttonTheme: ButtonThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(50),
+        ),
+        buttonColor: primaryColor,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(50),
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 32,
+            vertical: 16,
+          ),
+        ),
+      ),
+      cardTheme: CardThemeData(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        elevation: 2,
+      ),
+    );
+  }
+}
+
+class _Spacing {
+  const _Spacing();
+  
+  final double xxs = 4;
+  final double xs = 8;
+  final double sm = 12;
+  final double md = 16;
+  final double lg = 24;
+  final double xl = 32;
+  final double xxl = 48;
+}
+
+class _BorderRadius {
+  const _BorderRadius();
+  
+  final double xs = 4;
+  final double sm = 8;
+  final double md = 12;
+  final double lg = 16;
+  final double xl = 24;
+  final double xxl = 32;
+  final double circular = 999;
+}

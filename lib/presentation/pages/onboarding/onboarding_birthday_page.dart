@@ -35,8 +35,7 @@ class _OnboardingBirthdayPageState extends State<OnboardingBirthdayPage> {
               onPrimary: AppTheme.of(context).colors.pureWhite,
               surface: AppTheme.of(context).colors.darkTone,
               onSurface: AppTheme.of(context).colors.pureWhite,
-            ),
-            dialogBackgroundColor: AppTheme.of(context).colors.darkTone,
+            ), dialogTheme: DialogThemeData(backgroundColor: AppTheme.of(context).colors.darkTone),
           ),
           child: child!,
         );

@@ -73,10 +73,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
       ),
-      child: Row(
+      child: const Row(
         children: [
           Icon(Icons.info, color: Colors.orange, size: 20),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Expanded(
             child: Text(
               'User management is limited. You can only view users and send basic messages. Advanced features like role management, banning, and user invitations are not supported by the API.',
@@ -101,12 +101,12 @@ class _UserManagementPageState extends State<UserManagementPage> {
               controller: _searchController,
               labelText: 'Search users',
               hintText: 'Enter username or name...',
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: const Icon(Icons.search),
               onChanged: (value) {
                 // Search functionality is not implemented due to API limitations
                 if (value.isNotEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
+                    const SnackBar(
                       content: Text('User search is not supported by the API'),
                       backgroundColor: Colors.orange,
                     ),
@@ -123,7 +123,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppConstants.borderColor.withValues(alpha: 0.3)),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.filter_list,
               color: AppConstants.textSecondaryColor,
             ),
@@ -191,7 +191,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
           ),
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppConstants.textSecondaryColor,
               fontSize: 10,
             ),
@@ -216,11 +216,11 @@ class _UserManagementPageState extends State<UserManagementPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.error_outline, size: 64, color: Colors.red),
+                const Icon(Icons.error_outline, size: 64, color: Colors.red),
                 const SizedBox(height: 16),
                 Text(
                   _getUserFriendlyErrorMessage(state.error),
-                  style: TextStyle(color: AppConstants.textColor),
+                  style: const TextStyle(color: AppConstants.textColor),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
@@ -233,7 +233,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
                     ),
-                    child: Text(
+                    child: const Text(
                       'The server is experiencing issues. This is not a problem with your app.',
                       style: TextStyle(
                         color: Colors.orange,
@@ -274,7 +274,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
   }
 
   Widget _buildEmptyState() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -283,7 +283,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
             size: 64,
             color: AppConstants.textSecondaryColor,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             'No users found',
             style: TextStyle(
@@ -292,7 +292,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             'Users will appear here once they join the platform',
             style: TextStyle(
@@ -326,7 +326,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
             child: user.avatarUrl == null
                 ? Text(
                     user.username.isNotEmpty ? user.username[0].toUpperCase() : 'U',
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
@@ -344,7 +344,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   children: [
                     Text(
                       user.displayName ?? user.username,
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: AppConstants.textColor,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -358,7 +358,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: AppConstants.primaryColor),
                       ),
-                      child: Text(
+                      child: const Text(
                         'Member',
                         style: TextStyle(
                           color: AppConstants.primaryColor,
@@ -372,7 +372,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                 const SizedBox(height: 4),
                 Text(
                   user.bio ?? 'No bio available',
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppConstants.textSecondaryColor,
                     fontSize: 14,
                   ),
@@ -393,7 +393,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: AppConstants.primaryColor),
                 ),
-                child: Text(
+                child: const Text(
                   'View',
                   style: TextStyle(
                     color: AppConstants.primaryColor,
@@ -406,11 +406,11 @@ class _UserManagementPageState extends State<UserManagementPage> {
               Row(
                 children: [
                   IconButton(
-                    icon: Icon(Icons.message, color: AppConstants.textSecondaryColor, size: 20),
+                    icon: const Icon(Icons.message, color: AppConstants.textSecondaryColor, size: 20),
                     onPressed: () => _showMessageDialog(user),
                   ),
                   IconButton(
-                    icon: Icon(Icons.more_vert, color: AppConstants.textSecondaryColor, size: 20),
+                    icon: const Icon(Icons.more_vert, color: AppConstants.textSecondaryColor, size: 20),
                     onPressed: () => _showUserOptionsDialog(context, user),
                   ),
                 ],
@@ -427,7 +427,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppConstants.surfaceColor,
-        title: Text(
+        title: const Text(
           'Invite User',
           style: TextStyle(color: AppConstants.textColor),
         ),
@@ -447,10 +447,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
               ),
-              child: Row(
+              child: const Row(
                 children: [
                   Icon(Icons.info, color: Colors.orange, size: 20),
-                  const SizedBox(width: 8),
+                  SizedBox(width: 8),
                   Expanded(
                     child: Text(
                       'User invitations are not supported by the API',
@@ -468,7 +468,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text(
+            child: const Text(
               'Cancel',
               style: TextStyle(color: AppConstants.textSecondaryColor),
             ),
@@ -477,7 +477,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
             text: 'Invite',
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
+                const SnackBar(
                   content: Text('User invitations are not supported by the API'),
                   backgroundColor: Colors.orange,
                 ),
@@ -510,32 +510,32 @@ class _UserManagementPageState extends State<UserManagementPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              leading: Icon(Icons.person, color: AppConstants.textColor),
-              title: Text('View Profile', style: TextStyle(color: AppConstants.textColor)),
+              leading: const Icon(Icons.person, color: AppConstants.textColor),
+              title: const Text('View Profile', style: TextStyle(color: AppConstants.textColor)),
               onTap: () {
                 Navigator.pop(context);
                 _showProfileNotImplemented();
               },
             ),
             ListTile(
-              leading: Icon(Icons.message, color: AppConstants.textColor),
-              title: Text('Send Message', style: TextStyle(color: AppConstants.textColor)),
+              leading: const Icon(Icons.message, color: AppConstants.textColor),
+              title: const Text('Send Message', style: TextStyle(color: AppConstants.textColor)),
               onTap: () {
                 Navigator.pop(context);
                 _showMessageDialog(user);
               },
             ),
             ListTile(
-              leading: Icon(Icons.admin_panel_settings, color: AppConstants.textSecondaryColor),
-              title: Text('Make Admin', style: TextStyle(color: AppConstants.textSecondaryColor)),
+              leading: const Icon(Icons.admin_panel_settings, color: AppConstants.textSecondaryColor),
+              title: const Text('Make Admin', style: TextStyle(color: AppConstants.textSecondaryColor)),
               onTap: () {
                 Navigator.pop(context);
                 _showAdminNotSupported();
               },
             ),
             ListTile(
-              leading: Icon(Icons.block, color: AppConstants.textSecondaryColor),
-              title: Text('Ban User', style: TextStyle(color: AppConstants.textSecondaryColor)),
+              leading: const Icon(Icons.block, color: AppConstants.textSecondaryColor),
+              title: const Text('Ban User', style: TextStyle(color: AppConstants.textSecondaryColor)),
               onTap: () {
                 Navigator.pop(context);
                 _showBanNotSupported();
@@ -549,7 +549,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
 
   void _showProfileNotImplemented() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('User profile viewing is not yet implemented'),
         backgroundColor: Colors.blue,
       ),
@@ -558,7 +558,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
 
   void _showAdminNotSupported() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('Role management is not supported by the API'),
         backgroundColor: Colors.orange,
       ),
@@ -567,7 +567,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
 
   void _showBanNotSupported() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('User banning is not supported by the API'),
         backgroundColor: Colors.orange,
       ),

@@ -13,6 +13,7 @@ class UserProfile extends Equatable {
   final int followingCount;
   final bool isActive;
   final bool? isAuthenticated;
+  final bool isAdmin;
 
   const UserProfile({
     required this.id,
@@ -26,6 +27,7 @@ class UserProfile extends Equatable {
     this.followingCount = 0,
     required this.isActive,
     this.isAuthenticated,
+    this.isAdmin = false,
   });
 
   /// Creates a [UserProfile] from a JSON map
@@ -35,10 +37,17 @@ class UserProfile extends Equatable {
       // Use username as id if id is missing (common in some API responses)
       final id = json['id']?.toString() ?? json['username']?.toString() ?? '';
       final username = json['username']?.toString() ?? '';
+
+      // Handle backend response structure - backend returns first_name and last_name
+      final firstName = json['first_name']?.toString();
+      final lastName = json['last_name']?.toString();
+      final displayName = firstName != null && lastName != null
+          ? '$firstName $lastName'
+          : firstName ?? lastName ?? username;
+
       final email = json['email']?.toString();
       final avatarUrl = json['avatar_url']?.toString();
       final bio = json['bio']?.toString();
-      final displayName = json['display_name']?.toString();
       final location = json['location']?.toString();
       final followersCount = _parseInt(json['followers_count']) ?? 0;
       final followingCount = _parseInt(json['following_count']) ?? 0;

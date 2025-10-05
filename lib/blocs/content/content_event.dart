@@ -54,3 +54,22 @@ class ContentPlayRequested extends ContentEvent {
 }
 
 class ContentPlayedTracksRequested extends ContentEvent {}
+
+// Enhanced events from legacy
+class LoadTopTracks extends ContentEvent {}
+
+class LoadTopArtists extends ContentEvent {}
+
+class LoadTopGenres extends ContentEvent {}
+
+class LoadTopAnime extends ContentEvent {}
+
+class LoadTopManga extends ContentEvent {}
+
+class LoadLikedTracks extends ContentEvent {}
+
+class LoadLikedArtists extends ContentEvent {}
+
+class LoadLikedGenres extends ContentEvent {}
+
+class LoadLikedAlbums extends ContentEvent {}

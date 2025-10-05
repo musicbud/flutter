@@ -28,7 +28,7 @@ abstract class CommonItemsRemoteDataSource {
 class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   final http.Client _client;
   final String _token;
-  final String _baseUrl = 'http://84.235.170.234';
+  final String _baseUrl = 'http://localhost:8000';
 
   CommonItemsRemoteDataSourceImpl({
     required http.Client client,
@@ -48,14 +48,15 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
       final response = await _client.post(
         Uri.parse('$_baseUrl/bud/common/liked/tracks'),
         headers: _headers,
-        body: jsonEncode({'username': username}),
+        body: jsonEncode({'bud_id': username}),
       );
 
       if (response.statusCode != 200) {
         throw ServerException(message: 'Failed to get common liked tracks');
       }
 
-      final data = jsonDecode(response.body)['data'] as List;
+      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = responseData['results'] as List? ?? [];
       return data.map((json) => CommonTrack.fromJson(json)).toList();
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -68,14 +69,15 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
       final response = await _client.post(
         Uri.parse('$_baseUrl/bud/common/liked/artists'),
         headers: _headers,
-        body: jsonEncode({'username': username}),
+        body: jsonEncode({'bud_id': username}),
       );
 
       if (response.statusCode != 200) {
         throw ServerException(message: 'Failed to get common liked artists');
       }
 
-      final data = jsonDecode(response.body)['data'] as List;
+      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = responseData['results'] as List? ?? [];
       return data.map((json) => CommonArtist.fromJson(json)).toList();
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -88,14 +90,15 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
       final response = await _client.post(
         Uri.parse('$_baseUrl/bud/common/liked/albums'),
         headers: _headers,
-        body: jsonEncode({'username': username}),
+        body: jsonEncode({'bud_id': username}),
       );
 
       if (response.statusCode != 200) {
         throw ServerException(message: 'Failed to get common liked albums');
       }
 
-      final data = jsonDecode(response.body)['data'] as List;
+      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = responseData['results'] as List? ?? [];
       return data.map((json) => CommonAlbum.fromJson(json)).toList();
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -106,9 +109,7 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   Future<List<CommonTrack>> getCommonPlayedTracks(String identifier,
       {int page = 1}) async {
     try {
-      final data = identifier.contains('@')
-          ? {'username': identifier}
-          : {'bud_id': identifier, 'page': page};
+      final data = {'bud_id': identifier};
 
       final response = await _client.post(
         Uri.parse('$_baseUrl/bud/common/played/tracks'),
@@ -120,8 +121,9 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
         throw ServerException(message: 'Failed to get common played tracks');
       }
 
-      final responseData = jsonDecode(response.body)['data'] as List;
-      return responseData.map((json) => CommonTrack.fromJson(json)).toList();
+      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+      final results = responseData['results'] as List? ?? [];
+      return results.map((json) => CommonTrack.fromJson(json)).toList();
     } catch (e) {
       throw ServerException(message: e.toString());
     }
@@ -133,14 +135,15 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
       final response = await _client.post(
         Uri.parse('$_baseUrl/bud/common/top/artists'),
         headers: _headers,
-        body: jsonEncode({'username': username}),
+        body: jsonEncode({'bud_id': username}),
       );
 
       if (response.statusCode != 200) {
         throw ServerException(message: 'Failed to get common top artists');
       }
 
-      final data = jsonDecode(response.body)['data'] as List;
+      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = responseData['results'] as List? ?? [];
       return data.map((json) => CommonArtist.fromJson(json)).toList();
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -153,14 +156,15 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
       final response = await _client.post(
         Uri.parse('$_baseUrl/bud/common/top/genres'),
         headers: _headers,
-        body: jsonEncode({'username': username}),
+        body: jsonEncode({'bud_id': username}),
       );
 
       if (response.statusCode != 200) {
         throw ServerException(message: 'Failed to get common top genres');
       }
 
-      final data = jsonDecode(response.body)['data'] as List;
+      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = responseData['results'] as List? ?? [];
       return data.map((json) => CommonGenre.fromJson(json)).toList();
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -173,14 +177,15 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
       final response = await _client.post(
         Uri.parse('$_baseUrl/bud/common/top/anime'),
         headers: _headers,
-        body: jsonEncode({'username': username}),
+        body: jsonEncode({'bud_id': username}),
       );
 
       if (response.statusCode != 200) {
         throw ServerException(message: 'Failed to get common top anime');
       }
 
-      final data = jsonDecode(response.body)['data'] as List;
+      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = responseData['results'] as List? ?? [];
       return data.map((json) => CommonAnime.fromJson(json)).toList();
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -193,14 +198,15 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
       final response = await _client.post(
         Uri.parse('$_baseUrl/bud/common/top/manga'),
         headers: _headers,
-        body: jsonEncode({'username': username}),
+        body: jsonEncode({'bud_id': username}),
       );
 
       if (response.statusCode != 200) {
         throw ServerException(message: 'Failed to get common top manga');
       }
 
-      final data = jsonDecode(response.body)['data'] as List;
+      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = responseData['results'] as List? ?? [];
       return data.map((json) => CommonManga.fromJson(json)).toList();
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -220,7 +226,8 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
         throw ServerException(message: 'Failed to get common tracks');
       }
 
-      final data = jsonDecode(response.body)['data'] as List;
+      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = responseData['results'] as List? ?? [];
       return data.map((json) => CommonTrack.fromJson(json)).toList();
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -240,7 +247,8 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
         throw ServerException(message: 'Failed to get common artists');
       }
 
-      final data = jsonDecode(response.body)['data'] as List;
+      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = responseData['results'] as List? ?? [];
       return data.map((json) => CommonArtist.fromJson(json)).toList();
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -260,7 +268,8 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
         throw ServerException(message: 'Failed to get common genres');
       }
 
-      final data = jsonDecode(response.body)['data'] as List;
+      final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+      final data = responseData['results'] as List? ?? [];
       return data.map((json) => CommonGenre.fromJson(json)).toList();
     } catch (e) {
       throw ServerException(message: e.toString());
@@ -271,10 +280,11 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   Future<CategorizedCommonItems> getCategorizedCommonItems(
       String username) async {
     try {
+      // This endpoint may not exist in the backend, but keeping the implementation
       final response = await _client.post(
         Uri.parse('$_baseUrl/bud/common/all'),
         headers: _headers,
-        body: jsonEncode({'username': username}),
+        body: jsonEncode({'bud_id': username}),
       );
 
       if (response.statusCode != 200) {

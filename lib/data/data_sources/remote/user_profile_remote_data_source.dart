@@ -24,8 +24,14 @@ class UserProfileRemoteDataSourceImpl implements UserProfileRemoteDataSource {
   @override
   Future<Map<String, dynamic>> getUserProfile(String userId) async {
     try {
-      final response = await _dioClient.get('/users/$userId');
-      return response.data as Map<String, dynamic>;
+      // Handle the special case where userId is 'me' - use the correct endpoint
+      if (userId == 'me') {
+        final response = await _dioClient.post(ApiConfig.myProfile);
+        return response.data as Map<String, dynamic>;
+      } else {
+        final response = await _dioClient.get('/users/$userId');
+        return response.data as Map<String, dynamic>;
+      }
     } catch (e) {
       throw Exception('Failed to get user profile: $e');
     }
@@ -115,8 +121,24 @@ class UserProfileRemoteDataSourceImpl implements UserProfileRemoteDataSource {
           throw Exception('Unsupported content type: $contentType');
       }
 
-      final response = await _dioClient.get(endpoint);
-      return response.data as Map<String, dynamic>;
+      final response = await _dioClient.post(endpoint);
+      // Backend returns paginated response with 'results' field
+      final responseData = response.data;
+      if (responseData is Map<String, dynamic> && responseData.containsKey('results')) {
+        return {
+          'content': responseData['results'],
+          'pagination': {
+            'count': responseData['count'],
+            'next': responseData['next'],
+            'previous': responseData['previous'],
+          }
+        };
+      } else if (responseData is List) {
+        // Fallback for direct array response
+        return {'content': responseData};
+      } else {
+        return {'content': []};
+      }
     } catch (e) {
       throw Exception('Failed to get my liked $contentType: $e');
     }
@@ -177,8 +199,24 @@ class UserProfileRemoteDataSourceImpl implements UserProfileRemoteDataSource {
           throw Exception('Unsupported content type: $contentType');
       }
 
-      final response = await _dioClient.get(endpoint);
-      return response.data as Map<String, dynamic>;
+      final response = await _dioClient.post(endpoint);
+      // Backend returns paginated response with 'results' field
+      final responseData = response.data;
+      if (responseData is Map<String, dynamic> && responseData.containsKey('results')) {
+        return {
+          'content': responseData['results'],
+          'pagination': {
+            'count': responseData['count'],
+            'next': responseData['next'],
+            'previous': responseData['previous'],
+          }
+        };
+      } else if (responseData is List) {
+        // Fallback for direct array response
+        return {'content': responseData};
+      } else {
+        return {'content': []};
+      }
     } catch (e) {
       throw Exception('Failed to get my top $contentType: $e');
     }
@@ -197,8 +235,24 @@ class UserProfileRemoteDataSourceImpl implements UserProfileRemoteDataSource {
   @override
   Future<Map<String, dynamic>> getMyPlayedTracks() async {
     try {
-      final response = await _dioClient.get(ApiConfig.myPlayedTracks);
-      return response.data as Map<String, dynamic>;
+      final response = await _dioClient.post(ApiConfig.myPlayedTracks);
+      // Backend returns paginated response with 'results' field
+      final responseData = response.data;
+      if (responseData is Map<String, dynamic> && responseData.containsKey('results')) {
+        return {
+          'tracks': responseData['results'],
+          'pagination': {
+            'count': responseData['count'],
+            'next': responseData['next'],
+            'previous': responseData['previous'],
+          }
+        };
+      } else if (responseData is List) {
+        // Fallback for direct array response
+        return {'tracks': responseData};
+      } else {
+        return {'tracks': []};
+      }
     } catch (e) {
       throw Exception('Failed to get my played tracks: $e');
     }

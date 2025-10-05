@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/repositories/profile_repository.dart';
-import '../../domain/repositories/content_repository.dart';
-import '../../domain/repositories/bud_repository.dart';
-import '../../domain/models/bud_match.dart';
+import '../../../domain/repositories/profile_repository.dart';
+import '../../../domain/repositories/content_repository.dart';
+import '../../../domain/repositories/bud_repository.dart';
+import '../../../domain/models/bud_match.dart';
 import 'profile_event.dart';
 import 'profile_state.dart';
 
@@ -15,7 +15,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required this.profileRepository,
     required this.contentRepository,
     required this.budRepository,
-  }) : super(const ProfileInitial()) {
+  }) : super(ProfileInitial()) {
     on<ProfileRequested>(_onProfileRequested);
     on<ProfileUpdateRequested>(_onProfileUpdateRequested);
     on<ProfileAvatarUpdateRequested>(_onProfileAvatarUpdateRequested);
@@ -25,9 +25,6 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ProfileLikedItemsRequested>(_onProfileLikedItemsRequested);
     on<ProfileBudsRequested>(_onProfileBudsRequested);
     on<ProfileConnectedServicesRequested>(_onProfileConnectedServicesRequested);
-    on<ProfileRefreshRequested>(_onProfileRefreshRequested);
-    on<ProfileStatsRequested>(_onProfileStatsRequested);
-    on<ProfilePreferencesRequested>(_onProfilePreferencesRequested);
   }
 
   Future<void> _onProfileRequested(
@@ -35,7 +32,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     try {
-      emit(const ProfileLoading());
+      emit(ProfileLoading());
       final profile = await profileRepository.getUserProfile();
       emit(ProfileLoaded(profile: profile));
     } catch (e) {
@@ -86,7 +83,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ) async {
     try {
       await profileRepository.logout();
-      emit(const ProfileLogoutSuccess());
+      emit(ProfileLogoutSuccess());
     } catch (e) {
       emit(ProfileFailure(error: e.toString()));
     }
@@ -133,57 +130,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     try {
-      final services = await profileRepository.getConnectedServices();
-      emit(ProfileConnectedServicesLoaded(services: services));
-    } catch (e) {
-      emit(ProfileFailure(error: e.toString()));
-    }
-  }
-
-  Future<void> _onProfileRefreshRequested(
-    ProfileRefreshRequested event,
-    Emitter<ProfileState> emit,
-  ) async {
-    try {
-      emit(ProfileLoading());
-      final profile = await profileRepository.getUserProfile();
-      final services = await profileRepository.getConnectedServices();
-      emit(ProfileLoaded(profile: profile, services: services));
-    } catch (e) {
-      emit(ProfileFailure(error: e.toString()));
-    }
-  }
-
-  Future<void> _onProfileStatsRequested(
-    ProfileStatsRequested event,
-    Emitter<ProfileState> emit,
-  ) async {
-    try {
-      // This would need to be implemented in the repository
-      final stats = <String, dynamic>{
-        'totalTracks': 0,
-        'totalArtists': 0,
-        'totalGenres': 0,
-        'totalBuds': 0,
-      };
-      emit(ProfileStatsLoaded(stats: stats));
-    } catch (e) {
-      emit(ProfileFailure(error: e.toString()));
-    }
-  }
-
-  Future<void> _onProfilePreferencesRequested(
-    ProfilePreferencesRequested event,
-    Emitter<ProfileState> emit,
-  ) async {
-    try {
-      // This would need to be implemented in the repository
-      final preferences = <String, dynamic>{
-        'notifications': true,
-        'privacy': 'public',
-        'language': 'en',
-      };
-      emit(ProfilePreferencesLoaded(preferences: preferences));
+      emit(const ProfileConnectedServicesLoaded(services: []));
     } catch (e) {
       emit(ProfileFailure(error: e.toString()));
     }

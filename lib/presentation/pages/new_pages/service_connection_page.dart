@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/auth/auth_bloc.dart';
+import '../../../blocs/comprehensive_chat/comprehensive_chat_bloc.dart';
+import '../../../blocs/comprehensive_chat/comprehensive_chat_event.dart';
 import '../../../domain/models/content_service.dart';
 import '../../constants/app_constants.dart';
 import '../../widgets/common/app_scaffold.dart';
@@ -37,7 +39,9 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
   @override
   void dispose() {
     _tabController.dispose();
-    _authControllers.values.forEach((controller) => controller.dispose());
+    for (var controller in _authControllers.values) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -131,7 +135,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Connected Services',
             style: TextStyle(
               color: AppConstants.textColor,
@@ -363,7 +367,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
           const SizedBox(height: 8),
           Text(
             description,
-            style: TextStyle(
+            style: const TextStyle(
               color: AppConstants.textSecondaryColor,
               fontSize: 14,
             ),
@@ -396,7 +400,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
               children: [
                 Text(
                   isConnected ? 'Connected' : 'Not Connected',
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppConstants.textColor,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -406,7 +410,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
                   isConnected
                       ? 'Your account is successfully connected'
                       : 'Connect your account to get started',
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppConstants.textSecondaryColor,
                     fontSize: 14,
                   ),
@@ -454,10 +458,10 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
           ),
-          child: Row(
+          child: const Row(
             children: [
               Icon(Icons.info, color: Colors.orange, size: 20),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Expanded(
                 child: Text(
                   'Service disconnection is not supported by the API. To disconnect, you may need to revoke access from the service provider.',
@@ -506,7 +510,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Manual Authentication',
             style: TextStyle(
               color: AppConstants.textColor,
@@ -515,7 +519,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
             ),
           ),
           const SizedBox(height: 8),
-          Text(
+          const Text(
             'If OAuth is not working, you can manually enter your authentication code.',
             style: TextStyle(
               color: AppConstants.textSecondaryColor,
@@ -553,7 +557,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Features',
             style: TextStyle(
               color: AppConstants.textColor,
@@ -566,7 +570,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
             padding: const EdgeInsets.only(bottom: 8),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.check_circle,
                   color: Colors.green,
                   size: 20,
@@ -575,7 +579,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
                 Expanded(
                   child: Text(
                     feature,
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: AppConstants.textColor,
                       fontSize: 14,
                     ),
@@ -597,7 +601,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.red.withValues(alpha: 0.3)),
       ),
-      child: Column(
+      child: const Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
@@ -608,11 +612,11 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Row(
             children: [
               Icon(Icons.warning, color: Colors.red, size: 20),
-              const SizedBox(width: 8),
+              SizedBox(width: 8),
               Expanded(
                 child: Text(
                   'Service disconnection is not supported by the API. You can only connect and refresh tokens.',
@@ -734,11 +738,11 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
   }
 
   void _refreshSpotifyToken() {
-    context.read<AuthBloc>().add(RefreshServiceToken('spotify'));
+    context.read<AuthBloc>().add(const RefreshServiceToken('spotify'));
   }
 
   void _getSpotifyAuthUrl() {
-    context.read<AuthBloc>().add(GetServiceAuthUrl('spotify'));
+    context.read<AuthBloc>().add(const GetServiceAuthUrl('spotify'));
   }
 
   void _connectYTMusic() {
@@ -751,11 +755,11 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
   }
 
   void _refreshYTMusicToken() {
-    context.read<AuthBloc>().add(RefreshServiceToken('ytmusic'));
+    context.read<AuthBloc>().add(const RefreshServiceToken('ytmusic'));
   }
 
   void _getYTMusicAuthUrl() {
-    context.read<AuthBloc>().add(GetServiceAuthUrl('ytmusic'));
+    context.read<AuthBloc>().add(const GetServiceAuthUrl('ytmusic'));
   }
 
   void _connectLastFM() {
@@ -773,7 +777,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
   }
 
   void _getLastFMAuthUrl() {
-    context.read<AuthBloc>().add(GetServiceAuthUrl('lastfm'));
+    context.read<AuthBloc>().add(const GetServiceAuthUrl('lastfm'));
   }
 
   void _connectMAL() {
@@ -791,7 +795,7 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
   }
 
   void _getMALAuthUrl() {
-    context.read<AuthBloc>().add(GetServiceAuthUrl('mal'));
+    context.read<AuthBloc>().add(const GetServiceAuthUrl('mal'));
   }
 
   void _connectWithCode(String serviceName) {
@@ -817,18 +821,41 @@ class _ServiceConnectionPageState extends State<ServiceConnectionPage> with Tick
   }
 
   void _viewServiceProfile(String serviceName) {
-    // TODO: Implement view service profile logic
-    _showErrorSnackBar('Service profile viewing not yet implemented');
+    // Navigate to service profile page
+    Navigator.pushNamed(
+      context,
+      '/service-profile',
+      arguments: {'serviceName': serviceName},
+    );
   }
 
   void _syncServiceData(String serviceName) {
-    // TODO: Implement sync service data logic
-    _showErrorSnackBar('Service data syncing not yet implemented');
+    // Sync service data through the appropriate BLoC
+    switch (serviceName.toLowerCase()) {
+      case 'spotify':
+        context.read<ComprehensiveChatBloc>().add(SpotifyConnected());
+        _showSuccessSnackBar('Syncing Spotify data...');
+        break;
+      case 'youtube music':
+        context.read<ComprehensiveChatBloc>().add(YtmusicConnected());
+        _showSuccessSnackBar('Syncing YouTube Music data...');
+        break;
+      case 'lastfm':
+        context.read<ComprehensiveChatBloc>().add(LastfmConnected());
+        _showSuccessSnackBar('Syncing Last.fm data...');
+        break;
+      case 'myanimelist':
+        context.read<ComprehensiveChatBloc>().add(MalConnected());
+        _showSuccessSnackBar('Syncing MyAnimeList data...');
+        break;
+      default:
+        _showErrorSnackBar('Unknown service: $serviceName');
+    }
   }
 
   void _refreshServiceTokens() {
     // Refresh tokens for all connected services
-    context.read<AuthBloc>().add(RefreshServiceToken('spotify'));
-    context.read<AuthBloc>().add(RefreshServiceToken('ytmusic'));
+    context.read<AuthBloc>().add(const RefreshServiceToken('spotify'));
+    context.read<AuthBloc>().add(const RefreshServiceToken('ytmusic'));
   }
 }

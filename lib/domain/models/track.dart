@@ -25,12 +25,31 @@ class Track extends CommonTrack with EquatableMixin {
         );
 
   factory Track.fromJson(Map<String, dynamic> json) {
+    // Handle backend response structure
+    // Backend returns 'uid' instead of 'id', 'name' instead of 'title'
+    final id = json['uid'] as String? ?? json['id'] as String? ?? '';
+    final title = json['name'] as String? ?? json['title'] as String? ?? '';
+
+    // Backend may not include artist info directly in track serialization
+    // This might need to be populated from related data
+    final artistName = json['artist_name'] as String?;
+    final albumName = json['album_name'] as String?;
+
+    // Handle image URL - backend returns images array, take first one
+    String? imageUrl = json['image_url'] as String?;
+    if (imageUrl == null && json['images'] is List && (json['images'] as List).isNotEmpty) {
+      final images = json['images'] as List;
+      if (images.isNotEmpty && images[0] is Map<String, dynamic>) {
+        imageUrl = images[0]['url'] as String?;
+      }
+    }
+
     return Track(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      artistName: json['artist_name'] as String?,
-      albumName: json['album_name'] as String?,
-      imageUrl: json['image_url'] as String?,
+      id: id,
+      title: title,
+      artistName: artistName,
+      albumName: albumName,
+      imageUrl: imageUrl,
       latitude: json['latitude'] as double?,
       longitude: json['longitude'] as double?,
       playedAt: json['played_at'] != null

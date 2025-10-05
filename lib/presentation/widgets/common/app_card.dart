@@ -155,6 +155,7 @@ class AppCards {
     return AppCard(
       key: key,
       variant: AppCardVariant.musicTrack,
+      onTap: onTap,
       child: Row(
         children: [
           Container(
@@ -201,7 +202,6 @@ class AppCards {
           ),
         ],
       ),
-      onTap: onTap,
     );
   }
 
@@ -216,6 +216,7 @@ class AppCards {
     return AppCard(
       key: key,
       variant: AppCardVariant.profile,
+      onTap: onTap,
       child: Row(
         children: [
           Stack(
@@ -273,7 +274,6 @@ class AppCards {
           ),
         ],
       ),
-      onTap: onTap,
     );
   }
 
@@ -289,6 +289,7 @@ class AppCards {
     return AppCard(
       key: key,
       variant: AppCardVariant.event,
+      onTap: onTap,
       child: Row(
         children: [
           Container(
@@ -344,7 +345,6 @@ class AppCards {
           ),
         ],
       ),
-      onTap: onTap,
     );
   }
 
@@ -356,8 +356,8 @@ class AppCards {
     return AppCard(
       key: key,
       variant: AppCardVariant.gradient,
-      child: child,
       onTap: onTap,
+      child: child,
     );
   }
 
@@ -369,8 +369,8 @@ class AppCards {
     return AppCard(
       key: key,
       variant: AppCardVariant.primary,
-      child: child,
       onTap: onTap,
+      child: child,
     );
   }
 
@@ -382,8 +382,8 @@ class AppCards {
     return AppCard(
       key: key,
       variant: AppCardVariant.primary,
-      child: child,
       onTap: onTap,
+      child: child,
     );
   }
 
@@ -395,8 +395,8 @@ class AppCards {
     return AppCard(
       key: key,
       variant: AppCardVariant.transparent,
-      child: child,
       onTap: onTap,
+      child: child,
     );
   }
 
@@ -408,8 +408,8 @@ class AppCards {
     return AppCard(
       key: key,
       variant: AppCardVariant.transparent,
-      child: child,
       onTap: onTap,
+      child: child,
     );
   }
 
@@ -421,8 +421,8 @@ class AppCards {
     return AppCard(
       key: key,
       variant: AppCardVariant.outline,
-      child: child,
       onTap: onTap,
+      child: child,
     );
   }
 
@@ -434,8 +434,8 @@ class AppCards {
     return AppCard(
       key: key,
       variant: AppCardVariant.outline,
-      child: child,
       onTap: onTap,
+      child: child,
     );
   }
 }

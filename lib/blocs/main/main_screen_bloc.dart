@@ -36,9 +36,9 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
         emit(const MainScreenUnauthenticated());
       } else {
         // For other errors, still try to show the main screen with limited functionality
-        emit(MainScreenAuthenticated(
+        emit(const MainScreenAuthenticated(
           username: 'User',
-          userProfile: const {'username': 'User', 'id': 'user'},
+          userProfile: {'username': 'User', 'id': 'user'},
         ));
       }
     }

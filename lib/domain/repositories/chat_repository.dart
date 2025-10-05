@@ -70,4 +70,9 @@ abstract class ChatRepository {
     int? limit,
     String? beforeId,
   });
+
+  // Invitation operations
+  Future<void> sendInvitation(String channelId, String userId);
+  Future<void> acceptInvitation(String invitationId);
+  Future<void> declineInvitation(String invitationId);
 }

@@ -70,6 +70,11 @@ abstract class ChatRemoteDataSource {
   Future<void> kickUser(String channelId, String userId);
   Future<void> blockUser(String channelId, String userId);
   Future<void> unblockUser(String channelId, String userId);
+
+  // Invitation methods
+  Future<void> sendInvitation(String channelId, String userId);
+  Future<void> acceptInvitation(String invitationId);
+  Future<void> declineInvitation(String invitationId);
 }
 
 class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
@@ -512,5 +517,38 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   Future<void> unblockUser(String channelId, String userId) async {
     // This functionality is not directly supported by the API endpoints
     throw ServerException(message: 'Unblock user not supported by API');
+  }
+
+  @override
+  Future<void> sendInvitation(String channelId, String userId) async {
+    try {
+      await _dioClient.post('${ApiConfig.chatAddChannelMember}$channelId/', data: {
+        'userId': userId,
+      });
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to send invitation');
+    }
+  }
+
+  @override
+  Future<void> acceptInvitation(String invitationId) async {
+    try {
+      await _dioClient.post('${ApiConfig.chatHandleInvitation}$invitationId/', data: {
+        'action': 'accept',
+      });
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to accept invitation');
+    }
+  }
+
+  @override
+  Future<void> declineInvitation(String invitationId) async {
+    try {
+      await _dioClient.post('${ApiConfig.chatHandleInvitation}$invitationId/', data: {
+        'action': 'decline',
+      });
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to decline invitation');
+    }
   }
 }

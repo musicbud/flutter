@@ -38,17 +38,19 @@ class ProfileTopItemsRequested extends ProfileEvent {
   const ProfileTopItemsRequested(this.category);
 
   @override
-  List<Object?> get props => [category];
+  List<Object> get props => [category];
 }
 
 class ProfileLikedItemsRequested extends ProfileEvent {
-  final String category; // 'tracks', 'artists', 'genres', 'anime', 'manga'
+  final String category; // 'tracks', 'artists', 'genres', 'albums'
 
   const ProfileLikedItemsRequested(this.category);
 
   @override
-  List<Object?> get props => [category];
+  List<Object> get props => [category];
 }
+
+class ProfilePlayedTracksRequested extends ProfileEvent {}
 
 class ProfileBudsRequested extends ProfileEvent {
   final String category; // 'liked/artists', 'liked/tracks', etc.
@@ -56,13 +58,7 @@ class ProfileBudsRequested extends ProfileEvent {
   const ProfileBudsRequested(this.category);
 
   @override
-  List<Object?> get props => [category];
+  List<Object> get props => [category];
 }
 
 class ProfileConnectedServicesRequested extends ProfileEvent {}
-
-class ProfileRefreshRequested extends ProfileEvent {}
-
-class ProfileStatsRequested extends ProfileEvent {}
-
-class ProfilePreferencesRequested extends ProfileEvent {}

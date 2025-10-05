@@ -503,4 +503,37 @@ class ChatRepositoryImpl implements ChatRepository {
       throw ServerFailure(message: e.toString());
     }
   }
+
+  @override
+  Future<void> sendInvitation(String channelId, String userId) async {
+    try {
+      await _chatRemoteDataSource.sendInvitation(channelId, userId);
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
+  }
+
+  @override
+  Future<void> acceptInvitation(String invitationId) async {
+    try {
+      await _chatRemoteDataSource.acceptInvitation(invitationId);
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
+  }
+
+  @override
+  Future<void> declineInvitation(String invitationId) async {
+    try {
+      await _chatRemoteDataSource.declineInvitation(invitationId);
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
+  }
 }

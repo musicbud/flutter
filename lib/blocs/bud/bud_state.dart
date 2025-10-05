@@ -1,4 +1,11 @@
 import 'package:equatable/equatable.dart';
+import '../../../domain/models/bud_match.dart';
+import '../../../domain/models/common_track.dart';
+import '../../../domain/models/common_artist.dart';
+import '../../../domain/models/common_genre.dart';
+import '../../../domain/models/common_album.dart';
+import '../../../domain/models/common_anime.dart';
+import '../../../domain/models/common_manga.dart';
 
 abstract class BudState extends Equatable {
   const BudState();
@@ -7,106 +14,274 @@ abstract class BudState extends Equatable {
   List<Object?> get props => [];
 }
 
-class BudInitial extends BudState {}
+class BudInitial extends BudState {
+  const BudInitial();
+}
 
-class BudLoading extends BudState {}
-
-class BudFailure extends BudState {
-  final String error;
-
-  const BudFailure(this.error);
-
-  @override
-  List<Object> get props => [error];
+class BudLoading extends BudState {
+  const BudLoading();
 }
 
 class BudsLoaded extends BudState {
-  final List<dynamic> buds;
+  final List<BudMatch> buds;
+  final String category;
 
-  const BudsLoaded({required this.buds});
-
-  @override
-  List<Object?> get props => [buds];
-}
-
-class BudMatchesLoaded extends BudState {
-  final List<dynamic> matches;
-
-  const BudMatchesLoaded({required this.matches});
+  const BudsLoaded({
+    required this.buds,
+    required this.category,
+  });
 
   @override
-  List<Object?> get props => [matches];
+  List<Object> get props => [buds, category];
 }
 
-class BudRecommendationsLoaded extends BudState {
-  final List<dynamic> recommendations;
+class BudError extends BudState {
+  final String message;
 
-  const BudRecommendationsLoaded({required this.recommendations});
+  const BudError(this.message);
 
   @override
-  List<Object?> get props => [recommendations];
+  List<Object> get props => [message];
 }
 
-class BudSearchResultsLoaded extends BudState {
-  final List<dynamic> results;
+// Enhanced states from legacy
+class BudsByLikedArtistsLoaded extends BudState {
+  final List<BudMatch> buds;
+
+  const BudsByLikedArtistsLoaded({required this.buds});
+
+  @override
+  List<Object> get props => [buds];
+}
+
+class BudsByLikedTracksLoaded extends BudState {
+  final List<BudMatch> buds;
+
+  const BudsByLikedTracksLoaded({required this.buds});
+
+  @override
+  List<Object> get props => [buds];
+}
+
+class BudsByLikedGenresLoaded extends BudState {
+  final List<BudMatch> buds;
+
+  const BudsByLikedGenresLoaded({required this.buds});
+
+  @override
+  List<Object> get props => [buds];
+}
+
+class BudsByLikedAlbumsLoaded extends BudState {
+  final List<BudMatch> buds;
+
+  const BudsByLikedAlbumsLoaded({required this.buds});
+
+  @override
+  List<Object> get props => [buds];
+}
+
+class BudsByTopArtistsLoaded extends BudState {
+  final List<BudMatch> buds;
+
+  const BudsByTopArtistsLoaded({required this.buds});
+
+  @override
+  List<Object> get props => [buds];
+}
+
+class BudsByTopTracksLoaded extends BudState {
+  final List<BudMatch> buds;
+
+  const BudsByTopTracksLoaded({required this.buds});
+
+  @override
+  List<Object> get props => [buds];
+}
+
+class BudsByTopGenresLoaded extends BudState {
+  final List<BudMatch> buds;
+
+  const BudsByTopGenresLoaded({required this.buds});
+
+  @override
+  List<Object> get props => [buds];
+}
+
+class BudsByTopAnimeLoaded extends BudState {
+  final List<BudMatch> buds;
+
+  const BudsByTopAnimeLoaded({required this.buds});
+
+  @override
+  List<Object> get props => [buds];
+}
+
+class BudsByTopMangaLoaded extends BudState {
+  final List<BudMatch> buds;
+
+  const BudsByTopMangaLoaded({required this.buds});
+
+  @override
+  List<Object> get props => [buds];
+}
+
+class BudsByPlayedTracksLoaded extends BudState {
+  final List<BudMatch> buds;
+
+  const BudsByPlayedTracksLoaded({required this.buds});
+
+  @override
+  List<Object> get props => [buds];
+}
+
+class BudsByArtistLoaded extends BudState {
+  final List<BudMatch> buds;
+  final String artistId;
+
+  const BudsByArtistLoaded({required this.buds, required this.artistId});
+
+  @override
+  List<Object> get props => [buds, artistId];
+}
+
+class BudsByTrackLoaded extends BudState {
+  final List<BudMatch> buds;
+  final String trackId;
+
+  const BudsByTrackLoaded({required this.buds, required this.trackId});
+
+  @override
+  List<Object> get props => [buds, trackId];
+}
+
+class BudsByGenreLoaded extends BudState {
+  final List<BudMatch> buds;
+  final String genreId;
+
+  const BudsByGenreLoaded({required this.buds, required this.genreId});
+
+  @override
+  List<Object> get props => [buds, genreId];
+}
+
+class BudsByAlbumLoaded extends BudState {
+  final List<BudMatch> buds;
+  final String albumId;
+
+  const BudsByAlbumLoaded({required this.buds, required this.albumId});
+
+  @override
+  List<Object> get props => [buds, albumId];
+}
+
+class BudsSearchLoaded extends BudState {
+  final List<BudMatch> buds;
   final String query;
 
-  const BudSearchResultsLoaded({
-    required this.results,
-    required this.query,
-  });
+  const BudsSearchLoaded({required this.buds, required this.query});
 
   @override
-  List<Object?> get props => [results, query];
+  List<Object> get props => [buds, query];
 }
 
-class BudRequestSentSuccess extends BudState {
-  final String userId;
+// Common items states
+class CommonLikedArtistsLoaded extends BudState {
+  final List<CommonArtist> artists;
+  final String budId;
 
-  const BudRequestSentSuccess({required this.userId});
+  const CommonLikedArtistsLoaded({required this.artists, required this.budId});
 
   @override
-  List<Object?> get props => [userId];
+  List<Object> get props => [artists, budId];
 }
 
-class BudRequestAcceptedSuccess extends BudState {
-  final String userId;
+class CommonLikedTracksLoaded extends BudState {
+  final List<CommonTrack> tracks;
+  final String budId;
 
-  const BudRequestAcceptedSuccess({required this.userId});
+  const CommonLikedTracksLoaded({required this.tracks, required this.budId});
 
   @override
-  List<Object?> get props => [userId];
+  List<Object> get props => [tracks, budId];
 }
 
-class BudRequestRejectedSuccess extends BudState {
-  final String userId;
+class CommonLikedGenresLoaded extends BudState {
+  final List<CommonGenre> genres;
+  final String budId;
 
-  const BudRequestRejectedSuccess({required this.userId});
+  const CommonLikedGenresLoaded({required this.genres, required this.budId});
 
   @override
-  List<Object?> get props => [userId];
+  List<Object> get props => [genres, budId];
 }
 
-class BudRemovedSuccess extends BudState {
-  final String userId;
+class CommonLikedAlbumsLoaded extends BudState {
+  final List<CommonAlbum> albums;
+  final String budId;
 
-  const BudRemovedSuccess({required this.userId});
+  const CommonLikedAlbumsLoaded({required this.albums, required this.budId});
 
   @override
-  List<Object?> get props => [userId];
+  List<Object> get props => [albums, budId];
 }
 
-class CommonItemsLoaded extends BudState {
-  final List<dynamic> items;
-  final String category;
-  final String userId;
+class CommonTopArtistsLoaded extends BudState {
+  final List<CommonArtist> artists;
+  final String budId;
 
-  const CommonItemsLoaded({
-    required this.items,
-    required this.category,
-    required this.userId,
-  });
+  const CommonTopArtistsLoaded({required this.artists, required this.budId});
 
   @override
-  List<Object?> get props => [items, category, userId];
+  List<Object> get props => [artists, budId];
+}
+
+class CommonTopTracksLoaded extends BudState {
+  final List<CommonTrack> tracks;
+  final String budId;
+
+  const CommonTopTracksLoaded({required this.tracks, required this.budId});
+
+  @override
+  List<Object> get props => [tracks, budId];
+}
+
+class CommonTopGenresLoaded extends BudState {
+  final List<CommonGenre> genres;
+  final String budId;
+
+  const CommonTopGenresLoaded({required this.genres, required this.budId});
+
+  @override
+  List<Object> get props => [genres, budId];
+}
+
+class CommonTopAnimeLoaded extends BudState {
+  final List<CommonAnime> anime;
+  final String budId;
+
+  const CommonTopAnimeLoaded({required this.anime, required this.budId});
+
+  @override
+  List<Object> get props => [anime, budId];
+}
+
+class CommonTopMangaLoaded extends BudState {
+  final List<CommonManga> manga;
+  final String budId;
+
+  const CommonTopMangaLoaded({required this.manga, required this.budId});
+
+  @override
+  List<Object> get props => [manga, budId];
+}
+
+class CommonPlayedTracksLoaded extends BudState {
+  final List<CommonTrack> tracks;
+  final String budId;
+
+  const CommonPlayedTracksLoaded({required this.tracks, required this.budId});
+
+  @override
+  List<Object> get props => [tracks, budId];
 }

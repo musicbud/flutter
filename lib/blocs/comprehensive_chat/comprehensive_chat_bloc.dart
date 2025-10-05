@@ -6,7 +6,10 @@ import '../../domain/repositories/auth_repository.dart';
 import '../../domain/models/channel.dart';
 import '../../domain/models/channel_details.dart';
 import '../../domain/models/channel_dashboard.dart';
+import '../../domain/models/channel_invitation.dart';
 import '../../domain/models/channel_statistics.dart';
+import '../../domain/models/channel_settings.dart';
+import '../../domain/models/channel_stats.dart';
 import 'comprehensive_chat_event.dart';
 import 'comprehensive_chat_state.dart';
 
@@ -162,14 +165,12 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
       // TODO: Convert channelData to Channel model when repository returns proper type
       // final channelData = await _chatRepository.createChannel(event.name, event.description);
       // final channel = Channel.fromJson(channelData);
-      emit(ChannelCreatedSuccess(Channel(
-        id: 'temp_id',
+      final newChannel = Channel.create(
         name: event.name,
         description: event.description,
-        type: 'public',
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-      )));
+        isPublic: true,
+      );
+      emit(ChannelCreatedSuccess(newChannel));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }
@@ -379,9 +380,22 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
         channel: Channel(
           id: event.channelId,
           name: 'Channel',
-          type: 'public',
+          description: null,
+          isPublic: true,
+          settings: ChannelSettings(
+            channelId: event.channelId,
+            isPrivate: false,
+          ),
+          stats: ChannelStats(
+            channelId: event.channelId,
+            memberCount: 0,
+            messageCount: 0,
+            activeUsers: 0,
+            lastActivityAt: DateTime.now(),
+          ),
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
+          isJoined: false,
         ),
         members: const [],
         moderators: const [],
@@ -443,10 +457,17 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
     ChannelSettingsUpdated event,
     Emitter<ComprehensiveChatState> emit,
   ) async {
-    emit(ComprehensiveChatLoading());
     try {
-      await _chatRepository.updateChannel(event.channelId, event.settings['name'] ?? '', event.settings['description'] ?? '');
-      emit(ChannelSettingsUpdatedSuccess());
+      final channel = await _chatRepository.getChannel(event.channelId);
+      final updatedResult = await _chatRepository.updateChannel(
+        event.channelId,
+        channel.name,
+        channel.description ?? '',
+      );
+      emit(ChannelSettingsUpdatedSuccess(
+        channelId: event.channelId,
+        settings: event.settings,
+      ));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }
@@ -498,8 +519,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
   ) async {
     emit(ComprehensiveChatLoading());
     try {
-      // TODO: Implement user profile update
-      // await _userRepository.updateUserProfile(event.userId, event.profileData);
+      await _userRepository.updateUserProfile(event.userId, event.profileData);
       emit(UserProfileUpdatedSuccess());
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
@@ -512,8 +532,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
   ) async {
     emit(ComprehensiveChatLoading());
     try {
-      // TODO: Implement user ban functionality
-      // await _userRepository.banUser(event.userId);
+      await _userRepository.banUser(event.userId);
       emit(UserBannedSuccess());
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
@@ -526,8 +545,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
   ) async {
     emit(ComprehensiveChatLoading());
     try {
-      // TODO: Implement user unban functionality
-      // await _userRepository.unbanUser(event.userId);
+      await _userRepository.unbanUser(event.userId);
       emit(UserUnbannedSuccess());
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
@@ -540,9 +558,8 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
   ) async {
     emit(ComprehensiveChatLoading());
     try {
-      // TODO: Implement get banned users functionality
-      // final bannedUsers = await _userRepository.getBannedUsers();
-      emit(const BannedUsersLoaded([]));
+      final bannedUsers = await _userRepository.getBannedUsers();
+      emit(BannedUsersLoaded(bannedUsers));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }
@@ -660,9 +677,12 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
   ) async {
     emit(ComprehensiveChatLoading());
     try {
-      // TODO: Implement when repository method is available
-      // final invitations = await _chatRepository.getChannelInvitations(event.channelId);
-      emit(const ChannelInvitationsLoaded([]));
+      final invitations = await _chatRepository.getChannelInvitations(event.channelId);
+      // Convert dynamic list to List<ChannelInvitation>
+      final typedInvitations = invitations.map((invitation) =>
+        ChannelInvitation.fromJson(invitation as Map<String, dynamic>)
+      ).toList();
+      emit(ChannelInvitationsLoaded(typedInvitations));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }
@@ -674,9 +694,12 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
   ) async {
     emit(ComprehensiveChatLoading());
     try {
-      // TODO: Implement when repository method is available
-      // final invitations = await _chatRepository.getUserInvitations(event.userId);
-      emit(const UserInvitationsLoaded([]));
+      final invitations = await _chatRepository.getUserInvitations(event.userId);
+      // Convert dynamic list to List<ChannelInvitation>
+      final typedInvitations = invitations.map((invitation) =>
+        ChannelInvitation.fromJson(invitation as Map<String, dynamic>)
+      ).toList();
+      emit(UserInvitationsLoaded(typedInvitations));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }
@@ -688,8 +711,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
   ) async {
     emit(ComprehensiveChatLoading());
     try {
-      // TODO: Implement when repository method is available
-      // await _chatRepository.sendInvitation(event.channelId, event.userId);
+      await _chatRepository.sendInvitation(event.channelId, event.userId);
       emit(InvitationSentSuccess());
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
@@ -702,8 +724,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
   ) async {
     emit(ComprehensiveChatLoading());
     try {
-      // TODO: Implement when repository method is available
-      // await _chatRepository.acceptInvitation(event.invitationId);
+      await _chatRepository.acceptInvitation(event.invitationId);
       emit(InvitationAcceptedSuccess());
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
@@ -716,8 +737,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
   ) async {
     emit(ComprehensiveChatLoading());
     try {
-      // TODO: Implement when repository method is available
-      // await _chatRepository.declineInvitation(event.invitationId);
+      await _chatRepository.declineInvitation(event.invitationId);
       emit(InvitationDeclinedSuccess());
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));

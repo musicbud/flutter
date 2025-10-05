@@ -24,15 +24,32 @@ class BudMatch extends Equatable {
 
   /// Creates a [BudMatch] from a JSON map
   factory BudMatch.fromJson(Map<String, dynamic> json) {
+    // Handle backend response structure - backend returns 'bud' with user data and 'similarity_score'
+    final budData = json['bud'] as Map<String, dynamic>? ?? json;
+    final similarityScore = json['similarity_score'] as num? ?? 0;
+
+    final id = budData['uid'] as String? ?? budData['id'] as String? ?? '';
+    final userId = budData['uid'] as String? ?? budData['id'] as String? ?? '';
+    final username = budData['username'] as String? ?? '';
+
+    // Handle avatar URL - backend returns images array, take first one
+    String? avatarUrl = budData['avatar_url'] as String?;
+    if (avatarUrl == null && budData['images'] is List && (budData['images'] as List).isNotEmpty) {
+      final images = budData['images'] as List;
+      if (images.isNotEmpty && images[0] is Map<String, dynamic>) {
+        avatarUrl = images[0]['url'] as String?;
+      }
+    }
+
     return BudMatch(
-      id: json['id'] as String,
-      userId: json['user_id'] as String,
-      username: json['username'] as String,
-      avatarUrl: json['avatar_url'] as String?,
-      matchScore: (json['match_score'] as num).toDouble(),
-      commonArtists: json['common_artists'] as int,
-      commonTracks: json['common_tracks'] as int,
-      commonGenres: json['common_genres'] as int,
+      id: id,
+      userId: userId,
+      username: username,
+      avatarUrl: avatarUrl,
+      matchScore: similarityScore.toDouble(),
+      commonArtists: 0, // Backend doesn't provide individual counts
+      commonTracks: 0,
+      commonGenres: 0,
     );
   }
 

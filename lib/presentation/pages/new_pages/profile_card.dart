@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: ProfileScreenCard(),
     );
@@ -22,13 +24,13 @@ class ProfileScreenCard extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/pixiled_background.jpg'),
             fit: BoxFit.cover,
           ),
         ),
-        child: Center(
+        child: const Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -65,7 +67,7 @@ class AvatarNotifications extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(color: const Color(0xFFB48080), width: 1.1),
               ),
-              child: CircleAvatar(
+              child: const CircleAvatar(
                 backgroundColor: Color(0xFFB48080),
                 radius: 55,
                 backgroundImage: AssetImage('assets/profile.jpg'),
@@ -77,11 +79,11 @@ class AvatarNotifications extends StatelessWidget {
               child: Container(
                 width: 14,
                 height: 14,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFF265A),
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFF265A),
                   shape: BoxShape.circle,
                 ),
-                child: Text(
+                child: const Text(
                   '9',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -94,7 +96,7 @@ class AvatarNotifications extends StatelessWidget {
             ),
           ],
         ),
-        Icon(Icons.arrow_drop_down, color: const Color(0xFFB48080), size: 14),
+        const Icon(Icons.arrow_drop_down, color: Color(0xFFB48080), size: 14),
 
         //ProfileCard(),
       ],
@@ -114,14 +116,14 @@ class ProfileCard extends StatelessWidget {
       height: 102,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(4),
-          color: Color.fromARGB(145, 15, 15, 19),
+          color: const Color.fromARGB(145, 15, 15, 19),
           border: Border.all(color: const Color(0xFFCFD0FD), width: .1)),
       child: Padding(
         padding: const EdgeInsets.only(left: 12, top: 8, bottom: 6, right: 12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Ali Ahmed',
               style: TextStyle(
                 color: Colors.white,
@@ -129,22 +131,22 @@ class ProfileCard extends StatelessWidget {
                 fontWeight: FontWeight.normal,
               ),
             ),
-            SizedBox(height: 12),
-            Row(
+            const SizedBox(height: 12),
+            const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(size: 10, Icons.location_on_outlined, color: const Color(0xFFCFD0FD)),
+                Icon(size: 10, Icons.location_on_outlined, color: Color(0xFFCFD0FD)),
                 SizedBox(width: 5),
                 Text(
                   'Egypt - Al Sharqia',
                   style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.normal,
-                      color: const Color(0xFFCFD0FD)),
+                      color: Color(0xFFCFD0FD)),
                 ),
               ],
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             // _buildMusicTile('Echoes in the Dark', 'Midnight Echoes',
             //     'assets/music_cover2.jpg'),
             Container(
@@ -154,7 +156,7 @@ class ProfileCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(4)),
               child: Row(
                 children: [
-                  Spacer(),
+                  const Spacer(),
                   Container(
                     width: 23,
                     height: 23,
@@ -169,15 +171,15 @@ class ProfileCard extends StatelessWidget {
                     ),
                     //Image.asset("assets/music_cover.jpg", fit: BoxFit.fitHeight,),
                   ),
-                  SizedBox(width: 5),
-                  Column(crossAxisAlignment: CrossAxisAlignment.start,
+                  const SizedBox(width: 5),
+                  const Column(crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                     Text('Echoes in the Dark',
                         style: TextStyle(color: Colors.white, fontSize: 11)),
                     Text('Midnight Echoes',
-                        style: TextStyle(color: const Color(0xFFCFD0FD), fontSize: 9)),
+                        style: TextStyle(color: Color(0xFFCFD0FD), fontSize: 9)),
                   ]),
-                  Spacer(),
+                  const Spacer(),
                 ],
               ),
             )

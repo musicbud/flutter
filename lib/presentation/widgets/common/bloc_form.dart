@@ -109,7 +109,7 @@ class _BlocFormState<TBloc extends Bloc<TEvent, TState>, TState, TEvent> extends
       builder: (context, state) {
         if (widget.customStateWidget != null) {
           final customWidget = widget.customStateWidget!(state);
-          if (customWidget != null) return customWidget;
+          return customWidget;
         }
 
         if (widget.isLoading(state)) {

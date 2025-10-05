@@ -158,7 +158,18 @@ class ChannelStatisticsLoaded extends ComprehensiveChatState {
   List<Object?> get props => [statistics];
 }
 
-class ChannelSettingsUpdatedSuccess extends ComprehensiveChatState {}
+class ChannelSettingsUpdatedSuccess extends ComprehensiveChatState {
+  final String channelId;
+  final dynamic settings;
+
+  const ChannelSettingsUpdatedSuccess({
+    required this.channelId,
+    required this.settings,
+  });
+
+  @override
+  List<Object?> get props => [channelId, settings];
+}
 
 class ChannelDeletedSuccess extends ComprehensiveChatState {}
 

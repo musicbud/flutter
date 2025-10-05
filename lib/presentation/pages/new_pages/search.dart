@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/content/content_bloc.dart';
 import '../../../blocs/content/content_event.dart';
-import '../../../blocs/bud/bud_bloc.dart';
-import '../../../blocs/bud/bud_event.dart';
 import '../../../domain/models/common_track.dart';
 import '../../../domain/models/common_artist.dart';
 import '../../../domain/models/common_album.dart';
@@ -74,7 +72,6 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
           ),
         ],
       ),
-      drawer: _buildNavigationDrawer(),
       body: Column(
         children: [
           _buildSearchBar(),
@@ -120,10 +117,10 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
       ),
-      child: Row(
+      child: const Row(
         children: [
           Icon(Icons.info, color: Colors.orange, size: 20),
-          const SizedBox(width: 8),
+          SizedBox(width: 8),
           Expanded(
             child: Text(
               'Search functionality is limited. Content search is not supported by the API. You can browse your existing content instead.',
@@ -206,15 +203,15 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
           ),
           const SizedBox(height: 16),
           Text(
-            'No ${searchType} to display',
-            style: TextStyle(
+            'No $searchType to display',
+            style: const TextStyle(
               color: AppConstants.textColor,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 8),
-          Text(
+          const Text(
             'Start searching or browse your existing content',
             style: TextStyle(
               color: AppConstants.textSecondaryColor,
@@ -231,22 +228,22 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.search_off,
             size: 64,
             color: AppConstants.textSecondaryColor,
           ),
           const SizedBox(height: 16),
           Text(
-            'No ${searchType} found',
-            style: TextStyle(
+            'No $searchType found',
+            style: const TextStyle(
               color: AppConstants.textColor,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 8),
-          Text(
+          const Text(
             'Try a different search term or browse your existing content',
             style: TextStyle(
               color: AppConstants.textSecondaryColor,
@@ -317,15 +314,15 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: AppConstants.primaryColor.withValues(alpha: 0.2),
-          child: Icon(Icons.music_note, color: AppConstants.primaryColor),
+          child: const Icon(Icons.music_note, color: AppConstants.primaryColor),
         ),
         title: Text(
           track.name,
-          style: TextStyle(color: AppConstants.textColor),
+          style: const TextStyle(color: AppConstants.textColor),
         ),
         subtitle: Text(
                           track.artistName ?? 'Unknown Artist',
-          style: TextStyle(color: AppConstants.textSecondaryColor),
+          style: const TextStyle(color: AppConstants.textSecondaryColor),
         ),
         trailing: IconButton(
           icon: Icon(
@@ -344,15 +341,15 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: AppConstants.primaryColor.withValues(alpha: 0.2),
-          child: Icon(Icons.person, color: AppConstants.primaryColor),
+          child: const Icon(Icons.person, color: AppConstants.primaryColor),
         ),
         title: Text(
           artist.name,
-          style: TextStyle(color: AppConstants.textColor),
+          style: const TextStyle(color: AppConstants.textColor),
         ),
         subtitle: Text(
           '${artist.followers ?? 0} followers',
-          style: TextStyle(color: AppConstants.textSecondaryColor),
+          style: const TextStyle(color: AppConstants.textSecondaryColor),
         ),
         trailing: IconButton(
           icon: Icon(
@@ -371,15 +368,15 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: AppConstants.primaryColor.withValues(alpha: 0.2),
-          child: Icon(Icons.album, color: AppConstants.primaryColor),
+          child: const Icon(Icons.album, color: AppConstants.primaryColor),
         ),
         title: Text(
           album.name,
-          style: TextStyle(color: AppConstants.textColor),
+          style: const TextStyle(color: AppConstants.textColor),
         ),
         subtitle: Text(
                           album.artistName ?? 'Unknown Artist',
-          style: TextStyle(color: AppConstants.textSecondaryColor),
+          style: const TextStyle(color: AppConstants.textSecondaryColor),
         ),
         trailing: IconButton(
           icon: Icon(
@@ -398,13 +395,13 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: AppConstants.primaryColor.withValues(alpha: 0.2),
-          child: Icon(Icons.category, color: AppConstants.primaryColor),
+          child: const Icon(Icons.category, color: AppConstants.primaryColor),
         ),
         title: Text(
           genre.name,
-          style: TextStyle(color: AppConstants.textColor),
+          style: const TextStyle(color: AppConstants.textColor),
         ),
-        subtitle: Text(
+        subtitle: const Text(
                           'Genre',
           style: TextStyle(color: AppConstants.textSecondaryColor),
         ),
@@ -425,15 +422,15 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: AppConstants.primaryColor.withValues(alpha: 0.2),
-          child: Icon(Icons.animation, color: AppConstants.primaryColor),
+          child: const Icon(Icons.animation, color: AppConstants.primaryColor),
         ),
         title: Text(
           anime.title,
-          style: TextStyle(color: AppConstants.textColor),
+          style: const TextStyle(color: AppConstants.textColor),
         ),
         subtitle: Text(
           anime.type ?? 'Unknown Type',
-          style: TextStyle(color: AppConstants.textSecondaryColor),
+          style: const TextStyle(color: AppConstants.textSecondaryColor),
         ),
         trailing: IconButton(
           icon: Icon(
@@ -452,15 +449,15 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: AppConstants.primaryColor.withValues(alpha: 0.2),
-          child: Icon(Icons.book, color: AppConstants.primaryColor),
+          child: const Icon(Icons.book, color: AppConstants.primaryColor),
         ),
         title: Text(
           manga.title,
-          style: TextStyle(color: AppConstants.textColor),
+          style: const TextStyle(color: AppConstants.textColor),
         ),
         subtitle: Text(
           manga.type ?? 'Unknown Type',
-          style: TextStyle(color: AppConstants.textSecondaryColor),
+          style: const TextStyle(color: AppConstants.textSecondaryColor),
         ),
         trailing: IconButton(
           icon: Icon(
@@ -479,25 +476,25 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: AppConstants.primaryColor.withValues(alpha: 0.2),
-          child: Icon(Icons.person, color: AppConstants.primaryColor),
+          child: const Icon(Icons.person, color: AppConstants.primaryColor),
         ),
         title: Text(
           bud.username,
-          style: TextStyle(color: AppConstants.textColor),
+          style: const TextStyle(color: AppConstants.textColor),
         ),
         subtitle: Text(
           '${bud.matchScore ?? 0}% match',
-          style: TextStyle(color: AppConstants.textSecondaryColor),
+          style: const TextStyle(color: AppConstants.textSecondaryColor),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: Icon(Icons.person_add, color: AppConstants.primaryColor),
+              icon: const Icon(Icons.person_add, color: AppConstants.primaryColor),
               onPressed: () => _sendBudRequest(bud.id),
             ),
             IconButton(
-              icon: Icon(Icons.message, color: AppConstants.primaryColor),
+              icon: const Icon(Icons.message, color: AppConstants.primaryColor),
               onPressed: () => _openChat(bud.id),
             ),
           ],
@@ -560,8 +557,10 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
   }
 
   void _sendBudRequest(String budId) {
-    final event = BudRequestSent(userId: budId);
-    context.read<BudBloc>().add(event);
+    // TODO: Fix BudBloc events
+    // final event = BudRequestSent(userId: budId);
+    // context.read<BudBloc>().add(event);
+    _showErrorSnackBar('Bud request functionality not yet implemented');
   }
 
   void _openChat(String budId) {
@@ -583,7 +582,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          DrawerHeader(
+          const DrawerHeader(
             decoration: BoxDecoration(
               color: AppConstants.primaryColor,
             ),
@@ -599,7 +598,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
                     color: AppConstants.primaryColor,
                   ),
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: 8),
                 Text(
                   'Guest',
                   style: TextStyle(
@@ -659,7 +658,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
             },
           ),
           const SizedBox(height: 8),
-          Divider(color: Colors.grey),
+          const Divider(color: Colors.grey),
           const SizedBox(height: 8),
           _buildDrawerItem(
             icon: Icons.logout,
@@ -683,7 +682,7 @@ class _SearchPageState extends State<SearchPage> with TickerProviderStateMixin {
       leading: Icon(icon, color: AppConstants.primaryColor),
       title: Text(
         text,
-        style: TextStyle(
+        style: const TextStyle(
           color: AppConstants.textColor,
           fontSize: 16,
         ),

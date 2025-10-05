@@ -82,7 +82,7 @@ class _BlocListState<TBloc extends Bloc<TEvent, TState>, TState, TEvent, TItem>
       final hasReachedEnd = widget.hasReachedEnd?.call(state) ?? false;
 
       if (!isLoadingMore && !hasReachedEnd) {
-        context.read<TBloc>().add(widget.loadMoreEvent!);
+        context.read<TBloc>().add(widget.loadMoreEvent as TEvent);
       }
     }
   }
@@ -96,7 +96,7 @@ class _BlocListState<TBloc extends Bloc<TEvent, TState>, TState, TEvent, TItem>
 
   Future<void> _onRefresh() async {
     if (widget.refreshEvent != null) {
-      context.read<TBloc>().add(widget.refreshEvent!);
+      context.read<TBloc>().add(widget.refreshEvent as TEvent);
     } else {
       context.read<TBloc>().add(widget.loadEvent);
     }
@@ -124,10 +124,8 @@ class _BlocListState<TBloc extends Bloc<TEvent, TState>, TState, TEvent, TItem>
     // Handle custom state widget
     if (widget.customStateWidget != null) {
       final customWidget = widget.customStateWidget!(state);
-      if (customWidget != null) {
-        return customWidget;
-      }
-    }
+      return customWidget;
+        }
 
     // Handle loading state
     if (widget.isLoading(state)) {
@@ -191,7 +189,7 @@ class _BlocListState<TBloc extends Bloc<TEvent, TState>, TState, TEvent, TItem>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline,
               size: 64,
               color: AppConstants.errorColor,
@@ -295,7 +293,7 @@ class SimpleBlocList<TBloc extends Bloc<dynamic, TState>, TState, TItem> extends
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
+                const Icon(
                   Icons.error_outline,
                   size: 48,
                   color: AppConstants.errorColor,
@@ -317,7 +315,7 @@ class SimpleBlocList<TBloc extends Bloc<dynamic, TState>, TState, TItem> extends
 
         if (items.isEmpty) {
           return emptyBuilder?.call(context) ??
-              Center(
+              const Center(
                 child: Text(
                   'No items found',
                   style: AppConstants.captionStyle,

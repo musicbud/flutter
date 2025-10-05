@@ -27,10 +27,15 @@ class CommonGenre {
   });
 
   factory CommonGenre.fromJson(Map<String, dynamic> json) {
+    // Handle backend response structure - backend returns 'uid' instead of 'id'
+    final id = json['uid'] as String? ?? json['id'] as String? ?? '';
+    final uid = json['uid'] as String? ?? id;
+    final name = json['name'] as String? ?? '';
+
     return CommonGenre(
-      id: json['id'] as String,
-      uid: json['uid'] as String? ?? '',
-      name: json['name'] as String,
+      id: id,
+      uid: uid,
+      name: name,
       source: json['source'] as String?,
       spotifyId: json['spotify_id'] as String?,
       ytmusicId: json['ytmusic_id'] as String?,

@@ -35,6 +35,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     final response = await _dioClient.post(ApiConfig.myProfile);
 
     if (response.statusCode == 200) {
+      // The backend returns a direct JSON object, not wrapped in pagination
       return UserProfile.fromJson(response.data);
     } else {
       debugPrint('Failed to get profile. Status: ${response.statusCode}');
@@ -49,8 +50,17 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     final response = await _dioClient.post(ApiConfig.myLikedTracks);
 
     if (response.statusCode == 200) {
-      final List<dynamic> tracksJson = json.decode(response.data);
-      return tracksJson.map((json) => Track.fromJson(json)).toList();
+      // Backend returns paginated response with 'results' field
+      final responseData = response.data;
+      if (responseData is Map<String, dynamic> && responseData.containsKey('results')) {
+        final List<dynamic> tracksJson = responseData['results'];
+        return tracksJson.map((json) => Track.fromJson(json)).toList();
+      } else if (responseData is List) {
+        // Fallback for direct array response
+        return responseData.map((json) => Track.fromJson(json)).toList();
+      } else {
+        return [];
+      }
     } else {
       throw ServerException(message: 'Failed to get liked tracks');
     }
@@ -178,8 +188,17 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     final response = await _dioClient.post(ApiConfig.myTopTracks);
 
     if (response.statusCode == 200) {
-      final List<dynamic> tracksJson = json.decode(response.data);
-      return tracksJson.map((json) => Track.fromJson(json)).toList();
+      // Backend returns paginated response with 'results' field
+      final responseData = response.data;
+      if (responseData is Map<String, dynamic> && responseData.containsKey('results')) {
+        final List<dynamic> tracksJson = responseData['results'];
+        return tracksJson.map((json) => Track.fromJson(json)).toList();
+      } else if (responseData is List) {
+        // Fallback for direct array response
+        return responseData.map((json) => Track.fromJson(json)).toList();
+      } else {
+        return [];
+      }
     } else {
       throw ServerException(message: 'Failed to get top tracks');
     }
@@ -352,8 +371,17 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     final response = await _dioClient.post(ApiConfig.myPlayedTracks);
 
     if (response.statusCode == 200) {
-      final List<dynamic> tracksJson = json.decode(response.data);
-      return tracksJson.map((json) => Track.fromJson(json)).toList();
+      // Backend returns paginated response with 'results' field
+      final responseData = response.data;
+      if (responseData is Map<String, dynamic> && responseData.containsKey('results')) {
+        final List<dynamic> tracksJson = responseData['results'];
+        return tracksJson.map((json) => Track.fromJson(json)).toList();
+      } else if (responseData is List) {
+        // Fallback for direct array response
+        return responseData.map((json) => Track.fromJson(json)).toList();
+      } else {
+        return [];
+      }
     } else {
       throw ServerException(message: 'Failed to get played tracks');
     }
@@ -369,5 +397,51 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   Future<List<Track>> getCurrentlyPlayedTracks() async {
     // This endpoint is not in the requirements, so we'll throw an error
     throw ServerException(message: 'Currently played tracks not supported by API');
+  }
+
+  @override
+  Future<void> updateUserProfile(String userId, Map<String, dynamic> profileData) async {
+    final response = await _dioClient.post(
+      '${ApiConfig.users}/$userId/profile',
+      data: profileData,
+    );
+
+    if (response.statusCode != 200) {
+      throw ServerException(message: 'Failed to update user profile');
+    }
+  }
+
+  @override
+  Future<void> banUser(String userId) async {
+    final response = await _dioClient.post(
+      '${ApiConfig.users}/$userId/ban',
+    );
+
+    if (response.statusCode != 200) {
+      throw ServerException(message: 'Failed to ban user');
+    }
+  }
+
+  @override
+  Future<void> unbanUser(String userId) async {
+    final response = await _dioClient.post(
+      '${ApiConfig.users}/$userId/unban',
+    );
+
+    if (response.statusCode != 200) {
+      throw ServerException(message: 'Failed to unban user');
+    }
+  }
+
+  @override
+  Future<List<UserProfile>> getBannedUsers() async {
+    final response = await _dioClient.get('${ApiConfig.users}/banned');
+
+    if (response.statusCode == 200) {
+      final List<dynamic> usersJson = json.decode(response.data);
+      return usersJson.map((json) => UserProfile.fromJson(json)).toList();
+    } else {
+      throw ServerException(message: 'Failed to get banned users');
+    }
   }
 }

@@ -19,21 +19,21 @@ class _WelcomePageState extends State<WelcomePage> {
       'subtitle': 'Your ultimate music companion',
       'description': 'Discover new music, connect with fellow music lovers, and create unforgettable musical experiences together.',
       'icon': Icons.music_note,
-      'color': Color(0xFFFE2C54),
+      'color': const Color(0xFFFE2C54),
     },
     {
       'title': 'Connect & Share',
       'subtitle': 'Build your music community',
       'description': 'Find people who share your musical taste, join watch parties, and discover music through your connections.',
       'icon': Icons.people,
-      'color': Color(0xFF2D55FF),
+      'color': const Color(0xFF2D55FF),
     },
     {
       'title': 'Discover & Explore',
       'subtitle': 'Never-ending music journey',
       'description': 'Get personalized recommendations, explore new genres, and stay updated with the latest music trends.',
       'icon': Icons.explore,
-      'color': Color(0xFF2D55FF),
+      'color': const Color(0xFF2D55FF),
     },
   ];
 
@@ -176,7 +176,7 @@ class _WelcomePageState extends State<WelcomePage> {
                   (index) => Container(
                     width: _currentPage == index ? 24 : 8,
                     height: 8,
-                    margin: EdgeInsets.symmetric(horizontal: 4),
+                    margin: const EdgeInsets.symmetric(horizontal: 4),
                     decoration: BoxDecoration(
                       color: _currentPage == index
                           ? appTheme.colors.primaryRed

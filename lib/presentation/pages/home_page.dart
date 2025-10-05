@@ -13,13 +13,16 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final TextEditingController _searchController = TextEditingController();
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    // Load user profile when page initializes
+    // Load user profile and dynamic content
     context.read<UserProfileBloc>().add(FetchMyProfile());
+    context.read<UserProfileBloc>().add(FetchMyLikedContent(contentType: 'tracks'));
+    context.read<UserProfileBloc>().add(FetchMyTopContent(contentType: 'artists'));
+    context.read<UserProfileBloc>().add(FetchMyPlayedTracks());
   }
 
   @override
@@ -52,431 +55,312 @@ class _HomePageState extends State<HomePage> {
             child: SafeArea(
               child: CustomScrollView(
                 slivers: [
-                    // Header Section
-                    SliverToBoxAdapter(
-                      child: Container(
-                        padding: EdgeInsets.all(appTheme.spacing.lg),
-                        child: Row(
-                          children: [
-                            // Profile Avatar with enhanced styling
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(appTheme.radius.circular),
-                                boxShadow: appTheme.shadows.shadowCard,
-                                border: Border.all(
-                                  color: appTheme.colors.primaryRed.withValues(alpha: 0.3),
-                                  width: 2,
-                                ),
-                              ),
-                              child: CircleAvatar(
-                                radius: 28,
-                                backgroundColor: appTheme.colors.primaryRed,
-                                backgroundImage: state is UserProfileLoaded && state.userProfile.avatarUrl != null
-                                    ? NetworkImage(state.userProfile.avatarUrl!)
-                                    : null,
-                                child: state is UserProfileLoaded && state.userProfile.avatarUrl == null
-                                    ? Icon(
-                                        Icons.person,
-                                        color: appTheme.colors.white,
-                                        size: 28,
-                                      )
-                                    : null,
+                  // Header Section
+                  SliverToBoxAdapter(
+                    child: Container(
+                      padding: EdgeInsets.all(appTheme.spacing.lg),
+                      child: Row(
+                        children: [
+                          // Profile Avatar
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(appTheme.radius.circular),
+                              boxShadow: appTheme.shadows.shadowCard,
+                              border: Border.all(
+                                color: appTheme.colors.primaryRed.withValues(alpha: 0.3),
+                                width: 2,
                               ),
                             ),
-
-                            SizedBox(width: appTheme.spacing.md),
-
-                            // Welcome Text
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Welcome back!',
-                                    style: appTheme.typography.bodySmall.copyWith(
-                                      color: appTheme.colors.textMuted,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  SizedBox(height: appTheme.spacing.xs),
-                                  Text(
-                                    state is UserProfileLoaded
-                                        ? (state.userProfile.displayName != null
-                                            ? state.userProfile.displayName!
-                                            : state.userProfile.username)
-                                        : 'Loading...',
-                                    style: appTheme.typography.headlineH6.copyWith(
-                                      color: appTheme.colors.textPrimary,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                            child: CircleAvatar(
+                              radius: 28,
+                              backgroundColor: appTheme.colors.primaryRed,
+                              backgroundImage: state is UserProfileLoaded && state.userProfile.avatarUrl != null
+                                  ? NetworkImage(state.userProfile.avatarUrl!)
+                                  : null,
+                              child: state is UserProfileLoaded && state.userProfile.avatarUrl == null
+                                  ? Icon(
+                                      Icons.person,
+                                      color: appTheme.colors.white,
+                                      size: 28,
+                                    )
+                                  : null,
                             ),
-
-                            // Notification Icon with enhanced styling
-                            Container(
-                              padding: EdgeInsets.all(appTheme.spacing.sm),
-                              decoration: BoxDecoration(
-                                color: appTheme.colors.surfaceDark,
-                                borderRadius: BorderRadius.circular(appTheme.radius.md),
-                                boxShadow: appTheme.shadows.shadowSmall,
-                              ),
-                              child: Icon(
-                                Icons.notifications_outlined,
-                                color: appTheme.colors.textSecondary,
-                                size: 24,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    // Search Section
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
-                        child: ModernInputField(
-                          hintText: 'Search for music, artists, or playlists...',
-                          controller: _searchController,
-                          onChanged: (value) {
-                            // Handle search
-                          },
-                          size: ModernInputFieldSize.large,
-                        ),
-                      ),
-                    ),
-
-                    SliverToBoxAdapter(
-                      child: SizedBox(height: appTheme.spacing.lg),
-                    ),
-
-                    // Action Buttons Section
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: PrimaryButton(
-                                text: 'Discover',
-                                onPressed: () {
-                                  // Navigate to discover
-                                },
-                                icon: Icons.explore,
-                                size: ModernButtonSize.large,
-                                isFullWidth: true,
-                              ),
-                            ),
-                            SizedBox(width: appTheme.spacing.md),
-                            Expanded(
-                              child: SecondaryButton(
-                                text: 'My Library',
-                                onPressed: () {
-                                  // Navigate to library
-                                },
-                                icon: Icons.library_music,
-                                size: ModernButtonSize.large,
-                                isFullWidth: true,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    SliverToBoxAdapter(
-                      child: SizedBox(height: 120),
-                    ),
-
-                    // Featured Music Section
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          ),
+                          SizedBox(width: appTheme.spacing.md),
+                          // Welcome Text
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Featured Music',
-                                  style: appTheme.typography.headlineH7.copyWith(
+                                  'Welcome back!',
+                                  style: appTheme.typography.bodySmall.copyWith(
+                                    color: appTheme.colors.textMuted,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                SizedBox(height: appTheme.spacing.xs),
+                                Text(
+                                  state is UserProfileLoaded
+                                      ? (state.userProfile.displayName ?? state.userProfile.username)
+                                      : 'Loading...',
+                                  style: appTheme.typography.headlineH6.copyWith(
                                     color: appTheme.colors.textPrimary,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                                ModernTextButton(
-                                  text: 'View All',
-                                  onPressed: () {
-                                    // Navigate to all music
-                                  },
-                                  size: ModernButtonSize.small,
-                                ),
                               ],
                             ),
-                            SizedBox(height: appTheme.spacing.md),
-
-                            SizedBox(
-                              height: 160, // Further reduced from 180 to prevent overflow
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                physics: const ClampingScrollPhysics(),
-                                scrollDirection: Axis.horizontal,
-                                itemCount: 5,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    width: 120, // Further reduced from 140 to ensure proper fit
-                                    margin: EdgeInsets.only(
-                                      right: index < 4 ? appTheme.spacing.md : 0,
-                                    ),
-                                    child: _buildFeaturedMusicCard(
-                                      'Featured Track ${index + 1}',
-                                      'Artist ${index + 1}',
-                                      'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=120&h=160&fit=crop',
-                                      appTheme.colors.accentBlue,
-                                      appTheme,
-                                    ),
-                                  );
-                                },
-                              ),
+                          ),
+                          // Notification Icon
+                          Container(
+                            padding: EdgeInsets.all(appTheme.spacing.sm),
+                            decoration: BoxDecoration(
+                              color: appTheme.colors.surfaceDark,
+                              borderRadius: BorderRadius.circular(appTheme.radius.md),
+                              boxShadow: appTheme.shadows.shadowSmall,
                             ),
-                          ],
-                        ),
+                            child: Icon(
+                              Icons.notifications_outlined,
+                              color: appTheme.colors.textSecondary,
+                              size: 24,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-
-                    SliverToBoxAdapter(
-                      child: SizedBox(height: appTheme.spacing.xl),
-                    ),
-
-                    // Recent Activity Section
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Recent Activity',
-                              style: appTheme.typography.headlineH7.copyWith(
-                                color: appTheme.colors.textPrimary,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            SizedBox(height: appTheme.spacing.md),
-
-                            Column(
-                              children: [
-                                SizedBox(
-                                  height: 120, // Example fixed height for activity cards
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: const ClampingScrollPhysics(),
-                                    scrollDirection: Axis.vertical,
-                                    itemCount: 3,
-                                    itemBuilder: (context, index) {
-                                      // Existing activity card logic
-                                      if (index == 0) {
-                                        return _buildActivityCard(
-                                          'Liked a track',
-                                          'You liked "Midnight Dreams" by Luna Echo',
-                                          '2 hours ago',
-                                          Icons.favorite,
-                                          appTheme.colors.primaryRed,
-                                          appTheme,
-                                        );
-                                      } else if (index == 1) {
-                                        return _buildActivityCard(
-                                          'Added to playlist',
-                                          'Added "Ocean Waves" to "Chill Vibes"',
-                                          '1 day ago',
-                                          Icons.playlist_add,
-                                          appTheme.colors.accentBlue,
-                                          appTheme,
-                                        );
-                                      } else {
-                                        return _buildActivityCard(
-                                          'Followed artist',
-                                          'You started following Coastal Vibes',
-                                          '3 days ago',
-                                          Icons.person_add,
-                                          appTheme.colors.accentGreen,
-                                          appTheme,
-                                        );
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                  ),
+                  // Search Section
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+                      child: ModernInputField(
+                        hintText: 'Search for music, artists, or playlists...',
+                        controller: _searchController,
+                        onChanged: (value) {
+                          if (value.isNotEmpty) {
+                            // Navigate to search page with query
+                            Navigator.pushNamed(
+                              context,
+                              '/search',
+                              arguments: {'query': value},
+                            );
+                          }
+                        },
+                        size: ModernInputFieldSize.large,
                       ),
                     ),
-
-                    SliverToBoxAdapter(
-                      child: SizedBox(height: appTheme.spacing.xl),
+                  ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(height: appTheme.spacing.lg),
+                  ),
+                  // Action Buttons Section
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: PrimaryButton(
+                              text: 'Discover',
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/discover');
+                              },
+                              icon: Icons.explore,
+                              size: ModernButtonSize.large,
+                              isFullWidth: true,
+                            ),
+                          ),
+                          SizedBox(width: appTheme.spacing.md),
+                          Expanded(
+                            child: SecondaryButton(
+                              text: 'My Library',
+                              onPressed: () {
+                                Navigator.pushNamed(context, '/library');
+                              },
+                              icon: Icons.library_music,
+                              size: ModernButtonSize.large,
+                              isFullWidth: true,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(height: appTheme.spacing.xl),
+                  ),
+
+                  // Dynamic Content Sections
+                  _buildDynamicContentSections(appTheme),
+
+                  SliverToBoxAdapter(
+                    child: SizedBox(height: appTheme.spacing.xl),
+                  ),
+                ],
               ),
-            );
+            ),
+          );
         },
       ),
     );
   }
 
-  Widget _buildFeaturedMusicCard(
-    String title,
-    String artist,
-    String imageUrl,
-    Color accentColor,
-    AppTheme appTheme,
-  ) {
-    return ModernCard(
-      variant: ModernCardVariant.primary,
-      onTap: () {
-        // Navigate to track details
+  Widget _buildDynamicContentSections(dynamic appTheme) {
+    return BlocBuilder<UserProfileBloc, UserProfileState>(
+      builder: (context, state) {
+        if (state is MyContentLoaded) {
+          return SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (state.contentType == 'tracks' && state.content.isNotEmpty) ...[
+                  _buildContentSection(
+                    'Your Liked Songs',
+                    state.content.take(5).toList(),
+                    appTheme,
+                    'liked_songs',
+                  ),
+                  SizedBox(height: appTheme.spacing.xl),
+                ],
+                if (state.contentType == 'artists' && state.content.isNotEmpty) ...[
+                  _buildContentSection(
+                    'Your Top Artists',
+                    state.content.take(5).toList(),
+                    appTheme,
+                    'top_artists',
+                  ),
+                  SizedBox(height: appTheme.spacing.xl),
+                ],
+                if (state.contentType == 'played_tracks' && state.content.isNotEmpty) ...[
+                  _buildContentSection(
+                    'Recently Played',
+                    state.content.take(5).toList(),
+                    appTheme,
+                    'recently_played',
+                  ),
+                  SizedBox(height: appTheme.spacing.xl),
+                ],
+              ],
+            ),
+          );
+        }
+        return const SliverToBoxAdapter(child: SizedBox.shrink());
       },
+    );
+  }
+
+  Widget _buildContentSection(String title, List<dynamic> items, dynamic appTheme, String sectionType) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
         children: [
-          // Track Image
-          Container(
-            height: 80, // Further reduced from 100 to prevent overflow
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(appTheme.radius.lg),
-              color: accentColor.withValues(alpha: 0.1),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(appTheme.radius.lg),
-              child: imageUrl.isNotEmpty
-                  ? Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          color: accentColor.withValues(alpha: 0.2),
-                          child: Icon(
-                            Icons.music_note,
-                            color: accentColor,
-                            size: 40,
-                          ),
-                        );
-                      },
-                    )
-                  : Container(
-                      color: accentColor.withValues(alpha: 0.2),
-                      child: Icon(
-                        Icons.music_note,
-                        color: accentColor,
-                        size: 40,
-                      ),
-                    ),
-            ),
-          ),
-
-          SizedBox(height: appTheme.spacing.xs), // Reduced from sm to xs
-
-          // Track Info
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 title,
-                style: appTheme.typography.titleMedium.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: appTheme.colors.white,
+                style: appTheme.typography.headlineH6.copyWith(
+                  color: appTheme.colors.textPrimary,
+                  fontWeight: FontWeight.w700,
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
-              SizedBox(height: appTheme.spacing.xs / 2), // Reduced spacing
-              Text(
-                artist,
-                style: appTheme.typography.bodyH10.copyWith(
-                  color: appTheme.colors.textMuted,
+              TextButton(
+                onPressed: () {
+                  // Navigate to full list
+                  Navigator.pushNamed(context, '/library', arguments: {'tab': sectionType});
+                },
+                child: Text(
+                  'See All',
+                  style: appTheme.typography.bodySmall.copyWith(
+                    color: appTheme.colors.primaryRed,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
+          ),
+          SizedBox(height: appTheme.spacing.md),
+          SizedBox(
+            height: 120,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                final item = items[index];
+                return _buildContentItem(item, appTheme, sectionType);
+              },
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildActivityCard(
-    String title,
-    String description,
-    String timeAgo,
-    IconData icon,
-    Color accentColor,
-    AppTheme appTheme,
-  ) {
-    return ModernCard(
-      variant: ModernCardVariant.secondary,
-      onTap: () {
-        // Handle activity card tap
-      },
-      child: Row(
+  Widget _buildContentItem(dynamic item, dynamic appTheme, String sectionType) {
+    String title = '';
+    String subtitle = '';
+    String imageUrl = '';
+
+    // Extract data based on item type
+    if (item is Map<String, dynamic>) {
+      title = item['name'] ?? item['title'] ?? 'Unknown';
+      subtitle = item['artistName'] ?? item['artist'] ?? '';
+      imageUrl = item['albumImageUrl'] ?? item['imageUrl'] ?? '';
+    }
+
+    return Container(
+      width: 100,
+      margin: EdgeInsets.only(right: appTheme.spacing.md),
+      child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(appTheme.spacing.sm),
+            width: 80,
+            height: 80,
             decoration: BoxDecoration(
-              color: accentColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(appTheme.radius.md),
+              image: imageUrl.isNotEmpty
+                  ? DecorationImage(
+                      image: NetworkImage(imageUrl),
+                      fit: BoxFit.cover,
+                    )
+                  : null,
+              color: appTheme.colors.surfaceDark,
             ),
-            child: Icon(
-              icon,
-              color: accentColor,
-              size: 18, // Reduced from 20
-            ),
+            child: imageUrl.isEmpty
+                ? Icon(
+                    sectionType == 'liked_songs' ? Icons.music_note :
+                    sectionType == 'top_artists' ? Icons.person :
+                    Icons.history,
+                    color: appTheme.colors.textSecondary,
+                    size: 30,
+                  )
+                : null,
           ),
-
-          SizedBox(width: appTheme.spacing.md),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  style: appTheme.typography.titleSmall.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: appTheme.colors.white,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: appTheme.spacing.xs),
-                Text(
-                  description,
-                  style: appTheme.typography.bodyH10.copyWith(
-                    color: appTheme.colors.textMuted,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-
-          SizedBox(width: appTheme.spacing.sm),
-
+          SizedBox(height: appTheme.spacing.sm),
           Text(
-            timeAgo,
-            style: appTheme.typography.bodyH10.copyWith(
-              color: appTheme.colors.textMuted,
+            title,
+            style: appTheme.typography.caption.copyWith(
+              color: appTheme.colors.textPrimary,
+              fontWeight: FontWeight.w600,
             ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
           ),
+          if (subtitle.isNotEmpty) ...[
+            SizedBox(height: appTheme.spacing.xs),
+            Text(
+              subtitle,
+              style: appTheme.typography.caption.copyWith(
+                color: appTheme.colors.textMuted,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+          ],
         ],
       ),
     );

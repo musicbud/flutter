@@ -1,11 +1,10 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/models/common_track.dart';
-import '../../domain/models/common_artist.dart';
-import '../../domain/models/common_album.dart';
-import '../../domain/models/common_genre.dart';
-import '../../domain/models/common_anime.dart';
-import '../../domain/models/common_manga.dart';
-import '../../domain/models/categorized_common_items.dart';
+import '../../../domain/models/common_track.dart';
+import '../../../domain/models/common_artist.dart';
+import '../../../domain/models/common_genre.dart';
+import '../../../domain/models/common_album.dart';
+import '../../../domain/models/common_anime.dart';
+import '../../../domain/models/common_manga.dart';
 
 abstract class ContentState extends Equatable {
   const ContentState();
@@ -16,9 +15,7 @@ abstract class ContentState extends Equatable {
 
 class ContentInitial extends ContentState {}
 
-class ContentLoading extends ContentState {
-  const ContentLoading();
-}
+class ContentLoading extends ContentState {}
 
 class ContentLoaded extends ContentState {
   final List<CommonTrack> topTracks;
@@ -31,7 +28,6 @@ class ContentLoaded extends ContentState {
   final List<CommonTrack>? playedTracks;
   final List<CommonAnime> topAnime;
   final List<CommonManga> topManga;
-  final CategorizedCommonItems? categorizedItems;
 
   const ContentLoaded({
     required this.topTracks,
@@ -44,7 +40,6 @@ class ContentLoaded extends ContentState {
     this.playedTracks,
     required this.topAnime,
     required this.topManga,
-    this.categorizedItems,
   });
 
   @override
@@ -59,7 +54,6 @@ class ContentLoaded extends ContentState {
         playedTracks,
         topAnime,
         topManga,
-        categorizedItems,
       ];
 
   ContentLoaded copyWith({
@@ -73,7 +67,6 @@ class ContentLoaded extends ContentState {
     List<CommonTrack>? playedTracks,
     List<CommonAnime>? topAnime,
     List<CommonManga>? topManga,
-    CategorizedCommonItems? categorizedItems,
   }) {
     return ContentLoaded(
       topTracks: topTracks ?? this.topTracks,
@@ -86,7 +79,6 @@ class ContentLoaded extends ContentState {
       playedTracks: playedTracks ?? this.playedTracks,
       topAnime: topAnime ?? this.topAnime,
       topManga: topManga ?? this.topManga,
-      categorizedItems: categorizedItems ?? this.categorizedItems,
     );
   }
 }
@@ -129,4 +121,68 @@ class ContentPlaybackStarted extends ContentState {
 
   @override
   List<Object> get props => [track];
+}
+
+// Enhanced states from legacy
+class ContentTopTracksLoaded extends ContentState {
+  final List<CommonTrack> tracks;
+
+  const ContentTopTracksLoaded({required this.tracks});
+
+  @override
+  List<Object> get props => [tracks];
+}
+
+class ContentTopArtistsLoaded extends ContentState {
+  final List<CommonArtist> artists;
+
+  const ContentTopArtistsLoaded({required this.artists});
+
+  @override
+  List<Object> get props => [artists];
+}
+
+class ContentTopGenresLoaded extends ContentState {
+  final List<CommonGenre> genres;
+
+  const ContentTopGenresLoaded({required this.genres});
+
+  @override
+  List<Object> get props => [genres];
+}
+
+class ContentLikedTracksLoaded extends ContentState {
+  final List<CommonTrack> tracks;
+
+  const ContentLikedTracksLoaded({required this.tracks});
+
+  @override
+  List<Object> get props => [tracks];
+}
+
+class ContentLikedArtistsLoaded extends ContentState {
+  final List<CommonArtist> artists;
+
+  const ContentLikedArtistsLoaded({required this.artists});
+
+  @override
+  List<Object> get props => [artists];
+}
+
+class ContentLikedGenresLoaded extends ContentState {
+  final List<CommonGenre> genres;
+
+  const ContentLikedGenresLoaded({required this.genres});
+
+  @override
+  List<Object> get props => [genres];
+}
+
+class ContentLikedAlbumsLoaded extends ContentState {
+  final List<CommonAlbum> albums;
+
+  const ContentLikedAlbumsLoaded({required this.albums});
+
+  @override
+  List<Object> get props => [albums];
 }

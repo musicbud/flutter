@@ -31,17 +31,31 @@ class CommonArtist {
   });
 
   factory CommonArtist.fromJson(Map<String, dynamic> json) {
+    // Handle backend response structure - backend returns 'uid' instead of 'id'
+    final id = json['uid'] as String? ?? json['id'] as String? ?? '';
+    final uid = json['uid'] as String? ?? id;
+    final name = json['name'] as String? ?? '';
+
+    // Handle image URL - backend returns images array, take first one
+    String? imageUrl = json['image_url'] as String?;
+    if (imageUrl == null && json['images'] is List && (json['images'] as List).isNotEmpty) {
+      final images = json['images'] as List;
+      if (images.isNotEmpty && images[0] is Map<String, dynamic>) {
+        imageUrl = images[0]['url'] as String?;
+      }
+    }
+
     return CommonArtist(
-      id: json['id'] as String,
-      uid: json['uid'] as String? ?? '',
-      name: json['name'] as String,
+      id: id,
+      uid: uid,
+      name: name,
       source: json['source'] as String?,
       spotifyId: json['spotify_id'] as String?,
       ytmusicId: json['ytmusic_id'] as String?,
       lastfmId: json['lastfm_id'] as String?,
       popularity: json['popularity'] as int?,
       isLiked: json['is_liked'] as bool? ?? false,
-      imageUrl: json['image_url'] as String?,
+      imageUrl: imageUrl,
       imageUrls: (json['image_urls'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),

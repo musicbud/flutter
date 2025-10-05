@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 void main(List<String> args) {
-  runApp(MyApp());  
+  runApp(const MyApp());  
 
 }
 class MyApp extends StatelessWidget {
@@ -12,12 +12,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.dark(),
       home: Scaffold(
         body: Container(color: const Color.fromARGB(105, 255, 255, 255),
-          child: Center(
+          child: const Center(
             child: SizedBox(
               width: 400,
               height: 300,
               child: DecoratedBox(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(tileMode: TileMode.clamp,
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,

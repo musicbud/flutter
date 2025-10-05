@@ -104,8 +104,8 @@ class AppTextField extends StatelessWidget {
           color: const Color(0xFFCFD0FD).withValues(alpha: 0.7),
           fontSize: 16,
         ),
-        labelStyle: TextStyle(
-          color: const Color(0xFFCFD0FD),
+        labelStyle: const TextStyle(
+          color: Color(0xFFCFD0FD),
           fontSize: 16,
         ),
         errorStyle: const TextStyle(

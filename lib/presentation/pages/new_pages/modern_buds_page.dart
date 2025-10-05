@@ -1,5 +1,4 @@
 import "package:flutter/material.dart";
-import "../../constants/app_constants.dart";
 
 class ModernBudsPage extends StatelessWidget {
   const ModernBudsPage({Key? key}) : super(key: key);

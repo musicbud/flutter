@@ -95,14 +95,26 @@ class ContentRepositoryImpl implements ContentRepository {
 
 
   Future<List<CommonAnime>> getMyTopAnime() async {
-    // TODO: Implement when ContentRemoteDataSource supports anime
-    return [];
+    try {
+      final data = await _remoteDataSource.getMyTopAnime();
+      return data.map((json) => CommonAnime.fromJson(json)).toList();
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
 
   Future<List<CommonManga>> getMyTopManga() async {
-    // TODO: Implement when ContentRemoteDataSource supports manga
-    return [];
+    try {
+      final data = await _remoteDataSource.getMyTopManga();
+      return data.map((json) => CommonManga.fromJson(json)).toList();
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
 
@@ -180,8 +192,13 @@ class ContentRepositoryImpl implements ContentRepository {
 
   @override
   Future<List<Track>> getPlayedTracks() async {
-    // TODO: Implement actual logic
-    return [];
+    try {
+      return await _remoteDataSource.getPlayedTracks();
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
 
@@ -194,20 +211,38 @@ class ContentRepositoryImpl implements ContentRepository {
 
   @override
   Future<List<SpotifyDevice>> getSpotifyDevices() async {
-    // TODO: Implement actual logic
-    return [];
+    try {
+      final data = await _remoteDataSource.getSpotifyDevices();
+      return data.map((json) => SpotifyDevice.fromJson(json)).toList();
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
 
   @override
   Future<void> controlSpotifyPlayback(String command, String deviceId) async {
-    // TODO: Implement actual logic
+    try {
+      await _remoteDataSource.controlSpotifyPlayback(command, deviceId);
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
 
   @override
   Future<void> setSpotifyVolume(String deviceId, int volume) async {
-    // TODO: Implement actual logic
+    try {
+      await _remoteDataSource.setSpotifyVolume(deviceId, volume);
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
 
@@ -243,8 +278,13 @@ class ContentRepositoryImpl implements ContentRepository {
 
   @override
   Future<List<CommonTrack>> getPopularTracks() async {
-    // TODO: Implement actual logic
-    return [];
+    try {
+      return await _remoteDataSource.getPopularTracks();
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
 

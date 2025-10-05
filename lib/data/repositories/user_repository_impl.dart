@@ -202,4 +202,40 @@ class UserRepositoryImpl implements UserRepository {
       (_remoteDataSource as UserRemoteDataSourceImpl).updateToken(token);
     }
   }
+
+  @override
+  Future<void> updateUserProfile(String userId, Map<String, dynamic> profileData) async {
+    try {
+      await _remoteDataSource.updateUserProfile(userId, profileData);
+    } catch (e) {
+      throw Exception('Failed to update user profile: $e');
+    }
+  }
+
+  @override
+  Future<void> banUser(String userId) async {
+    try {
+      await _remoteDataSource.banUser(userId);
+    } catch (e) {
+      throw Exception('Failed to ban user: $e');
+    }
+  }
+
+  @override
+  Future<void> unbanUser(String userId) async {
+    try {
+      await _remoteDataSource.unbanUser(userId);
+    } catch (e) {
+      throw Exception('Failed to unban user: $e');
+    }
+  }
+
+  @override
+  Future<List<UserProfile>> getBannedUsers() async {
+    try {
+      return await _remoteDataSource.getBannedUsers();
+    } catch (e) {
+      throw Exception('Failed to get banned users: $e');
+    }
+  }
 }

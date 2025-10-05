@@ -58,13 +58,13 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
+              const Padding(
+                padding: EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // User name
-                    const Text(
+                    Text(
                       'Emily',
                       style: TextStyle(
                         fontSize: 28,
@@ -73,10 +73,10 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                       ),
                     ),
                     
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8),
                     
                     // Age
-                    const Text(
+                    Text(
                       'Age: 24',
                       style: TextStyle(
                         fontSize: 16,
@@ -84,10 +84,10 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                       ),
                     ),
                     
-                    const SizedBox(height: 4),
+                    SizedBox(height: 4),
                     
                     // Joined date
-                    const Text(
+                    Text(
                       'Joined since 21 Oct 2023',
                       style: TextStyle(
                         fontSize: 16,
@@ -95,11 +95,11 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                       ),
                     ),
                     
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     
                     // Location
                     Row(
-                      children: const [
+                      children: [
                         Icon(
                           Icons.location_on_outlined,
                           size: 16,
@@ -116,10 +116,10 @@ class _ProfilePageState extends State<ProfilePage> with SingleTickerProviderStat
                       ],
                     ),
                     
-                    const SizedBox(height: 12),
+                    SizedBox(height: 12),
                     
                     // Bio
-                    const Text(
+                    Text(
                       'A passionate marketing specialist with a flair for creativity and innovation. With over five years of experience in digital marketing.',
                       style: TextStyle(
                         fontSize: 16,

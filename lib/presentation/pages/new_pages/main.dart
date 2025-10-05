@@ -1,34 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
-import '../../../blocs/main/main_screen_bloc.dart';
-import '../../../blocs/main/main_screen_state.dart';
-import '../../../blocs/main/main_screen_event.dart';
 import '../../../blocs/auth/auth_bloc.dart';
 import '../../../blocs/profile/profile_bloc.dart';
 import '../../../blocs/profile/profile_event.dart';
-import '../../../blocs/profile/profile_state.dart';
 import '../../../blocs/likes/likes_bloc.dart';
-import '../../../blocs/likes/likes_state.dart';
 import '../../../blocs/likes/likes_event.dart';
-import '../../../blocs/track/track_bloc.dart';
-import '../../../blocs/bud/bud_bloc.dart';
-import '../../../blocs/bud/bud_category_bloc.dart';
 import '../../../blocs/chat/chat_bloc.dart';
 import '../../../blocs/chat/chat_event.dart';
-import '../../../blocs/spotify_control/spotify_control_bloc.dart';
-import '../../../domain/repositories/profile_repository.dart';
-import '../../../domain/repositories/content_repository.dart';
-import '../../../domain/repositories/bud_repository.dart';
-import '../../../domain/repositories/auth_repository.dart';
-import '../../../domain/repositories/chat_repository.dart';
 import '../../widgets/loading_indicator.dart';
 import '../../widgets/common/app_scaffold.dart';
 import '../../widgets/common/unified_navigation_scaffold.dart';
 import '../../widgets/common/app_bottom_navigation_bar.dart';
 import '../../constants/app_constants.dart';
 import '../../mixins/page_mixin.dart';
-import '../../../injection_container.dart' as di;
 
 // Import the new pages from the main pages directory
 import '../home_page.dart';
@@ -71,14 +55,6 @@ import 'stories_page.dart';
 
 import 'chat_screen.dart';
 // import 'profile_page.dart';
-import 'service_connection_page.dart';
-import 'user_management_page.dart';
-import 'admin_dashboard_page.dart';
-import 'channel_management_page.dart';
-import 'settings_page.dart';
-import 'event_page.dart';
-import 'top_profile.dart';
-import 'cards.dart';
 import 'dynamic_music_page.dart';
 import 'dynamic_buds_page.dart';
 
@@ -92,7 +68,7 @@ class NewMainScreen extends StatefulWidget {
 class _NewMainScreenState extends State<NewMainScreen> with PageMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   int _selectedIndex = 0;
-  bool _isLoading = false;
+  final bool _isLoading = false;
 
   @override
   void initState() {
@@ -523,7 +499,7 @@ class _NewMainScreenState extends State<NewMainScreen> with PageMixin {
   void _loadHomeData() {
     // Load home data
     context.read<ProfileBloc>().add(ProfileRequested());
-    context.read<LikesBloc>().add(LikesUpdateRequested('general'));
+    context.read<LikesBloc>().add(const LikesUpdateRequested('general'));
   }
 }
 
@@ -602,14 +578,14 @@ class _HomeTabState extends State<HomeTab> with PageMixin {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
+          const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Welcome back!',
                 style: AppConstants.headingStyle,
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: 4),
               Text(
                 'Discover new music and connect with friends',
                 style: AppConstants.captionStyle,
@@ -620,7 +596,7 @@ class _HomeTabState extends State<HomeTab> with PageMixin {
             children: [
               IconButton(
                 onPressed: () => navigateTo('/notifications'),
-                icon: Icon(
+                icon: const Icon(
                   Icons.notifications_outlined,
                   color: AppConstants.textColor,
                   size: 24,
@@ -628,7 +604,7 @@ class _HomeTabState extends State<HomeTab> with PageMixin {
               ),
               IconButton(
                 onPressed: () => navigateTo(AppConstants.profileRoute),
-                icon: Icon(
+                icon: const Icon(
                   Icons.person_outline,
                   color: AppConstants.textColor,
                   size: 24,
@@ -668,7 +644,7 @@ class _HomeTabState extends State<HomeTab> with PageMixin {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Quick Actions',
             style: AppConstants.subheadingStyle,
           ),
@@ -739,12 +715,12 @@ class _HomeTabState extends State<HomeTab> with PageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Recent Activity',
           style: AppConstants.subheadingStyle,
         ),
         const SizedBox(height: 16),
-        Container(
+        SizedBox(
           height: 120,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
@@ -759,7 +735,7 @@ class _HomeTabState extends State<HomeTab> with PageMixin {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.music_note,
                     color: AppConstants.primaryColor,
                     size: 32,
@@ -783,12 +759,12 @@ class _HomeTabState extends State<HomeTab> with PageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Recommended for You',
           style: AppConstants.subheadingStyle,
         ),
         const SizedBox(height: 16),
-        Container(
+        SizedBox(
           height: 150,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
@@ -811,7 +787,7 @@ class _HomeTabState extends State<HomeTab> with PageMixin {
                           top: Radius.circular(12),
                         ),
                       ),
-                      child: Center(
+                      child: const Center(
                         child: Icon(
                           Icons.album,
                           color: AppConstants.primaryColor,

@@ -87,7 +87,7 @@ class SettingsPage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
+                const Text(
                   'Premium Member',
                   style: TextStyle(
                     color: Colors.pinkAccent,
@@ -321,7 +321,7 @@ class SettingsPage extends StatelessWidget {
             fontSize: 14,
           ),
         ),
-        trailing: Icon(
+        trailing: const Icon(
           Icons.arrow_forward_ios,
           color: Colors.white30,
           size: 16,
@@ -377,7 +377,7 @@ class SettingsPage extends StatelessWidget {
                     fontSize: 14,
                   ),
                 ),
-                trailing: Icon(
+                trailing: const Icon(
                   Icons.arrow_forward_ios,
                   color: Colors.red,
                   size: 16,

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../blocs/chat/chat_management_bloc.dart';
-import '../constants/app_theme.dart';
+import '../../blocs/comprehensive_chat/comprehensive_chat_bloc.dart';
+import '../../blocs/comprehensive_chat/comprehensive_chat_event.dart';
+import '../../blocs/comprehensive_chat/comprehensive_chat_state.dart';
 import '../widgets/common/index.dart';
+import '../theme/app_theme.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
@@ -14,14 +16,13 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
-  List<ChatMessage> _messages = [];
-  bool _isTyping = false;
+  final bool _isTyping = false;
 
   @override
   void initState() {
     super.initState();
     // Load chat data when page initializes
-    context.read<ChatManagementBloc>().add(GetChatHome());
+    context.read<ComprehensiveChatBloc>().add(ChannelsRequested());
   }
 
   @override
@@ -34,24 +35,13 @@ class _ChatPageState extends State<ChatPage> {
   void _sendMessage() {
     if (_messageController.text.trim().isNotEmpty) {
       final message = _messageController.text.trim();
-
-      // Send message through bloc
-      context.read<ChatManagementBloc>().add(
-        SendMessage(
-          message: message,
-          username: 'sarahjohnson', // This would come from the current chat
+      // Send message through ComprehensiveChatBloc
+      context.read<ComprehensiveChatBloc>().add(
+        MessageSent(
+          channelId: 'current_channel_id', // TODO: Get from route arguments or state
+          content: message,
         ),
       );
-
-      // Add message to local list for immediate UI update
-      setState(() {
-        _messages.add(ChatMessage(
-          text: message,
-          isMe: true,
-          timestamp: DateTime.now(),
-        ));
-      });
-
       _messageController.clear();
       _scrollToBottom();
     }
@@ -62,7 +52,7 @@ class _ChatPageState extends State<ChatPage> {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
       }
@@ -72,28 +62,43 @@ class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     final appTheme = AppTheme.of(context);
-
-    return BlocListener<ChatManagementBloc, ChatManagementState>(
+    return BlocListener<ComprehensiveChatBloc, ComprehensiveChatState>(
       listener: (context, state) {
-        if (state is ChatManagementError) {
+        if (state is ComprehensiveChatError) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Error: ${state.message}'),
-              backgroundColor: appTheme.colors.errorRed,
+              backgroundColor: const Color(0xFFCF6679),
             ),
           );
-        } else if (state is MessageSent) {
-          // Message was sent successfully
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Message sent!'),
-              duration: Duration(seconds: 1),
-            ),
-          );
+        } else if (state is MessageSentSuccess) {
+          // Message sent successfully
+          _scrollToBottom();
         }
       },
-      child: BlocBuilder<ChatManagementBloc, ChatManagementState>(
+      child: BlocBuilder<ComprehensiveChatBloc, ComprehensiveChatState>(
         builder: (context, state) {
+          // Extract messages and user info from ComprehensiveChatBloc state
+          List<dynamic> chats = [];
+          String userName = 'User';
+          String avatarUrl = '';
+          String status = 'Offline';
+          if (state is ChannelsLoaded) {
+            chats = state.channels.map((channel) => {
+              'message': 'Channel: ${channel.name}',
+              'is_me': false,
+              'timestamp': DateTime.now(),
+            }).toList();
+            userName = 'Channel List';
+          } else if (state is MessagesLoaded) {
+            chats = state.messages.map((message) => {
+              'message': message.content,
+              'is_me': false,
+              'timestamp': message.createdAt,
+            }).toList();
+            userName = 'Chat';
+          }
+
           return Container(
             decoration: BoxDecoration(
               gradient: appTheme.gradients.backgroundGradient,
@@ -102,9 +107,9 @@ class _ChatPageState extends State<ChatPage> {
               children: [
                 // Enhanced Header
                 Container(
-                  padding: EdgeInsets.all(appTheme.spacing.lg),
+                  padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: appTheme.colors.surfaceDark,
+                    color: const Color(0xFF282828),
                     boxShadow: appTheme.shadows.shadowCard,
                   ),
                   child: SafeArea(
@@ -112,19 +117,19 @@ class _ChatPageState extends State<ChatPage> {
                       children: [
                         // Back Button
                         Container(
-                          padding: EdgeInsets.all(appTheme.spacing.sm),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: appTheme.colors.surfaceLight,
-                            borderRadius: BorderRadius.circular(appTheme.radius.md),
+                            color: const Color(0xFF3E3E3E),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
                             Icons.arrow_back_ios,
-                            color: appTheme.colors.textPrimary,
+                            color: Colors.white,
                             size: 20,
                           ),
                         ),
 
-                        SizedBox(width: appTheme.spacing.md),
+                        const SizedBox(width: 16),
 
                         // Chat Partner Info
                         Expanded(
@@ -133,22 +138,23 @@ class _ChatPageState extends State<ChatPage> {
                               // Avatar
                               Container(
                                 decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(appTheme.radius.circular),
+                                  borderRadius: BorderRadius.circular(999),
                                   border: Border.all(
-                                    color: appTheme.colors.primaryRed.withValues(alpha: 0.3),
+                                    color: const Color(0xFFCF6679).withOpacity(0.3),
                                     width: 2,
                                   ),
                                 ),
                                 child: CircleAvatar(
                                   radius: 24,
-                                  backgroundColor: appTheme.colors.primaryRed,
-                                  backgroundImage: NetworkImage(
-                                    'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
-                                  ),
+                                  backgroundColor: appTheme.primaryRed,
+                                  backgroundImage: avatarUrl.isNotEmpty
+                                      ? NetworkImage(avatarUrl)
+                                      : null,
+                                  child: avatarUrl.isEmpty ? const Icon(Icons.person, color: Colors.white) : null,
                                 ),
                               ),
 
-                              SizedBox(width: appTheme.spacing.md),
+                              const SizedBox(width: 16),
 
                               // Name and Status
                               Expanded(
@@ -156,9 +162,9 @@ class _ChatPageState extends State<ChatPage> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Sarah Johnson',
-                                      style: appTheme.typography.titleMedium.copyWith(
-                                        color: appTheme.colors.textPrimary,
+                                      userName,
+                                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                        color: Colors.white,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
@@ -168,15 +174,17 @@ class _ChatPageState extends State<ChatPage> {
                                           width: 8,
                                           height: 8,
                                           decoration: BoxDecoration(
-                                            color: appTheme.colors.accentGreen,
+                                            color: status == 'Online'
+                                                ? const Color(0xFF1ED760)
+                                                : const Color(0x80FFFFFF),
                                             borderRadius: BorderRadius.circular(4),
                                           ),
                                         ),
-                                        SizedBox(width: appTheme.spacing.xs),
+                                        const SizedBox(width: 8),
                                         Text(
-                                          'Online',
-                                          style: appTheme.typography.caption.copyWith(
-                                            color: appTheme.colors.textMuted,
+                                          status,
+                                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                            color: const Color(0x80FFFFFF),
                                           ),
                                         ),
                                       ],
@@ -192,27 +200,27 @@ class _ChatPageState extends State<ChatPage> {
                         Row(
                           children: [
                             Container(
-                              padding: EdgeInsets.all(appTheme.spacing.sm),
+                              padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: appTheme.colors.surfaceLight,
-                                borderRadius: BorderRadius.circular(appTheme.radius.md),
+                                color: const Color(0xFF3E3E3E),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               child: Icon(
                                 Icons.video_call,
-                                color: appTheme.colors.textSecondary,
+                                color: const Color(0xB3FFFFFF),
                                 size: 20,
                               ),
                             ),
-                            SizedBox(width: appTheme.spacing.sm),
+                            const SizedBox(width: 12),
                             Container(
-                              padding: EdgeInsets.all(appTheme.spacing.sm),
+                              padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: appTheme.colors.surfaceLight,
-                                borderRadius: BorderRadius.circular(appTheme.radius.md),
+                                color: const Color(0xFF3E3E3E),
+                                borderRadius: BorderRadius.circular(12),
                               ),
                               child: Icon(
                                 Icons.call,
-                                color: appTheme.colors.textSecondary,
+                                color: const Color(0xB3FFFFFF),
                                 size: 20,
                               ),
                             ),
@@ -226,10 +234,10 @@ class _ChatPageState extends State<ChatPage> {
                 // Messages Area
                 Expanded(
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
-                    child: state is ChatHomeLoaded
-                        ? _buildMessagesList(_extractChatsFromState(state.chatHome), appTheme)
-                        : state is ChatManagementLoading
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: state is ChannelsLoaded || state is MessagesLoaded
+                        ? _buildMessagesList(chats, appTheme)
+                        : state is ComprehensiveChatLoading
                             ? _buildLoadingState(appTheme)
                             : _buildEmptyState(appTheme),
                   ),
@@ -237,9 +245,9 @@ class _ChatPageState extends State<ChatPage> {
 
                 // Message Input Area
                 Container(
-                  padding: EdgeInsets.all(appTheme.spacing.lg),
+                  padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: appTheme.colors.surfaceDark,
+                    color: const Color(0xFF282828),
                     boxShadow: appTheme.shadows.shadowCard,
                   ),
                   child: SafeArea(
@@ -247,19 +255,19 @@ class _ChatPageState extends State<ChatPage> {
                       children: [
                         // Attachment Button
                         Container(
-                          padding: EdgeInsets.all(appTheme.spacing.sm),
+                          padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: appTheme.colors.surfaceLight,
-                            borderRadius: BorderRadius.circular(appTheme.radius.md),
+                            color: const Color(0xFF3E3E3E),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           child: Icon(
                             Icons.attach_file,
-                            color: appTheme.colors.textSecondary,
+                            color: const Color(0xB3FFFFFF),
                             size: 20,
                           ),
                         ),
 
-                        SizedBox(width: appTheme.spacing.md),
+                        const SizedBox(width: 16),
 
                         // Message Input
                         Expanded(
@@ -269,26 +277,29 @@ class _ChatPageState extends State<ChatPage> {
                             onChanged: (value) {
                               // Handle input changes
                             },
-                            
+                            onSubmitted: (_) => _sendMessage(),
                             size: ModernInputFieldSize.medium,
-                            customBackgroundColor: appTheme.colors.surfaceLight,
+                            customBackgroundColor: const Color(0xFF3E3E3E),
                           ),
                         ),
 
-                        SizedBox(width: appTheme.spacing.md),
+                        const SizedBox(width: 16),
 
                         // Send Button
-                        Container(
-                          padding: EdgeInsets.all(appTheme.spacing.sm),
-                          decoration: BoxDecoration(
-                            color: appTheme.colors.primaryRed,
-                            borderRadius: BorderRadius.circular(appTheme.radius.md),
-                            boxShadow: appTheme.shadows.shadowMedium,
-                          ),
-                          child: Icon(
-                            Icons.send,
-                            color: appTheme.colors.white,
-                            size: 20,
+                        GestureDetector(
+                          onTap: _sendMessage,
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFCF6679),
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: appTheme.shadows.shadowMedium,
+                            ),
+                            child: Icon(
+                              Icons.send,
+                              color: Colors.white,
+                              size: 20,
+                            ),
                           ),
                         ),
                       ],
@@ -303,35 +314,24 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget _buildMessagesList(List<dynamic> chats, AppTheme appTheme) {
+  Widget _buildMessagesList(List<dynamic> chats, dynamic appTheme) {
     return ListView.builder(
       controller: _scrollController,
       padding: EdgeInsets.symmetric(vertical: appTheme.spacing.md),
-      itemCount: chats.length + _messages.length,
+      itemCount: chats.length,
       itemBuilder: (context, index) {
-        if (index < chats.length) {
-          final chat = chats[index];
-          return _buildChatMessage(
-            chat['message'] ?? 'Hello! How are you?',
-            chat['is_me'] ?? false,
-            chat['timestamp'] ?? DateTime.now(),
-            appTheme,
-          );
-        } else {
-          final messageIndex = index - chats.length;
-          final message = _messages[messageIndex];
-          return _buildChatMessage(
-            message.text,
-            message.isMe,
-            message.timestamp,
-            appTheme,
-          );
-        }
+        final chat = chats[index];
+        return _buildChatMessage(
+          chat['message'] ?? 'Hello! How are you?',
+          chat['is_me'] ?? false,
+          chat['timestamp'] ?? DateTime.now(),
+          appTheme,
+        );
       },
     );
   }
 
-  Widget _buildChatMessage(String text, bool isMe, DateTime timestamp, AppTheme appTheme) {
+  Widget _buildChatMessage(String text, bool isMe, DateTime timestamp, dynamic appTheme) {
     return Container(
       margin: EdgeInsets.only(bottom: appTheme.spacing.md),
       child: Row(
@@ -344,8 +344,8 @@ class _ChatPageState extends State<ChatPage> {
               margin: EdgeInsets.only(right: appTheme.spacing.sm),
               child: CircleAvatar(
                 radius: 16,
-                backgroundColor: appTheme.colors.primaryRed,
-                backgroundImage: NetworkImage(
+                backgroundColor: const Color(0xFFCF6679),
+                backgroundImage: const NetworkImage(
                   'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
                 ),
               ),
@@ -399,7 +399,7 @@ class _ChatPageState extends State<ChatPage> {
               child: CircleAvatar(
                 radius: 16,
                 backgroundColor: appTheme.colors.accentBlue,
-                backgroundImage: NetworkImage(
+                backgroundImage: const NetworkImage(
                   'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
                 ),
               ),
@@ -410,7 +410,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget _buildLoadingState(AppTheme appTheme) {
+  Widget _buildLoadingState(dynamic appTheme) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -438,7 +438,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  Widget _buildEmptyState(AppTheme appTheme) {
+  Widget _buildEmptyState(dynamic appTheme) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

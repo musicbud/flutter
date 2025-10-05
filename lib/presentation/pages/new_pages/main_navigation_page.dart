@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'admin_dashboard_page.dart';
-import 'channel_management_page.dart';
-import 'user_management_page.dart';
-import 'service_connection_page.dart';
-import 'settings_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../blocs/main/main_screen_bloc.dart';
+import '../../../blocs/main/main_screen_state.dart';
+import '../../../blocs/main/main_screen_event.dart';
+import '../../../presentation/constants/app_theme.dart';
+import '../home_page.dart';
+import '../library_page.dart';
+import '../discover_page.dart';
+import '../auth/login_page.dart';
 import 'chat_screen.dart';
+import 'profile_page.dart';
 
 class MainNavigationPage extends StatefulWidget {
   const MainNavigationPage({super.key});
@@ -17,76 +22,103 @@ class _MainNavigationPageState extends State<MainNavigationPage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
+    const HomePage(), // New home page as default
     const ChatListScreen(),
-    const AdminDashboardPage(),
-    const ChannelManagementPage(),
-    const UserManagementPage(),
-    const ServiceConnectionPage(),
-    const SettingsPage(),
+    const LibraryPage(),
+    const DiscoverPage(),
+    const ProfilePage(),
   ];
 
   final List<String> _pageTitles = [
-    'Chats',
-    'Admin',
-    'Channels',
-    'Users',
-    'Services',
-    'Settings',
+    'Home',
+    'Chat',
+    'Library',
+    'Discover',
+    'Profile',
   ];
 
   final List<IconData> _pageIcons = [
+    Icons.home_outlined,
     Icons.chat_bubble_outline,
-    Icons.admin_panel_settings,
-    Icons.chat_bubble_outline,
-    Icons.people_outline,
-    Icons.link,
-    Icons.settings,
+    Icons.library_music_outlined,
+    Icons.explore_outlined,
+    Icons.person_outline,
   ];
 
   @override
+  void initState() {
+    super.initState();
+    // Initialize MainScreenBloc
+    context.read<MainScreenBloc>().add(MainScreenInitialized());
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: _pages[_currentIndex],
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha:  0.9),
-        border: Border(
-          top: BorderSide(
-            color: Colors.white.withValues(alpha:  0.2),
-            width: 0.5,
-          ),
-        ),
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) {
-            setState(() {
-              _currentIndex = index;
-            });
-          },
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.transparent,
-          selectedItemColor: Colors.pinkAccent,
-                  unselectedItemColor: Colors.white.withValues(alpha:  0.6),
-        selectedLabelStyle: const TextStyle(
-          color: Colors.pinkAccent,
-          fontSize: 12,
-          fontWeight: FontWeight.w600,
-        ),
-        unselectedLabelStyle: TextStyle(
-          color: Colors.white.withValues(alpha:  0.6),
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-        ),
-          items: List.generate(
-            _pages.length,
-            (index) => BottomNavigationBarItem(
-              icon: Icon(_pageIcons[index]),
-              label: _pageTitles[index],
-            ),
-          ),
-        ),
+    final appTheme = AppTheme.of(context);
+
+    return BlocListener<MainScreenBloc, MainScreenState>(
+      listener: (context, state) {
+        if (state is MainScreenFailure) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.error), backgroundColor: Colors.red),
+          );
+        }
+      },
+      child: BlocBuilder<MainScreenBloc, MainScreenState>(
+        builder: (context, state) {
+          if (state is MainScreenLoading) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          if (state is MainScreenAuthenticated) {
+            return Scaffold(
+              backgroundColor: Colors.black,
+              body: _pages[_currentIndex],
+              bottomNavigationBar: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey[900],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 20,
+                      offset: const Offset(0, -5),
+                    ),
+                  ],
+                ),
+                child: SafeArea(
+                  child: BottomNavigationBar(
+                    currentIndex: _currentIndex,
+                    onTap: (index) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
+                    items: List.generate(
+                      _pages.length,
+                      (index) => BottomNavigationBarItem(
+                        icon: Icon(_pageIcons[index]),
+                        label: _pageTitles[index],
+                        // builder: (context, child) => _pages[index],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }
+
+          // Handle unauthenticated state by showing login screen
+          if (state is MainScreenUnauthenticated) {
+            return const LoginPage();
+          }
+
+          // Default loading state
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        },
       ),
     );
   }
@@ -414,7 +446,7 @@ class MatchNowButton extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 4),
-              Icon(
+              const Icon(
                 Icons.arrow_forward_ios,
                 size: 14,
                 color: Colors.black,

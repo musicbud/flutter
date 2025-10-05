@@ -12,6 +12,7 @@ abstract class UserRepository {
   Future<UserProfile> getBudProfile(String username);
   Future<void> updateMyProfile(UserProfile profile);
   Future<void> updateMyLikes();
+  Future<void> updateUserProfile(String userId, Map<String, dynamic> profileData);
 
   // Liked items
   Future<List<CommonArtist>> getLikedArtists();
@@ -52,6 +53,11 @@ abstract class UserRepository {
   // Track operations
   Future<void> likeSong(String songId);
   Future<void> unlikeSong(String songId);
+
+  // Admin operations
+  Future<void> banUser(String userId);
+  Future<void> unbanUser(String userId);
+  Future<List<UserProfile>> getBannedUsers();
 
   // Token management
   void updateToken(String token);

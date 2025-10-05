@@ -136,7 +136,7 @@ class AppButton extends StatelessWidget {
       backgroundColor: isOutlined ? appTheme.colors.transparent : buttonColor,
       foregroundColor: buttonTextColor,
       side: isOutlined || buttonBorderColor != appTheme.colors.transparent
-          ? BorderSide(color: buttonBorderColor!, width: 2)
+          ? BorderSide(color: buttonBorderColor, width: 2)
           : null,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(appTheme.radius.md),

@@ -10,6 +10,9 @@ import 'blocs/bud/bud_bloc.dart';
 import 'blocs/user_profile/user_profile_bloc.dart';
 import 'blocs/bud_matching/bud_matching_bloc.dart';
 import 'blocs/chat/chat_management_bloc.dart';
+import 'blocs/comprehensive_chat/comprehensive_chat_bloc.dart';
+import 'blocs/library/library_bloc.dart';
+import 'presentation/blocs/search/search_bloc.dart';
 import 'data/providers/token_provider.dart';
 import 'domain/repositories/auth_repository.dart';
 import 'app.dart';
@@ -91,6 +94,21 @@ class MusicBudApp extends StatelessWidget {
       // Authentication BLoC with token management
       BlocProvider<AuthBloc>(
         create: (context) => _createAuthBloc(context),
+      ),
+
+      // Search BLoC for search functionality
+      BlocProvider<SearchBloc>(
+        create: (context) => di.sl<SearchBloc>(),
+      ),
+
+      // Comprehensive Chat BLoC for comprehensive chat functionality
+      BlocProvider<ComprehensiveChatBloc>(
+        create: (context) => di.sl<ComprehensiveChatBloc>(),
+      ),
+
+      // Library BLoC for library functionality
+      BlocProvider<LibraryBloc>(
+        create: (context) => di.sl<LibraryBloc>(),
       ),
     ];
   }

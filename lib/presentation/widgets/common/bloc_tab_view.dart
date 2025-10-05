@@ -42,7 +42,7 @@ class _BlocTabViewState<TBloc extends Bloc<TEvent, TState>, TState, TEvent> exte
     // Load initial tab data
     if (widget.tabs.isNotEmpty && widget.tabs[0].loadEvent != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<TBloc>().add(widget.tabs[0].loadEvent!);
+        context.read<TBloc>().add(widget.tabs[0].loadEvent as TEvent);
       });
     }
   }
@@ -61,7 +61,7 @@ class _BlocTabViewState<TBloc extends Bloc<TEvent, TState>, TState, TEvent> exte
 
       final currentTab = widget.tabs[_currentTabIndex];
       if (currentTab.loadEvent != null) {
-        context.read<TBloc>().add(currentTab.loadEvent!);
+        context.read<TBloc>().add(currentTab.loadEvent as TEvent);
       }
     }
   }
@@ -144,10 +144,8 @@ class _BlocTabViewState<TBloc extends Bloc<TEvent, TState>, TState, TEvent> exte
     // Handle custom state widget
     if (tab.customStateWidget != null) {
       final customWidget = tab.customStateWidget!(state);
-      if (customWidget != null) {
-        return customWidget;
-      }
-    }
+      return customWidget;
+        }
 
     // Build main content
     return Container(
@@ -163,7 +161,7 @@ class _BlocTabViewState<TBloc extends Bloc<TEvent, TState>, TState, TEvent> exte
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline,
               size: 64,
               color: AppConstants.errorColor,
@@ -373,7 +371,7 @@ class _CategoryTabViewState<TBloc extends Bloc<TEvent, TState>, TState, TEvent, 
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline,
               size: 64,
               color: AppConstants.errorColor,
@@ -406,7 +404,7 @@ class _CategoryTabViewState<TBloc extends Bloc<TEvent, TState>, TState, TEvent, 
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.inbox_outlined,
               size: 64,
               color: AppConstants.textSecondaryColor,
@@ -421,7 +419,7 @@ class _CategoryTabViewState<TBloc extends Bloc<TEvent, TState>, TState, TEvent, 
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 8),
-            Text(
+            const Text(
               'Try selecting a different category',
               style: AppConstants.captionStyle,
               textAlign: TextAlign.center,

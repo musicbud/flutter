@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/models/user_profile.dart';
-import '../../domain/models/content_service.dart';
+import '../../../domain/models/user_profile.dart';
+import '../../../domain/models/bud_match.dart';
 
 abstract class ProfileState extends Equatable {
   const ProfileState();
@@ -9,12 +9,35 @@ abstract class ProfileState extends Equatable {
   List<Object?> get props => [];
 }
 
-class ProfileInitial extends ProfileState {
-  const ProfileInitial();
+class ProfileInitial extends ProfileState {}
+
+class ProfileLoading extends ProfileState {}
+
+class ProfileLoaded extends ProfileState {
+  final UserProfile profile;
+
+  const ProfileLoaded({required this.profile});
+
+  @override
+  List<Object> get props => [profile];
 }
 
-class ProfileLoading extends ProfileState {
-  const ProfileLoading();
+class ProfileUpdateSuccess extends ProfileState {
+  final UserProfile profile;
+
+  const ProfileUpdateSuccess({required this.profile});
+
+  @override
+  List<Object> get props => [profile];
+}
+
+class ProfileAvatarUpdateSuccess extends ProfileState {
+  final String avatarUrl;
+
+  const ProfileAvatarUpdateSuccess({required this.avatarUrl});
+
+  @override
+  List<Object> get props => [avatarUrl];
 }
 
 class ProfileAuthenticationStatus extends ProfileState {
@@ -23,34 +46,10 @@ class ProfileAuthenticationStatus extends ProfileState {
   const ProfileAuthenticationStatus({required this.isAuthenticated});
 
   @override
-  List<Object?> get props => [isAuthenticated];
+  List<Object> get props => [isAuthenticated];
 }
 
-class ProfileLoaded extends ProfileState {
-  final UserProfile profile;
-  final List<ContentService>? services;
-
-  const ProfileLoaded({
-    required this.profile,
-    this.services,
-  });
-
-  @override
-  List<Object?> get props => [profile, services];
-}
-
-class ProfileFailure extends ProfileState {
-  final String error;
-
-  const ProfileFailure({required this.error});
-
-  @override
-  List<Object?> get props => [error];
-}
-
-class ProfileLogoutSuccess extends ProfileState {
-  const ProfileLogoutSuccess();
-}
+class ProfileLogoutSuccess extends ProfileState {}
 
 class ProfileTopItemsLoaded extends ProfileState {
   final List<dynamic> items;
@@ -59,7 +58,7 @@ class ProfileTopItemsLoaded extends ProfileState {
   const ProfileTopItemsLoaded({required this.items, required this.category});
 
   @override
-  List<Object?> get props => [items, category];
+  List<Object> get props => [items, category];
 }
 
 class ProfileLikedItemsLoaded extends ProfileState {
@@ -69,17 +68,17 @@ class ProfileLikedItemsLoaded extends ProfileState {
   const ProfileLikedItemsLoaded({required this.items, required this.category});
 
   @override
-  List<Object?> get props => [items, category];
+  List<Object> get props => [items, category];
 }
 
 class ProfileBudsLoaded extends ProfileState {
-  final List<dynamic> buds;
+  final List<BudMatch> buds;
   final String category;
 
   const ProfileBudsLoaded({required this.buds, required this.category});
 
   @override
-  List<Object?> get props => [buds, category];
+  List<Object> get props => [buds, category];
 }
 
 class ProfileConnectedServicesLoaded extends ProfileState {
@@ -88,41 +87,14 @@ class ProfileConnectedServicesLoaded extends ProfileState {
   const ProfileConnectedServicesLoaded({required this.services});
 
   @override
-  List<Object?> get props => [services];
+  List<Object> get props => [services];
 }
 
-class ProfileStatsLoaded extends ProfileState {
-  final Map<String, dynamic> stats;
+class ProfileFailure extends ProfileState {
+  final String error;
 
-  const ProfileStatsLoaded({required this.stats});
-
-  @override
-  List<Object?> get props => [stats];
-}
-
-class ProfilePreferencesLoaded extends ProfileState {
-  final Map<String, dynamic> preferences;
-
-  const ProfilePreferencesLoaded({required this.preferences});
+  const ProfileFailure({required this.error});
 
   @override
-  List<Object?> get props => [preferences];
-}
-
-class ProfileAvatarUpdateSuccess extends ProfileState {
-  final String avatarUrl;
-
-  const ProfileAvatarUpdateSuccess({required this.avatarUrl});
-
-  @override
-  List<Object?> get props => [avatarUrl];
-}
-
-class ProfileUpdateSuccess extends ProfileState {
-  final UserProfile profile;
-
-  const ProfileUpdateSuccess({required this.profile});
-
-  @override
-  List<Object?> get props => [profile];
+  List<Object> get props => [error];
 }

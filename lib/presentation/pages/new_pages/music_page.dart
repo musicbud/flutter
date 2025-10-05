@@ -7,7 +7,6 @@ import '../../../blocs/spotify_control/spotify_control_bloc.dart';
 import '../../../blocs/spotify_control/spotify_control_event.dart';
 import '../../../blocs/spotify_control/spotify_control_state.dart';
 import '../../../blocs/likes/likes_bloc.dart';
-import '../../../blocs/likes/likes_event.dart';
 import '../../../blocs/likes/likes_state.dart';
 import '../../widgets/loading_indicator.dart';
 import '../../constants/app_constants.dart';
@@ -87,14 +86,14 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
+          const Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Music',
                 style: AppConstants.headingStyle,
               ),
-              const SizedBox(height: 4),
+              SizedBox(height: 4),
               Text(
                 'Discover and enjoy your music',
                 style: AppConstants.captionStyle,
@@ -105,7 +104,7 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
             children: [
               IconButton(
                 onPressed: _showNowPlaying,
-                icon: Icon(
+                icon: const Icon(
                   Icons.play_circle_filled,
                   color: AppConstants.primaryColor,
                   size: 32,
@@ -113,7 +112,7 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
               ),
               IconButton(
                 onPressed: _showMusicSettings,
-                icon: Icon(
+                icon: const Icon(
                   Icons.settings,
                   color: AppConstants.textColor,
                   size: 24,
@@ -134,7 +133,7 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
         onChanged: _onSearchChanged,
         decoration: InputDecoration(
           hintText: 'Search for songs, artists, albums...',
-          hintStyle: TextStyle(color: AppConstants.textSecondaryColor),
+          hintStyle: const TextStyle(color: AppConstants.textSecondaryColor),
           prefixIcon: const Icon(Icons.search, color: AppConstants.textSecondaryColor),
           suffixIcon: _isSearching
               ? const Icon(Icons.clear, color: AppConstants.textSecondaryColor)
@@ -313,7 +312,7 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
                     ),
                     IconButton(
                       onPressed: _skipToPrevious,
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.skip_previous,
                         color: Colors.white,
                         size: 24,
@@ -321,7 +320,7 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
                     ),
                     IconButton(
                       onPressed: _skipToNext,
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.skip_next,
                         color: Colors.white,
                         size: 24,
@@ -347,13 +346,13 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.music_note,
             color: AppConstants.primaryColor,
             size: 32,
           ),
           const SizedBox(width: 16),
-          Expanded(
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -361,7 +360,7 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
                   'No track playing',
                   style: AppConstants.subheadingStyle,
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: 4),
                 Text(
                   'Start playing music to see what\'s currently playing',
                   style: AppConstants.captionStyle,
@@ -388,7 +387,7 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Quick Actions',
           style: AppConstants.subheadingStyle,
         ),
@@ -477,13 +476,13 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'Recently Played',
               style: AppConstants.subheadingStyle,
             ),
             TextButton(
               onPressed: _viewAllRecentlyPlayed,
-              child: Text(
+              child: const Text(
                 'View All',
                 style: TextStyle(color: AppConstants.primaryColor),
               ),
@@ -517,13 +516,13 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'Top Tracks',
               style: AppConstants.subheadingStyle,
             ),
             TextButton(
               onPressed: _viewAllTopTracks,
-              child: Text(
+              child: const Text(
                 'View All',
                 style: TextStyle(color: AppConstants.primaryColor),
               ),
@@ -562,7 +561,7 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
           borderRadius: BorderRadius.circular(8),
           color: AppConstants.surfaceColor,
         ),
-        child: Icon(
+        child: const Icon(
           Icons.music_note,
           color: AppConstants.primaryColor,
         ),
@@ -589,7 +588,7 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
           const SizedBox(width: 8),
           IconButton(
             onPressed: () => _toggleLike('track_$title'),
-            icon: Icon(
+            icon: const Icon(
               Icons.favorite_border,
               color: AppConstants.primaryColor,
               size: 20,
@@ -604,7 +603,7 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'Recommended Artists',
           style: AppConstants.subheadingStyle,
         ),
@@ -661,7 +660,7 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           'New Releases',
           style: AppConstants.subheadingStyle,
         ),
@@ -735,13 +734,13 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
+            const Text(
               'Your Playlists',
               style: AppConstants.subheadingStyle,
             ),
             TextButton(
               onPressed: _createNewPlaylist,
-              child: Text(
+              child: const Text(
                 'Create New',
                 style: TextStyle(color: AppConstants.primaryColor),
               ),
@@ -889,13 +888,13 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.error_outline,
             color: AppConstants.errorColor,
             size: 64,
           ),
           const SizedBox(height: 16),
-          Text(
+          const Text(
             'Error loading music',
             style: AppConstants.subheadingStyle,
           ),
@@ -1127,5 +1126,5 @@ class _MusicPageState extends State<MusicPage> with PageMixin {
   }
 
   // Placeholder variables for demo
-  bool _isPlaying = false;
+  final bool _isPlaying = false;
 }

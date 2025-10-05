@@ -36,10 +36,24 @@ class CommonAlbum {
   });
 
   factory CommonAlbum.fromJson(Map<String, dynamic> json) {
+    // Handle backend response structure - backend returns 'uid' instead of 'id'
+    final id = json['uid'] as String? ?? json['id'] as String? ?? '';
+    final uid = json['uid'] as String? ?? id;
+    final name = json['name'] as String? ?? '';
+
+    // Handle image URL - backend returns images array, take first one
+    String? imageUrl = json['image_url'] as String?;
+    if (imageUrl == null && json['images'] is List && (json['images'] as List).isNotEmpty) {
+      final images = json['images'] as List;
+      if (images.isNotEmpty && images[0] is Map<String, dynamic>) {
+        imageUrl = images[0]['url'] as String?;
+      }
+    }
+
     return CommonAlbum(
-      id: json['id'] as String,
-      uid: json['uid'] as String? ?? '',
-      name: json['name'] as String,
+      id: id,
+      uid: uid,
+      name: name,
       artistName: json['artist_name'] as String?,
       artistId: json['artist_id'] as String?,
       source: json['source'] as String?,
@@ -53,7 +67,7 @@ class CommonAlbum {
       imageUrls: (json['image_urls'] as List<dynamic>?)
           ?.map((e) => e as String)
           .toList(),
-      imageUrl: json['image_url'] as String?,
+      imageUrl: imageUrl,
       releaseYear: json['release_year'] as int?,
       totalTracks: json['total_tracks'] as int?,
     );

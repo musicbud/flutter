@@ -320,7 +320,7 @@ class AppTheme {
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(radiusXL),
     ),
-    margin: EdgeInsets.all(spacingM),
+    margin: const EdgeInsets.all(spacingM),
     shadowColor: Colors.black,
   );
 
@@ -328,7 +328,7 @@ class AppTheme {
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(radiusM),
     ),
-    padding: EdgeInsets.symmetric(
+    padding: const EdgeInsets.symmetric(
       horizontal: spacingL,
       vertical: spacingM,
     ),
@@ -337,23 +337,23 @@ class AppTheme {
   InputDecorationTheme get inputDecorationTheme => InputDecorationTheme(
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(radiusM),
-      borderSide: BorderSide(color: borderColor),
+      borderSide: const BorderSide(color: borderColor),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(radiusM),
-      borderSide: BorderSide(color: borderColor),
+      borderSide: const BorderSide(color: borderColor),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(radiusM),
-      borderSide: BorderSide(color: primaryRed, width: 2),
+      borderSide: const BorderSide(color: primaryRed, width: 2),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(radiusM),
-      borderSide: BorderSide(color: error),
+      borderSide: const BorderSide(color: error),
     ),
     filled: true,
     fillColor: surfaceDark,
-    contentPadding: EdgeInsets.symmetric(
+    contentPadding: const EdgeInsets.symmetric(
       horizontal: spacingM,
       vertical: spacingM,
     ),
@@ -367,10 +367,10 @@ class AppTheme {
       color: white,
       fontWeight: FontWeight.w600,
     ),
-    iconTheme: IconThemeData(color: white),
+    iconTheme: const IconThemeData(color: white),
   );
 
-  BottomNavigationBarThemeData get bottomNavigationBarTheme => BottomNavigationBarThemeData(
+  BottomNavigationBarThemeData get bottomNavigationBarTheme => const BottomNavigationBarThemeData(
     backgroundColor: surface,
     selectedItemColor: primaryRed,
     unselectedItemColor: lightGray,
@@ -390,7 +390,7 @@ class AppTheme {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(radiusXL),
       ),
-      margin: EdgeInsets.all(spacingM),
+      margin: const EdgeInsets.all(spacingM),
       shadowColor: Colors.black,
     ),
     buttonTheme: buttonTheme,
@@ -398,7 +398,7 @@ class AppTheme {
     appBarTheme: appBarTheme.copyWith(
       backgroundColor: white,
       titleTextStyle: headlineH6.copyWith(color: darkTone),
-      iconTheme: IconThemeData(color: darkTone),
+      iconTheme: const IconThemeData(color: darkTone),
     ),
     bottomNavigationBarTheme: bottomNavigationBarTheme.copyWith(
       backgroundColor: white,
@@ -418,7 +418,7 @@ class AppTheme {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(radiusXL),
       ),
-      margin: EdgeInsets.all(spacingM),
+      margin: const EdgeInsets.all(spacingM),
       shadowColor: Colors.black,
     ),
     buttonTheme: buttonTheme,

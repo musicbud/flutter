@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../../domain/repositories/auth_repository.dart';
@@ -27,7 +28,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       
       if (Platform.isLinux) {
         // Skip connectivity check on Linux desktop (development mode)
-        print('Skipping connectivity check on Linux desktop - assuming connected');
+        debugPrint('Skipping connectivity check on Linux desktop - assuming connected');
         connectivityResult = ConnectivityResult.wifi;
       } else {
         try {
@@ -37,8 +38,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         } catch (e) {
           // If D-Bus connectivity check fails, assume we have connectivity
           // This handles cases where D-Bus is not available (e.g., in Nix shell)
-          print('Connectivity check failed (likely D-Bus unavailable): $e');
-          print('Assuming network connectivity is available...');
+          debugPrint('Connectivity check failed (likely D-Bus unavailable): $e');
+          debugPrint('Assuming network connectivity is available...');
           connectivityResult = ConnectivityResult.wifi;
         }
       }
@@ -78,7 +79,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       
       if (Platform.isLinux) {
         // Skip connectivity check on Linux desktop (development mode)
-        print('Skipping connectivity check on Linux desktop - assuming connected');
+        debugPrint('Skipping connectivity check on Linux desktop - assuming connected');
         connectivityResult = ConnectivityResult.wifi;
       } else {
         try {
@@ -87,8 +88,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               .timeout(const Duration(seconds: 3));
         } catch (e) {
           // If D-Bus connectivity check fails, assume we have connectivity
-          print('Connectivity check failed (likely D-Bus unavailable): $e');
-          print('Assuming network connectivity is available...');
+          debugPrint('Connectivity check failed (likely D-Bus unavailable): $e');
+          debugPrint('Assuming network connectivity is available...');
           connectivityResult = ConnectivityResult.wifi;
         }
       }

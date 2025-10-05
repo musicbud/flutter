@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       home: CardsScreen(),
     );
@@ -15,6 +17,8 @@ class MyApp extends StatelessWidget {
 }
 
 class CardsScreen extends StatelessWidget {
+  const CardsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,8 +29,8 @@ class CardsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 20),
-              Row(
+              const SizedBox(height: 20),
+              const Row(
                 children: [
                   InfoText(title: 'Listeners', value: '45.2k'),
                   SizedBox(width: 20),
@@ -37,31 +41,31 @@ class CardsScreen extends StatelessWidget {
                   Icon(Icons.bookmark_border, color: Colors.white),
                 ],
               ),
-              SizedBox(height: 20),
-              MusicCard(),
-              SizedBox(height: 20),
-              DetailText(
+              const SizedBox(height: 20),
+              const MusicCard(),
+              const SizedBox(height: 20),
+              const DetailText(
                 title: 'Length:',
                 highlight: true,
                 value: '                  3:24',
                 maxLines: 1,
               ),
-              DetailText(
+              const DetailText(
                 title: 'Lyrics:',
                 value:
                     '''                    In the shadows where the whispers play, 
                     Stars are dancing, guiding my way. Lost in the...''',
                 maxLines: 2,
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text('Tags:',
+                    const Text('Tags:',
                         style: TextStyle(color: Colors.white, fontSize: 16)),
-                    SizedBox(width: 110),
+                    const SizedBox(width: 110),
                     Wrap(
                       spacing: 20,
                       children: [
@@ -77,16 +81,16 @@ class CardsScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(height: 20),
-              Text('External Links',
+              const SizedBox(height: 20),
+              const Text('External Links',
                   style: TextStyle(
                       color: Colors.white70,
                       fontSize: 24,
                       fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
-              ExternalLink(icon: Icons.music_note, text: 'Spotify'),
-              ExternalLink(icon: Icons.play_circle_fill, text: 'Youtube Music'),
-              ExternalLink(icon: Icons.camera_alt, text: 'Instagram'),
+              const SizedBox(height: 10),
+              const ExternalLink(icon: Icons.music_note, text: 'Spotify'),
+              const ExternalLink(icon: Icons.play_circle_fill, text: 'Youtube Music'),
+              const ExternalLink(icon: Icons.camera_alt, text: 'Instagram'),
             ],
           ),
         ),
@@ -99,16 +103,16 @@ class InfoText extends StatelessWidget {
   final String title;
   final String value;
 
-  const InfoText({required this.title, required this.value});
+  const InfoText({super.key, required this.title, required this.value});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: TextStyle(color: Colors.white70, fontSize: 14)),
+        Text(title, style: const TextStyle(color: Colors.white70, fontSize: 14)),
         Text(value,
-            style: TextStyle(
+            style: const TextStyle(
                 color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold)),
@@ -118,6 +122,8 @@ class InfoText extends StatelessWidget {
 }
 
 class MusicCard extends StatelessWidget {
+  const MusicCard({super.key});
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -127,31 +133,31 @@ class MusicCard extends StatelessWidget {
           Container(
             height: 420,
             decoration: BoxDecoration(
-              image: DecorationImage(
+              image: const DecorationImage(
                 image: AssetImage('assets/music_cover3.jpg'),
                 fit: BoxFit.cover,
               ),
               borderRadius: BorderRadius.circular(30),
               color: Colors.grey[900],
             ),
-            padding: EdgeInsets.all(10),
+            padding: const EdgeInsets.all(10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                SizedBox(height: 10),
-                Text('Stars in the Dust',
+                const SizedBox(height: 10),
+                const Text('Stars in the Dust',
                     style: TextStyle(color: Colors.white, fontSize: 35)),
-                Text('The Celestial Nomads',
+                const Text('The Celestial Nomads',
                     style: TextStyle(color: Colors.white70)),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 10),
+                const Text(
                   """is an ethereal blend of ambient and acoustic soundscapes that transports listeners to a serene, celestial realm. The track opens with a gentle, melodic guitar riff that sets the tone for the rest of the song. music is perfect for meditation, relaxation, or simply getting lost in the beauty of the cosmos.""",
                   style: TextStyle(color: Colors.white70),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 _buildMusicTile("Waves of Stardust", "Midnight Echoes",
@@ -159,8 +165,8 @@ class MusicCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: 20),
-          Positioned(
+          const SizedBox(height: 20),
+          const Positioned(
             bottom: 0,
             right: 10,
             child: Icon(Icons.play_circle_outline_outlined,
@@ -178,7 +184,7 @@ class DetailText extends StatelessWidget {
   final bool highlight;
 
   const DetailText(
-      {required this.title,
+      {super.key, required this.title,
       required this.value,
       this.highlight = false,
       required int maxLines});
@@ -187,8 +193,8 @@ class DetailText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Text(title, style: TextStyle(color: Colors.white, fontSize: 16)),
-        SizedBox(width: 30),
+        Text(title, style: const TextStyle(color: Colors.white, fontSize: 16)),
+        const SizedBox(width: 30),
         Text(value,
             style: TextStyle(
                 color: highlight ? Colors.redAccent : Colors.white70)),
@@ -201,7 +207,7 @@ class ExternalLink extends StatelessWidget {
   final IconData icon;
   final String text;
 
-  const ExternalLink({required this.icon, required this.text});
+  const ExternalLink({super.key, required this.icon, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -210,8 +216,8 @@ class ExternalLink extends StatelessWidget {
       child: Row(
         children: [
           Icon(icon, color: Colors.white),
-          SizedBox(width: 20),
-          Text(text, style: TextStyle(color: Colors.white)),
+          const SizedBox(width: 20),
+          Text(text, style: const TextStyle(color: Colors.white)),
         ],
       ),
     );
@@ -222,7 +228,7 @@ Widget _buildMusicTile(String title, String artist, String image) {
   return Container(
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: Color.fromARGB(98, 43, 43, 43),
+        color: const Color.fromARGB(98, 43, 43, 43),
         border: Border.all(
             color: const Color.fromARGB(255, 123, 122, 122), width: .3)),
     child: ListTile(
@@ -230,8 +236,8 @@ Widget _buildMusicTile(String title, String artist, String image) {
         borderRadius: BorderRadius.circular(12),
         child: Image.asset(image, width: 50, height: 50, fit: BoxFit.cover),
       ),
-      title: Text(title, style: TextStyle(color: Colors.white)),
-      subtitle: Text(artist, style: TextStyle(color: Colors.white70)),
+      title: Text(title, style: const TextStyle(color: Colors.white)),
+      subtitle: Text(artist, style: const TextStyle(color: Colors.white70)),
     ),
   );
 }

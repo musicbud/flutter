@@ -5,7 +5,6 @@ import 'package:musicbud_flutter/blocs/auth/login/login_event.dart';
 import 'package:musicbud_flutter/blocs/auth/login/login_state.dart';
 import 'package:musicbud_flutter/blocs/user/user_bloc.dart';
 import 'package:musicbud_flutter/blocs/user/user_event.dart';
-import 'package:musicbud_flutter/presentation/pages/home_page.dart';
 import 'package:musicbud_flutter/blocs/auth/auth_bloc.dart';
 import '../widgets/common/app_scaffold.dart';
 import '../widgets/common/app_app_bar.dart';
@@ -61,7 +60,7 @@ class LoginPageState extends State<LoginPage> with PageMixin {
       child: BlocBuilder<LoginBloc, LoginState>(
         builder: (context, state) {
           return AppScaffold(
-            appBar: AppAppBar(
+            appBar: const AppAppBar(
               title: 'Login',
               automaticallyImplyLeading: false,
             ),
@@ -181,7 +180,7 @@ class LoginPageState extends State<LoginPage> with PageMixin {
   Widget _buildAppTitle() {
     return Column(
       children: [
-        Icon(
+        const Icon(
           Icons.music_note,
           size: 64,
           color: AppConstants.primaryColor,
@@ -212,7 +211,7 @@ class LoginPageState extends State<LoginPage> with PageMixin {
         // TODO: Implement forgot password functionality
         showInfoSnackBar('Forgot password functionality coming soon!');
       },
-      child: Text(
+      child: const Text(
         'Forgot Password?',
         style: TextStyle(
           color: AppConstants.primaryColor,

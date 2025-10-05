@@ -1,11 +1,11 @@
 import "package:flutter/material.dart";
-import "../../constants/app_constants.dart";
 
 class ModernInputField extends StatefulWidget {
   final TextEditingController? controller;
   final String? hintText;
   final bool enabled;
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
   final VoidCallback? onTap;
   final ModernInputFieldSize size;
   final Color? customBackgroundColor;
@@ -14,6 +14,8 @@ class ModernInputField extends StatefulWidget {
   final TextStyle? customLabelStyle;
   final TextStyle? customHintStyle;
   final ModernInputFieldVariant variant;
+  final String? label;
+  final int? maxLines;
 
   const ModernInputField({
     super.key,
@@ -21,6 +23,7 @@ class ModernInputField extends StatefulWidget {
     this.hintText,
     this.enabled = true,
     this.onChanged,
+    this.onSubmitted,
     this.onTap,
     this.size = ModernInputFieldSize.medium,
     this.customBackgroundColor,
@@ -29,6 +32,8 @@ class ModernInputField extends StatefulWidget {
     this.customLabelStyle,
     this.customHintStyle,
     this.variant = ModernInputFieldVariant.outlined,
+    this.label,
+    this.maxLines,
   });
 
   @override
@@ -44,11 +49,95 @@ class _ModernInputFieldState extends State<ModernInputField> {
         controller: widget.controller,
         enabled: widget.enabled,
         onChanged: widget.onChanged,
+        // onSubmitted: widget.onSubmitted,
         onTap: widget.onTap,
-        decoration: InputDecoration(
-          hintText: widget.hintText,
-          border: InputBorder.none,
-        ),
+        maxLines: widget.maxLines,
+        style: widget.customTextStyle ?? Theme.of(context).textTheme.bodyMedium,
+        decoration: _getInputDecoration(context),
+      ),
+    );
+  }
+
+  InputDecoration _getInputDecoration(BuildContext context) {
+    final borderRadius = BorderRadius.circular(8);
+    final borderSide = BorderSide(
+      color: widget.customBorderColor ?? Theme.of(context).dividerColor,
+    );
+    final focusedBorderSide = BorderSide(
+      color: widget.customBorderColor ?? Theme.of(context).primaryColor,
+      width: 2,
+    );
+
+    var decoration = InputDecoration(
+      labelText: widget.label,
+      hintText: widget.hintText,
+      labelStyle: widget.customLabelStyle ?? Theme.of(context).textTheme.bodyMedium,
+      hintStyle: widget.customHintStyle ?? Theme.of(context).textTheme.bodyMedium?.copyWith(
+        color: Theme.of(context).hintColor,
+      ),
+      filled: widget.variant == ModernInputFieldVariant.filled,
+      fillColor: widget.customBackgroundColor ?? (widget.variant == ModernInputFieldVariant.filled 
+        ? Theme.of(context).inputDecorationTheme.fillColor 
+        : Colors.transparent),
+    );
+
+    switch (widget.variant) {
+      case ModernInputFieldVariant.outlined:
+        decoration = decoration.copyWith(
+          border: OutlineInputBorder(
+            borderRadius: borderRadius,
+            borderSide: borderSide,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: borderRadius,
+            borderSide: borderSide,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: borderRadius,
+            borderSide: focusedBorderSide,
+          ),
+        );
+        break;
+      case ModernInputFieldVariant.underlined:
+        decoration = decoration.copyWith(
+          border: UnderlineInputBorder(
+            borderSide: borderSide,
+          ),
+          enabledBorder: UnderlineInputBorder(
+            borderSide: borderSide,
+          ),
+          focusedBorder: UnderlineInputBorder(
+            borderSide: focusedBorderSide,
+          ),
+        );
+        break;
+      case ModernInputFieldVariant.filled:
+        decoration = decoration.copyWith(
+          border: OutlineInputBorder(
+            borderRadius: borderRadius,
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: borderRadius,
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: borderRadius,
+            borderSide: focusedBorderSide,
+          ),
+        );
+        break;
+    }
+
+    // Apply size-specific padding
+    final verticalPadding = widget.size == ModernInputFieldSize.small ? 8.0 
+      : widget.size == ModernInputFieldSize.medium ? 12.0 
+      : 16.0;
+    
+    return decoration.copyWith(
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: verticalPadding,
       ),
     );
   }
@@ -61,6 +150,7 @@ enum ModernInputFieldSize {
 }
 
 enum ModernInputFieldVariant {
-  filled,
   outlined,
+  underlined,
+  filled,
 }

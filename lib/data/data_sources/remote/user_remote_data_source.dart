@@ -46,4 +46,10 @@ abstract class UserRemoteDataSource {
   Future<List<Track>> getPlayedTracks();
   Future<List<Track>> getPlayedTracksWithLocation();
   Future<List<Track>> getCurrentlyPlayedTracks();
+
+  // Admin operations
+  Future<void> updateUserProfile(String userId, Map<String, dynamic> profileData);
+  Future<void> banUser(String userId);
+  Future<void> unbanUser(String userId);
+  Future<List<UserProfile>> getBannedUsers();
 }

@@ -5,7 +5,6 @@ import '../../../blocs/content/content_event.dart';
 import '../../../blocs/content/content_state.dart';
 import '../../../blocs/likes/likes_bloc.dart';
 import '../../../blocs/likes/likes_event.dart';
-import '../../../blocs/likes/likes_state.dart';
 import '../../../domain/models/common_track.dart';
 import '../../../domain/models/common_artist.dart';
 import '../../../domain/models/common_genre.dart';
@@ -127,7 +126,7 @@ class _DynamicMusicPageState extends State<DynamicMusicPage> with PageMixin {
 
       if (tracks.isEmpty) {
         return _buildEmptyState(
-          'No ${category} tracks',
+          'No $category tracks',
           _getTracksEmptyMessage(category),
           Icons.music_note_outlined,
         );
@@ -159,7 +158,7 @@ class _DynamicMusicPageState extends State<DynamicMusicPage> with PageMixin {
 
       if (artists.isEmpty) {
         return _buildEmptyState(
-          'No ${category} artists',
+          'No $category artists',
           _getArtistsEmptyMessage(category),
           Icons.person_outline,
         );
@@ -231,7 +230,7 @@ class _DynamicMusicPageState extends State<DynamicMusicPage> with PageMixin {
                       : null,
                 ),
                 child: track.imageUrl == null
-                    ? Icon(
+                    ? const Icon(
                         Icons.music_note,
                         color: AppConstants.primaryColor,
                         size: 24,
@@ -287,7 +286,7 @@ class _DynamicMusicPageState extends State<DynamicMusicPage> with PageMixin {
                   ),
                   IconButton(
                     onPressed: () => _playTrack(track),
-                    icon: Icon(
+                    icon: const Icon(
                       Icons.play_arrow,
                       color: AppConstants.primaryColor,
                       size: 24,
@@ -334,7 +333,7 @@ class _DynamicMusicPageState extends State<DynamicMusicPage> with PageMixin {
                       : null,
                 ),
                 child: artist.imageUrl == null
-                    ? Icon(
+                    ? const Icon(
                         Icons.person,
                         color: AppConstants.primaryColor,
                         size: 24,
@@ -408,7 +407,7 @@ class _DynamicMusicPageState extends State<DynamicMusicPage> with PageMixin {
                   borderRadius: BorderRadius.circular(8),
                   color: AppConstants.primaryColor.withValues(alpha: 0.2),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.category,
                   color: AppConstants.primaryColor,
                   size: 24,
@@ -429,7 +428,7 @@ class _DynamicMusicPageState extends State<DynamicMusicPage> with PageMixin {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    Text(
+                    const Text(
                       'Music genre',
                       style: AppConstants.captionStyle,
                     ),
@@ -561,11 +560,11 @@ class _DynamicMusicPageState extends State<DynamicMusicPage> with PageMixin {
                   hintStyle: AppConstants.captionStyle,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: AppConstants.borderColor),
+                    borderSide: const BorderSide(color: AppConstants.borderColor),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(color: AppConstants.primaryColor),
+                    borderSide: const BorderSide(color: AppConstants.primaryColor),
                   ),
                 ),
                 onSubmitted: (query) {

@@ -4,8 +4,8 @@ import '../../../blocs/auth/register/register_bloc.dart';
 import '../../../blocs/auth/register/register_event.dart';
 import '../../../blocs/auth/register/register_state.dart';
 import '../../widgets/common/bloc_form.dart';
-import '../../widgets/common/app_button.dart';
-import '../../constants/app_constants.dart';
+import '../../widgets/error_card.dart';
+import '../../theme/app_theme.dart';
 import '../../mixins/page_mixin.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -32,6 +32,8 @@ class _RegisterPageState extends State<RegisterPage> with PageMixin {
 
   @override
   Widget build(BuildContext context) {
+    final appTheme = AppTheme.of(context);
+
     return BlocForm<RegisterBloc, RegisterState, RegisterEvent>(
       title: 'Create Account',
       fields: [
@@ -40,14 +42,14 @@ class _RegisterPageState extends State<RegisterPage> with PageMixin {
           label: 'Email Address',
           hint: 'Enter your email address',
           keyboardType: TextInputType.emailAddress,
-          prefixIcon: const Icon(Icons.email_outlined, color: AppConstants.primaryColor),
+          prefixIcon: Icon(Icons.email_outlined, color: appTheme.colors.primary),
           validator: BlocFormField.emailValidator,
         ),
         BlocFormField(
           key: 'username',
           label: 'Username',
           hint: 'Choose a unique username',
-          prefixIcon: const Icon(Icons.person_outline, color: AppConstants.primaryColor),
+          prefixIcon: Icon(Icons.person_outline, color: appTheme.colors.primary),
           validator: BlocFormField.usernameValidator,
         ),
         BlocFormField(
@@ -55,7 +57,7 @@ class _RegisterPageState extends State<RegisterPage> with PageMixin {
           label: 'Password',
           hint: 'Create a secure password',
           obscureText: true,
-          prefixIcon: const Icon(Icons.lock_outline, color: AppConstants.primaryColor),
+          prefixIcon: Icon(Icons.lock_outline, color: appTheme.colors.primary),
           validator: BlocFormField.passwordValidator,
           onChanged: (value) => _passwordController.text = value,
         ),
@@ -64,13 +66,12 @@ class _RegisterPageState extends State<RegisterPage> with PageMixin {
           label: 'Confirm Password',
           hint: 'Re-enter your password',
           obscureText: true,
-          prefixIcon: const Icon(Icons.lock_outline, color: AppConstants.primaryColor),
+          prefixIcon: Icon(Icons.lock_outline, color: appTheme.colors.primary),
           validator: BlocFormField.confirmPasswordValidator(_passwordController),
         ),
       ],
       submitButtonText: 'Create Account',
       onSubmit: (values) {
-        // First check connectivity and server status like in legacy
         context.read<RegisterBloc>().add(RegisterConnectivityChecked());
         context.read<RegisterBloc>().add(RegisterServerStatusChecked());
 
@@ -98,152 +99,102 @@ class _RegisterPageState extends State<RegisterPage> with PageMixin {
         navigateTo('/home');
       },
       onStateChanged: (state) {
-        // Handle specific state changes that don't require user feedback
         if (state is RegisterConnectivityStatus && state.isConnected) {
           // Connection restored, could auto-retry if needed
         }
       },
       additionalActions: [
         // Sign in link
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Already have an account?',
-              style: AppConstants.captionStyle,
-            ),
-            TextButton(
-              onPressed: () => navigateTo('/login'),
-              child: Text(
-                'Sign In',
-                style: AppConstants.bodyStyle.copyWith(
-                  color: AppConstants.primaryColor,
-                  fontWeight: FontWeight.w600,
+        AnimatedOpacity(
+          opacity: 1.0,
+          duration: const Duration(milliseconds: 300),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Already have an account?',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Colors.grey,
                 ),
               ),
-            ),
-          ],
+              TextButton(
+                onPressed: () => navigateTo('/login'),
+                child: Text(
+                  'Sign In',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: appTheme.colors.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
 
         const SizedBox(height: 16),
 
         // Terms and conditions
-        Text(
-          'By creating an account, you agree to our Terms of Service and Privacy Policy',
-          style: AppConstants.captionStyle.copyWith(fontSize: 12),
-          textAlign: TextAlign.center,
+        AnimatedOpacity(
+          opacity: 1.0,
+          duration: const Duration(milliseconds: 300),
+          child: Text(
+            'By creating an account, you agree to our Terms of Service and Privacy Policy',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Colors.grey,
+            ),
+            textAlign: TextAlign.center,
+          ),
         ),
       ],
       customStateWidget: (state) {
-        // Handle connectivity and server status checks
         if (state is RegisterConnectivityStatus && !state.isConnected) {
           return _buildConnectivityError();
         }
         if (state is RegisterServerStatus && !state.isReachable) {
           return _buildServerError(state.message);
         }
-        return Container(); // Return empty container instead of null
+        return Container();
       },
     );
   }
 
   Widget _buildConnectivityError() {
+    final appTheme = AppTheme.of(context);
+
     return Scaffold(
-      backgroundColor: AppConstants.backgroundColor,
+      backgroundColor: appTheme.colors.surface,
       appBar: AppBar(
         title: const Text('Create Account'),
-        backgroundColor: AppConstants.backgroundColor,
+        backgroundColor: appTheme.colors.surface,
       ),
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.wifi_off,
-                size: 64,
-                color: AppConstants.errorColor,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'No Internet Connection',
-                style: AppConstants.headingStyle.copyWith(
-                  color: AppConstants.errorColor,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Please check your internet connection and try again.',
-                style: AppConstants.bodyStyle.copyWith(
-                  color: AppConstants.textSecondaryColor,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
-              AppButton(
-                text: 'Retry',
-                onPressed: () {
-                  context.read<RegisterBloc>().add(RegisterConnectivityChecked());
-                },
-                backgroundColor: AppConstants.errorColor,
-              ),
-            ],
-          ),
+        child: ErrorCard(
+          message: 'Please check your internet connection and try again.',
+          icon: Icons.wifi_off,
+          onRetry: () {
+            context.read<RegisterBloc>().add(RegisterConnectivityChecked());
+          },
         ),
       ),
     );
   }
 
   Widget _buildServerError(String? message) {
+    final appTheme = AppTheme.of(context);
+
     return Scaffold(
-      backgroundColor: AppConstants.backgroundColor,
+      backgroundColor: appTheme.colors.surface,
       appBar: AppBar(
         title: const Text('Create Account'),
-        backgroundColor: AppConstants.backgroundColor,
+        backgroundColor: appTheme.colors.surface,
       ),
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.cloud_off,
-                size: 64,
-                color: AppConstants.errorColor,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                'Server Unavailable',
-                style: AppConstants.headingStyle.copyWith(
-                  color: AppConstants.errorColor,
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                message ?? 'The server is currently unavailable. Please try again later.',
-                style: AppConstants.bodyStyle.copyWith(
-                  color: AppConstants.textSecondaryColor,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
-              AppButton(
-                text: 'Check Server Status',
-                onPressed: () {
-                  context.read<RegisterBloc>().add(RegisterServerStatusChecked());
-                },
-                backgroundColor: AppConstants.errorColor,
-              ),
-              const SizedBox(height: 16),
-              AppButton(
-                text: 'Go Back',
-                onPressed: () => navigateBack(),
-                isOutlined: true,
-              ),
-            ],
-          ),
+        child: ErrorCard(
+          message: message ?? 'The server is currently unavailable. Please try again later.',
+          icon: Icons.cloud_off,
+          onRetry: () {
+            context.read<RegisterBloc>().add(RegisterServerStatusChecked());
+          },
         ),
       ),
     );

@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../constants/app_constants.dart';
-import '../../mixins/page_mixin.dart';
 import 'app_bottom_navigation_bar.dart';
 
 /// A unified scaffold that manages all navigation elements to prevent overlapping

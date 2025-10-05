@@ -18,8 +18,16 @@ import 'data/data_sources/remote/bud_remote_data_source.dart';
 import 'data/data_sources/remote/auth_remote_data_source.dart';
 import 'data/data_sources/remote/chat_remote_data_source.dart';
 import 'data/data_sources/remote/user_profile_remote_data_source.dart';
+import 'data/data_sources/remote/analytics_remote_data_source.dart';
+import 'config/api_config.dart';
 import 'data/data_sources/remote/bud_matching_remote_data_source.dart';
 import 'data/data_sources/remote/chat_management_remote_data_source.dart';
+import 'data/data_sources/remote/settings_remote_data_source.dart';
+import 'data/data_sources/remote/event_remote_data_source.dart';
+// import 'data/data_sources/remote/admin_remote_data_source.dart'; // Not used - conflicting implementation
+import 'data/data_sources/remote/channel_remote_data_source.dart';
+import 'data/datasources/search_remote_data_source.dart';
+import 'data/data_sources/remote/common_items_remote_data_source.dart';
 
 // Repositories
 import 'data/repositories/auth_repository_impl.dart';
@@ -29,8 +37,16 @@ import 'data/repositories/user_repository_impl.dart';
 import 'data/repositories/profile_repository_impl.dart';
 import 'data/repositories/chat_repository_impl.dart';
 import 'data/repositories/user_profile_repository_impl.dart';
-import 'data/repositories/bud_matching_repository_impl.dart';
-import 'data/repositories/chat_management_repository_impl.dart';
+import 'data/repositories/settings_repository_impl.dart';
+import 'data/repositories/event_repository_impl.dart';
+import 'data/repositories/analytics_repository_impl.dart';
+import 'data/repositories/admin_repository_impl.dart';
+import 'data/repositories/channel_repository_impl.dart';
+import 'data/repositories/search_repository_impl.dart';
+import 'data/repositories/services_repository_impl.dart';
+import 'data/repositories/library_repository_impl.dart';
+import 'data/repositories/common_items_repository_impl.dart';
+import 'data/datasources/admin_remote_data_source.dart';
 
 // Domain Interfaces
 import 'domain/repositories/auth_repository.dart';
@@ -40,23 +56,33 @@ import 'domain/repositories/content_repository.dart';
 import 'domain/repositories/bud_repository.dart';
 import 'domain/repositories/chat_repository.dart';
 import 'domain/repositories/user_profile_repository.dart';
-import 'domain/repositories/bud_matching_repository.dart';
-import 'domain/repositories/chat_management_repository.dart';
+import 'domain/repositories/settings_repository.dart';
+import 'domain/repositories/event_repository.dart';
+import 'domain/repositories/analytics_repository.dart';
+import 'domain/repositories/admin_repository.dart';
+import 'domain/repositories/channel_repository.dart';
+import 'domain/repositories/search_repository.dart';
+import 'domain/repositories/services_repository.dart';
+import 'domain/repositories/library_repository.dart';
+import 'domain/repositories/common_items_repository.dart';
 
 // BLoCs
 import 'blocs/user/user_bloc.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'blocs/profile/profile_bloc.dart';
 import 'blocs/main/main_screen_bloc.dart';
-import 'blocs/chat/chat_bloc.dart';
-import 'blocs/content/content_bloc.dart';
-import 'blocs/bud/bud_bloc.dart';
+import 'blocs/settings/settings_bloc.dart';
+import 'blocs/event/event_bloc.dart';
+import 'blocs/analytics/analytics_bloc.dart';
+import 'presentation/blocs/admin/admin_bloc.dart';
+import 'presentation/blocs/channel/channel_bloc.dart';
+import 'presentation/blocs/search/search_bloc.dart';
 import 'blocs/user_profile/user_profile_bloc.dart';
-import 'blocs/bud_matching/bud_matching_bloc.dart';
-import 'blocs/chat/chat_management_bloc.dart';
-
-// Configuration
-import 'config/api_config.dart';
+import 'blocs/comprehensive_chat/comprehensive_chat_bloc.dart';
+import 'blocs/library/library_bloc.dart';
+import 'blocs/bud/bud_bloc.dart';
+import 'blocs/bud/common_items/bud_common_items_bloc.dart';
+import 'blocs/artist/artist_bloc.dart';
 
 /// Global GetIt instance for dependency injection
 final sl = GetIt.instance;
@@ -173,6 +199,11 @@ Future<void> _registerDataSources() async {
     () => UserProfileRemoteDataSourceImpl(dioClient: sl<DioClient>()),
   );
 
+  // Analytics Data Source
+  sl.registerLazySingleton<AnalyticsRemoteDataSource>(
+    () => AnalyticsRemoteDataSource(dio: sl<Dio>()),
+  );
+
   // Bud Matching Data Source
   sl.registerLazySingleton<BudMatchingRemoteDataSource>(
     () => BudMatchingRemoteDataSourceImpl(dioClient: sl<DioClient>()),
@@ -181,6 +212,39 @@ Future<void> _registerDataSources() async {
   // Chat Management Data Source
   sl.registerLazySingleton<ChatManagementRemoteDataSource>(
     () => ChatManagementRemoteDataSourceImpl(dioClient: sl<DioClient>()),
+  );
+
+  // Settings Data Source
+  sl.registerLazySingleton<SettingsRemoteDataSource>(
+    () => SettingsRemoteDataSourceImpl(dioClient: sl<Dio>()),
+  );
+
+  // Event Data Source
+  sl.registerLazySingleton<EventRemoteDataSource>(
+    () => EventRemoteDataSourceImpl(dioClient: sl<Dio>()),
+  );
+
+  // Admin Data Source
+  sl.registerLazySingleton<AdminRemoteDataSource>(
+    () => AdminRemoteDataSourceImpl(client: sl<http.Client>()),
+  );
+
+  // Channel Data Source
+  sl.registerLazySingleton<ChannelRemoteDataSource>(
+    () => ChannelRemoteDataSourceImpl(client: sl()),
+  );
+
+  // Search Data Source
+  sl.registerLazySingleton<SearchRemoteDataSource>(
+    () => SearchRemoteDataSourceImpl(client: sl()),
+  );
+
+  // Common Items Data Source
+  sl.registerLazySingleton<CommonItemsRemoteDataSource>(
+    () => CommonItemsRemoteDataSourceImpl(
+      client: sl<http.Client>(),
+      token: '', // TODO: Get token from token provider
+    ),
   );
 }
 
@@ -221,6 +285,13 @@ Future<void> _registerRepositories() async {
     ),
   );
 
+  // Analytics Repository
+  sl.registerLazySingleton<AnalyticsRepository>(
+    () => AnalyticsRepositoryImpl(
+      remoteDataSource: sl<AnalyticsRemoteDataSource>(),
+    ),
+  );
+
   // Chat Repository
   sl.registerLazySingleton<ChatRepository>(
     () => ChatRepositoryImpl(
@@ -235,17 +306,63 @@ Future<void> _registerRepositories() async {
     ),
   );
 
-  // Bud Matching Repository
-  sl.registerLazySingleton<BudMatchingRepository>(
-    () => BudMatchingRepositoryImpl(
-      remoteDataSource: sl<BudMatchingRemoteDataSource>(),
+  // Settings Repository
+  sl.registerLazySingleton<SettingsRepository>(
+    () => SettingsRepositoryImpl(
+      remoteDataSource: sl<SettingsRemoteDataSource>(),
     ),
   );
 
-  // Chat Management Repository
-  sl.registerLazySingleton<ChatManagementRepository>(
-    () => ChatManagementRepositoryImpl(
-      remoteDataSource: sl<ChatManagementRemoteDataSource>(),
+  // Event Repository
+  sl.registerLazySingleton<EventRepository>(
+    () => EventRepositoryImpl(
+      remoteDataSource: sl<EventRemoteDataSource>(),
+    ),
+  );
+
+  // Admin Repository
+  sl.registerLazySingleton<AdminRepository>(
+    () => AdminRepositoryImpl(
+      remoteDataSource: sl<AdminRemoteDataSource>(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Channel Repository
+  sl.registerLazySingleton<ChannelRepository>(
+    () => ChannelRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Search Repository
+  sl.registerLazySingleton<SearchRepository>(
+    () => SearchRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
+  // Services Repository
+  sl.registerLazySingleton<ServicesRepository>(
+    () => ServicesRepositoryImpl(
+      userRepository: sl<UserRepository>(),
+    ),
+  );
+
+  // Library Repository
+  sl.registerLazySingleton<LibraryRepository>(
+    () => LibraryRepositoryImpl(
+      contentRepository: sl<ContentRepository>(),
+      userRepository: sl<UserRepository>(),
+    ),
+  );
+
+  // Common Items Repository
+  sl.registerLazySingleton<CommonItemsRepository>(
+    () => CommonItemsRepositoryImpl(
+      remoteDataSource: sl<CommonItemsRemoteDataSource>(),
     ),
   );
 }
@@ -269,24 +386,39 @@ Future<void> _registerBlocs() async {
     budRepository: sl<BudRepository>(),
   ));
 
+  // Analytics BLoC
+  sl.registerFactory<AnalyticsBloc>(() => AnalyticsBloc(
+    analyticsRepository: sl<AnalyticsRepository>(),
+  ));
+
   // Main Screen BLoC
   sl.registerFactory<MainScreenBloc>(() => MainScreenBloc(
     profileRepository: sl<ProfileRepository>(),
   ));
 
-  // Chat BLoC
-  sl.registerFactory<ChatBloc>(() => ChatBloc(
-    chatRepository: sl<ChatRepository>(),
+  // Settings BLoC
+  sl.registerFactory<SettingsBloc>(() => SettingsBloc(
+    settingsRepository: sl<SettingsRepository>(),
   ));
 
-  // Content BLoC
-  sl.registerFactory<ContentBloc>(() => ContentBloc(
-    contentRepository: sl<ContentRepository>(),
+  // Event BLoC
+  sl.registerFactory<EventBloc>(() => EventBloc(
+    eventRepository: sl<EventRepository>(),
   ));
 
-  // Bud BLoC
-  sl.registerFactory<BudBloc>(() => BudBloc(
-    budRepository: sl<BudRepository>(),
+  // Admin BLoC
+  sl.registerFactory<AdminBloc>(() => AdminBloc(
+    repository: sl<AdminRepository>(),
+  ));
+
+  // Channel BLoC
+  sl.registerFactory<ChannelBloc>(() => ChannelBloc(
+    repository: sl<ChannelRepository>(),
+  ));
+
+  // Search BLoC
+  sl.registerFactory<SearchBloc>(() => SearchBloc(
+    repository: sl<SearchRepository>(),
   ));
 
   // User Profile BLoC
@@ -294,14 +426,34 @@ Future<void> _registerBlocs() async {
     userProfileRepository: sl<UserProfileRepository>(),
   ));
 
-  // Bud Matching BLoC
-  sl.registerFactory<BudMatchingBloc>(() => BudMatchingBloc(
-    budMatchingRepository: sl<BudMatchingRepository>(),
+  // Comprehensive Chat BLoC
+  sl.registerFactory<ComprehensiveChatBloc>(() => ComprehensiveChatBloc(
+    chatRepository: sl<ChatRepository>(),
+    userRepository: sl<UserRepository>(),
+    servicesRepository: sl<ServicesRepository>(),
+    authRepository: sl<AuthRepository>(),
   ));
 
-  // Chat Management BLoC
-  sl.registerFactory<ChatManagementBloc>(() => ChatManagementBloc(
-    chatManagementRepository: sl<ChatManagementRepository>(),
+  // Library BLoC
+  sl.registerFactory<LibraryBloc>(() => LibraryBloc(
+    libraryRepository: sl<LibraryRepository>(),
+  ));
+
+  // Bud BLoC
+  sl.registerFactory<BudBloc>(() => BudBloc(
+    budRepository: sl<BudRepository>(),
+    commonItemsRepository: sl<CommonItemsRepository>(),
+  ));
+
+  // Artist BLoC
+  sl.registerFactory<ArtistBloc>(() => ArtistBloc(
+    contentRepository: sl<ContentRepository>(),
+    budRepository: sl<BudRepository>(),
+  ));
+
+  // Bud Common Items BLoC
+  sl.registerFactory<BudCommonItemsBloc>(() => BudCommonItemsBloc(
+    budRepository: sl<BudRepository>(),
   ));
 }
 
@@ -309,9 +461,9 @@ Future<void> _registerBlocs() async {
 void _logDependencyRegistration() {
   debugPrint('🔧 Dependency Injection Registration Complete');
   debugPrint('📡 Network: DioClient, DioClientAdapter');
-  debugPrint('💾 Data Sources: Content, User, Bud, UserProfile, BudMatching, ChatManagement');
-  debugPrint('🏗️ Repositories: Auth, Content, Bud, User, Profile, UserProfile, BudMatching, ChatManagement');
-  debugPrint('🧠 BLoCs: User, Auth, Profile, MainScreen, Chat, Content, Bud, UserProfile, BudMatching, ChatManagement');
+  debugPrint('💾 Data Sources: Content, User, Bud, UserProfile, BudMatching, ChatManagement, Settings, Event, Admin, Channel, Search');
+  debugPrint('🏗️ Repositories: Auth, Content, Bud, User, Profile, UserProfile, BudMatching, ChatManagement, Settings, Event, Admin, Channel, Search, CommonItems');
+  debugPrint('🧠 BLoCs: User, Auth, Profile, MainScreen, Chat, Content, Bud, UserProfile, BudMatching, ChatManagement, Settings, Event, Analytics, Admin, Channel, Search, Bud, Artist, BudCommonItems');
 }
 
 /// Dependency injection utilities

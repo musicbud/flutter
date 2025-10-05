@@ -76,66 +76,93 @@ class BudsSearchRequested extends BudEvent {
   List<Object> get props => [query];
 }
 
-class BudsRequested extends BudEvent {}
+// Common items with specific bud
+class CommonLikedArtistsRequested extends BudEvent {
+  final String budId;
 
-class BudMatchesRequested extends BudEvent {}
-
-class BudRecommendationsRequested extends BudEvent {}
-
-class BudSearchRequested extends BudEvent {
-  final String query;
-
-  const BudSearchRequested({required this.query});
+  const CommonLikedArtistsRequested(this.budId);
 
   @override
-  List<Object?> get props => [query];
+  List<Object> get props => [budId];
 }
 
-class BudRequestSent extends BudEvent {
-  final String userId;
+class CommonLikedTracksRequested extends BudEvent {
+  final String budId;
 
-  const BudRequestSent({required this.userId});
+  const CommonLikedTracksRequested(this.budId);
 
   @override
-  List<Object?> get props => [userId];
+  List<Object> get props => [budId];
 }
 
-class BudRequestAccepted extends BudEvent {
-  final String userId;
+class CommonLikedGenresRequested extends BudEvent {
+  final String budId;
 
-  const BudRequestAccepted({required this.userId});
+  const CommonLikedGenresRequested(this.budId);
 
   @override
-  List<Object?> get props => [userId];
+  List<Object> get props => [budId];
 }
 
-class BudRequestRejected extends BudEvent {
-  final String userId;
+class CommonLikedAlbumsRequested extends BudEvent {
+  final String budId;
 
-  const BudRequestRejected({required this.userId});
+  const CommonLikedAlbumsRequested(this.budId);
 
   @override
-  List<Object?> get props => [userId];
+  List<Object> get props => [budId];
 }
 
-class BudRemoved extends BudEvent {
-  final String userId;
+class CommonTopArtistsRequested extends BudEvent {
+  final String budId;
 
-  const BudRemoved({required this.userId});
+  const CommonTopArtistsRequested(this.budId);
 
   @override
-  List<Object?> get props => [userId];
+  List<Object> get props => [budId];
 }
 
-class CommonItemsRequested extends BudEvent {
-  final String userId;
-  final String category;
+class CommonTopTracksRequested extends BudEvent {
+  final String budId;
 
-  const CommonItemsRequested({
-    required this.userId,
-    required this.category,
-  });
+  const CommonTopTracksRequested(this.budId);
 
   @override
-  List<Object?> get props => [userId, category];
+  List<Object> get props => [budId];
+}
+
+class CommonTopGenresRequested extends BudEvent {
+  final String budId;
+
+  const CommonTopGenresRequested(this.budId);
+
+  @override
+  List<Object> get props => [budId];
+}
+
+class CommonTopAnimeRequested extends BudEvent {
+  final String budId;
+
+  const CommonTopAnimeRequested(this.budId);
+
+  @override
+  List<Object> get props => [budId];
+}
+
+class CommonTopMangaRequested extends BudEvent {
+  final String budId;
+
+  const CommonTopMangaRequested(this.budId);
+
+  @override
+  List<Object> get props => [budId];
+}
+
+class CommonPlayedTracksRequested extends BudEvent {
+  final String budId;
+
+  const CommonPlayedTracksRequested(this.budId);
+
+  @override
+  List<Object> get props => [budId];
 }

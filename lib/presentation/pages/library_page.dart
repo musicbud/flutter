@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
-import '../constants/app_theme.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../domain/models/library_item.dart';
+import '../../blocs/library/library_bloc.dart';
+import '../../blocs/library/library_event.dart';
+import '../../blocs/library/library_state.dart';
 import '../widgets/common/index.dart';
+import '../theme/app_theme.dart';
 
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
@@ -22,9 +27,106 @@ class _LibraryPageState extends State<LibraryPage> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    // Load initial playlists
+    context.read<LibraryBloc>().add(const LibraryItemsRequested(type: 'playlists'));
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _onTabChanged(String tab) {
+    setState(() {
+      _selectedTab = tab;
+      _selectedIndex = _tabs.indexOf(tab);
+    });
+
+    // Load items for selected tab
+    String type = tab.toLowerCase().replaceAll(' ', '_');
+    context.read<LibraryBloc>().add(LibraryItemsRequested(
+      type: type,
+      query: _searchController.text.isNotEmpty ? _searchController.text : null,
+    ));
+  }
+
+  void _onSearch(String query) {
+    String type = _selectedTab.toLowerCase().replaceAll(' ', '_');
+    context.read<LibraryBloc>().add(LibraryItemsRequested(
+      type: type,
+      query: query.isNotEmpty ? query : null,
+    ));
+  }
+
+  void _onCreatePlaylist() {
+    final appTheme = AppTheme.of(context);
+    final nameController = TextEditingController();
+    final descController = TextEditingController();
+    bool isPrivate = false;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text(
+            'Create Playlist',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              color: Colors.white,
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ModernInputField(
+                controller: nameController,
+                hintText: 'Playlist Name',
+              ),
+              SizedBox(height: appTheme.spacing.md),
+              ModernInputField(
+                controller: descController,
+                hintText: 'Description (optional)',
+                maxLines: 3,
+              ),
+              SizedBox(height: appTheme.spacing.md),
+              CheckboxListTile(
+                title: Text(
+                  'Private Playlist',
+                  style: appTheme.typography.bodyMedium,
+                ),
+                value: isPrivate,
+                onChanged: (value) {
+                  setState(() {
+                    isPrivate = value ?? false;
+                  });
+                },
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            PrimaryButton(
+              text: 'Create',
+              onPressed: () {
+                if (nameController.text.isNotEmpty) {
+                  context.read<LibraryBloc>().add(LibraryPlaylistCreated(
+                    name: nameController.text,
+                    description: descController.text,
+                    isPrivate: isPrivate,
+                  ));
+                  Navigator.pop(context);
+                }
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -35,58 +137,131 @@ class _LibraryPageState extends State<LibraryPage> {
       decoration: BoxDecoration(
         gradient: appTheme.gradients.backgroundGradient,
       ),
-      child: CustomScrollView(
-        slivers: [
-          // Header Section
-          SliverToBoxAdapter(
-            child: Container(
-              padding: EdgeInsets.all(appTheme.spacing.lg),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'My Library',
-                    style: appTheme.typography.headlineH5.copyWith(
-                      color: appTheme.colors.textPrimary,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  SizedBox(height: appTheme.spacing.sm),
-                  Text(
-                    'Your personal music collection',
-                    style: appTheme.typography.bodyMedium.copyWith(
-                      color: appTheme.colors.textMuted,
-                    ),
-                  ),
-                ],
+      child: BlocConsumer<LibraryBloc, LibraryState>(
+        listener: (context, state) {
+          if (state is LibraryActionSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(state.message)),
+            );
+          } else if (state is LibraryActionFailure) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.error),
+                backgroundColor: const Color(0xFFCF6679),
               ),
-            ),
-          ),
+            );
+          }
+        },
+        builder: (context, state) {
+          return CustomScrollView(
+            slivers: [
+              // Header Section
+              SliverToBoxAdapter(
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'My Library',
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Your personal music collection',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: const Color(0x80FFFFFF),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
           // Search Section
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: ModernInputField(
                 hintText: 'Search your library...',
                 controller: _searchController,
-                onChanged: (value) {
-                  // Handle search
-                },
+                onChanged: _onSearch,
                 size: ModernInputFieldSize.large,
               ),
             ),
           ),
 
           SliverToBoxAdapter(
-            child: SizedBox(height: appTheme.spacing.lg),
+            child: const SizedBox(height: 24),
+          ),
+
+          // Create Playlist Button (only show in Playlists tab)
+          if (_selectedTab == 'Playlists')
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: PrimaryButton(
+                  text: 'Create New Playlist',
+                  onPressed: _onCreatePlaylist,
+                  icon: Icons.add,
+                  size: ModernButtonSize.large,
+                ),
+              ),
+            ),
+
+          SliverToBoxAdapter(
+            child: const SizedBox(height: 24),
+          ),
+
+          // Library Items Section
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (state is LibraryLoaded) ...[
+                    Text(
+                      '${state.totalCount} $_selectedTab',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: const Color(0xB3FFFFFF),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: state.items.length,
+                      itemBuilder: (context, index) {
+                        final item = state.items[index];
+                        return _buildLibraryItem(item, appTheme);
+                      },
+                    ),
+                  ] else if (state is LibraryLoading) ...[
+                    const Center(child: CircularProgressIndicator()),
+                  ] else if (state is LibraryError) ...[
+                    Center(
+                      child: Text(
+                        'Error: ${state.message}',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color: const Color(0xFFCF6679),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ),
 
           // Tabs Section
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
-              child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: SizedBox(
                 height: 50,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
@@ -97,7 +272,7 @@ class _LibraryPageState extends State<LibraryPage> {
 
                     return Container(
                       margin: EdgeInsets.only(
-                        right: index < _tabs.length - 1 ? appTheme.spacing.md : 0,
+                        right: index < _tabs.length - 1 ? 16 : 0,
                       ),
                       child: GestureDetector(
                         onTap: () {
@@ -108,31 +283,43 @@ class _LibraryPageState extends State<LibraryPage> {
                         },
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: appTheme.spacing.lg,
-                            vertical: appTheme.spacing.sm,
+                            horizontal: 24,
+                            vertical: 12,
                           ),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? appTheme.colors.primaryRed
-                                : appTheme.colors.surfaceDark,
+                                ? const Color(0xFFCF6679)
+                                : const Color(0xFF282828),
                             borderRadius: BorderRadius.circular(appTheme.radius.circular),
                             border: Border.all(
                               color: isSelected
-                                  ? appTheme.colors.primaryRed
-                                  : appTheme.colors.borderColor,
+                                  ? const Color(0xFFCF6679)
+                                  : const Color(0xFF3E3E3E),
                               width: 1.5,
                             ),
                             boxShadow: isSelected
-                                ? appTheme.shadows.shadowMedium
-                                : appTheme.shadows.shadowSmall,
+                                ? [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.2),
+                                      blurRadius: 6,
+                                      offset: const Offset(0, 3),
+                                    ),
+                                  ]
+                                : [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ]
                           ),
                           child: Center(
                             child: Text(
                               tab,
-                              style: appTheme.typography.bodySmall.copyWith(
+                              style: appTheme.typography.bodySmall?.copyWith(
                                 color: isSelected
-                                    ? appTheme.colors.white
-                                    : appTheme.colors.textSecondary,
+                                    ? Colors.white
+                                    : const Color(0xB3FFFFFF),
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -147,26 +334,28 @@ class _LibraryPageState extends State<LibraryPage> {
           ),
 
           SliverToBoxAdapter(
-            child: SizedBox(height: appTheme.spacing.xl),
+            child: const SizedBox(height: 32),
           ),
 
           // Content based on selected tab
           SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: _buildTabContent(appTheme),
             ),
           ),
 
           SliverToBoxAdapter(
-            child: SizedBox(height: appTheme.spacing.xl),
+            child: const SizedBox(height: 32),
           ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _buildTabContent(AppTheme appTheme) {
+  Widget _buildTabContent(dynamic appTheme) {
     switch (_selectedTab) {
       case 'Playlists':
         return _buildPlaylistsContent(appTheme);
@@ -181,113 +370,218 @@ class _LibraryPageState extends State<LibraryPage> {
     }
   }
 
-  Widget _buildPlaylistsContent(AppTheme appTheme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildPlaylistsContent(dynamic appTheme) {
+    return BlocBuilder<LibraryBloc, LibraryState>(
+      builder: (context, state) {
+        if (state is LibraryLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (state is LibraryLoaded && state.items.isNotEmpty) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Your Playlists',
+                    style: appTheme.typography.headlineH7.copyWith(
+                      color: appTheme.colors.textPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  PrimaryButton(
+                    text: 'Create New',
+                    onPressed: _onCreatePlaylist,
+                    icon: Icons.add,
+                    size: ModernButtonSize.small,
+                  ),
+                ],
+              ),
+              SizedBox(height: appTheme.spacing.md),
+
+              // Playlists Grid
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: appTheme.spacing.md,
+                  mainAxisSpacing: appTheme.spacing.md,
+                  childAspectRatio: 0.8,
+                ),
+                itemCount: state.items.length,
+                itemBuilder: (context, index) {
+                  final item = state.items[index];
+                  return _buildPlaylistCard(
+                    item.title,
+                    item.description ?? '0 tracks',
+                    item.imageUrl ?? 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop',
+                    appTheme.colors.accentBlue,
+                    appTheme,
+                  );
+                },
+              ),
+            ],
+          );
+        }
+
+        // Show empty state or fallback
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Your Playlists',
+                  style: appTheme.typography.headlineH7.copyWith(
+                    color: appTheme.colors.textPrimary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                PrimaryButton(
+                  text: 'Create New',
+                  onPressed: _onCreatePlaylist,
+                  icon: Icons.add,
+                  size: ModernButtonSize.small,
+                ),
+              ],
+            ),
+            SizedBox(height: appTheme.spacing.md),
+            Center(
+              child: Padding(
+                padding: EdgeInsets.all(appTheme.spacing.xl),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.queue_music,
+                      size: 64,
+                      color: appTheme.colors.textMuted,
+                    ),
+                    SizedBox(height: appTheme.spacing.md),
+                    Text(
+                      'No playlists yet',
+                      style: appTheme.typography.headlineH6.copyWith(
+                        color: appTheme.colors.textSecondary,
+                      ),
+                    ),
+                    SizedBox(height: appTheme.spacing.sm),
+                    Text(
+                      'Create your first playlist to get started',
+                      style: appTheme.typography.bodyMedium.copyWith(
+                        color: appTheme.colors.textMuted,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildLikedSongsContent(dynamic appTheme) {
+    return BlocBuilder<LibraryBloc, LibraryState>(
+      builder: (context, state) {
+        if (state is LibraryLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (state is LibraryLoaded && state.items.isNotEmpty) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Liked Songs',
+                style: appTheme.typography.headlineH7.copyWith(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              SizedBox(height: appTheme.spacing.md),
+
+              // Liked Songs List
+              Column(
+                children: state.items.map((item) {
+                  return Column(
+                    children: [
+                      _buildLikedSongCard(
+                        item.title,
+                        item.description ?? 'Unknown Artist',
+                        'Liked', // Could be enhanced to show genre
+                        item.imageUrl ?? 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop',
+                        appTheme.colors.accentBlue,
+                        appTheme,
+                      ),
+                      SizedBox(height: appTheme.spacing.md),
+                    ],
+                  );
+                }).toList(),
+              ),
+            ],
+          );
+        }
+
+        // Empty state
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Your Playlists',
+              'Liked Songs',
               style: appTheme.typography.headlineH7.copyWith(
-                color: appTheme.colors.textPrimary,
+                color: Colors.white,
                 fontWeight: FontWeight.w700,
               ),
             ),
-            PrimaryButton(
-              text: 'Create New',
-              onPressed: () {
-                // Navigate to create playlist
-              },
-              icon: Icons.add,
-              size: ModernButtonSize.small,
+            SizedBox(height: appTheme.spacing.md),
+            Center(
+              child: Padding(
+                padding: EdgeInsets.all(appTheme.spacing.xl),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.favorite_border,
+                      size: 64,
+                      color: appTheme.colors.textMuted,
+                    ),
+                    SizedBox(height: appTheme.spacing.md),
+                    Text(
+                      'No liked songs yet',
+                      style: appTheme.typography.headlineH6.copyWith(
+                        color: appTheme.colors.textSecondary,
+                      ),
+                    ),
+                    SizedBox(height: appTheme.spacing.sm),
+                    Text(
+                      'Songs you like will appear here',
+                      style: appTheme.typography.bodyMedium.copyWith(
+                        color: appTheme.colors.textMuted,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
-        ),
-        SizedBox(height: appTheme.spacing.md),
-
-        // Playlists Grid
-        GridView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: appTheme.spacing.md,
-            mainAxisSpacing: appTheme.spacing.md,
-            childAspectRatio: 0.8,
-          ),
-          itemCount: 6,
-          itemBuilder: (context, index) {
-            return _buildPlaylistCard(
-              'Chill Vibes ${index + 1}',
-              '${(index + 1) * 12} tracks',
-              'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop',
-              appTheme.colors.accentBlue,
-              appTheme,
-            );
-          },
-        ),
-      ],
+        );
+      },
     );
   }
 
-  Widget _buildLikedSongsContent(AppTheme appTheme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Liked Songs',
-          style: appTheme.typography.headlineH7.copyWith(
-            color: appTheme.colors.textPrimary,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        SizedBox(height: appTheme.spacing.md),
-
-        // Liked Songs List
-        Column(
-          children: [
-            _buildLikedSongCard(
-              'Midnight Dreams',
-              'Luna Echo',
-              'Electronic',
-              'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop',
-              appTheme.colors.accentBlue,
-              appTheme,
-            ),
-            SizedBox(height: appTheme.spacing.md),
-            _buildLikedSongCard(
-              'Ocean Waves',
-              'Coastal Vibes',
-              'Chill',
-              'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop',
-              appTheme.colors.accentPurple,
-              appTheme,
-            ),
-            SizedBox(height: appTheme.spacing.md),
-            _buildLikedSongCard(
-              'Urban Nights',
-              'City Pulse',
-              'Hip Hop',
-              'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop',
-              appTheme.colors.accentGreen,
-              appTheme,
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDownloadsContent(AppTheme appTheme) {
+  Widget _buildDownloadsContent(dynamic appTheme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Downloaded Music',
           style: appTheme.typography.headlineH7.copyWith(
-            color: appTheme.colors.textPrimary,
+            color: Colors.white,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -296,7 +590,7 @@ class _LibraryPageState extends State<LibraryPage> {
         // Downloads Grid
         GridView.builder(
           shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+          physics: const NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: appTheme.spacing.md,
@@ -319,14 +613,14 @@ class _LibraryPageState extends State<LibraryPage> {
     );
   }
 
-  Widget _buildRecentlyPlayedContent(AppTheme appTheme) {
+  Widget _buildRecentlyPlayedContent(dynamic appTheme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Recently Played',
           style: appTheme.typography.headlineH7.copyWith(
-            color: appTheme.colors.textPrimary,
+            color: Colors.white,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -352,7 +646,7 @@ class _LibraryPageState extends State<LibraryPage> {
               appTheme.colors.accentBlue,
               appTheme,
             ),
-            SizedBox(height: appTheme.spacing.md),
+            const SizedBox(height: 16),
             _buildRecentlyPlayedCard(
               'Urban Flow',
               'City Pulse',
@@ -372,7 +666,7 @@ class _LibraryPageState extends State<LibraryPage> {
     String trackCount,
     String imageUrl,
     Color accentColor,
-    AppTheme appTheme,
+    dynamic appTheme,
   ) {
     return ModernCard(
       variant: ModernCardVariant.primary,
@@ -406,13 +700,13 @@ class _LibraryPageState extends State<LibraryPage> {
             ),
           ),
 
-          SizedBox(height: appTheme.spacing.md),
+          const SizedBox(height: 16),
 
           // Playlist Info
           Text(
             title,
             style: appTheme.typography.titleSmall.copyWith(
-              color: appTheme.colors.textPrimary,
+              color: Colors.white,
               fontWeight: FontWeight.w600,
             ),
             maxLines: 1,
@@ -422,7 +716,7 @@ class _LibraryPageState extends State<LibraryPage> {
           Text(
             trackCount,
             style: appTheme.typography.caption.copyWith(
-              color: appTheme.colors.textMuted,
+              color: const Color(0x80FFFFFF),
             ),
           ),
           SizedBox(height: appTheme.spacing.md),
@@ -435,7 +729,7 @@ class _LibraryPageState extends State<LibraryPage> {
                 padding: EdgeInsets.all(appTheme.spacing.sm),
                 decoration: BoxDecoration(
                   color: appTheme.colors.primaryRed,
-                  borderRadius: BorderRadius.circular(appTheme.radius.circular),
+                  borderRadius: BorderRadius.circular(999),
                 ),
                 child: Icon(
                   Icons.play_arrow,
@@ -445,7 +739,7 @@ class _LibraryPageState extends State<LibraryPage> {
               ),
               Icon(
                 Icons.more_vert,
-                color: appTheme.colors.textMuted,
+                color: const Color(0x80FFFFFF),
                 size: 20,
               ),
             ],
@@ -461,7 +755,7 @@ class _LibraryPageState extends State<LibraryPage> {
     String genre,
     String imageUrl,
     Color accentColor,
-    AppTheme appTheme,
+    dynamic appTheme,
   ) {
     return ModernCard(
       variant: ModernCardVariant.primary,
@@ -504,7 +798,7 @@ class _LibraryPageState extends State<LibraryPage> {
                 Text(
                   title,
                   style: appTheme.typography.titleSmall.copyWith(
-                    color: appTheme.colors.textPrimary,
+                    color: Colors.white,
                     fontWeight: FontWeight.w600,
                   ),
                   maxLines: 1,
@@ -513,8 +807,8 @@ class _LibraryPageState extends State<LibraryPage> {
                 SizedBox(height: appTheme.spacing.xs),
                 Text(
                   artist,
-                  style: appTheme.typography.bodySmall.copyWith(
-                    color: appTheme.colors.textSecondary,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: const Color(0xB3FFFFFF),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -574,7 +868,7 @@ class _LibraryPageState extends State<LibraryPage> {
     String trackCount,
     String imageUrl,
     Color accentColor,
-    AppTheme appTheme,
+    dynamic appTheme,
   ) {
     return ModernCard(
       variant: ModernCardVariant.primary,
@@ -623,8 +917,8 @@ class _LibraryPageState extends State<LibraryPage> {
           SizedBox(height: appTheme.spacing.xs),
           Text(
             artist,
-            style: appTheme.typography.bodySmall.copyWith(
-              color: appTheme.colors.textSecondary,
+            style: appTheme.typography.bodySmall?.copyWith(
+              color: const Color(0xB3FFFFFF),
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -671,7 +965,7 @@ class _LibraryPageState extends State<LibraryPage> {
     String timeAgo,
     String imageUrl,
     Color accentColor,
-    AppTheme appTheme,
+    dynamic appTheme,
   ) {
     return ModernCard(
       variant: ModernCardVariant.primary,
@@ -761,6 +1055,185 @@ class _LibraryPageState extends State<LibraryPage> {
                 size: 24,
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLibraryItem(LibraryItem item, dynamic appTheme) {
+    return ModernCard(
+      variant: ModernCardVariant.secondary,
+      margin: EdgeInsets.only(bottom: appTheme.spacing.md),
+      child: ListTile(
+        leading: item.imageUrl != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(appTheme.radius.sm),
+                child: Image.network(
+                  item.imageUrl!,
+                  width: 48,
+                  height: 48,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: 48,
+                      height: 48,
+                      decoration: BoxDecoration(
+                        color: appTheme.colors.surfaceVariant,
+                        borderRadius: BorderRadius.circular(appTheme.radius.sm),
+                      ),
+                      child: Icon(
+                        _getItemIcon(item.type),
+                        color: appTheme.colors.textSecondary,
+                      ),
+                    );
+                  },
+                ),
+              )
+            : Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: appTheme.colors.surfaceVariant,
+                  borderRadius: BorderRadius.circular(appTheme.radius.sm),
+                ),
+                child: Icon(
+                  _getItemIcon(item.type),
+                  color: appTheme.colors.textSecondary,
+                ),
+              ),
+        title: Text(
+          item.title,
+          style: appTheme.typography.titleMedium.copyWith(
+            color: appTheme.colors.textPrimary,
+          ),
+        ),
+        subtitle: item.description != null
+            ? Text(
+                item.description!,
+                style: appTheme.typography.bodySmall.copyWith(
+                  color: appTheme.colors.textSecondary,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              )
+            : null,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (item.type == 'song') ...[
+              IconButton(
+                icon: Icon(
+                  item.isLiked ? Icons.favorite : Icons.favorite_border,
+                  color: item.isLiked ? appTheme.colors.primaryRed : appTheme.colors.textSecondary,
+                ),
+                onPressed: () {
+                  context.read<LibraryBloc>().add(LibraryItemToggleLiked(
+                    itemId: item.id,
+                    type: item.type,
+                  ));
+                },
+              ),
+              IconButton(
+                icon: Icon(
+                  item.isDownloaded ? Icons.download_done : Icons.download_outlined,
+                  color: item.isDownloaded ? appTheme.colors.primary : appTheme.colors.textSecondary,
+                ),
+                onPressed: () {
+                  context.read<LibraryBloc>().add(LibraryItemToggleDownload(
+                    itemId: item.id,
+                    type: item.type,
+                  ));
+                },
+              ),
+            ],
+            if (item.type == 'playlist' && !item.id.startsWith('system_')) ...[
+              IconButton(
+                icon: Icon(Icons.more_vert, color: appTheme.colors.textSecondary),
+                onPressed: () => _showPlaylistOptions(item),
+              ),
+            ],
+          ],
+        ),
+        onTap: () {
+          context.read<LibraryBloc>().add(LibraryItemPlayRequested(
+            itemId: item.id,
+            type: item.type,
+          ));
+        },
+      ),
+    );
+  }
+
+  IconData _getItemIcon(String type) {
+    switch (type) {
+      case 'playlist':
+        return Icons.queue_music;
+      case 'song':
+        return Icons.music_note;
+      case 'album':
+        return Icons.album;
+      case 'artist':
+        return Icons.person;
+      default:
+        return Icons.library_music;
+    }
+  }
+
+  void _showPlaylistOptions(LibraryItem playlist) {
+    final appTheme = AppTheme.of(context);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF282828),
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.edit),
+              title: const Text('Edit Playlist'),
+              onTap: () {
+                Navigator.pop(context);
+                // TODO: Implement edit playlist
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete, color: Colors.red),
+              title: const Text('Delete Playlist'),
+              onTap: () {
+                Navigator.pop(context);
+                _confirmDeletePlaylist(playlist);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _confirmDeletePlaylist(LibraryItem playlist) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Playlist'),
+        content: Text('Are you sure you want to delete "${playlist.title}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              context.read<LibraryBloc>().add(LibraryPlaylistDeleted(
+                playlistId: playlist.id,
+              ));
+              Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: const Text('Delete'),
           ),
         ],
       ),

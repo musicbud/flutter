@@ -29,14 +29,14 @@ class AppColors {
   ];
 
   // Custom color scheme
-  static final ColorScheme colorScheme = ColorScheme(
-    primary: const Color(0xFFFF6B8F),
+  static const ColorScheme colorScheme = ColorScheme(
+    primary: Color(0xFFFF6B8F),
     secondary: secondary,
     surface: surfaceOverlay,
     surfaceContainer: background,
     error: Colors.red,
     onPrimary: Colors.white,
-    onSecondary: const Color(0xFFCFD0FD),
+    onSecondary: Color(0xFFCFD0FD),
     onSurface: textPrimary,
     onError: Colors.white,
     brightness: Brightness.dark,

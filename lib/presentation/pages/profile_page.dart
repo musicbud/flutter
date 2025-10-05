@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../blocs/user_profile/user_profile_bloc.dart';
+import '../../domain/models/user_profile.dart';
 import '../constants/app_theme.dart';
 import '../widgets/common/index.dart';
 
@@ -12,11 +13,55 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  final _formKey = GlobalKey<FormState>();
+  final _displayNameController = TextEditingController();
+  final _bioController = TextEditingController();
+  final _locationController = TextEditingController();
+  bool _isEditing = false;
+
   @override
   void initState() {
     super.initState();
     // Load user profile when page initializes
     context.read<UserProfileBloc>().add(FetchMyProfile());
+  }
+
+  @override
+  void dispose() {
+    _displayNameController.dispose();
+    _bioController.dispose();
+    _locationController.dispose();
+    super.dispose();
+  }
+
+  void _startEditing(UserProfile profile) {
+    _displayNameController.text = profile.displayName ?? '';
+    _bioController.text = profile.bio ?? '';
+    _locationController.text = profile.location ?? '';
+    setState(() {
+      _isEditing = true;
+    });
+  }
+
+  void _cancelEditing() {
+    setState(() {
+      _isEditing = false;
+    });
+  }
+
+  void _saveChanges() {
+    if (_formKey.currentState?.validate() ?? false) {
+      context.read<UserProfileBloc>().add(UpdateUserProfile(
+        updateRequest: UserProfileUpdateRequest(
+          displayName: _displayNameController.text,
+          bio: _bioController.text,
+          location: _locationController.text,
+        ),
+      ));
+      setState(() {
+        _isEditing = false;
+      });
+    }
   }
 
   @override
@@ -32,6 +77,15 @@ class _ProfilePageState extends State<ProfilePage> {
               backgroundColor: appTheme.colors.errorRed,
             ),
           );
+        } else if (state is UserProfileUpdated) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Profile updated successfully'),
+              backgroundColor: appTheme.colors.successGreen,
+            ),
+          );
+          // Refresh profile after update
+          context.read<UserProfileBloc>().add(FetchMyProfile());
         }
       },
       child: BlocBuilder<UserProfileBloc, UserProfileState>(
@@ -78,24 +132,98 @@ class _ProfilePageState extends State<ProfilePage> {
 
                         // Profile Info
                         if (state is UserProfileLoaded) ...[
-                          Text(
-                            state.userProfile.displayName ?? state.userProfile.username,
-                            style: appTheme.typography.headlineH5.copyWith(
-                              color: appTheme.colors.textPrimary,
-                              fontWeight: FontWeight.w700,
+                          if (_isEditing) ...[
+                            Form(
+                              key: _formKey,
+                              child: Column(
+                                children: [
+                                  ModernInputField(
+                                    controller: _displayNameController,
+                                    label: 'Display Name',
+                                    hintText: 'Enter your display name',
+                                  ),
+                                  SizedBox(height: appTheme.spacing.md),
+                                  ModernInputField(
+                                    controller: _bioController,
+                                    label: 'Bio',
+                                    hintText: 'Tell us about yourself',
+                                    maxLines: 3,
+                                  ),
+                                  SizedBox(height: appTheme.spacing.md),
+                                  ModernInputField(
+                                    controller: _locationController,
+                                    label: 'Location',
+                                    hintText: 'Enter your location',
+                                  ),
+                                  SizedBox(height: appTheme.spacing.md),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      SecondaryButton(
+                                        text: 'Cancel',
+                                        onPressed: _cancelEditing,
+                                      ),
+                                      PrimaryButton(
+                                        text: 'Save',
+                                        onPressed: _saveChanges,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                            textAlign: TextAlign.center,
-                          ),
-
-                          if (state.userProfile.displayName != null) ...[
-                            SizedBox(height: appTheme.spacing.xs),
+                          ] else ...[
                             Text(
-                              '@${state.userProfile.username}',
-                              style: appTheme.typography.bodyMedium.copyWith(
-                                color: appTheme.colors.textMuted,
+                              state.userProfile.displayName ?? state.userProfile.username,
+                              style: appTheme.typography.headlineH5.copyWith(
+                                color: appTheme.colors.textPrimary,
+                                fontWeight: FontWeight.w700,
                               ),
                               textAlign: TextAlign.center,
                             ),
+
+                            if (state.userProfile.displayName != null) ...[
+                              SizedBox(height: appTheme.spacing.xs),
+                              Text(
+                                '@${state.userProfile.username}',
+                                style: appTheme.typography.bodyMedium.copyWith(
+                                  color: appTheme.colors.textMuted,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+
+                            if (state.userProfile.bio != null && state.userProfile.bio!.isNotEmpty) ...[
+                              SizedBox(height: appTheme.spacing.md),
+                              Text(
+                                state.userProfile.bio!,
+                                style: appTheme.typography.bodyMedium.copyWith(
+                                  color: appTheme.colors.textSecondary,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+
+                            if (state.userProfile.location != null && state.userProfile.location!.isNotEmpty) ...[
+                              SizedBox(height: appTheme.spacing.sm),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    size: 16,
+                                    color: appTheme.colors.textMuted,
+                                  ),
+                                  SizedBox(width: appTheme.spacing.xs),
+                                  Text(
+                                    state.userProfile.location!,
+                                    style: appTheme.typography.bodySmall.copyWith(
+                                      color: appTheme.colors.textMuted,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ],
 
                           SizedBox(height: appTheme.spacing.md),
@@ -104,7 +232,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              _buildStatItem('Followers', '1.2K', appTheme),
+                              _buildStatItem('Followers', state.userProfile.followersCount.toString() ?? '0', appTheme),
                               _buildStatItem('Following', '856', appTheme),
                               _buildStatItem('Tracks', '324', appTheme),
                             ],
@@ -114,11 +242,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
                           // Edit Profile Button
                           PrimaryButton(
-                            text: 'Edit Profile',
+                            text: _isEditing ? 'Cancel' : 'Edit Profile',
                             onPressed: () {
-                              // Navigate to edit profile
+                              if (_isEditing) {
+                                _cancelEditing();
+                              } else {
+                                _startEditing(state.userProfile);
+                              }
                             },
-                            icon: Icons.edit,
+                            icon: _isEditing ? Icons.close : Icons.edit,
                             size: ModernButtonSize.large,
                             isFullWidth: true,
                           ),
