@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/models/analytics.dart';
+import '../../../models/analytics.dart';
 
 abstract class AnalyticsState extends Equatable {
   const AnalyticsState();

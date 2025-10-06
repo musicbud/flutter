@@ -70,6 +70,9 @@ mixin ScrollBehaviorMixin<T extends StatefulWidget> on State<T> {
   /// Pagination configuration
   PaginationConfig? _paginationConfig;
 
+  /// Scroll physics for scrollable widgets
+  ScrollPhysics? _scrollPhysics;
+
   /// Gets the scroll controller
   ScrollController get scrollController => _scrollController;
 
@@ -194,13 +197,13 @@ mixin ScrollBehaviorMixin<T extends StatefulWidget> on State<T> {
 
   /// Setup scroll controller with configuration
   void setupScrollController({
-    VoidCallback? onScroll,
-    VoidCallback? onScrollForward,
-    VoidCallback? onScrollReverse,
-    VoidCallback? onScrollIdle,
-    VoidCallback? onLoadMore,
-    VoidCallback? onLoadingMoreChanged,
-    Function(dynamic error)? onLoadMoreError,
+    void Function(double position, ScrollDirection direction)? onScroll,
+    void Function(double position)? onScrollForward,
+    void Function(double position)? onScrollReverse,
+    void Function(double position)? onScrollIdle,
+    Future<bool> Function()? onLoadMore,
+    void Function(bool loading)? onLoadingMoreChanged,
+    void Function(dynamic error)? onLoadMoreError,
     PaginationConfig? paginationConfig,
     ScrollPhysics? physics,
     bool keepScrollOffset = false,
@@ -218,12 +221,13 @@ mixin ScrollBehaviorMixin<T extends StatefulWidget> on State<T> {
     }
 
     if (physics != null) {
-      _scrollController = ScrollController(
-        physics: physics,
-        keepScrollOffset: keepScrollOffset,
-        debugLabel: debugLabel,
-      );
-    }
+       _scrollPhysics = physics;
+     }
+
+    _scrollController = ScrollController(
+      keepScrollOffset: keepScrollOffset,
+      debugLabel: debugLabel,
+    );
   }
 
   /// Setup pagination configuration
@@ -395,7 +399,6 @@ mixin ScrollBehaviorMixin<T extends StatefulWidget> on State<T> {
   Widget buildRefreshableScrollView({
     required List<Widget> children,
     RefreshCallback? onRefresh,
-    ScrollPhysics? physics,
     bool reverse = false,
     EdgeInsetsGeometry? padding,
     bool shrinkWrap = false,
@@ -406,7 +409,7 @@ mixin ScrollBehaviorMixin<T extends StatefulWidget> on State<T> {
       child: ListView(
         key: key,
         controller: _scrollController,
-        physics: physics,
+        physics: _scrollPhysics,
         reverse: reverse,
         padding: padding,
         shrinkWrap: shrinkWrap,
@@ -419,7 +422,6 @@ mixin ScrollBehaviorMixin<T extends StatefulWidget> on State<T> {
   Widget buildPaginatableScrollView({
     required NullableIndexedWidgetBuilder itemBuilder,
     required int itemCount,
-    ScrollPhysics? physics,
     bool reverse = false,
     EdgeInsetsGeometry? padding,
     bool shrinkWrap = false,
@@ -429,7 +431,7 @@ mixin ScrollBehaviorMixin<T extends StatefulWidget> on State<T> {
     return ListView.builder(
       key: key,
       controller: _scrollController,
-      physics: physics,
+      physics: _scrollPhysics,
       reverse: reverse,
       padding: padding,
       shrinkWrap: shrinkWrap,
@@ -468,7 +470,6 @@ mixin ScrollBehaviorMixin<T extends StatefulWidget> on State<T> {
     required SliverGridDelegate gridDelegate,
     required NullableIndexedWidgetBuilder itemBuilder,
     required int itemCount,
-    ScrollPhysics? physics,
     bool reverse = false,
     EdgeInsetsGeometry? padding,
     bool shrinkWrap = false,
@@ -478,7 +479,7 @@ mixin ScrollBehaviorMixin<T extends StatefulWidget> on State<T> {
     return GridView.builder(
       key: key,
       controller: _scrollController,
-      physics: physics,
+      physics: _scrollPhysics,
       reverse: reverse,
       padding: padding,
       shrinkWrap: shrinkWrap,
@@ -509,7 +510,6 @@ mixin ScrollBehaviorMixin<T extends StatefulWidget> on State<T> {
   /// Build custom scroll view with pagination
   Widget buildPaginatableCustomScrollView({
     required List<Widget> slivers,
-    ScrollPhysics? physics,
     bool reverse = false,
     EdgeInsetsGeometry? padding,
     bool shrinkWrap = false,
@@ -534,7 +534,7 @@ mixin ScrollBehaviorMixin<T extends StatefulWidget> on State<T> {
     return CustomScrollView(
       key: key,
       controller: _scrollController,
-      physics: physics,
+      physics: _scrollPhysics,
       reverse: reverse,
       shrinkWrap: shrinkWrap,
       slivers: updatedSlivers,
@@ -542,12 +542,30 @@ mixin ScrollBehaviorMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// Scroll callbacks
-  VoidCallback? get onScroll => null;
-  VoidCallback? get onScrollForward => null;
-  VoidCallback? get onScrollReverse => null;
-  VoidCallback? get onScrollIdle => null;
-  VoidCallback? get onLoadingMoreChanged => null;
-  Function(dynamic error)? get onLoadMoreError => null;
+  void Function(double position, ScrollDirection direction)? _onScroll;
+  void Function(double position)? _onScrollForward;
+  void Function(double position)? _onScrollReverse;
+  void Function(double position)? _onScrollIdle;
+  void Function(bool loading)? _onLoadingMoreChanged;
+  void Function(dynamic error)? _onLoadMoreError;
+
+  void Function(double position, ScrollDirection direction)? get onScroll => _onScroll;
+  set onScroll(void Function(double position, ScrollDirection direction)? callback) => _onScroll = callback;
+
+  void Function(double position)? get onScrollForward => _onScrollForward;
+  set onScrollForward(void Function(double position)? callback) => _onScrollForward = callback;
+
+  void Function(double position)? get onScrollReverse => _onScrollReverse;
+  set onScrollReverse(void Function(double position)? callback) => _onScrollReverse = callback;
+
+  void Function(double position)? get onScrollIdle => _onScrollIdle;
+  set onScrollIdle(void Function(double position)? callback) => _onScrollIdle = callback;
+
+  void Function(bool loading)? get onLoadingMoreChanged => _onLoadingMoreChanged;
+  set onLoadingMoreChanged(void Function(bool loading)? callback) => _onLoadingMoreChanged = callback;
+
+  void Function(dynamic error)? get onLoadMoreError => _onLoadMoreError;
+  set onLoadMoreError(void Function(dynamic error)? callback) => _onLoadMoreError = callback;
 }
 
 /// Scroll direction enumeration

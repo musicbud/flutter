@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/design_system.dart';
+import '../../../core/theme/design_system.dart';
 
 /// A composer class for handling responsive design patterns.
 /// Provides a fluent API for creating responsive layouts that adapt to different screen sizes.

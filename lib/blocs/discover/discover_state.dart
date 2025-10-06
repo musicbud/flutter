@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/models/discover_item.dart';
+import '../../models/discover_item.dart';
 
 abstract class DiscoverState extends Equatable {
   const DiscoverState();

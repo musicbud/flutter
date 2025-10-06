@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:ui'; // Added for ImageFilter
 import '../../../core/theme/design_system.dart';
-import '../../navigation/navigation_constants.dart';
-import '../../navigation/navigation_mixins.dart';
-import '../../navigation/navigation_item.dart';
+import '../../../navigation/navigation_config.dart';
+import '../../../navigation/navigation_constants.dart';
+import '../../../navigation/navigation_mixins.dart';
+import '../../../navigation/navigation_item.dart';
 
 /// A modern, combined bottom navigation bar widget with dark mode styling
 class AppBottomNavigationBar extends StatelessWidget with BaseNavigationMixin {

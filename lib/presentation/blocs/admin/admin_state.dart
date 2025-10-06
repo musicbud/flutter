@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/models/admin.dart';
+import '../../../models/admin.dart';
 
 abstract class AdminState extends Equatable {
   const AdminState();

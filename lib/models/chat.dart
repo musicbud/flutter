@@ -1,64 +1,84 @@
 class Chat {
+  final String id;
   final String userId;
   final String username;
-  final String lastMessage;
-  final DateTime lastMessageTimestamp;
-  final bool isRead;
-  final bool isArchived;
   final String? avatarUrl;
+  final String? lastMessage;
+  final DateTime? lastMessageAt;
+  final int unreadCount;
+  final bool isArchived;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
-  const Chat({
+  Chat({
+    required this.id,
     required this.userId,
     required this.username,
-    required this.lastMessage,
-    required this.lastMessageTimestamp,
-    this.isRead = false,
-    this.isArchived = false,
     this.avatarUrl,
+    this.lastMessage,
+    this.lastMessageAt,
+    required this.unreadCount,
+    required this.isArchived,
+    required this.createdAt,
+    required this.updatedAt,
   });
-
-  Chat copyWith({
-    String? userId,
-    String? username,
-    String? lastMessage,
-    DateTime? lastMessageTimestamp,
-    bool? isRead,
-    bool? isArchived,
-    String? avatarUrl,
-  }) {
-    return Chat(
-      userId: userId ?? this.userId,
-      username: username ?? this.username,
-      lastMessage: lastMessage ?? this.lastMessage,
-      lastMessageTimestamp: lastMessageTimestamp ?? this.lastMessageTimestamp,
-      isRead: isRead ?? this.isRead,
-      isArchived: isArchived ?? this.isArchived,
-      avatarUrl: avatarUrl ?? this.avatarUrl,
-    );
-  }
 
   factory Chat.fromJson(Map<String, dynamic> json) {
     return Chat(
+      id: json['id'] as String,
       userId: json['user_id'] as String,
       username: json['username'] as String,
-      lastMessage: json['last_message'] as String,
-      lastMessageTimestamp:
-          DateTime.parse(json['last_message_timestamp'] as String),
-      isRead: json['is_read'] as bool? ?? false,
-      isArchived: json['is_archived'] as bool? ?? false,
       avatarUrl: json['avatar_url'] as String?,
+      lastMessage: json['last_message'] as String?,
+      lastMessageAt: json['last_message_at'] != null
+          ? DateTime.parse(json['last_message_at'] as String)
+          : null,
+      unreadCount: json['unread_count'] as int,
+      isArchived: json['is_archived'] as bool,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      'id': id,
       'user_id': userId,
       'username': username,
-      'last_message': lastMessage,
-      'last_message_timestamp': lastMessageTimestamp.toIso8601String(),
-      'is_read': isRead,
+      if (avatarUrl != null) 'avatar_url': avatarUrl,
+      if (lastMessage != null) 'last_message': lastMessage,
+      if (lastMessageAt != null)
+        'last_message_at': lastMessageAt!.toIso8601String(),
+      'unread_count': unreadCount,
       'is_archived': isArchived,
-      'avatar_url': avatarUrl,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
     };
+  }
+
+  Chat copyWith({
+    String? id,
+    String? userId,
+    String? username,
+    String? avatarUrl,
+    String? lastMessage,
+    DateTime? lastMessageAt,
+    int? unreadCount,
+    bool? isArchived,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return Chat(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      username: username ?? this.username,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      lastMessage: lastMessage ?? this.lastMessage,
+      lastMessageAt: lastMessageAt ?? this.lastMessageAt,
+      unreadCount: unreadCount ?? this.unreadCount,
+      isArchived: isArchived ?? this.isArchived,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
   }
 }

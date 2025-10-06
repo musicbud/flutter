@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../domain/models/artist.dart';
+import '../../../models/artist.dart';
 
 class ArtistListItem extends StatelessWidget {
   final Artist artist;
@@ -35,8 +35,8 @@ class ArtistListItem extends StatelessWidget {
           : null,
       trailing: IconButton(
         icon: Icon(
-          artist.isFollowed ? Icons.favorite : Icons.favorite_border,
-          color: artist.isFollowed ? Colors.red : null,
+          artist.isLiked ? Icons.favorite : Icons.favorite_border,
+          color: artist.isLiked ? Colors.red : null,
         ),
         onPressed: onFollowPressed,
       ),

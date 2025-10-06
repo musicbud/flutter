@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../domain/models/user_profile.dart';
+import '../../../models/user_profile.dart';
 import '../../../core/theme/app_theme.dart';
 
 class ProfileStatsWidget extends StatelessWidget {

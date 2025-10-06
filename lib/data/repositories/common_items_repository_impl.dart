@@ -2,13 +2,13 @@ import 'package:dartz/dartz.dart';
 import '../../core/error/exceptions.dart';
 import '../../core/error/failures.dart';
 import '../../domain/repositories/common_items_repository.dart';
-import '../../domain/models/common_track.dart';
-import '../../domain/models/common_artist.dart';
-import '../../domain/models/common_album.dart';
-import '../../domain/models/common_genre.dart';
-import '../../domain/models/common_anime.dart';
-import '../../domain/models/common_manga.dart';
-import '../../domain/models/categorized_common_items.dart';
+import '../../models/common_track.dart';
+import '../../models/common_artist.dart';
+import '../../models/common_album.dart';
+import '../../models/common_genre.dart';
+import '../../models/common_anime.dart';
+import '../../models/common_manga.dart';
+import '../../models/categorized_common_items.dart';
 import '../data_sources/remote/common_items_remote_data_source.dart';
 
 class CommonItemsRepositoryImpl implements CommonItemsRepository {

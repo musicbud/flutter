@@ -10,7 +10,7 @@ import '../../../core/theme/design_system.dart';
 /// - Consistent spacing and typography
 /// - Support for custom padding and styling
 /// - Theme-aware colors and typography
-class SectionHeader extends StatelessWidget {
+class SimpleSectionHeader extends StatelessWidget {
   /// The title text to display
   final String title;
 
@@ -41,7 +41,7 @@ class SectionHeader extends StatelessWidget {
   /// Whether the action button should be styled as a text button or outlined button
   final bool actionIsOutlined;
 
-  const SectionHeader({
+  const SimpleSectionHeader({
     super.key,
     required this.title,
     this.actionText,

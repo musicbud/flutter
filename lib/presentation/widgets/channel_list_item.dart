@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../domain/models/channel.dart';
+import '../../../models/channel.dart';
 
 class ChannelListItem extends StatelessWidget {
   final Channel channel;

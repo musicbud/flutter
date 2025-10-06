@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../models/album.dart';
 import '../components/release_card.dart';
-import '../discover_content_manager.dart';
 
 class NewReleasesSection extends StatelessWidget {
-  const NewReleasesSection({super.key});
+  final List<Album> albums;
+  final bool isLoading;
+
+  const NewReleasesSection({
+    super.key,
+    required this.albums,
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     final appTheme = AppTheme.of(context);
-    final releases = DiscoverContentManager.getNewReleases();
 
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
@@ -26,25 +32,32 @@ class NewReleasesSection extends StatelessWidget {
           SizedBox(height: appTheme.spacing.md),
           SizedBox(
             height: 280,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                ...releases.map((release) => Padding(
-                  padding: EdgeInsets.only(right: appTheme.spacing.md),
-                  child: ReleaseCard(
-                    title: release['title'] as String,
-                    artist: release['artist'] as String,
-                    type: release['type'] as String,
-                    imageUrl: release['imageUrl'] as String?,
-                    icon: (release['icon'] as IconData?) ?? Icons.music_note,
-                    accentColor: (release['accentColor'] as Color?) ?? Colors.blue,
-                    onTap: () {
-                      // Handle new release card tap
-                    },
-                  ),
-                )),
-              ],
-            ),
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : albums.isEmpty
+                    ? const Center(child: Text('No new releases available'))
+                    : ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: albums.map((album) => Padding(
+                          padding: EdgeInsets.only(right: appTheme.spacing.md),
+                          child: ReleaseCard(
+                            title: album.name,
+                            artist: album.artistName,
+                            type: 'Album',
+                            imageUrl: album.imageUrls?.first,
+                            icon: Icons.album,
+                            accentColor: Colors.blue,
+                            onTap: () {
+                              // Navigate to album detail
+                              Navigator.pushNamed(
+                                context,
+                                '/album/${album.id}',
+                                arguments: album,
+                              );
+                            },
+                          ),
+                        )).toList(),
+                      ),
           ),
         ],
       ),

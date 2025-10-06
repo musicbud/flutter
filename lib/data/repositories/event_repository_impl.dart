@@ -1,5 +1,5 @@
 import '../../domain/repositories/event_repository.dart';
-import '../../domain/models/event/event.dart';
+import '../../models/event/event.dart';
 import '../data_sources/remote/event_remote_data_source.dart';
 
 class EventRepositoryImpl implements EventRepository {

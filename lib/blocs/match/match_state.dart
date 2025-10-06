@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/models/match_profile.dart';
+import '../../models/match_profile.dart';
 
 sealed class MatchState extends Equatable {
   const MatchState();

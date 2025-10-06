@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../widgets/common/index.dart';
+import '../../../widgets/common/index.dart';
 import 'widgets/category_filter_widget.dart';
 
 class DiscoverSearchSection extends StatefulWidget {

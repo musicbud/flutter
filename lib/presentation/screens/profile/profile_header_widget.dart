@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/user_profile/user_profile_bloc.dart';
-import '../../../domain/models/user_profile.dart';
+import '../../../models/user_profile.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../widgets/common/index.dart';
+import '../../../widgets/common/index.dart';
 
 class ProfileHeaderWidget extends StatefulWidget {
   final UserProfile? userProfile;

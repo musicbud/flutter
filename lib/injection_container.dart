@@ -2,10 +2,13 @@ import 'package:get_it/get_it.dart';
 import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 // Network
 import 'data/network/dio_client.dart';
 import 'data/network/dio_client_adapter.dart';
+import 'core/network/network_info.dart';
 
 // Providers
 import 'data/providers/token_provider.dart';
@@ -26,7 +29,7 @@ import 'data/data_sources/remote/settings_remote_data_source.dart';
 import 'data/data_sources/remote/event_remote_data_source.dart';
 // import 'data/data_sources/remote/admin_remote_data_source.dart'; // Not used - conflicting implementation
 import 'data/data_sources/remote/channel_remote_data_source.dart';
-import 'data/datasources/search_remote_data_source.dart';
+import 'data/data_sources/remote/search_remote_data_source.dart';
 import 'data/data_sources/remote/common_items_remote_data_source.dart';
 
 // Repositories
@@ -46,7 +49,7 @@ import 'data/repositories/search_repository_impl.dart';
 import 'data/repositories/services_repository_impl.dart';
 import 'data/repositories/library_repository_impl.dart';
 import 'data/repositories/common_items_repository_impl.dart';
-import 'data/datasources/admin_remote_data_source.dart';
+import 'data/data_sources/remote/admin_remote_data_source.dart';
 
 // Domain Interfaces
 import 'domain/repositories/auth_repository.dart';
@@ -84,6 +87,7 @@ import 'blocs/library/library_bloc.dart';
 import 'blocs/bud/bud_bloc.dart';
 import 'blocs/bud/common_items/bud_common_items_bloc.dart';
 import 'blocs/artist/artist_bloc.dart';
+import 'blocs/content/content_bloc.dart';
 
 /// Global GetIt instance for dependency injection
 final sl = GetIt.instance;
@@ -111,6 +115,12 @@ Future<void> _registerExternalDependencies() async {
 
   // Token Provider
   sl.registerLazySingleton<TokenProvider>(() => TokenProvider());
+
+  // Network Info
+  sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(
+    InternetConnectionChecker(),
+    connectivity: Connectivity(),
+  ));
 }
 
 /// Creates and configures the Dio instance with interceptors
@@ -227,17 +237,17 @@ Future<void> _registerDataSources() async {
 
   // Admin Data Source
   sl.registerLazySingleton<AdminRemoteDataSource>(
-    () => AdminRemoteDataSourceImpl(client: sl<http.Client>()),
+    () => AdminRemoteDataSourceImpl(dioClient: sl<DioClient>()),
   );
 
   // Channel Data Source
   sl.registerLazySingleton<ChannelRemoteDataSource>(
-    () => ChannelRemoteDataSourceImpl(client: sl()),
+    () => ChannelRemoteDataSourceImpl(client: sl<http.Client>()),
   );
 
   // Search Data Source
   sl.registerLazySingleton<SearchRemoteDataSource>(
-    () => SearchRemoteDataSourceImpl(client: sl()),
+    () => SearchRemoteDataSourceImpl(client: sl<Dio>()),
   );
 
   // Common Items Data Source
@@ -325,23 +335,23 @@ Future<void> _registerRepositories() async {
   sl.registerLazySingleton<AdminRepository>(
     () => AdminRepositoryImpl(
       remoteDataSource: sl<AdminRemoteDataSource>(),
-      networkInfo: sl(),
+      networkInfo: sl<NetworkInfo>(),
     ),
   );
 
   // Channel Repository
   sl.registerLazySingleton<ChannelRepository>(
     () => ChannelRepositoryImpl(
-      remoteDataSource: sl(),
-      networkInfo: sl(),
+      remoteDataSource: sl<ChannelRemoteDataSource>(),
+      networkInfo: sl<NetworkInfo>(),
     ),
   );
 
   // Search Repository
   sl.registerLazySingleton<SearchRepository>(
     () => SearchRepositoryImpl(
-      remoteDataSource: sl(),
-      networkInfo: sl(),
+      remoteDataSource: sl<SearchRemoteDataSource>(),
+      networkInfo: sl<NetworkInfo>(),
     ),
   );
 
@@ -382,9 +392,9 @@ Future<void> _registerBlocs() async {
 
   // Profile BLoC
   sl.registerFactory<ProfileBloc>(() => ProfileBloc(
-    profileRepository: sl<ProfileRepository>(),
+    userProfileRepository: sl<UserProfileRepository>(),
     contentRepository: sl<ContentRepository>(),
-    budRepository: sl<BudRepository>(),
+    userRepository: sl<UserRepository>(),
   ));
 
   // Analytics BLoC
@@ -442,7 +452,13 @@ Future<void> _registerBlocs() async {
 
   // Library BLoC
   sl.registerFactory<LibraryBloc>(() => LibraryBloc(
-    libraryRepository: sl<LibraryRepository>(),
+    contentRepository: sl<ContentRepository>(),
+    userRepository: sl<UserRepository>(),
+  ));
+
+  // Content BLoC
+  sl.registerFactory<ContentBloc>(() => ContentBloc(
+    contentRepository: sl<ContentRepository>(),
   ));
 
   // Bud BLoC

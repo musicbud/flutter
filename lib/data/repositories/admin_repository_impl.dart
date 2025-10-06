@@ -2,9 +2,9 @@ import 'package:dartz/dartz.dart';
 import '../../core/error/failures.dart';
 import '../../core/error/exceptions.dart';
 import '../../core/network/network_info.dart';
-import '../../domain/models/admin.dart';
+import '../../models/admin.dart';
 import '../../domain/repositories/admin_repository.dart';
-import '../datasources/admin_remote_data_source.dart';
+import '../data_sources/remote/admin_remote_data_source.dart';
 
 class AdminRepositoryImpl implements AdminRepository {
   final AdminRemoteDataSource remoteDataSource;

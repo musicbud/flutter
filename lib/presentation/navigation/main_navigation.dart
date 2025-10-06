@@ -58,7 +58,16 @@ class MainNavigationController extends ChangeNotifier {
 
   /// Get the current page widget
   Widget getCurrentPage(BuildContext context) {
-    return mainNavigationItems[_selectedIndex].pageBuilder(context);
+    final pageBuilder = mainNavigationItems[_selectedIndex].pageBuilder;
+    if (pageBuilder != null) {
+      return pageBuilder(context);
+    }
+    // Fallback to a default page if pageBuilder is null
+    return const Scaffold(
+      body: Center(
+        child: Text('Page not available'),
+      ),
+    );
   }
 
   /// Navigate to a specific page by index

@@ -1,8 +1,8 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/models/common_track.dart';
-import '../../../domain/models/common_artist.dart';
-import '../../../domain/models/common_album.dart';
-import '../../../domain/models/spotify_device.dart';
+import '../../../models/common_track.dart';
+import '../../../models/artist.dart';
+import '../../../models/album.dart';
+import '../../../models/spotify_device.dart';
 
 abstract class MusicState extends Equatable {
   const MusicState();
@@ -35,7 +35,7 @@ class PopularTracksLoaded extends MusicState {
 }
 
 class PopularArtistsLoaded extends MusicState {
-  final List<CommonArtist> artists;
+  final List<Artist> artists;
 
   const PopularArtistsLoaded(this.artists);
 
@@ -44,7 +44,7 @@ class PopularArtistsLoaded extends MusicState {
 }
 
 class PopularAlbumsLoaded extends MusicState {
-  final List<CommonAlbum> albums;
+  final List<Album> albums;
 
   const PopularAlbumsLoaded(this.albums);
 
@@ -63,7 +63,7 @@ class TopTracksLoaded extends MusicState {
 }
 
 class TopArtistsLoaded extends MusicState {
-  final List<CommonArtist> artists;
+  final List<Artist> artists;
 
   const TopArtistsLoaded(this.artists);
 
@@ -82,7 +82,7 @@ class LikedTracksLoaded extends MusicState {
 }
 
 class LikedArtistsLoaded extends MusicState {
-  final List<CommonArtist> artists;
+  final List<Artist> artists;
 
   const LikedArtistsLoaded(this.artists);
 
@@ -91,7 +91,7 @@ class LikedArtistsLoaded extends MusicState {
 }
 
 class LikedAlbumsLoaded extends MusicState {
-  final List<CommonAlbum> albums;
+  final List<Album> albums;
 
   const LikedAlbumsLoaded(this.albums);
 
@@ -123,7 +123,7 @@ class TracksSearchResultLoaded extends MusicState {
 }
 
 class ArtistsSearchResultLoaded extends MusicState {
-  final List<CommonArtist> artists;
+  final List<Artist> artists;
 
   const ArtistsSearchResultLoaded(this.artists);
 
@@ -132,7 +132,7 @@ class ArtistsSearchResultLoaded extends MusicState {
 }
 
 class AlbumsSearchResultLoaded extends MusicState {
-  final List<CommonAlbum> albums;
+  final List<Album> albums;
 
   const AlbumsSearchResultLoaded(this.albums);
 

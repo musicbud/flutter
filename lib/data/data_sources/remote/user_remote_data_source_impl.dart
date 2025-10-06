@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../../../core/error/exceptions.dart';
-import '../../../domain/models/track.dart';
-import '../../../domain/models/user_profile.dart';
-import '../../../domain/models/common_artist.dart';
-import '../../../domain/models/common_album.dart';
-import '../../../domain/models/common_genre.dart';
-import '../../../domain/models/common_anime.dart';
-import '../../../domain/models/common_manga.dart';
+import '../../../models/track.dart';
+import '../../../models/user_profile.dart';
+import '../../../models/artist.dart';
+import '../../../models/album.dart';
+import '../../../models/genre.dart';
+import '../../../models/parent_user.dart';
+import '../../../models/common_anime.dart';
+import '../../../models/common_manga.dart';
 import 'user_remote_data_source.dart';
 import '../../providers/token_provider.dart';
 import '../../network/dio_client.dart';
@@ -42,6 +43,22 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
       debugPrint('Response body: ${response.data}');
       debugPrint('Headers sent: $_headers');
       throw ServerException(message: 'Failed to get user profile');
+    }
+  }
+
+  @override
+  Future<ParentUser> getParentUser() async {
+    debugPrint('Getting parent user with token: ${_tokenProvider.token}');
+    final response = await _dioClient.post(ApiConfig.myProfile);
+
+    if (response.statusCode == 200) {
+      // Assuming the response contains parent user data
+      return ParentUser.fromJson(response.data);
+    } else {
+      debugPrint('Failed to get parent user. Status: ${response.statusCode}');
+      debugPrint('Response body: ${response.data}');
+      debugPrint('Headers sent: $_headers');
+      throw ServerException(message: 'Failed to get parent user');
     }
   }
 
@@ -136,48 +153,48 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   }
 
   @override
-  Future<List<CommonArtist>> getLikedArtists() async {
+  Future<List<Artist>> getLikedArtists() async {
     final response = await _dioClient.post(ApiConfig.myLikedArtists);
 
     if (response.statusCode == 200) {
       final List<dynamic> artistsJson = json.decode(response.data);
-      return artistsJson.map((json) => CommonArtist.fromJson(json)).toList();
+      return artistsJson.map((json) => Artist.fromJson(json)).toList();
     } else {
       throw ServerException(message: 'Failed to get liked artists');
     }
   }
 
   @override
-  Future<List<CommonAlbum>> getLikedAlbums() async {
+  Future<List<Album>> getLikedAlbums() async {
     final response = await _dioClient.post(ApiConfig.myLikedAlbums);
 
     if (response.statusCode == 200) {
       final List<dynamic> albumsJson = json.decode(response.data);
-      return albumsJson.map((json) => CommonAlbum.fromJson(json)).toList();
+      return albumsJson.map((json) => Album.fromJson(json)).toList();
     } else {
       throw ServerException(message: 'Failed to get liked albums');
     }
   }
 
   @override
-  Future<List<CommonGenre>> getLikedGenres() async {
+  Future<List<Genre>> getLikedGenres() async {
     final response = await _dioClient.post(ApiConfig.myLikedGenres);
 
     if (response.statusCode == 200) {
       final List<dynamic> genresJson = json.decode(response.data);
-      return genresJson.map((json) => CommonGenre.fromJson(json)).toList();
+      return genresJson.map((json) => Genre.fromJson(json)).toList();
     } else {
       throw ServerException(message: 'Failed to get liked genres');
     }
   }
 
   @override
-  Future<List<CommonArtist>> getTopArtists() async {
+  Future<List<Artist>> getTopArtists() async {
     final response = await _dioClient.post(ApiConfig.myTopArtists);
 
     if (response.statusCode == 200) {
       final List<dynamic> artistsJson = json.decode(response.data);
-      return artistsJson.map((json) => CommonArtist.fromJson(json)).toList();
+      return artistsJson.map((json) => Artist.fromJson(json)).toList();
     } else {
       throw ServerException(message: 'Failed to get top artists');
     }
@@ -205,12 +222,12 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   }
 
   @override
-  Future<List<CommonGenre>> getTopGenres() async {
+  Future<List<Genre>> getTopGenres() async {
     final response = await _dioClient.post(ApiConfig.myTopGenres);
 
     if (response.statusCode == 200) {
       final List<dynamic> genresJson = json.decode(response.data);
-      return genresJson.map((json) => CommonGenre.fromJson(json)).toList();
+      return genresJson.map((json) => Genre.fromJson(json)).toList();
     } else {
       throw ServerException(message: 'Failed to get top genres');
     }
@@ -402,7 +419,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> updateUserProfile(String userId, Map<String, dynamic> profileData) async {
     final response = await _dioClient.post(
-      '${ApiConfig.users}/$userId/profile',
+      '${ApiConfig.usersWeb}/$userId/profile',
       data: profileData,
     );
 
@@ -414,7 +431,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> banUser(String userId) async {
     final response = await _dioClient.post(
-      '${ApiConfig.users}/$userId/ban',
+      '${ApiConfig.usersWeb}/$userId/ban',
     );
 
     if (response.statusCode != 200) {
@@ -425,7 +442,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<void> unbanUser(String userId) async {
     final response = await _dioClient.post(
-      '${ApiConfig.users}/$userId/unban',
+      '${ApiConfig.usersWeb}/$userId/unban',
     );
 
     if (response.statusCode != 200) {
@@ -435,7 +452,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<UserProfile>> getBannedUsers() async {
-    final response = await _dioClient.get('${ApiConfig.users}/banned');
+    final response = await _dioClient.get('${ApiConfig.usersWeb}/banned');
 
     if (response.statusCode == 200) {
       final List<dynamic> usersJson = json.decode(response.data);

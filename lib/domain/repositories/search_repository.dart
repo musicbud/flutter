@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import '../../core/error/failures.dart';
-import '../models/search.dart';
+import '../../models/search.dart';
 
 abstract class SearchRepository {
   Future<Either<Failure, SearchResults>> search({

@@ -1,4 +1,4 @@
-import 'package:musicbud_flutter/domain/models/common_album.dart';
+import 'package:musicbud_flutter/models/common_album.dart';
 
 class Album {
   final String id;

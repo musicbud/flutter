@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../domain/repositories/content_repository.dart';
-import '../../domain/models/track.dart';
+import '../../models/track.dart';
 import 'map_event.dart';
 import 'map_state.dart';
 

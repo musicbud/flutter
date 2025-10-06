@@ -1,4 +1,4 @@
-import 'package:musicbud_flutter/domain/models/common_manga.dart';
+import 'package:musicbud_flutter/models/common_manga.dart';
 
 class Manga {
   final String id;

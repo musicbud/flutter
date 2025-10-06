@@ -1,4 +1,4 @@
-import '../../domain/models/user_profile.dart';
+import '../../models/user_profile.dart';
 
 class UserProfileModel extends UserProfile {
   const UserProfileModel({

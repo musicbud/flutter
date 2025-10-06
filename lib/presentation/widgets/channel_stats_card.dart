@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../domain/models/channel_stats.dart';
+import '../../models/channel_stats.dart';
 
 class ChannelStatsCard extends StatelessWidget {
   final ChannelStats stats;

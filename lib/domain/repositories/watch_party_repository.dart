@@ -1,4 +1,4 @@
-import '../models/watch_party.dart';
+import '../../models/watch_party.dart';
 
 abstract class WatchPartyRepository {
   /// Get all watch parties

@@ -1,12 +1,11 @@
 import '../../domain/repositories/content_repository.dart';
-import '../../domain/models/common_track.dart';
-import '../../domain/models/common_artist.dart';
-import '../../domain/models/common_genre.dart';
-import '../../domain/models/common_album.dart';
-import '../../domain/models/common_anime.dart';
-import '../../domain/models/common_manga.dart';
-import '../../domain/models/spotify_device.dart';
-import '../../domain/models/track.dart';
+import '../../models/track.dart';
+import '../../models/artist.dart';
+import '../../models/album.dart';
+import '../../models/genre.dart';
+import '../../models/common_anime.dart';
+import '../../models/common_manga.dart';
+import '../../models/spotify_device.dart';
 import '../data_sources/remote/content_remote_data_source.dart';
 import '../../core/error/exceptions.dart';
 import '../../core/error/failures.dart';
@@ -17,7 +16,7 @@ class ContentRepositoryImpl implements ContentRepository {
   ContentRepositoryImpl({required ContentRemoteDataSource remoteDataSource})
       : _remoteDataSource = remoteDataSource;
 
-  Future<List<CommonTrack>> getMyLikedTracks() async {
+  Future<List<Track>> getMyLikedTracks() async {
     try {
       return await _remoteDataSource.getMyLikedTracks();
     } on ServerException catch (e) {
@@ -28,7 +27,7 @@ class ContentRepositoryImpl implements ContentRepository {
   }
 
 
-  Future<List<CommonArtist>> getMyLikedArtists() async {
+  Future<List<Artist>> getMyLikedArtists() async {
     try {
       return await _remoteDataSource.getMyLikedArtists();
     } on ServerException catch (e) {
@@ -39,7 +38,7 @@ class ContentRepositoryImpl implements ContentRepository {
   }
 
 
-  Future<List<CommonGenre>> getMyLikedGenres() async {
+  Future<List<Genre>> getMyLikedGenres() async {
     try {
       return await _remoteDataSource.getMyLikedGenres();
     } on ServerException catch (e) {
@@ -50,7 +49,7 @@ class ContentRepositoryImpl implements ContentRepository {
   }
 
 
-  Future<List<CommonAlbum>> getMyLikedAlbums() async {
+  Future<List<Album>> getMyLikedAlbums() async {
     try {
       return await _remoteDataSource.getMyLikedAlbums();
     } on ServerException catch (e) {
@@ -61,7 +60,7 @@ class ContentRepositoryImpl implements ContentRepository {
   }
 
 
-  Future<List<CommonTrack>> getMyTopTracks() async {
+  Future<List<Track>> getMyTopTracks() async {
     try {
       return await _remoteDataSource.getMyTopTracks();
     } on ServerException catch (e) {
@@ -72,7 +71,7 @@ class ContentRepositoryImpl implements ContentRepository {
   }
 
 
-  Future<List<CommonArtist>> getMyTopArtists() async {
+  Future<List<Artist>> getMyTopArtists() async {
     try {
       return await _remoteDataSource.getMyTopArtists();
     } on ServerException catch (e) {
@@ -83,7 +82,7 @@ class ContentRepositoryImpl implements ContentRepository {
   }
 
 
-  Future<List<CommonGenre>> getMyTopGenres() async {
+  Future<List<Genre>> getMyTopGenres() async {
     try {
       return await _remoteDataSource.getMyTopGenres();
     } on ServerException catch (e) {
@@ -118,7 +117,7 @@ class ContentRepositoryImpl implements ContentRepository {
   }
 
 
-  Future<List<CommonTrack>> getMyPlayedTracks() async {
+  Future<List<Track>> getMyPlayedTracks() async {
     try {
       return await _remoteDataSource.getMyPlayedTracks();
     } on ServerException catch (e) {
@@ -277,7 +276,7 @@ class ContentRepositoryImpl implements ContentRepository {
 
 
   @override
-  Future<List<CommonTrack>> getPopularTracks() async {
+  Future<List<Track>> getPopularTracks() async {
     try {
       return await _remoteDataSource.getPopularTracks();
     } on ServerException catch (e) {
@@ -289,14 +288,14 @@ class ContentRepositoryImpl implements ContentRepository {
 
 
   @override
-  Future<List<CommonArtist>> getPopularArtists() async {
+  Future<List<Artist>> getPopularArtists() async {
     // TODO: Implement actual logic
     return [];
   }
 
 
   @override
-  Future<List<CommonAlbum>> getPopularAlbums() async {
+  Future<List<Album>> getPopularAlbums() async {
     // TODO: Implement actual logic
     return [];
   }
@@ -317,19 +316,19 @@ class ContentRepositoryImpl implements ContentRepository {
 
 
   @override
-  Future<List<CommonTrack>> getTopTracks() async {
+  Future<List<Track>> getTopTracks() async {
     return await getMyTopTracks();
   }
 
 
   @override
-  Future<List<CommonArtist>> getTopArtists() async {
+  Future<List<Artist>> getTopArtists() async {
     return await getMyTopArtists();
   }
 
 
   @override
-  Future<List<CommonGenre>> getTopGenres() async {
+  Future<List<Genre>> getTopGenres() async {
     return await getMyTopGenres();
   }
 
@@ -347,25 +346,25 @@ class ContentRepositoryImpl implements ContentRepository {
 
 
   @override
-  Future<List<CommonTrack>> getLikedTracks() async {
+  Future<List<Track>> getLikedTracks() async {
     return await getMyLikedTracks();
   }
 
 
   @override
-  Future<List<CommonArtist>> getLikedArtists() async {
+  Future<List<Artist>> getLikedArtists() async {
     return await getMyLikedArtists();
   }
 
 
   @override
-  Future<List<CommonGenre>> getLikedGenres() async {
+  Future<List<Genre>> getLikedGenres() async {
     return await getMyLikedGenres();
   }
 
 
   @override
-  Future<List<CommonAlbum>> getLikedAlbums() async {
+  Future<List<Album>> getLikedAlbums() async {
     return await getMyLikedAlbums();
   }
 
@@ -413,28 +412,28 @@ class ContentRepositoryImpl implements ContentRepository {
 
 
   @override
-  Future<CommonTrack> getTrackDetails(String trackId) async {
+  Future<Track> getTrackDetails(String trackId) async {
     // TODO: Implement actual logic
     throw UnimplementedError();
   }
 
 
   @override
-  Future<CommonArtist> getArtistDetails(String artistId) async {
+  Future<Artist> getArtistDetails(String artistId) async {
     // TODO: Implement actual logic
     throw UnimplementedError();
   }
 
 
   @override
-  Future<CommonAlbum> getAlbumDetails(String albumId) async {
+  Future<Album> getAlbumDetails(String albumId) async {
     // TODO: Implement actual logic
     throw UnimplementedError();
   }
 
 
   @override
-  Future<CommonGenre> getGenreDetails(String genreId) async {
+  Future<Genre> getGenreDetails(String genreId) async {
     // TODO: Implement actual logic
     throw UnimplementedError();
   }
@@ -455,28 +454,28 @@ class ContentRepositoryImpl implements ContentRepository {
 
 
   @override
-  Future<List<CommonTrack>> searchTracks(String query) async {
+  Future<List<Track>> searchTracks(String query) async {
     // TODO: Implement actual logic
     return [];
   }
 
 
   @override
-  Future<List<CommonArtist>> searchArtists(String query) async {
+  Future<List<Artist>> searchArtists(String query) async {
     // TODO: Implement actual logic
     return [];
   }
 
 
   @override
-  Future<List<CommonAlbum>> searchAlbums(String query) async {
+  Future<List<Album>> searchAlbums(String query) async {
     // TODO: Implement actual logic
     return [];
   }
 
 
   @override
-  Future<List<CommonGenre>> searchGenres(String query) async {
+  Future<List<Genre>> searchGenres(String query) async {
     // TODO: Implement actual logic
     return [];
   }

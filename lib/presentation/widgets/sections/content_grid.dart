@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/design_system.dart';
 import '../base/base_content_container.dart';
+import '../utils/theme_helper.dart' as ThemeHelper;
 
 /// A reusable grid layout widget for displaying content in a grid format.
 /// Provides consistent spacing, responsive columns, and loading states.
@@ -13,11 +14,6 @@ import '../base/base_content_container.dart';
 /// - Empty state handling
 /// - Scroll physics customization
 class ContentGrid<T> extends BaseContentContainer<T> {
-  /// The list of items to display in the grid
-  final List<T> items;
-
-  /// Builder function to create widgets for each item
-  final Widget Function(BuildContext context, T item, int index) itemBuilder;
 
   /// Number of columns in the grid (responsive by default)
   final int? crossAxisCount;
@@ -59,7 +55,12 @@ class ContentGrid<T> extends BaseContentContainer<T> {
         // Show loading indicator for pagination
         if (hasMoreItems && index == items.length) {
           _handlePagination();
-          return _buildDefaultLoadingIndicator();
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
 
         return itemBuilder(context, items[index], index);
@@ -78,7 +79,7 @@ class ContentGrid<T> extends BaseContentContainer<T> {
   }
 
   @override
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Text(
         'No items to display',
@@ -94,11 +95,4 @@ class ContentGrid<T> extends BaseContentContainer<T> {
   void _handlePagination() {
     triggerLoadMore();
   }
-
-  Widget _buildLoadingState() {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
-  }
-
 }

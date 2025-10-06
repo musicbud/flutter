@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import '../../../domain/models/user_profile.dart';
+import '../../../models/user_profile.dart';
 import '../../../core/theme/design_system.dart';
 import '../../theme/app_theme.dart';
-import '../../navigation/navigation_constants.dart';
-import '../../navigation/navigation_mixins.dart';
-import '../../navigation/navigation_items.dart';
-import '../../navigation/navigation_item.dart';
+import '../../../navigation/navigation_config.dart';
+import '../../../navigation/navigation_constants.dart';
+import '../../../navigation/navigation_mixins.dart';
+import '../../../navigation/navigation_items.dart';
+import '../../../navigation/navigation_item.dart';
 
 class AppNavigationDrawer extends StatelessWidget with BaseNavigationMixin {
   final UserProfile? userProfile;
@@ -131,7 +132,7 @@ class AppNavigationDrawer extends StatelessWidget with BaseNavigationMixin {
         } else {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => item.pageBuilder(context)),
+            MaterialPageRoute(builder: (context) => item.pageBuilder?.call(context) ?? const SizedBox.shrink()),
           );
         }
       },

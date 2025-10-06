@@ -1,4 +1,4 @@
-import '../../domain/models/bud_match.dart';
+import '../../models/bud_match.dart';
 
 class BudMatchModel extends BudMatch {
   const BudMatchModel({

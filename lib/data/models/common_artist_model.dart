@@ -1,4 +1,4 @@
-import '../../domain/models/common_artist.dart';
+import '../../models/common_artist.dart';
 
 class CommonArtistModel extends CommonArtist {
   CommonArtistModel({

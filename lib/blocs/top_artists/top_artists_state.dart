@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/models/common_artist.dart';
+import '../../models/artist.dart';
 
 abstract class TopArtistsState extends Equatable {
   const TopArtistsState();
@@ -13,7 +13,7 @@ class TopArtistsInitial extends TopArtistsState {}
 class TopArtistsLoading extends TopArtistsState {}
 
 class TopArtistsLoadingMore extends TopArtistsState {
-  final List<CommonArtist> currentArtists;
+  final List<Artist> currentArtists;
 
   const TopArtistsLoadingMore(this.currentArtists);
 
@@ -22,7 +22,7 @@ class TopArtistsLoadingMore extends TopArtistsState {
 }
 
 class TopArtistsLoaded extends TopArtistsState {
-  final List<CommonArtist> artists;
+  final List<Artist> artists;
   final bool hasReachedEnd;
   final int currentPage;
 
@@ -36,7 +36,7 @@ class TopArtistsLoaded extends TopArtistsState {
   List<Object> get props => [artists, hasReachedEnd, currentPage];
 
   TopArtistsLoaded copyWith({
-    List<CommonArtist>? artists,
+    List<Artist>? artists,
     bool? hasReachedEnd,
     int? currentPage,
   }) {

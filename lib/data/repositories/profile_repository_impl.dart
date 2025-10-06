@@ -1,6 +1,6 @@
 import 'package:image_picker/image_picker.dart';
-import '../../domain/models/user_profile.dart';
-import '../../domain/models/content_service.dart';
+import '../../models/user_profile.dart';
+import '../../models/content_service.dart';
 import '../../domain/repositories/profile_repository.dart';
 import '../network/dio_client.dart';
 

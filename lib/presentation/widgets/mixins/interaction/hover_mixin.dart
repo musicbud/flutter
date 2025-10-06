@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/scheduler.dart';
+import '../../../../core/theme/design_system.dart';
 
 /// A mixin that provides comprehensive hover state management for widgets.
 ///
@@ -81,7 +84,7 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
   void _initializeHoverAnimations() {
     _hoverAnimationController = AnimationController(
       duration: const Duration(milliseconds: 200),
-      vsync: this,
+      vsync: const _HoverTickerProvider(),
     );
 
     _hoverScaleAnimation = Tween<double>(
@@ -684,17 +687,29 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
 
     return Material(
       color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      child: DataRow(
-        cells: cells.map((cell) {
-          return DataCell(
-            buildHoverableWidget(
-              context: context,
-              onHover: onHover,
-              onExit: onExit,
-              child: cell.child,
-            ),
-          );
-        }).toList(),
+      child: InkWell(
+        onHover: _hoverEnabled ? (hovered) {
+          if (hovered) {
+            onHover?.call();
+          } else {
+            onExit?.call();
+          }
+        } : null,
+        child: Container(
+          padding: EdgeInsets.all(design.designSystemSpacing.sm),
+          child: Row(
+            children: cells.map((cell) {
+              return Expanded(
+                child: buildHoverableWidget(
+                  context: context,
+                  onHover: onHover,
+                  onExit: onExit,
+                  child: cell.child,
+                ),
+              );
+            }).toList(),
+          ),
+        ),
       ),
     );
   }
@@ -1611,6 +1626,14 @@ enum HoverState {
 
   /// Widget is being hovered
   hovering,
+}
+
+/// Ticker provider for animations
+class _HoverTickerProvider extends TickerProvider {
+  const _HoverTickerProvider();
+
+  @override
+  Ticker createTicker(TickerCallback onTick) => Ticker(onTick);
 }
 
 /// Hover configuration

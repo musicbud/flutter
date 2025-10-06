@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../domain/models/channel_settings.dart';
+import '../../models/channel_settings.dart';
 
 class ChannelSettingsForm extends StatefulWidget {
   final ChannelSettings initialSettings;

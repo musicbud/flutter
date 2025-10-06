@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../../domain/models/common_genre.dart';
+import '../../../../models/common_genre.dart';
 
 abstract class GenreState extends Equatable {
   const GenreState();

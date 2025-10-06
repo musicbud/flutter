@@ -2,9 +2,9 @@ import 'package:dartz/dartz.dart';
 import '../../core/error/failures.dart';
 import '../../core/error/exceptions.dart';
 import '../../core/network/network_info.dart';
-import '../../domain/models/search.dart';
+import '../../models/search.dart';
 import '../../domain/repositories/search_repository.dart';
-import '../datasources/search_remote_data_source.dart';
+import '../data_sources/remote/search_remote_data_source.dart';
 
 class SearchRepositoryImpl implements SearchRepository {
   final SearchRemoteDataSource remoteDataSource;
@@ -25,12 +25,12 @@ class SearchRepositoryImpl implements SearchRepository {
   }) async {
     if (await networkInfo.isConnected) {
       try {
-        final results = await remoteDataSource.search(
+        final results = await remoteDataSource.performSearch(
           query: query,
           types: types,
           filters: filters,
-          page: page,
-          pageSize: pageSize,
+          page: page ?? 1,
+          pageSize: pageSize ?? 20,
         );
         return Right(results);
       } on ServerException catch (e) {
@@ -48,10 +48,10 @@ class SearchRepositoryImpl implements SearchRepository {
   }) async {
     if (await networkInfo.isConnected) {
       try {
-        final suggestions = await remoteDataSource.getSuggestions(
-          query: query,
-          limit: limit,
-        );
+        final suggestions = await remoteDataSource.getSearchSuggestions(query);
+        // Apply limit if specified
+        final limitedSuggestions = limit != null ? suggestions.take(limit).toList() : suggestions;
+        return Right(limitedSuggestions);
         return Right(suggestions);
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -79,7 +79,7 @@ class SearchRepositoryImpl implements SearchRepository {
   Future<Either<Failure, List<String>>> getRecentSearches({int? limit}) async {
     if (await networkInfo.isConnected) {
       try {
-        final searches = await remoteDataSource.getRecentSearches(limit: limit);
+        final searches = await remoteDataSource.getRecentSearches(limit: limit ?? 10);
         return Right(searches);
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -107,7 +107,7 @@ class SearchRepositoryImpl implements SearchRepository {
   Future<Either<Failure, List<String>>> getTrendingSearches({int? limit}) async {
     if (await networkInfo.isConnected) {
       try {
-        final searches = await remoteDataSource.getTrendingSearches(limit: limit);
+        final searches = await remoteDataSource.getTrendingSearches(limit: limit ?? 10);
         return Right(searches);
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));

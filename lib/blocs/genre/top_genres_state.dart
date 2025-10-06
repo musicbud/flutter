@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/models/common_genre.dart';
+import '../../models/genre.dart';
 
 abstract class TopGenresState extends Equatable {
   const TopGenresState();
@@ -13,7 +13,7 @@ class TopGenresInitial extends TopGenresState {}
 class TopGenresLoading extends TopGenresState {}
 
 class TopGenresLoadingMore extends TopGenresState {
-  final List<CommonGenre> currentGenres;
+  final List<Genre> currentGenres;
 
   const TopGenresLoadingMore(this.currentGenres);
 
@@ -22,7 +22,7 @@ class TopGenresLoadingMore extends TopGenresState {
 }
 
 class TopGenresLoaded extends TopGenresState {
-  final List<CommonGenre> genres;
+  final List<Genre> genres;
   final bool hasReachedEnd;
   final int currentPage;
   final String? selectedGenreId;
@@ -39,7 +39,7 @@ class TopGenresLoaded extends TopGenresState {
       [genres, hasReachedEnd, currentPage, selectedGenreId];
 
   TopGenresLoaded copyWith({
-    List<CommonGenre>? genres,
+    List<Genre>? genres,
     bool? hasReachedEnd,
     int? currentPage,
     String? selectedGenreId,

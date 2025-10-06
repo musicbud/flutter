@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../domain/models/search.dart';
+import '../../../models/search.dart';
 import '../../widgets/search_result_item.dart';
 import '../../widgets/sections/content_list.dart';
 

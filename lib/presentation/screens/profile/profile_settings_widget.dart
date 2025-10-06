@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../widgets/common/section_header.dart';
 import 'components/settings_option.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../widgets/common/index.dart';
+import '../../../widgets/common/index.dart';
 
 class ProfileSettingsWidget extends StatelessWidget {
   const ProfileSettingsWidget({super.key});

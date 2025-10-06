@@ -62,7 +62,7 @@ import '../../../../core/theme/design_system.dart';
 /// ```
 abstract class BaseStateDisplay extends StatelessWidget {
   /// Primary text content (required)
-  final String title;
+  final String? title;
 
   /// Secondary descriptive text (optional)
   final String? message;
@@ -91,7 +91,7 @@ abstract class BaseStateDisplay extends StatelessWidget {
   /// Constructor for BaseStateDisplay
   const BaseStateDisplay({
     super.key,
-    required this.title,
+    this.title,
     this.message,
     this.icon,
     this.actionCallback,
@@ -116,7 +116,7 @@ abstract class BaseStateDisplay extends StatelessWidget {
         // Icon section
         if (icon != null) ...[
           _buildIcon(context),
-          SizedBox(height: theme.designSystemSpacing.xl),
+          SizedBox(height: theme.designSystemSpacing?.xl ?? 32.0),
         ],
 
         // Content section
@@ -124,7 +124,7 @@ abstract class BaseStateDisplay extends StatelessWidget {
 
         // Action section
         if (actionText != null && actionCallback != null) ...[
-          SizedBox(height: theme.designSystemSpacing.xl),
+          SizedBox(height: theme.designSystemSpacing?.xl ?? 32.0),
           _buildAction(context),
         ],
       ],
@@ -135,7 +135,7 @@ abstract class BaseStateDisplay extends StatelessWidget {
     }
 
     return Padding(
-      padding: padding ?? EdgeInsets.all(theme.designSystemSpacing.xl),
+      padding: padding ?? EdgeInsets.all(theme.designSystemSpacing?.xl ?? 32.0),
       child: Container(
         color: backgroundColor,
         child: content,
@@ -169,15 +169,15 @@ abstract class BaseStateDisplay extends StatelessWidget {
     final designColors = theme.designSystemColors;
 
     return Container(
-      padding: EdgeInsets.all(theme.designSystemSpacing.lg),
+      padding: EdgeInsets.all(theme.designSystemSpacing?.lg ?? 24.0),
       decoration: BoxDecoration(
-        color: theme.designSystemColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(theme.designSystemRadius.xl),
+        color: designColors?.surfaceContainer ?? Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(theme.designSystemRadius?.xl ?? 31.0),
       ),
       child: Icon(
         icon,
         size: iconSize,
-        color: theme.designSystemColors.onSurfaceVariant,
+        color: designColors?.onSurfaceVariant ?? Colors.grey.shade600,
       ),
     );
   }
@@ -192,22 +192,24 @@ abstract class BaseStateDisplay extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         // Title
-        Text(
-          title,
-          style: theme.designSystemTypography.titleMedium.copyWith(
-            color: theme.designSystemColors.onSurface,
-            fontWeight: FontWeight.w600,
+        if (title != null) ...[
+          Text(
+            title!,
+            style: getDesignSystemTypography(context).titleMedium.copyWith(
+              color: getDesignSystemColors(context).onSurface,
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
           ),
-          textAlign: TextAlign.center,
-        ),
+        ],
 
         // Message
         if (message != null) ...[
-          SizedBox(height: theme.designSystemSpacing.md),
+          SizedBox(height: theme.designSystemSpacing?.md ?? 16.0),
           Text(
             message!,
-            style: theme.designSystemTypography.bodyMedium.copyWith(
-              color: theme.designSystemColors.onSurfaceVariant,
+            style: getDesignSystemTypography(context).bodyMedium.copyWith(
+              color: getDesignSystemColors(context).onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -243,24 +245,66 @@ abstract class BaseStateDisplay extends StatelessWidget {
   /// Helper method to get design system colors
   @protected
   DesignSystemColors getDesignSystemColors(BuildContext context) {
-    return Theme.of(context).designSystemColors;
+    return Theme.of(context).designSystemColors ?? DesignSystemColors(
+      primary: DesignSystem.primary,
+      secondary: DesignSystem.secondary,
+      surface: DesignSystem.surface,
+      background: DesignSystem.background,
+      onSurface: DesignSystem.onSurface,
+      onSurfaceVariant: DesignSystem.onSurfaceVariant,
+      error: DesignSystem.error,
+      success: DesignSystem.success,
+      warning: DesignSystem.warning,
+      info: DesignSystem.info,
+      accentBlue: DesignSystem.accentBlue,
+      accentPurple: DesignSystem.accentPurple,
+      accentGreen: DesignSystem.accentGreen,
+      accentOrange: DesignSystem.accentOrange,
+      border: DesignSystem.border,
+      overlay: DesignSystem.overlay,
+      surfaceContainer: DesignSystem.surfaceContainer,
+      surfaceContainerHigh: DesignSystem.surfaceContainerHigh,
+      surfaceContainerHighest: DesignSystem.surfaceContainerHighest,
+      onPrimary: DesignSystem.onPrimary,
+      onError: DesignSystem.onError,
+      onErrorContainer: DesignSystem.onErrorContainer,
+    );
   }
 
   /// Helper method to get design system typography
   @protected
   DesignSystemTypography getDesignSystemTypography(BuildContext context) {
-    return Theme.of(context).designSystemTypography;
+    return Theme.of(context).designSystemTypography ?? DesignSystemTypography(
+      displayLarge: DesignSystem.displayLarge,
+      displayMedium: DesignSystem.displayMedium,
+      displaySmall: DesignSystem.displaySmall,
+      headlineLarge: DesignSystem.headlineLarge,
+      headlineMedium: DesignSystem.headlineMedium,
+      headlineSmall: DesignSystem.headlineSmall,
+      titleLarge: DesignSystem.titleLarge,
+      titleMedium: DesignSystem.titleMedium,
+      titleSmall: DesignSystem.titleSmall,
+      bodyLarge: DesignSystem.bodyLarge,
+      bodyMedium: DesignSystem.bodyMedium,
+      bodySmall: DesignSystem.bodySmall,
+      labelLarge: DesignSystem.labelLarge,
+      labelMedium: DesignSystem.labelMedium,
+      labelSmall: DesignSystem.labelSmall,
+      caption: DesignSystem.caption,
+      overline: DesignSystem.overline,
+      arabicText: DesignSystem.arabicText,
+    );
   }
 
   /// Helper method to get design system spacing
   @protected
   DesignSystemSpacing getDesignSystemSpacing(BuildContext context) {
-    return Theme.of(context).designSystemSpacing;
+    return Theme.of(context).designSystemSpacing ?? const DesignSystemSpacing();
   }
 
   /// Helper method to get design system radius
   @protected
   DesignSystemRadius getDesignSystemRadius(BuildContext context) {
-    return Theme.of(context).designSystemRadius;
+    return Theme.of(context).designSystemRadius ?? const DesignSystemRadius();
   }
 }

@@ -1,4 +1,4 @@
-import '../models/library_item.dart';
+import '../../models/library_item.dart';
 
 abstract class LibraryRepository {
   Future<List<LibraryItem>> getLibraryItems({

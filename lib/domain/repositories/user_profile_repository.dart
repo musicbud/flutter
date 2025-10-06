@@ -1,4 +1,4 @@
-import '../models/user_profile.dart';
+import '../../../models/user_profile.dart';
 
 abstract class UserProfileRepository {
   /// Get user profile by user ID

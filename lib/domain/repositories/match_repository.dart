@@ -1,4 +1,4 @@
-import '../models/match_profile.dart';
+import '../../models/match_profile.dart';
 
 abstract class MatchRepository {
   /// Get recommended matches based on user preferences

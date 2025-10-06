@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/models/common_genre.dart';
+import '../../../models/genre.dart';
 
 abstract class GenreState extends Equatable {
   const GenreState();
@@ -23,7 +23,7 @@ class GenreFailure extends GenreState {
 
 // Top content
 class TopGenresLoaded extends GenreState {
-  final List<CommonGenre> genres;
+  final List<Genre> genres;
 
   const TopGenresLoaded(this.genres);
 
@@ -33,7 +33,7 @@ class TopGenresLoaded extends GenreState {
 
 // Liked content
 class LikedGenresLoaded extends GenreState {
-  final List<CommonGenre> genres;
+  final List<Genre> genres;
 
   const LikedGenresLoaded(this.genres);
 
@@ -48,7 +48,7 @@ class GenreUnlikeSuccess extends GenreState {}
 
 // Search operations
 class GenresSearchResultLoaded extends GenreState {
-  final List<CommonGenre> genres;
+  final List<Genre> genres;
 
   const GenresSearchResultLoaded(this.genres);
 

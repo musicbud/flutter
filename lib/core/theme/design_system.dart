@@ -475,6 +475,108 @@ class DesignSystem {
         vertical: spacingMD,
       ),
     ),
+
+    // Design system extensions
+    extensions: <ThemeExtension<dynamic>>[
+      DesignSystemColors(
+        primary: primary,
+        secondary: secondary,
+        surface: neutral50,
+        background: neutral50,
+        onSurface: neutral900,
+        onSurfaceVariant: neutral700,
+        error: error,
+        success: success,
+        warning: warning,
+        info: info,
+        accentBlue: accentBlue,
+        accentPurple: accentPurple,
+        accentGreen: accentGreen,
+        accentOrange: accentOrange,
+        border: neutral400,
+        overlay: overlay,
+        surfaceContainer: neutral100,
+        surfaceContainerHigh: neutral200,
+        surfaceContainerHighest: neutral300,
+        onPrimary: onPrimary,
+        onError: onError,
+        onErrorContainer: onErrorContainer,
+      ),
+      DesignSystemTypography(
+        displayLarge: displayLarge.copyWith(color: neutral900),
+        displayMedium: displayMedium.copyWith(color: neutral900),
+        displaySmall: displaySmall.copyWith(color: neutral900),
+        headlineLarge: headlineLarge.copyWith(color: neutral900),
+        headlineMedium: headlineMedium.copyWith(color: neutral900),
+        headlineSmall: headlineSmall.copyWith(color: neutral900),
+        titleLarge: titleLarge.copyWith(color: neutral900),
+        titleMedium: titleMedium.copyWith(color: neutral900),
+        titleSmall: titleSmall.copyWith(color: neutral900),
+        bodyLarge: bodyLarge.copyWith(color: neutral900),
+        bodyMedium: bodyMedium.copyWith(color: neutral800),
+        bodySmall: bodySmall.copyWith(color: neutral700),
+        labelLarge: labelLarge.copyWith(color: neutral900),
+        labelMedium: labelMedium.copyWith(color: neutral800),
+        labelSmall: labelSmall.copyWith(color: neutral700),
+        caption: caption.copyWith(color: neutral700),
+        overline: overline.copyWith(color: neutral700),
+        arabicText: arabicText.copyWith(color: neutral900),
+      ),
+      const DesignSystemSpacing(),
+      const DesignSystemRadius(),
+      const DesignSystemShadows(),
+      const DesignSystemGradients(),
+      DesignSystemThemeExtension(
+        designSystemColors: DesignSystemColors(
+          primary: primary,
+          secondary: secondary,
+          surface: neutral50,
+          background: neutral50,
+          onSurface: neutral900,
+          onSurfaceVariant: neutral700,
+          error: error,
+          success: success,
+          warning: warning,
+          info: info,
+          accentBlue: accentBlue,
+          accentPurple: accentPurple,
+          accentGreen: accentGreen,
+          accentOrange: accentOrange,
+          border: neutral400,
+          overlay: overlay,
+          surfaceContainer: neutral100,
+          surfaceContainerHigh: neutral200,
+          surfaceContainerHighest: neutral300,
+          onPrimary: onPrimary,
+          onError: onError,
+          onErrorContainer: onErrorContainer,
+        ),
+        designSystemSpacing: const DesignSystemSpacing(),
+        designSystemTypography: DesignSystemTypography(
+          displayLarge: displayLarge.copyWith(color: neutral900),
+          displayMedium: displayMedium.copyWith(color: neutral900),
+          displaySmall: displaySmall.copyWith(color: neutral900),
+          headlineLarge: headlineLarge.copyWith(color: neutral900),
+          headlineMedium: headlineMedium.copyWith(color: neutral900),
+          headlineSmall: headlineSmall.copyWith(color: neutral900),
+          titleLarge: titleLarge.copyWith(color: neutral900),
+          titleMedium: titleMedium.copyWith(color: neutral900),
+          titleSmall: titleSmall.copyWith(color: neutral900),
+          bodyLarge: bodyLarge.copyWith(color: neutral900),
+          bodyMedium: bodyMedium.copyWith(color: neutral800),
+          bodySmall: bodySmall.copyWith(color: neutral700),
+          labelLarge: labelLarge.copyWith(color: neutral900),
+          labelMedium: labelMedium.copyWith(color: neutral800),
+          labelSmall: labelSmall.copyWith(color: neutral700),
+          caption: caption.copyWith(color: neutral700),
+          overline: overline.copyWith(color: neutral700),
+          arabicText: arabicText.copyWith(color: neutral900),
+        ),
+        designSystemRadius: const DesignSystemRadius(),
+        designSystemShadows: const DesignSystemShadows(),
+        designSystemGradients: const DesignSystemGradients(),
+      ),
+    ],
   );
 
   /// Dark theme data (primary theme for MusicBud)
@@ -576,6 +678,108 @@ class DesignSystem {
         vertical: spacingMD,
       ),
     ),
+
+    // Design system extensions
+    extensions: <ThemeExtension<dynamic>>[
+      DesignSystemColors(
+        primary: primary,
+        secondary: secondary,
+        surface: surface,
+        background: surface,
+        onSurface: onSurface,
+        onSurfaceVariant: onSurfaceVariant,
+        error: error,
+        success: success,
+        warning: warning,
+        info: info,
+        accentBlue: accentBlue,
+        accentPurple: accentPurple,
+        accentGreen: accentGreen,
+        accentOrange: accentOrange,
+        border: border,
+        overlay: overlay,
+        surfaceContainer: surfaceContainer,
+        surfaceContainerHigh: surfaceContainerHigh,
+        surfaceContainerHighest: surfaceContainerHighest,
+        onPrimary: onPrimary,
+        onError: onError,
+        onErrorContainer: onErrorContainer,
+      ),
+      DesignSystemTypography(
+        displayLarge: displayLarge.copyWith(color: onSurface),
+        displayMedium: displayMedium.copyWith(color: onSurface),
+        displaySmall: displaySmall.copyWith(color: onSurface),
+        headlineLarge: headlineLarge.copyWith(color: onSurface),
+        headlineMedium: headlineMedium.copyWith(color: onSurface),
+        headlineSmall: headlineSmall.copyWith(color: onSurface),
+        titleLarge: titleLarge.copyWith(color: onSurface),
+        titleMedium: titleMedium.copyWith(color: onSurface),
+        titleSmall: titleSmall.copyWith(color: onSurface),
+        bodyLarge: bodyLarge.copyWith(color: onSurface),
+        bodyMedium: bodyMedium.copyWith(color: onSurfaceVariant),
+        bodySmall: bodySmall.copyWith(color: onSurfaceVariant),
+        labelLarge: labelLarge.copyWith(color: onSurface),
+        labelMedium: labelMedium.copyWith(color: onSurfaceVariant),
+        labelSmall: labelSmall.copyWith(color: onSurfaceVariant),
+        caption: caption.copyWith(color: onSurfaceVariant),
+        overline: overline.copyWith(color: onSurfaceVariant),
+        arabicText: arabicText.copyWith(color: onSurface),
+      ),
+      const DesignSystemSpacing(),
+      const DesignSystemRadius(),
+      const DesignSystemShadows(),
+      const DesignSystemGradients(),
+      DesignSystemThemeExtension(
+        designSystemColors: DesignSystemColors(
+          primary: primary,
+          secondary: secondary,
+          surface: surface,
+          background: surface,
+          onSurface: onSurface,
+          onSurfaceVariant: onSurfaceVariant,
+          error: error,
+          success: success,
+          warning: warning,
+          info: info,
+          accentBlue: accentBlue,
+          accentPurple: accentPurple,
+          accentGreen: accentGreen,
+          accentOrange: accentOrange,
+          border: border,
+          overlay: overlay,
+          surfaceContainer: surfaceContainer,
+          surfaceContainerHigh: surfaceContainerHigh,
+          surfaceContainerHighest: surfaceContainerHighest,
+          onPrimary: onPrimary,
+          onError: onError,
+          onErrorContainer: onErrorContainer,
+        ),
+        designSystemSpacing: const DesignSystemSpacing(),
+        designSystemTypography: DesignSystemTypography(
+          displayLarge: displayLarge.copyWith(color: onSurface),
+          displayMedium: displayMedium.copyWith(color: onSurface),
+          displaySmall: displaySmall.copyWith(color: onSurface),
+          headlineLarge: headlineLarge.copyWith(color: onSurface),
+          headlineMedium: headlineMedium.copyWith(color: onSurface),
+          headlineSmall: headlineSmall.copyWith(color: onSurface),
+          titleLarge: titleLarge.copyWith(color: onSurface),
+          titleMedium: titleMedium.copyWith(color: onSurface),
+          titleSmall: titleSmall.copyWith(color: onSurface),
+          bodyLarge: bodyLarge.copyWith(color: onSurface),
+          bodyMedium: bodyMedium.copyWith(color: onSurfaceVariant),
+          bodySmall: bodySmall.copyWith(color: onSurfaceVariant),
+          labelLarge: labelLarge.copyWith(color: onSurface),
+          labelMedium: labelMedium.copyWith(color: onSurfaceVariant),
+          labelSmall: labelSmall.copyWith(color: onSurfaceVariant),
+          caption: caption.copyWith(color: onSurfaceVariant),
+          overline: overline.copyWith(color: onSurfaceVariant),
+          arabicText: arabicText.copyWith(color: onSurface),
+        ),
+        designSystemRadius: const DesignSystemRadius(),
+        designSystemShadows: const DesignSystemShadows(),
+        designSystemGradients: const DesignSystemGradients(),
+      ),
+    ],
   );
 }
 
@@ -583,63 +787,29 @@ class DesignSystem {
 // THEME EXTENSIONS
 // ===========================================================================
 
+
 /// Extension for component-specific theming
-extension DesignSystemThemeExtension on ThemeData {
-  /// MusicBud specific colors
-  DesignSystemColors get designSystemColors => DesignSystemColors(
-    primary: colorScheme.primary,
-    secondary: colorScheme.secondary,
-    surface: colorScheme.surface,
-    background: colorScheme.surface,
-    onSurface: colorScheme.onSurface,
-    onSurfaceVariant: colorScheme.onSurfaceVariant,
-    error: colorScheme.error,
-    success: DesignSystem.success,
-    warning: DesignSystem.warning,
-    info: DesignSystem.info,
-    accentBlue: DesignSystem.accentBlue,
-    accentPurple: DesignSystem.accentPurple,
-    accentGreen: DesignSystem.accentGreen,
-    accentOrange: DesignSystem.accentOrange,
-    border: DesignSystem.border,
-    overlay: DesignSystem.overlay,
-    surfaceContainer: DesignSystem.surfaceContainer,
-    onPrimary: DesignSystem.onPrimary,
-  );
+extension ThemeDataDesignSystemExtension on ThemeData {
+  /// Combined design system extension
+  DesignSystemThemeExtension? get designSystem => extension<DesignSystemThemeExtension>();
 
-  /// MusicBud specific typography
-  DesignSystemTypography get designSystemTypography => DesignSystemTypography(
-    displayLarge: textTheme.displayLarge!,
-    displayMedium: textTheme.displayMedium!,
-    displaySmall: textTheme.displaySmall!,
-    headlineLarge: textTheme.headlineLarge!,
-    headlineMedium: textTheme.headlineMedium!,
-    headlineSmall: textTheme.headlineSmall!,
-    titleLarge: textTheme.titleLarge!,
-    titleMedium: textTheme.titleMedium!,
-    titleSmall: textTheme.titleSmall!,
-    bodyLarge: textTheme.bodyLarge!,
-    bodyMedium: textTheme.bodyMedium!,
-    bodySmall: textTheme.bodySmall!,
-    labelLarge: textTheme.labelLarge!,
-    labelMedium: textTheme.labelMedium!,
-    labelSmall: textTheme.labelSmall!,
-    caption: DesignSystem.caption,
-    overline: DesignSystem.overline,
-    arabicText: DesignSystem.arabicText,
-  );
+  /// Colors extension
+  DesignSystemColors? get designSystemColors => extension<DesignSystemColors>();
 
-  /// MusicBud specific spacing
-  DesignSystemSpacing get designSystemSpacing => const DesignSystemSpacing();
+  /// Typography extension
+  DesignSystemTypography? get designSystemTypography => extension<DesignSystemTypography>();
 
-  /// MusicBud specific border radius
-  DesignSystemRadius get designSystemRadius => const DesignSystemRadius();
+  /// Spacing extension
+  DesignSystemSpacing? get designSystemSpacing => extension<DesignSystemSpacing>();
 
-  /// MusicBud specific shadows
-  DesignSystemShadows get designSystemShadows => const DesignSystemShadows();
+  /// Radius extension
+  DesignSystemRadius? get designSystemRadius => extension<DesignSystemRadius>();
 
-  /// MusicBud specific gradients
-  DesignSystemGradients get designSystemGradients => const DesignSystemGradients();
+  /// Shadows extension
+  DesignSystemShadows? get designSystemShadows => extension<DesignSystemShadows>();
+
+  /// Gradients extension
+  DesignSystemGradients? get designSystemGradients => extension<DesignSystemGradients>();
 }
 
 /// Colors extension class
@@ -662,7 +832,11 @@ class DesignSystemColors extends ThemeExtension<DesignSystemColors> {
     required this.border,
     required this.overlay,
     required this.surfaceContainer,
+    required this.surfaceContainerHigh,
+    required this.surfaceContainerHighest,
     required this.onPrimary,
+    required this.onError,
+    required this.onErrorContainer,
   });
 
   final Color primary;
@@ -682,7 +856,11 @@ class DesignSystemColors extends ThemeExtension<DesignSystemColors> {
   final Color border;
   final Color overlay;
   final Color surfaceContainer;
+  final Color surfaceContainerHigh;
+  final Color surfaceContainerHighest;
   final Color onPrimary;
+  final Color onError;
+  final Color onErrorContainer;
 
   @override
   DesignSystemColors copyWith({
@@ -703,7 +881,11 @@ class DesignSystemColors extends ThemeExtension<DesignSystemColors> {
     Color? border,
     Color? overlay,
     Color? surfaceContainer,
+    Color? surfaceContainerHigh,
+    Color? surfaceContainerHighest,
     Color? onPrimary,
+    Color? onError,
+    Color? onErrorContainer,
   }) {
     return DesignSystemColors(
       primary: primary ?? this.primary,
@@ -723,7 +905,11 @@ class DesignSystemColors extends ThemeExtension<DesignSystemColors> {
       border: border ?? this.border,
       overlay: overlay ?? this.overlay,
       surfaceContainer: surfaceContainer ?? this.surfaceContainer,
+      surfaceContainerHigh: surfaceContainerHigh ?? this.surfaceContainerHigh,
+      surfaceContainerHighest: surfaceContainerHighest ?? this.surfaceContainerHighest,
       onPrimary: onPrimary ?? this.onPrimary,
+      onError: onError ?? this.onError,
+      onErrorContainer: onErrorContainer ?? this.onErrorContainer,
     );
   }
 
@@ -748,7 +934,11 @@ class DesignSystemColors extends ThemeExtension<DesignSystemColors> {
       border: Color.lerp(border, other.border, t)!,
       overlay: Color.lerp(overlay, other.overlay, t)!,
       surfaceContainer: Color.lerp(surfaceContainer, other.surfaceContainer, t)!,
+      surfaceContainerHigh: Color.lerp(surfaceContainerHigh, other.surfaceContainerHigh, t)!,
+      surfaceContainerHighest: Color.lerp(surfaceContainerHighest, other.surfaceContainerHighest, t)!,
       onPrimary: Color.lerp(onPrimary, other.onPrimary, t)!,
+      onError: Color.lerp(onError, other.onError, t)!,
+      onErrorContainer: Color.lerp(onErrorContainer, other.onErrorContainer, t)!,
     );
   }
 }
@@ -991,5 +1181,56 @@ class DesignSystemGradients extends ThemeExtension<DesignSystemGradients> {
   DesignSystemGradients lerp(DesignSystemGradients? other, double t) {
     if (other is! DesignSystemGradients) return this;
     return DesignSystemGradients();
+  }
+}
+
+/// Main theme extension that combines all design system components
+class DesignSystemThemeExtension extends ThemeExtension<DesignSystemThemeExtension> {
+  const DesignSystemThemeExtension({
+    required this.designSystemColors,
+    required this.designSystemSpacing,
+    required this.designSystemTypography,
+    required this.designSystemRadius,
+    required this.designSystemShadows,
+    required this.designSystemGradients,
+  });
+
+  final DesignSystemColors designSystemColors;
+  final DesignSystemSpacing designSystemSpacing;
+  final DesignSystemTypography designSystemTypography;
+  final DesignSystemRadius designSystemRadius;
+  final DesignSystemShadows designSystemShadows;
+  final DesignSystemGradients designSystemGradients;
+
+  @override
+  DesignSystemThemeExtension copyWith({
+    DesignSystemColors? designSystemColors,
+    DesignSystemSpacing? designSystemSpacing,
+    DesignSystemTypography? designSystemTypography,
+    DesignSystemRadius? designSystemRadius,
+    DesignSystemShadows? designSystemShadows,
+    DesignSystemGradients? designSystemGradients,
+  }) {
+    return DesignSystemThemeExtension(
+      designSystemColors: designSystemColors ?? this.designSystemColors,
+      designSystemSpacing: designSystemSpacing ?? this.designSystemSpacing,
+      designSystemTypography: designSystemTypography ?? this.designSystemTypography,
+      designSystemRadius: designSystemRadius ?? this.designSystemRadius,
+      designSystemShadows: designSystemShadows ?? this.designSystemShadows,
+      designSystemGradients: designSystemGradients ?? this.designSystemGradients,
+    );
+  }
+
+  @override
+  DesignSystemThemeExtension lerp(DesignSystemThemeExtension? other, double t) {
+    if (other is! DesignSystemThemeExtension) return this;
+    return DesignSystemThemeExtension(
+      designSystemColors: designSystemColors.lerp(other.designSystemColors, t),
+      designSystemSpacing: designSystemSpacing.lerp(other.designSystemSpacing, t),
+      designSystemTypography: designSystemTypography.lerp(other.designSystemTypography, t),
+      designSystemRadius: designSystemRadius.lerp(other.designSystemRadius, t),
+      designSystemShadows: designSystemShadows.lerp(other.designSystemShadows, t),
+      designSystemGradients: designSystemGradients.lerp(other.designSystemGradients, t),
+    );
   }
 }

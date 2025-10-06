@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/design_system.dart';
+import '../../../core/theme/design_system.dart';
 import '../builders/card_builder.dart';
+import '../utils/theme_helper.dart';
 
 /// A factory class for creating specific card types.
 /// Provides pre-configured card builders for common use cases in the music app.
@@ -18,14 +19,16 @@ import '../builders/card_builder.dart';
 ///
 /// // Create different card types
 /// final playlistCard = factory.createPlaylistCard(
+///   context: context,
 ///   title: 'My Playlist',
 ///   trackCount: '25 tracks',
 ///   imageUrl: 'https://example.com/playlist.jpg',
-///   accentColor: DesignSystem.primary,
+///   accentColor: ThemeHelper.getDesignSystemColors(context).primary,
 ///   onTap: () => navigateToPlaylist(),
 /// );
 ///
 /// final artistCard = factory.createArtistCard(
+///   context: context,
 ///   name: 'Artist Name',
 ///   genre: 'Pop',
 ///   followerCount: '1.2M followers',
@@ -36,6 +39,7 @@ import '../builders/card_builder.dart';
 class CardFactory {
   /// Creates a playlist card with consistent styling
   Widget createPlaylistCard({
+    required BuildContext context,
     required String title,
     required String trackCount,
     required String imageUrl,
@@ -44,10 +48,14 @@ class CardFactory {
     double? elevation,
     EdgeInsetsGeometry? margin,
   }) {
+    final colors = ThemeHelper.getDesignSystemColors(context);
+    final spacing = ThemeHelper.getDesignSystemSpacing(context);
+    final radius = ThemeHelper.getDesignSystemRadius(context);
+
     return CardBuilder()
         .withVariant(CardVariant.primary)
         .withElevation(elevation ?? 2)
-        .withMargin(margin ?? EdgeInsets.all(DesignSystem.spacingXS))
+        .withMargin(margin ?? EdgeInsets.all(spacing.xs))
         .withOnTap(onTap ?? () {})
         .withContent(
           child: Column(
@@ -58,11 +66,11 @@ class CardFactory {
                 height: 120,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
-                  color: accentColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(radius.lg),
+                  color: accentColor.withValues(alpha: 0.1),
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
+                  borderRadius: BorderRadius.circular(radius.lg),
                   child: Image.network(
                     imageUrl,
                     fit: BoxFit.cover,
@@ -77,47 +85,54 @@ class CardFactory {
                 ),
               ),
 
-              SizedBox(height: DesignSystem.spacingMD),
+              SizedBox(height: spacing.md),
 
               // Playlist Info
               Text(
                 title,
-                style: DesignSystem.titleSmall.copyWith(
-                  color: DesignSystem.onSurface,
+                style: TextStyle(
+                  color: colors.onSurface,
                   fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  fontFamily: 'Cairo',
+                  height: 1.40,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              SizedBox(height: DesignSystem.spacingXS),
+              SizedBox(height: spacing.xs),
               Text(
                 trackCount,
-                style: DesignSystem.caption.copyWith(
-                  color: DesignSystem.onSurfaceVariant,
+                style: TextStyle(
+                  color: colors.onSurfaceVariant,
+                  fontSize: 12,
+                  fontFamily: 'Josefin Sans',
+                  fontWeight: FontWeight.w400,
+                  height: 1.50,
                 ),
               ),
 
-              SizedBox(height: DesignSystem.spacingMD),
+              SizedBox(height: spacing.md),
 
               // Action Row
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Container(
-                    padding: EdgeInsets.all(DesignSystem.spacingSM),
+                    padding: EdgeInsets.all(spacing.sm),
                     decoration: BoxDecoration(
-                      color: DesignSystem.primary,
+                      color: colors.primary,
                       borderRadius: BorderRadius.circular(999),
                     ),
                     child: Icon(
                       Icons.play_arrow,
-                      color: DesignSystem.onPrimary,
+                      color: colors.onPrimary,
                       size: 20,
                     ),
                   ),
                   Icon(
                     Icons.more_vert,
-                    color: DesignSystem.onSurfaceVariant,
+                    color: colors.onSurfaceVariant,
                     size: 20,
                   ),
                 ],
@@ -130,6 +145,7 @@ class CardFactory {
 
   /// Creates an artist card with consistent styling
   Widget createArtistCard({
+    required BuildContext context,
     required String name,
     required String genre,
     required String followerCount,
@@ -138,10 +154,14 @@ class CardFactory {
     double? elevation,
     EdgeInsetsGeometry? margin,
   }) {
+    final colors = ThemeHelper.getDesignSystemColors(context);
+    final spacing = ThemeHelper.getDesignSystemSpacing(context);
+    final radius = ThemeHelper.getDesignSystemRadius(context);
+
     return CardBuilder()
         .withVariant(CardVariant.primary)
         .withElevation(elevation ?? 2)
-        .withMargin(margin ?? EdgeInsets.all(DesignSystem.spacingXS))
+        .withMargin(margin ?? EdgeInsets.all(spacing.xs))
         .withOnTap(onTap ?? () {})
         .withContent(
           child: Column(
@@ -152,18 +172,18 @@ class CardFactory {
                 height: 140,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
-                  color: DesignSystem.surfaceContainerHigh,
+                  borderRadius: BorderRadius.circular(radius.lg),
+                  color: colors.surfaceContainerHigh,
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
+                  borderRadius: BorderRadius.circular(radius.lg),
                   child: Image.network(
                     imageUrl,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Icon(
                         Icons.person,
-                        color: DesignSystem.onSurfaceVariant,
+                        color: colors.onSurfaceVariant,
                         size: 48,
                       );
                     },
@@ -171,34 +191,45 @@ class CardFactory {
                 ),
               ),
 
-              SizedBox(height: DesignSystem.spacingMD),
+              SizedBox(height: spacing.md),
 
               // Artist Info
               Text(
                 name,
-                style: DesignSystem.titleMedium.copyWith(
-                  color: DesignSystem.onSurface,
+                style: TextStyle(
+                  color: colors.onSurface,
                   fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                  fontFamily: 'Cairo',
+                  height: 1.35,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              SizedBox(height: DesignSystem.spacingXS),
+              SizedBox(height: spacing.xs),
               Text(
                 genre,
-                style: DesignSystem.bodySmall.copyWith(
-                  color: DesignSystem.onSurfaceVariant,
+                style: TextStyle(
+                  color: colors.onSurfaceVariant,
+                  fontSize: 14,
+                  fontFamily: 'Josefin Sans',
+                  fontWeight: FontWeight.w400,
+                  height: 1.50,
                 ),
               ),
-              SizedBox(height: DesignSystem.spacingXS),
+              SizedBox(height: spacing.xs),
               Text(
                 followerCount,
-                style: DesignSystem.caption.copyWith(
-                  color: DesignSystem.onSurfaceVariant,
+                style: TextStyle(
+                  color: colors.onSurfaceVariant,
+                  fontSize: 12,
+                  fontFamily: 'Josefin Sans',
+                  fontWeight: FontWeight.w400,
+                  height: 1.50,
                 ),
               ),
 
-              SizedBox(height: DesignSystem.spacingMD),
+              SizedBox(height: spacing.md),
 
               // Follow Button
               SizedBox(
@@ -206,12 +237,12 @@ class CardFactory {
                 child: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: DesignSystem.primary,
-                    foregroundColor: DesignSystem.onPrimary,
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.onPrimary,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
+                      borderRadius: BorderRadius.circular(radius.md),
                     ),
-                    padding: EdgeInsets.symmetric(vertical: DesignSystem.spacingSM),
+                    padding: EdgeInsets.symmetric(vertical: spacing.sm),
                   ),
                   child: Text('Follow'),
                 ),
@@ -224,6 +255,7 @@ class CardFactory {
 
   /// Creates a track/song card with consistent styling
   Widget createTrackCard({
+    required BuildContext context,
     required String title,
     required String artist,
     required String album,
@@ -235,10 +267,14 @@ class CardFactory {
     double? elevation,
     EdgeInsetsGeometry? margin,
   }) {
+    final colors = ThemeHelper.getDesignSystemColors(context);
+    final spacing = ThemeHelper.getDesignSystemSpacing(context);
+    final radius = ThemeHelper.getDesignSystemRadius(context);
+
     return CardBuilder()
         .withVariant(CardVariant.primary)
         .withElevation(elevation ?? 1)
-        .withMargin(margin ?? EdgeInsets.symmetric(vertical: DesignSystem.spacingXXS))
+        .withMargin(margin ?? EdgeInsets.symmetric(vertical: spacing.xxs))
         .withOnTap(onTap ?? () {})
         .withContent(
           child: Row(
@@ -248,18 +284,18 @@ class CardFactory {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
-                  color: DesignSystem.surfaceContainerHigh,
+                  borderRadius: BorderRadius.circular(radius.md),
+                  color: colors.surfaceContainerHigh,
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
+                  borderRadius: BorderRadius.circular(radius.md),
                   child: Image.network(
                     imageUrl,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Icon(
                         Icons.music_note,
-                        color: DesignSystem.onSurfaceVariant,
+                        color: colors.onSurfaceVariant,
                         size: 24,
                       );
                     },
@@ -267,7 +303,7 @@ class CardFactory {
                 ),
               ),
 
-              SizedBox(width: DesignSystem.spacingMD),
+              SizedBox(width: spacing.md),
 
               // Track Info
               Expanded(
@@ -276,27 +312,38 @@ class CardFactory {
                   children: [
                     Text(
                       title,
-                      style: DesignSystem.titleSmall.copyWith(
-                        color: DesignSystem.onSurface,
+                      style: TextStyle(
+                        color: colors.onSurface,
                         fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        fontFamily: 'Cairo',
+                        height: 1.40,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: DesignSystem.spacingXXS),
+                    SizedBox(height: spacing.xxs),
                     Text(
                       artist,
-                      style: DesignSystem.bodySmall.copyWith(
-                        color: DesignSystem.onSurfaceVariant,
+                      style: TextStyle(
+                        color: colors.onSurfaceVariant,
+                        fontSize: 14,
+                        fontFamily: 'Josefin Sans',
+                        fontWeight: FontWeight.w400,
+                        height: 1.50,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: DesignSystem.spacingXXS),
+                    SizedBox(height: spacing.xxs),
                     Text(
                       album,
-                      style: DesignSystem.caption.copyWith(
-                        color: DesignSystem.onSurfaceVariant,
+                      style: TextStyle(
+                        color: colors.onSurfaceVariant,
+                        fontSize: 12,
+                        fontFamily: 'Josefin Sans',
+                        fontWeight: FontWeight.w400,
+                        height: 1.50,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -308,12 +355,16 @@ class CardFactory {
               // Duration
               Text(
                 _formatDuration(duration),
-                style: DesignSystem.bodySmall.copyWith(
-                  color: DesignSystem.onSurfaceVariant,
+                style: TextStyle(
+                  color: colors.onSurfaceVariant,
+                  fontSize: 14,
+                  fontFamily: 'Josefin Sans',
+                  fontWeight: FontWeight.w400,
+                  height: 1.50,
                 ),
               ),
 
-              SizedBox(width: DesignSystem.spacingMD),
+              SizedBox(width: spacing.md),
 
               // Actions
               Row(
@@ -322,7 +373,7 @@ class CardFactory {
                     onPressed: onPlay,
                     icon: Icon(
                       Icons.play_circle_fill,
-                      color: DesignSystem.primary,
+                      color: colors.primary,
                       size: 32,
                     ),
                   ),
@@ -330,7 +381,7 @@ class CardFactory {
                     onPressed: onAddToPlaylist,
                     icon: Icon(
                       Icons.more_vert,
-                      color: DesignSystem.onSurfaceVariant,
+                      color: colors.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -343,6 +394,7 @@ class CardFactory {
 
   /// Creates an album card with consistent styling
   Widget createAlbumCard({
+    required BuildContext context,
     required String title,
     required String artist,
     required String year,
@@ -352,10 +404,14 @@ class CardFactory {
     double? elevation,
     EdgeInsetsGeometry? margin,
   }) {
+    final colors = ThemeHelper.getDesignSystemColors(context);
+    final spacing = ThemeHelper.getDesignSystemSpacing(context);
+    final radius = ThemeHelper.getDesignSystemRadius(context);
+
     return CardBuilder()
         .withVariant(CardVariant.primary)
         .withElevation(elevation ?? 2)
-        .withMargin(margin ?? EdgeInsets.all(DesignSystem.spacingXS))
+        .withMargin(margin ?? EdgeInsets.all(spacing.xs))
         .withOnTap(onTap ?? () {})
         .withContent(
           child: Column(
@@ -366,18 +422,18 @@ class CardFactory {
                 height: 160,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
-                  color: DesignSystem.surfaceContainerHigh,
+                  borderRadius: BorderRadius.circular(radius.lg),
+                  color: colors.surfaceContainerHigh,
                 ),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
+                  borderRadius: BorderRadius.circular(radius.lg),
                   child: Image.network(
                     imageUrl,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Icon(
                         Icons.album,
-                        color: DesignSystem.onSurfaceVariant,
+                        color: colors.onSurfaceVariant,
                         size: 48,
                       );
                     },
@@ -385,36 +441,47 @@ class CardFactory {
                 ),
               ),
 
-              SizedBox(height: DesignSystem.spacingMD),
+              SizedBox(height: spacing.md),
 
               // Album Info
               Text(
                 title,
-                style: DesignSystem.titleMedium.copyWith(
-                  color: DesignSystem.onSurface,
+                style: TextStyle(
+                  color: colors.onSurface,
                   fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                  fontFamily: 'Cairo',
+                  height: 1.35,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              SizedBox(height: DesignSystem.spacingXS),
+              SizedBox(height: spacing.xs),
               Text(
                 artist,
-                style: DesignSystem.bodyMedium.copyWith(
-                  color: DesignSystem.onSurfaceVariant,
+                style: TextStyle(
+                  color: colors.onSurfaceVariant,
+                  fontSize: 16,
+                  fontFamily: 'Josefin Sans',
+                  fontWeight: FontWeight.w400,
+                  height: 1.40,
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
-              SizedBox(height: DesignSystem.spacingXS),
+              SizedBox(height: spacing.xs),
               Text(
                 '$year • $trackCount tracks',
-                style: DesignSystem.caption.copyWith(
-                  color: DesignSystem.onSurfaceVariant,
+                style: TextStyle(
+                  color: colors.onSurfaceVariant,
+                  fontSize: 12,
+                  fontFamily: 'Josefin Sans',
+                  fontWeight: FontWeight.w400,
+                  height: 1.50,
                 ),
               ),
 
-              SizedBox(height: DesignSystem.spacingMD),
+              SizedBox(height: spacing.md),
 
               // Play Button
               SizedBox(
@@ -424,12 +491,12 @@ class CardFactory {
                   icon: Icon(Icons.play_arrow, size: 20),
                   label: Text('Play'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: DesignSystem.primary,
-                    foregroundColor: DesignSystem.onPrimary,
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.onPrimary,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
+                      borderRadius: BorderRadius.circular(radius.md),
                     ),
-                    padding: EdgeInsets.symmetric(vertical: DesignSystem.spacingSM),
+                    padding: EdgeInsets.symmetric(vertical: spacing.sm),
                   ),
                 ),
               ),
@@ -441,6 +508,7 @@ class CardFactory {
 
   /// Creates a statistics card for displaying metrics
   Widget createStatsCard({
+    required BuildContext context,
     required String title,
     required String value,
     required IconData icon,
@@ -449,10 +517,13 @@ class CardFactory {
     double? elevation,
     EdgeInsetsGeometry? margin,
   }) {
+    final colors = ThemeHelper.getDesignSystemColors(context);
+    final spacing = ThemeHelper.getDesignSystemSpacing(context);
+
     return CardBuilder()
         .withVariant(CardVariant.secondary)
         .withElevation(elevation ?? 1)
-        .withMargin(margin ?? EdgeInsets.all(DesignSystem.spacingXS))
+        .withMargin(margin ?? EdgeInsets.all(spacing.xs))
         .withOnTap(onTap)
         .withContent(
           child: Column(
@@ -461,21 +532,28 @@ class CardFactory {
               Icon(
                 icon,
                 size: 32,
-                color: iconColor ?? DesignSystem.primary,
+                color: iconColor ?? colors.primary,
               ),
-              SizedBox(height: DesignSystem.spacingSM),
+              SizedBox(height: spacing.sm),
               Text(
                 value,
-                style: DesignSystem.titleLarge.copyWith(
-                  color: DesignSystem.onSurface,
+                style: TextStyle(
+                  color: colors.onSurface,
                   fontWeight: FontWeight.w700,
+                  fontSize: 22,
+                  fontFamily: 'Cairo',
+                  height: 1.30,
                 ),
               ),
-              SizedBox(height: DesignSystem.spacingXS),
+              SizedBox(height: spacing.xs),
               Text(
                 title,
-                style: DesignSystem.bodySmall.copyWith(
-                  color: DesignSystem.onSurfaceVariant,
+                style: TextStyle(
+                  color: colors.onSurfaceVariant,
+                  fontSize: 14,
+                  fontFamily: 'Josefin Sans',
+                  fontWeight: FontWeight.w400,
+                  height: 1.50,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -487,6 +565,7 @@ class CardFactory {
 
   /// Creates a feature/highlight card
   Widget createFeatureCard({
+    required BuildContext context,
     required String title,
     required String description,
     required String imageUrl,
@@ -495,21 +574,25 @@ class CardFactory {
     double? elevation,
     EdgeInsetsGeometry? margin,
   }) {
+    final colors = ThemeHelper.getDesignSystemColors(context);
+    final spacing = ThemeHelper.getDesignSystemSpacing(context);
+    final radius = ThemeHelper.getDesignSystemRadius(context);
+
     return CardBuilder()
         .withVariant(CardVariant.accent)
         .withElevation(elevation ?? 3)
-        .withMargin(margin ?? EdgeInsets.all(DesignSystem.spacingXS))
+        .withMargin(margin ?? EdgeInsets.all(spacing.xs))
         .withOnTap(onTap ?? () {})
         .withContent(
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
+              borderRadius: BorderRadius.circular(radius.lg),
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  DesignSystem.primary.withOpacity(0.1),
-                  DesignSystem.primary.withOpacity(0.05),
+                  colors.primary.withValues(alpha: 0.1),
+                  colors.primary.withValues(alpha: 0.05),
                 ],
               ),
             ),
@@ -520,20 +603,24 @@ class CardFactory {
                 Align(
                   alignment: Alignment.topRight,
                   child: Container(
-                    margin: EdgeInsets.all(DesignSystem.spacingSM),
+                    margin: EdgeInsets.all(spacing.sm),
                     padding: EdgeInsets.symmetric(
-                      horizontal: DesignSystem.spacingSM,
-                      vertical: DesignSystem.spacingXXS,
+                      horizontal: spacing.sm,
+                      vertical: spacing.xxs,
                     ),
                     decoration: BoxDecoration(
-                      color: DesignSystem.primary,
-                      borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
+                      color: colors.primary,
+                      borderRadius: BorderRadius.circular(radius.circular),
                     ),
                     child: Text(
                       badge,
-                      style: DesignSystem.caption.copyWith(
-                        color: DesignSystem.onPrimary,
+                      style: TextStyle(
+                        color: colors.onPrimary,
                         fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                        fontFamily: 'Josefin Sans',
+                        fontWeight: FontWeight.w400,
+                        height: 1.50,
                       ),
                     ),
                   ),
@@ -541,32 +628,39 @@ class CardFactory {
 
                 // Content
                 Padding(
-                  padding: EdgeInsets.all(DesignSystem.spacingMD),
+                  padding: EdgeInsets.all(spacing.md),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         title,
-                        style: DesignSystem.titleLarge.copyWith(
-                          color: DesignSystem.onSurface,
+                        style: TextStyle(
+                          color: colors.onSurface,
                           fontWeight: FontWeight.w700,
+                          fontSize: 22,
+                          fontFamily: 'Cairo',
+                          height: 1.30,
                         ),
                       ),
-                      SizedBox(height: DesignSystem.spacingSM),
+                      SizedBox(height: spacing.sm),
                       Text(
                         description,
-                        style: DesignSystem.bodyMedium.copyWith(
-                          color: DesignSystem.onSurfaceVariant,
+                        style: TextStyle(
+                          color: colors.onSurfaceVariant,
+                          fontSize: 16,
+                          fontFamily: 'Josefin Sans',
+                          fontWeight: FontWeight.w400,
+                          height: 1.40,
                         ),
                       ),
-                      SizedBox(height: DesignSystem.spacingLG),
+                      SizedBox(height: spacing.lg),
                       ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: DesignSystem.primary,
-                          foregroundColor: DesignSystem.onPrimary,
+                          backgroundColor: colors.primary,
+                          foregroundColor: colors.onPrimary,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
+                            borderRadius: BorderRadius.circular(radius.md),
                           ),
                         ),
                         child: Text('Learn More'),

@@ -133,10 +133,12 @@ class MainNavigationDrawer extends StatelessWidget {
               title: Text(item.label, style: const TextStyle(fontSize: 14)),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => item.pageBuilder(context)),
-                );
+                if (item.pageBuilder != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => item.pageBuilder!(context)),
+                  );
+                }
                 onDrawerItemTap?.call();
               },
             )),
@@ -160,10 +162,12 @@ class MainNavigationDrawer extends StatelessWidget {
               title: Text(item.label, style: const TextStyle(fontSize: 14)),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => item.pageBuilder(context)),
-                );
+                if (item.pageBuilder != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => item.pageBuilder!(context)),
+                  );
+                }
                 onDrawerItemTap?.call();
               },
             )),
@@ -187,10 +191,12 @@ class MainNavigationDrawer extends StatelessWidget {
               title: Text(item.label, style: const TextStyle(fontSize: 14)),
               onTap: () {
                 Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => item.pageBuilder(context)),
-                );
+                if (item.pageBuilder != null) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => item.pageBuilder!(context)),
+                  );
+                }
                 onDrawerItemTap?.call();
               },
             )),

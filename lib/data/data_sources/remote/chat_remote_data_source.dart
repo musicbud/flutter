@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import '../../../core/error/exceptions.dart';
 import '../../network/dio_client.dart';
-import '../../../domain/models/chat.dart';
-import '../../../domain/models/chat_message.dart';
-import '../../../domain/models/message.dart';
-import '../../../domain/models/channel.dart';
-import '../../../domain/models/user_profile.dart';
+import '../../../models/chat.dart';
+import '../../../models/chat_message.dart';
+import '../../../models/message.dart';
+import '../../../models/channel.dart';
+import '../../../models/user_profile.dart';
 import '../../../config/api_config.dart';
 
 abstract class ChatRemoteDataSource {

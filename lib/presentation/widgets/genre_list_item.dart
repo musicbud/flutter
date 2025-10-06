@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../domain/models/genre.dart';
+import '../../../models/genre.dart';
 
 class GenreListItem extends StatelessWidget {
   final Genre genre;

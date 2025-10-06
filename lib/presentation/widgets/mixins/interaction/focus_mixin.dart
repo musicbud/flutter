@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import '../../../../core/theme/design_system.dart';
 
 /// A mixin that provides comprehensive focus state management for widgets.
 ///
@@ -107,7 +109,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
   void _initializeFocusAnimations() {
     _focusAnimationController = AnimationController(
       duration: const Duration(milliseconds: 200),
-      vsync: this,
+      vsync: const _TickerProvider(),
     );
 
     _focusScaleAnimation = Tween<double>(
@@ -179,7 +181,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     bool skipTraversal = false,
     bool descendantsAreFocusable = true,
     bool autofocus = false,
-    FocusOnKeyCallback? onKey,
+    FocusOnKeyEventCallback? onKeyEvent,
     String? debugLabel,
   }) {
     _focusConfig = FocusConfig(
@@ -189,7 +191,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
       skipTraversal: skipTraversal,
       descendantsAreFocusable: descendantsAreFocusable,
       autofocus: autofocus,
-      onKey: onKey,
+      onKeyEvent: onKeyEvent,
       debugLabel: debugLabel,
     );
 
@@ -249,7 +251,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     required Widget child,
     VoidCallback? onFocus,
     VoidCallback? onUnfocus,
-    FocusOnKeyCallback? onKey,
+    FocusOnKeyEventCallback? onKeyEvent,
     bool canRequestFocus = true,
     bool skipTraversal = false,
     bool autofocus = false,
@@ -263,7 +265,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
           onUnfocus?.call();
         }
       } : null,
-      onKey: onKey,
+      onKeyEvent: onKeyEvent,
       canRequestFocus: canRequestFocus,
       skipTraversal: skipTraversal,
       autofocus: autofocus,
@@ -466,7 +468,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
       } : null,
       child: IconButton(
         onPressed: _focusEnabled ? onPressed : null,
-        icon: Icon(icon),
+        icon: icon,
         iconSize: size ?? 24,
         color: color ?? design.designSystemColors.onSurface,
         padding: padding ?? EdgeInsets.all(design.designSystemSpacing.sm),
@@ -1577,6 +1579,14 @@ enum FocusState {
   focused,
 }
 
+/// Ticker provider for animations
+class _TickerProvider extends TickerProvider {
+  const _TickerProvider();
+
+  @override
+  Ticker createTicker(TickerCallback onTick) => Ticker(onTick);
+}
+
 /// Focus configuration
 class FocusConfig {
   /// Callback when focus is gained
@@ -1597,8 +1607,11 @@ class FocusConfig {
   /// Whether to autofocus
   final bool autofocus;
 
+  /// Whether animations are enabled
+  final bool enableAnimations;
+
   /// Key event handler
-  final FocusOnKeyCallback? onKey;
+  final FocusOnKeyEventCallback? onKeyEvent;
 
   /// Debug label
   final String? debugLabel;
@@ -1610,7 +1623,8 @@ class FocusConfig {
     this.skipTraversal = false,
     this.descendantsAreFocusable = true,
     this.autofocus = false,
-    this.onKey,
+    this.enableAnimations = true,
+    this.onKeyEvent,
     this.debugLabel,
   });
 }

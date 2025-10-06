@@ -1,5 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/repositories/channel_repository.dart';
+import '../../../models/channel.dart';
+import '../../../models/channel_user.dart';
+import '../../../models/channel_stats.dart';
 import 'channel_event.dart';
 import 'channel_state.dart';
 
@@ -34,7 +37,7 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
     );
     result.fold(
       (failure) => emit(const ChannelError('Failed to load channels')),
-      (channels) => emit(ChannelsLoaded(channels)),
+      (channels) => emit(ChannelsLoaded(channels as List<Channel>)),
     );
   }
 
@@ -46,7 +49,7 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
     final result = await repository.getChannelById(event.id);
     result.fold(
       (failure) => emit(const ChannelError('Failed to load channel')),
-      (channel) => emit(SingleChannelLoaded(channel)),
+      (channel) => emit(SingleChannelLoaded(channel as Channel)),
     );
   }
 
@@ -58,7 +61,7 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
     final result = await repository.createChannel(event.channel);
     result.fold(
       (failure) => emit(const ChannelError('Failed to create channel')),
-      (channel) => emit(SingleChannelLoaded(channel)),
+      (channel) => emit(SingleChannelLoaded(channel as Channel)),
     );
   }
 
@@ -70,7 +73,7 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
     final result = await repository.updateChannel(event.channel.id, event.channel);
     result.fold(
       (failure) => emit(const ChannelError('Failed to update channel')),
-      (channel) => emit(SingleChannelLoaded(channel)),
+      (channel) => emit(SingleChannelLoaded(channel as Channel)),
     );
   }
 
@@ -118,7 +121,7 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
     final result = await repository.getChannelMembers(event.channelId);
     result.fold(
       (failure) => emit(const ChannelError('Failed to load channel members')),
-      (members) => emit(ChannelMembersLoaded(members)),
+      (members) => emit(ChannelMembersLoaded(members.map((id) => ChannelUser(id: id, username: id, role: 'member', joinedAt: DateTime.now())).toList())),
     );
   }
 
@@ -193,7 +196,7 @@ class ChannelBloc extends Bloc<ChannelEvent, ChannelState> {
     final result = await repository.getChannelStats(event.channelId);
     result.fold(
       (failure) => emit(const ChannelError('Failed to load channel stats')),
-      (stats) => emit(ChannelStatsLoaded(stats)),
+      (stats) => emit(ChannelStatsLoaded(stats as ChannelStats)),
     );
   }
 }

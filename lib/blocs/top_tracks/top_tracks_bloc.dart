@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/content_repository.dart';
-import '../../domain/models/common_track.dart';
+import '../../models/common_track.dart';
 import 'top_tracks_event.dart';
 import 'top_tracks_state.dart';
 

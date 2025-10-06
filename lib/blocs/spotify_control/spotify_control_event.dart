@@ -1,4 +1,4 @@
-import '../../domain/models/common_track.dart';
+import '../../models/common_track.dart';
 
 /// Base class for all Spotify control events
 abstract class SpotifyControlEvent {}

@@ -1,4 +1,4 @@
-import '../../domain/models/onboarding_step.dart';
+import '../../../models/onboarding_step.dart';
 
 abstract class OnboardingRepository {
   /// Get the list of onboarding steps in order

@@ -1,25 +1,24 @@
 import 'package:dio/dio.dart';
 import '../../../core/error/exceptions.dart';
 import '../../network/dio_client.dart';
-import '../../../domain/models/common_track.dart';
-import '../../../domain/models/common_artist.dart';
-import '../../../domain/models/common_genre.dart';
-import '../../../domain/models/common_album.dart';
-import '../../../domain/models/track.dart';
+import '../../../models/track.dart';
+import '../../../models/artist.dart';
+import '../../../models/album.dart';
+import '../../../models/genre.dart';
 import '../../../config/api_config.dart';
 
 abstract class ContentRemoteDataSource {
   // User's content
-  Future<List<CommonTrack>> getMyLikedTracks();
-  Future<List<CommonArtist>> getMyLikedArtists();
-  Future<List<CommonGenre>> getMyLikedGenres();
-  Future<List<CommonAlbum>> getMyLikedAlbums();
+  Future<List<Track>> getMyLikedTracks();
+  Future<List<Artist>> getMyLikedArtists();
+  Future<List<Genre>> getMyLikedGenres();
+  Future<List<Album>> getMyLikedAlbums();
 
-  Future<List<CommonTrack>> getMyTopTracks();
-  Future<List<CommonArtist>> getMyTopArtists();
-  Future<List<CommonGenre>> getMyTopGenres();
+  Future<List<Track>> getMyTopTracks();
+  Future<List<Artist>> getMyTopArtists();
+  Future<List<Genre>> getMyTopGenres();
 
-  Future<List<CommonTrack>> getMyPlayedTracks();
+  Future<List<Track>> getMyPlayedTracks();
 
   // Anime/Manga content
   Future<List<dynamic>> getMyTopAnime();
@@ -31,7 +30,7 @@ abstract class ContentRemoteDataSource {
   Future<void> setSpotifyVolume(String deviceId, int volume);
 
   // Popular content
-  Future<List<CommonTrack>> getPopularTracks();
+  Future<List<Track>> getPopularTracks();
 
   // Track management
   Future<List<Track>> getPlayedTracks();
@@ -48,96 +47,96 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       : _dioClient = dioClient;
 
   @override
-  Future<List<CommonTrack>> getMyLikedTracks() async {
+  Future<List<Track>> getMyLikedTracks() async {
     try {
       final response = await _dioClient.post(ApiConfig.myLikedTracks, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
-      return results.map((json) => CommonTrack.fromJson(json)).toList();
+      return results.map((json) => Track.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get liked tracks');
     }
   }
 
   @override
-  Future<List<CommonArtist>> getMyLikedArtists() async {
+  Future<List<Artist>> getMyLikedArtists() async {
     try {
       final response = await _dioClient.post(ApiConfig.myLikedArtists, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
-      return results.map((json) => CommonArtist.fromJson(json)).toList();
+      return results.map((json) => Artist.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get liked artists');
     }
   }
 
   @override
-  Future<List<CommonGenre>> getMyLikedGenres() async {
+  Future<List<Genre>> getMyLikedGenres() async {
     try {
       final response = await _dioClient.post(ApiConfig.myLikedGenres, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
-      return results.map((json) => CommonGenre.fromJson(json)).toList();
+      return results.map((json) => Genre.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get liked genres');
     }
   }
 
   @override
-  Future<List<CommonAlbum>> getMyLikedAlbums() async {
+  Future<List<Album>> getMyLikedAlbums() async {
     try {
       final response = await _dioClient.post(ApiConfig.myLikedAlbums, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
-      return results.map((json) => CommonAlbum.fromJson(json)).toList();
+      return results.map((json) => Album.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get liked albums');
     }
   }
 
   @override
-  Future<List<CommonTrack>> getMyTopTracks() async {
+  Future<List<Track>> getMyTopTracks() async {
     try {
       final response = await _dioClient.post(ApiConfig.myTopTracks, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
-      return results.map((json) => CommonTrack.fromJson(json)).toList();
+      return results.map((json) => Track.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get top tracks');
     }
   }
 
   @override
-  Future<List<CommonArtist>> getMyTopArtists() async {
+  Future<List<Artist>> getMyTopArtists() async {
     try {
       final response = await _dioClient.post(ApiConfig.myTopArtists, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
-      return results.map((json) => CommonArtist.fromJson(json)).toList();
+      return results.map((json) => Artist.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get top artists');
     }
   }
 
   @override
-  Future<List<CommonGenre>> getMyTopGenres() async {
+  Future<List<Genre>> getMyTopGenres() async {
     try {
       final response = await _dioClient.post(ApiConfig.myTopGenres, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
-      return results.map((json) => CommonGenre.fromJson(json)).toList();
+      return results.map((json) => Genre.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get top genres');
     }
   }
 
   @override
-  Future<List<CommonTrack>> getMyPlayedTracks() async {
+  Future<List<Track>> getMyPlayedTracks() async {
     try {
       final response = await _dioClient.post(ApiConfig.myPlayedTracks, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
-      return results.map((json) => CommonTrack.fromJson(json)).toList();
+      return results.map((json) => Track.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get played tracks');
     }
@@ -224,10 +223,10 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   }
 
   @override
-  Future<List<CommonTrack>> getPopularTracks() async {
+  Future<List<Track>> getPopularTracks() async {
     try {
       final response = await _dioClient.get('/content/popular/tracks');
-      return (response.data as List).map((json) => CommonTrack.fromJson(json)).toList();
+      return (response.data as List).map((json) => Track.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get popular tracks');
     }

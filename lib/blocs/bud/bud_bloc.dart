@@ -12,8 +12,8 @@ class BudBloc extends Bloc<BudEvent, BudState> {
     required BudRepository budRepository,
     required CommonItemsRepository commonItemsRepository,
   }) : _budRepository = budRepository,
-       _commonItemsRepository = commonItemsRepository,
-       super(const BudInitial()) {
+        _commonItemsRepository = commonItemsRepository,
+        super(const BudInitial()) {
     // By liked items
     on<BudsByLikedArtistsRequested>(_onBudsByLikedArtistsRequested);
     on<BudsByLikedTracksRequested>(_onBudsByLikedTracksRequested);
@@ -51,70 +51,70 @@ class BudBloc extends Bloc<BudEvent, BudState> {
   }
 
   // By liked items handlers
-  Future<void> _onBudsByLikedArtistsRequested(
-    BudsByLikedArtistsRequested event,
-    Emitter<BudState> emit,
-  ) async {
-    emit(const BudLoading());
-    try {
-      final buds = await _budRepository.getBudsByLikedArtists();
-      emit(BudsByLikedArtistsLoaded(buds: buds));
-    } catch (e) {
-      emit(BudError(e.toString()));
-    }
-  }
+   Future<void> _onBudsByLikedArtistsRequested(
+     BudsByLikedArtistsRequested event,
+     Emitter<BudState> emit,
+   ) async {
+     emit(const BudLoading());
+     try {
+       final buds = await _budRepository.getBudsByLikedArtists();
+       emit(BudsByLikedArtistsLoaded(buds: buds));
+     } catch (e) {
+       emit(BudError(e.toString()));
+     }
+   }
 
-  Future<void> _onBudsByLikedTracksRequested(
-    BudsByLikedTracksRequested event,
-    Emitter<BudState> emit,
-  ) async {
-    emit(const BudLoading());
-    try {
-      final buds = await _budRepository.getBudsByLikedTracks();
-      emit(BudsByLikedTracksLoaded(buds: buds));
-    } catch (e) {
-      emit(BudError(e.toString()));
-    }
-  }
+   Future<void> _onBudsByLikedTracksRequested(
+     BudsByLikedTracksRequested event,
+     Emitter<BudState> emit,
+   ) async {
+     emit(const BudLoading());
+     try {
+       final buds = await _budRepository.getBudsByLikedTracks();
+       emit(BudsByLikedTracksLoaded(buds: buds));
+     } catch (e) {
+       emit(BudError(e.toString()));
+     }
+   }
 
-  Future<void> _onBudsByLikedGenresRequested(
-    BudsByLikedGenresRequested event,
-    Emitter<BudState> emit,
-  ) async {
-    emit(const BudLoading());
-    try {
-      final buds = await _budRepository.getBudsByLikedGenres();
-      emit(BudsByLikedGenresLoaded(buds: buds));
-    } catch (e) {
-      emit(BudError(e.toString()));
-    }
-  }
+   Future<void> _onBudsByLikedGenresRequested(
+     BudsByLikedGenresRequested event,
+     Emitter<BudState> emit,
+   ) async {
+     emit(const BudLoading());
+     try {
+       final buds = await _budRepository.getBudsByLikedGenres();
+       emit(BudsByLikedGenresLoaded(buds: buds));
+     } catch (e) {
+       emit(BudError(e.toString()));
+     }
+   }
 
-  Future<void> _onBudsByLikedAlbumsRequested(
-    BudsByLikedAlbumsRequested event,
-    Emitter<BudState> emit,
-  ) async {
-    emit(const BudLoading());
-    try {
-      final buds = await _budRepository.getBudsByLikedAlbums();
-      emit(BudsByLikedAlbumsLoaded(buds: buds));
-    } catch (e) {
-      emit(BudError(e.toString()));
-    }
-  }
+   Future<void> _onBudsByLikedAlbumsRequested(
+     BudsByLikedAlbumsRequested event,
+     Emitter<BudState> emit,
+   ) async {
+     emit(const BudLoading());
+     try {
+       final buds = await _budRepository.getBudsByLikedAlbums();
+       emit(BudsByLikedAlbumsLoaded(buds: buds));
+     } catch (e) {
+       emit(BudError(e.toString()));
+     }
+   }
 
-  Future<void> _onBudsByPlayedTracksRequested(
-    BudsByPlayedTracksRequested event,
-    Emitter<BudState> emit,
-  ) async {
-    emit(const BudLoading());
-    try {
-      // TODO: Implement when repository supports played tracks
-      emit(const BudsByPlayedTracksLoaded(buds: []));
-    } catch (e) {
-      emit(BudError(e.toString()));
-    }
-  }
+   Future<void> _onBudsByPlayedTracksRequested(
+     BudsByPlayedTracksRequested event,
+     Emitter<BudState> emit,
+   ) async {
+     emit(const BudLoading());
+     try {
+       final buds = await _budRepository.getBudsByPlayedTracks();
+       emit(BudsByPlayedTracksLoaded(buds: buds));
+     } catch (e) {
+       emit(BudError(e.toString()));
+     }
+   }
 
   // By top items handlers
   Future<void> _onBudsByTopArtistsRequested(
@@ -189,8 +189,8 @@ class BudBloc extends Bloc<BudEvent, BudState> {
   ) async {
     emit(const BudLoading());
     try {
-      // TODO: Implement when repository supports specific item search
-      emit(BudsByArtistLoaded(buds: const [], artistId: event.artistId));
+      final buds = await _budRepository.getBudsByArtist(event.artistId);
+      emit(BudsByArtistLoaded(buds: buds, artistId: event.artistId));
     } catch (e) {
       emit(BudError(e.toString()));
     }
@@ -202,8 +202,8 @@ class BudBloc extends Bloc<BudEvent, BudState> {
   ) async {
     emit(const BudLoading());
     try {
-      // TODO: Implement when repository supports specific item search
-      emit(BudsByTrackLoaded(buds: const [], trackId: event.trackId));
+      final buds = await _budRepository.getBudsByTrack(event.trackId);
+      emit(BudsByTrackLoaded(buds: buds, trackId: event.trackId));
     } catch (e) {
       emit(BudError(e.toString()));
     }
@@ -215,8 +215,8 @@ class BudBloc extends Bloc<BudEvent, BudState> {
   ) async {
     emit(const BudLoading());
     try {
-      // TODO: Implement when repository supports specific item search
-      emit(BudsByGenreLoaded(buds: const [], genreId: event.genreId));
+      final buds = await _budRepository.getBudsByGenre(event.genreId);
+      emit(BudsByGenreLoaded(buds: buds, genreId: event.genreId));
     } catch (e) {
       emit(BudError(e.toString()));
     }
@@ -228,8 +228,8 @@ class BudBloc extends Bloc<BudEvent, BudState> {
   ) async {
     emit(const BudLoading());
     try {
-      // TODO: Implement when repository supports specific item search
-      emit(BudsByAlbumLoaded(buds: const [], albumId: event.albumId));
+      final buds = await _budRepository.getBudsByAlbum(event.albumId);
+      emit(BudsByAlbumLoaded(buds: buds, albumId: event.albumId));
     } catch (e) {
       emit(BudError(e.toString()));
     }
@@ -242,8 +242,8 @@ class BudBloc extends Bloc<BudEvent, BudState> {
   ) async {
     emit(const BudLoading());
     try {
-      // TODO: Implement search functionality
-      emit(BudsSearchLoaded(buds: const [], query: event.query));
+      final buds = await _budRepository.searchBuds(event.query);
+      emit(BudsSearchLoaded(buds: buds, query: event.query));
     } catch (e) {
       emit(BudError(e.toString()));
     }
@@ -288,8 +288,11 @@ class BudBloc extends Bloc<BudEvent, BudState> {
   ) async {
     emit(const BudLoading());
     try {
-      // TODO: Implement when repository supports common liked genres
-      emit(CommonLikedGenresLoaded(genres: const [], budId: event.budId));
+      final result = await _commonItemsRepository.getCommonTopGenres(event.budId);
+      result.fold(
+        (failure) => emit(BudError(failure.message)),
+        (genres) => emit(CommonLikedGenresLoaded(genres: genres, budId: event.budId)),
+      );
     } catch (e) {
       emit(BudError(e.toString()));
     }
@@ -301,8 +304,11 @@ class BudBloc extends Bloc<BudEvent, BudState> {
   ) async {
     emit(const BudLoading());
     try {
-      // TODO: Implement when repository supports common liked albums
-      emit(CommonLikedAlbumsLoaded(albums: const [], budId: event.budId));
+      final result = await _commonItemsRepository.getCommonLikedAlbums(event.budId);
+      result.fold(
+        (failure) => emit(BudError(failure.message)),
+        (albums) => emit(CommonLikedAlbumsLoaded(albums: albums, budId: event.budId)),
+      );
     } catch (e) {
       emit(BudError(e.toString()));
     }
@@ -330,8 +336,11 @@ class BudBloc extends Bloc<BudEvent, BudState> {
   ) async {
     emit(const BudLoading());
     try {
-      // TODO: Implement when repository supports common top tracks
-      emit(CommonTopTracksLoaded(tracks: const [], budId: event.budId));
+      final result = await _commonItemsRepository.getCommonTracks(event.budId);
+      result.fold(
+        (failure) => emit(BudError(failure.message)),
+        (tracks) => emit(CommonTopTracksLoaded(tracks: tracks, budId: event.budId)),
+      );
     } catch (e) {
       emit(BudError(e.toString()));
     }

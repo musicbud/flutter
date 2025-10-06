@@ -1,9 +1,9 @@
 import '../../domain/repositories/chat_repository.dart';
-import '../../domain/models/chat.dart';
-import '../../domain/models/message.dart';
-import '../../domain/models/channel.dart';
-import '../../domain/models/chat_message.dart';
-import '../../domain/models/user_profile.dart';
+import '../../models/channel.dart';
+import '../../models/message.dart';
+import '../../models/user_profile.dart';
+import '../../models/chat.dart';
+import '../../models/chat_message.dart';
 import '../data_sources/remote/chat_remote_data_source.dart';
 import '../../core/error/exceptions.dart';
 import '../../core/error/failures.dart';

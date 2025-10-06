@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:musicbud_flutter/core/theme/design_system.dart';
 
 /// A mixin that provides comprehensive empty state management for widgets.
 ///
@@ -183,7 +184,7 @@ mixin EmptyStateMixin<T extends StatefulWidget> on State<T> {
 
     return ElevatedButton.icon(
       onPressed: config.onActionPressed,
-      icon: _getActionIcon(config.type),
+      icon: Icon(_getActionIcon(config.type)),
       label: Text(config.actionText!),
       style: ElevatedButton.styleFrom(
         backgroundColor: design.designSystemColors.primary,

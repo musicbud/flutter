@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../../core/error/exceptions.dart';
-import '../../../domain/models/channel.dart';
-import '../../../domain/models/channel_settings.dart';
-import '../../../domain/models/channel_stats.dart';
+import '../../../models/channel.dart';
+import '../../../models/channel_settings.dart';
+import '../../../models/channel_stats.dart';
 import '../../../config/constants.dart' as api_constants;
 
 abstract class ChannelRemoteDataSource {

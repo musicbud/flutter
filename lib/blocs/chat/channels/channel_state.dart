@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/models/channel.dart';
+import '../../../models/channel.dart';
 
 abstract class ChannelState extends Equatable {
   const ChannelState();

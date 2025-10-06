@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import '../../../core/error/exceptions.dart';
 import '../../network/dio_client.dart';
-import '../../../domain/models/bud_match.dart';
-import '../../../domain/models/common_track.dart';
-import '../../../domain/models/common_artist.dart';
-import '../../../domain/models/common_genre.dart';
+import '../../../models/bud_match.dart';
+import '../../../models/common_track.dart';
+import '../../../models/common_artist.dart';
+import '../../../models/common_genre.dart';
 import '../../../config/api_config.dart';
 
 abstract class BudRemoteDataSource {

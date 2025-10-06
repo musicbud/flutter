@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/design_system.dart';
+import '../../../core/theme/design_system.dart';
 import '../builders/state_builder.dart';
 
 /// A factory class for creating state displays.
@@ -36,12 +36,16 @@ import '../builders/state_builder.dart';
 class StateFactory {
   /// Creates a loading state widget
   Widget createLoadingState({
+    required BuildContext context,
     String? message,
     bool showProgress = true,
     double? progressSize,
     Widget? customIndicator,
     EdgeInsetsGeometry? padding,
   }) {
+    final theme = Theme.of(context);
+    final design = theme.extension<DesignSystemThemeExtension>()!;
+
     return StateBuilder()
         .withState(StateType.loading)
         .withLoadingMessage(message ?? 'Loading...')
@@ -52,17 +56,18 @@ class StateFactory {
                   height: progressSize ?? 48,
                   child: CircularProgressIndicator(
                     strokeWidth: 3,
-                    valueColor: AlwaysStoppedAnimation<Color>(DesignSystem.primary),
+                    valueColor: AlwaysStoppedAnimation<Color>(design.designSystemColors.primary),
                   ),
                 ))
               : null,
         )
-        .withPadding(padding ?? EdgeInsets.all(DesignSystem.spacingXL))
+        .withPadding(padding ?? EdgeInsets.all(design.designSystemSpacing.xl))
         .build();
   }
 
   /// Creates an empty state widget
   Widget createEmptyState({
+    required BuildContext context,
     EmptyStateType type = EmptyStateType.general,
     String? message,
     String? actionText,
@@ -70,16 +75,20 @@ class StateFactory {
     IconData? customIcon,
     EdgeInsetsGeometry? padding,
   }) {
+    final theme = Theme.of(context);
+    final design = theme.extension<DesignSystemThemeExtension>()!;
+
     return StateBuilder()
         .withState(StateType.empty)
         .withEmptyMessage(message ?? _getDefaultEmptyMessage(type))
         .withEmptyIcon(customIcon ?? _getDefaultEmptyIcon(type))
-        .withPadding(padding ?? EdgeInsets.all(DesignSystem.spacingXL))
+        .withPadding(padding ?? EdgeInsets.all(design.designSystemSpacing.xl))
         .build();
   }
 
   /// Creates an error state widget
   Widget createErrorState({
+    required BuildContext context,
     ErrorStateType type = ErrorStateType.general,
     String? message,
     String? actionText,
@@ -87,28 +96,35 @@ class StateFactory {
     IconData? customIcon,
     EdgeInsetsGeometry? padding,
   }) {
+    final theme = Theme.of(context);
+    final design = theme.extension<DesignSystemThemeExtension>()!;
+
     return StateBuilder()
         .withState(StateType.error)
         .withErrorMessage(message ?? _getDefaultErrorMessage(type))
         .withErrorIcon(customIcon ?? _getDefaultErrorIcon(type))
         .withOnRetry(onRetry)
-        .withPadding(padding ?? EdgeInsets.all(DesignSystem.spacingXL))
+        .withPadding(padding ?? EdgeInsets.all(design.designSystemSpacing.xl))
         .build();
   }
 
   /// Creates a success state widget
   Widget createSuccessState({
+    required BuildContext context,
     String? message,
     String? actionText,
     VoidCallback? onActionPressed,
     IconData? customIcon,
     EdgeInsetsGeometry? padding,
   }) {
+    final theme = Theme.of(context);
+    final design = theme.extension<DesignSystemThemeExtension>()!;
+
     return StateBuilder()
         .withState(StateType.success)
         .withSuccessMessage(message ?? 'Success!')
         .withSuccessIcon(customIcon ?? Icons.check_circle_outline)
-        .withPadding(padding ?? EdgeInsets.all(DesignSystem.spacingXL))
+        .withPadding(padding ?? EdgeInsets.all(design.designSystemSpacing.xl))
         .build();
   }
 
@@ -131,18 +147,22 @@ class StateFactory {
 
   /// Creates a loading overlay for covering content
   Widget createLoadingOverlay({
+    required BuildContext context,
     String? message,
     bool dismissible = false,
     VoidCallback? onDismiss,
   }) {
+    final theme = Theme.of(context);
+    final design = theme.extension<DesignSystemThemeExtension>()!;
+
     return Container(
-      color: DesignSystem.overlay,
+      color: design.designSystemColors.overlay,
       child: Center(
         child: Container(
-          padding: EdgeInsets.all(DesignSystem.spacingLG),
+          padding: EdgeInsets.all(design.designSystemSpacing.lg),
           decoration: BoxDecoration(
-            color: DesignSystem.surface,
-            borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
+            color: design.designSystemColors.surface,
+            borderRadius: BorderRadius.circular(design.designSystemRadius.lg),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -152,14 +172,14 @@ class StateFactory {
                 height: 48,
                 child: CircularProgressIndicator(
                   strokeWidth: 3,
-                  valueColor: AlwaysStoppedAnimation<Color>(DesignSystem.primary),
+                  valueColor: AlwaysStoppedAnimation<Color>(design.designSystemColors.primary),
                 ),
               ),
-              SizedBox(height: DesignSystem.spacingLG),
+              SizedBox(height: design.designSystemSpacing.lg),
               Text(
                 message ?? 'Loading...',
-                style: DesignSystem.bodyMedium.copyWith(
-                  color: DesignSystem.onSurface,
+                style: design.designSystemTypography.bodyMedium.copyWith(
+                  color: design.designSystemColors.onSurface,
                 ),
               ),
             ],
@@ -171,10 +191,14 @@ class StateFactory {
 
   /// Creates a skeleton loading placeholder
   Widget createSkeletonLoader({
+    required BuildContext context,
     double height = 60,
     int lines = 1,
     EdgeInsetsGeometry? margin,
   }) {
+    final theme = Theme.of(context);
+    final design = theme.extension<DesignSystemThemeExtension>()!;
+
     return Container(
       height: height,
       margin: margin,
@@ -185,11 +209,11 @@ class StateFactory {
           (index) => Container(
             height: height / lines,
             margin: EdgeInsets.only(
-              bottom: index < lines - 1 ? DesignSystem.spacingXS : 0,
+              bottom: index < lines - 1 ? design.designSystemSpacing.xs : 0,
             ),
             decoration: BoxDecoration(
-              color: DesignSystem.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
+              color: design.designSystemColors.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(design.designSystemRadius.sm),
             ),
             child: AnimatedContainer(
               duration: Duration(milliseconds: 1500),
@@ -199,9 +223,9 @@ class StateFactory {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    DesignSystem.surfaceContainerHigh,
-                    DesignSystem.surfaceContainer,
-                    DesignSystem.surfaceContainerHigh,
+                    design.designSystemColors.surfaceContainerHigh,
+                    design.designSystemColors.surfaceContainer,
+                    design.designSystemColors.surfaceContainerHigh,
                   ],
                 ),
               ),
@@ -214,18 +238,22 @@ class StateFactory {
 
   /// Creates a shimmer loading effect
   Widget createShimmerEffect({
+    required BuildContext context,
     double height = 200,
     EdgeInsetsGeometry? margin,
   }) {
+    final theme = Theme.of(context);
+    final design = theme.extension<DesignSystemThemeExtension>()!;
+
     return Container(
       height: height,
       margin: margin,
       decoration: BoxDecoration(
-        color: DesignSystem.surfaceContainer,
-        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
+        color: design.designSystemColors.surfaceContainer,
+        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
+        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
         child: AnimatedContainer(
           duration: Duration(milliseconds: 1500),
           curve: Curves.easeInOut,
@@ -234,9 +262,9 @@ class StateFactory {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                DesignSystem.surfaceContainer,
-                DesignSystem.surfaceContainerHigh.withOpacity(0.5),
-                DesignSystem.surfaceContainer,
+                design.designSystemColors.surfaceContainer,
+                design.designSystemColors.surfaceContainerHigh.withValues(alpha: 0.5),
+                design.designSystemColors.surfaceContainer,
               ],
             ),
           ),

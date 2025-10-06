@@ -1,45 +1,89 @@
-class ChannelUser {
-  final int id;
+import 'package:equatable/equatable.dart';
+
+/// A model class representing a user in a chat channel
+class ChannelUser extends Equatable {
+  final String id;
   final String username;
-  final String? displayName;
   final String? avatarUrl;
-  final String role;
+  final String role; // 'owner', 'admin', 'moderator', 'member'
+  final bool isOnline;
   final DateTime joinedAt;
   final DateTime? lastActive;
+  final Map<String, bool> permissions;
 
-  ChannelUser({
+  const ChannelUser({
     required this.id,
     required this.username,
-    this.displayName,
     this.avatarUrl,
     required this.role,
+    this.isOnline = false,
     required this.joinedAt,
     this.lastActive,
+    this.permissions = const {},
   });
 
+  /// Creates a [ChannelUser] from a JSON map
   factory ChannelUser.fromJson(Map<String, dynamic> json) {
     return ChannelUser(
-      id: json['id'] as int,
+      id: json['id'] as String,
       username: json['username'] as String,
-      displayName: json['display_name'] as String?,
       avatarUrl: json['avatar_url'] as String?,
       role: json['role'] as String,
+      isOnline: json['is_online'] as bool? ?? false,
       joinedAt: DateTime.parse(json['joined_at'] as String),
       lastActive: json['last_active'] != null
           ? DateTime.parse(json['last_active'] as String)
           : null,
+      permissions: Map<String, bool>.from(json['permissions'] as Map? ?? {}),
     );
   }
 
+  /// Converts this [ChannelUser] to a JSON map
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'username': username,
-      'display_name': displayName,
       'avatar_url': avatarUrl,
       'role': role,
+      'is_online': isOnline,
       'joined_at': joinedAt.toIso8601String(),
       'last_active': lastActive?.toIso8601String(),
+      'permissions': permissions,
     };
   }
+
+  /// Creates a copy of this [ChannelUser] with the given fields replaced with new values
+  ChannelUser copyWith({
+    String? id,
+    String? username,
+    String? avatarUrl,
+    String? role,
+    bool? isOnline,
+    DateTime? joinedAt,
+    DateTime? lastActive,
+    Map<String, bool>? permissions,
+  }) {
+    return ChannelUser(
+      id: id ?? this.id,
+      username: username ?? this.username,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      role: role ?? this.role,
+      isOnline: isOnline ?? this.isOnline,
+      joinedAt: joinedAt ?? this.joinedAt,
+      lastActive: lastActive ?? this.lastActive,
+      permissions: permissions ?? this.permissions,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+         id,
+         username,
+         avatarUrl,
+         role,
+         isOnline,
+         joinedAt,
+         lastActive,
+         permissions,
+       ];
 }

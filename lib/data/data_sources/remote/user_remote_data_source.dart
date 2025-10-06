@@ -1,13 +1,15 @@
-import '../../../domain/models/track.dart';
-import '../../../domain/models/user_profile.dart';
-import '../../../domain/models/common_artist.dart';
-import '../../../domain/models/common_album.dart';
-import '../../../domain/models/common_genre.dart';
-import '../../../domain/models/common_anime.dart';
-import '../../../domain/models/common_manga.dart';
+import '../../../models/track.dart';
+import '../../../models/user_profile.dart';
+import '../../../models/artist.dart';
+import '../../../models/album.dart';
+import '../../../models/genre.dart';
+import '../../../models/parent_user.dart';
+import '../../../models/common_anime.dart';
+import '../../../models/common_manga.dart';
 
 abstract class UserRemoteDataSource {
   Future<UserProfile> getUserProfile();
+  Future<ParentUser> getParentUser();
   Future<List<Track>> getLikedTracks();
   Future<void> likeSong(String songId);
   Future<void> unlikeSong(String songId);
@@ -17,12 +19,12 @@ abstract class UserRemoteDataSource {
   Future<UserProfile> getBudProfile(String username);
   Future<void> updateMyProfile(UserProfile profile);
   Future<void> updateMyLikes();
-  Future<List<CommonArtist>> getLikedArtists();
-  Future<List<CommonAlbum>> getLikedAlbums();
-  Future<List<CommonGenre>> getLikedGenres();
-  Future<List<CommonArtist>> getTopArtists();
+  Future<List<Artist>> getLikedArtists();
+  Future<List<Album>> getLikedAlbums();
+  Future<List<Genre>> getLikedGenres();
+  Future<List<Artist>> getTopArtists();
   Future<List<Track>> getTopTracks();
-  Future<List<CommonGenre>> getTopGenres();
+  Future<List<Genre>> getTopGenres();
   Future<List<CommonAnime>> getTopAnime();
   Future<List<CommonManga>> getTopManga();
 

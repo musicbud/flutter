@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/models/channel.dart';
-import '../../../domain/models/channel_settings.dart';
+import '../../../models/channel.dart';
+import '../../../models/channel_settings.dart';
 
 abstract class ChannelEvent extends Equatable {
   const ChannelEvent();

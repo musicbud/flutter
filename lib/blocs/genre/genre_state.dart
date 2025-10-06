@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/models/common_genre.dart';
-import '../../domain/models/bud_match.dart';
+import '../../models/genre.dart';
+import '../../models/bud_match.dart';
 
 abstract class GenreState extends Equatable {
   const GenreState();
@@ -14,7 +14,7 @@ class GenreInitial extends GenreState {}
 class GenreLoading extends GenreState {}
 
 class GenreDetailsLoaded extends GenreState {
-  final CommonGenre genre;
+  final Genre genre;
   final List<BudMatch> buds;
 
   const GenreDetailsLoaded({

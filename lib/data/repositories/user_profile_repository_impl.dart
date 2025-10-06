@@ -1,5 +1,5 @@
 import '../../domain/repositories/user_profile_repository.dart';
-import '../../domain/models/user_profile.dart';
+import '../../models/user_profile.dart';
 import '../data_sources/remote/user_profile_remote_data_source.dart';
 
 class UserProfileRepositoryImpl implements UserProfileRepository {

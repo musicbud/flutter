@@ -1,4 +1,4 @@
-import '../../domain/models/bud_request.dart';
+import '../../models/bud_request.dart';
 
 class BudRequestModel extends BudRequest {
   const BudRequestModel({

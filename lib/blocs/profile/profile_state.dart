@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/models/user_profile.dart';
-import '../../../domain/models/bud_match.dart';
+import '../../../models/user_profile.dart';
+import '../../../models/bud_match.dart';
 
 abstract class ProfileState extends Equatable {
   const ProfileState();

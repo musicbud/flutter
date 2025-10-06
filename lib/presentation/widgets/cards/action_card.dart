@@ -85,7 +85,7 @@ class ActionCard extends BaseCard {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: (iconColor ?? getDesignSystemColors(context).primary).withOpacity(0.1),
+              color: (iconColor ?? getDesignSystemColors(context).primary).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(getDesignSystemRadius(context).md),
             ),
             child: Icon(

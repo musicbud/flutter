@@ -1,4 +1,4 @@
-import '../../domain/models/common_track.dart';
+import '../../models/common_track.dart';
 
 class CommonTrackModel extends CommonTrack {
   CommonTrackModel({

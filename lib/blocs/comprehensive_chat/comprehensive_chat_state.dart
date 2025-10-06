@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/models/channel.dart';
-import '../../domain/models/message.dart';
-import '../../domain/models/channel_details.dart';
-import '../../domain/models/channel_dashboard.dart';
-import '../../domain/models/channel_statistics.dart';
-import '../../domain/models/user_profile.dart';
-import '../../domain/models/channel_invitation.dart';
+import '../../models/channel.dart';
+import '../../models/message.dart';
+import '../../models/channel_details.dart';
+import '../../models/channel_dashboard.dart';
+import '../../models/channel_statistics.dart';
+import '../../models/user_profile.dart';
+import '../../models/channel_invitation.dart';
 
 // Base state class
 abstract class ComprehensiveChatState extends Equatable {

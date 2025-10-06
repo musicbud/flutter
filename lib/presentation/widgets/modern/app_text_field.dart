@@ -133,10 +133,10 @@ class _AppTextFieldState extends State<AppTextField> {
           vertical: 12,
         ),
         hintStyle: widget.hintStyle ?? theme.textTheme.bodyLarge?.copyWith(
-          color: theme.colorScheme.onSurface.withOpacity(0.6),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
         ),
         labelStyle: widget.labelStyle ?? theme.textTheme.bodyMedium?.copyWith(
-          color: theme.colorScheme.onSurface.withOpacity(0.8),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
         ),
         filled: true,
         fillColor: widget.fillColor ?? theme.colorScheme.surface,
@@ -178,7 +178,7 @@ class _AppTextFieldState extends State<AppTextField> {
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(widget.borderRadius),
           borderSide: BorderSide(
-            color: theme.colorScheme.outline.withOpacity(0.5),
+            color: theme.colorScheme.outline.withValues(alpha: 0.5),
             width: 1.0,
           ),
         ),

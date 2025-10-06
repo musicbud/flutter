@@ -1,4 +1,4 @@
-import '../models/demo_user_profile.dart';
+import '../../models/demo_user_profile.dart';
 
 abstract class DemoProfileRepository {
   /// Get demo user profile

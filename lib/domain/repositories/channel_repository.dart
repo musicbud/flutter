@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import '../../core/error/failures.dart';
-import '../models/channel.dart';
-import '../models/channel_settings.dart';
-import '../models/channel_stats.dart';
+import '../../models/channel.dart';
+import '../../models/channel_settings.dart';
+import '../../models/channel_stats.dart';
 
 abstract class ChannelRepository {
   // Channel CRUD operations

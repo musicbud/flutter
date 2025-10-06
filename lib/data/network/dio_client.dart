@@ -12,11 +12,15 @@ class DioClient {
     required Dio dio,
     required TokenProvider tokenProvider,
   }) : _dio = dio,
-       _tokenProvider = tokenProvider {
+        _tokenProvider = tokenProvider {
     _dio.options.baseUrl = baseUrl;
+    _dio.options.connectTimeout = const Duration(seconds: 30);
+    _dio.options.receiveTimeout = const Duration(seconds: 30);
+    _dio.options.sendTimeout = const Duration(seconds: 30);
     _dio.options.headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
+      'User-Agent': 'MusicBud-Flutter/1.0',
     };
 
     _dio.interceptors.add(
@@ -82,10 +86,10 @@ class DioClient {
     try {
       return await _dio.get(path, queryParameters: queryParameters);
     } on DioException catch (e) {
-      // Retry once for 500 server errors
+      // Retry once for 500 server errors (working logic from commit 6cac314)
       if (e.response?.statusCode == 500) {
         try {
-          await Future.delayed(const Duration(seconds: 2)); // Wait 2 seconds before retry
+          await Future.delayed(Duration(seconds: 2)); // Wait 2 seconds before retry
           return await _dio.get(path, queryParameters: queryParameters);
         } catch (retryError) {
           if (retryError is DioException) {
@@ -104,10 +108,10 @@ class DioClient {
     try {
       return await _dio.post(path, data: data);
     } on DioException catch (e) {
-      // Retry once for 500 server errors
+      // Retry once for 500 server errors (working logic from commit 6cac314)
       if (e.response?.statusCode == 500) {
         try {
-          await Future.delayed(const Duration(seconds: 2)); // Wait 2 seconds before retry
+          await Future.delayed(Duration(seconds: 2)); // Wait 2 seconds before retry
           return await _dio.post(path, data: data);
         } catch (retryError) {
           if (retryError is DioException) {
@@ -126,10 +130,10 @@ class DioClient {
     try {
       return await _dio.put(path, data: data);
     } on DioException catch (e) {
-      // Retry once for 500 server errors
+      // Retry once for 500 server errors (working logic from commit 6cac314)
       if (e.response?.statusCode == 500) {
         try {
-          await Future.delayed(const Duration(seconds: 2)); // Wait 2 seconds before retry
+          await Future.delayed(Duration(seconds: 2)); // Wait 2 seconds before retry
           return await _dio.put(path, data: data);
         } catch (retryError) {
           if (retryError is DioException) {
@@ -147,10 +151,10 @@ class DioClient {
     try {
       return await _dio.delete(path, queryParameters: queryParameters);
     } on DioException catch (e) {
-      // Retry once for 500 server errors
+      // Retry once for 500 server errors (working logic from commit 6cac314)
       if (e.response?.statusCode == 500) {
         try {
-          await Future.delayed(const Duration(seconds: 2)); // Wait 2 seconds before retry
+          await Future.delayed(Duration(seconds: 2)); // Wait 2 seconds before retry
           return await _dio.delete(path, queryParameters: queryParameters);
         } catch (retryError) {
           if (retryError is DioException) {
@@ -164,30 +168,31 @@ class DioClient {
     }
   }
 
-  /// Handle Dio exceptions with enhanced error information
+
+  /// Handle Dio exceptions with enhanced error information (working from commit 6cac314)
   void _handleDioException(DioException e, String method, String path) {
-    // final fullUrl = '${_dio.options.baseUrl}$path';
+    final fullUrl = '${_dio.options.baseUrl}$path';
 
     if (HttpUtils.isNotFoundError(e)) {
-      // 🚨 404 Error detected for $method $fullUrl
-      // 💡 This endpoint may not exist in the backend API
-      // 📚 Check the backend repository for correct endpoints: https://github.com/musicbud/backend
-      // 🔧 Consider updating the API configuration if endpoints have changed
+      print('🚨 404 Error detected for $method $fullUrl');
+      print('💡 This endpoint may not exist in the backend API');
+      print('📚 Check the backend repository for correct endpoints: https://github.com/musicbud/backend');
+      print('🔧 Consider updating the API configuration if endpoints have changed');
     }
 
     if (HttpUtils.isAuthenticationError(e)) {
-      // 🔐 Authentication error for $method $fullUrl
-      // 💡 Check if the user is properly logged in and token is valid
+      print('🔐 Authentication error for $method $fullUrl');
+      print('💡 Check if the user is properly logged in and token is valid');
     }
 
     if (HttpUtils.isServerError(e)) {
-      // 🖥️ Server error for $method $fullUrl
-      // 💡 The backend server may be experiencing issues
+      print('🖥️ Server error for $method $fullUrl');
+      print('💡 The backend server may be experiencing issues');
     }
 
     if (HttpUtils.isNetworkError(e)) {
-      // 🌐 Network error for $method $fullUrl
-      // 💡 Check internet connection and server availability
+      print('🌐 Network error for $method $fullUrl');
+      print('💡 Check internet connection and server availability');
     }
   }
 

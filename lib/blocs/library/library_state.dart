@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/models/library_item.dart';
+import '../../models/library_item.dart';
 
 abstract class LibraryState extends Equatable {
   const LibraryState();
@@ -13,7 +13,7 @@ class LibraryInitial extends LibraryState {}
 class LibraryLoading extends LibraryState {}
 
 class LibraryLoaded extends LibraryState {
-  final List<LibraryItem> items;
+  final List<dynamic> items;
   final String currentType;
   final bool hasReachedEnd;
   final int totalCount;
@@ -31,7 +31,7 @@ class LibraryLoaded extends LibraryState {
   List<Object?> get props => [items, currentType, hasReachedEnd, totalCount, error];
 
   LibraryLoaded copyWith({
-    List<LibraryItem>? items,
+    List<dynamic>? items,
     String? currentType,
     bool? hasReachedEnd,
     int? totalCount,

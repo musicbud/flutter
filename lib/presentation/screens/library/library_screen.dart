@@ -4,7 +4,7 @@ import '../../../blocs/library/library_bloc.dart';
 import '../../../blocs/library/library_event.dart';
 import '../../../blocs/library/library_state.dart';
 import '../../../core/theme/design_system.dart';
-import '../../widgets/common/index.dart';
+import '../../../widgets/common/index.dart';
 import 'library_tab_manager.dart';
 import 'library_search_section.dart';
 import 'tabs/playlists_tab.dart';

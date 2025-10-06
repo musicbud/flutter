@@ -1,14 +1,21 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../domain/repositories/library_repository.dart';
+import '../../domain/repositories/content_repository.dart';
+import '../../domain/repositories/user_repository.dart';
+import '../../models/artist.dart';
+import '../../models/album.dart';
+import '../../models/genre.dart';
 import 'library_event.dart';
 import 'library_state.dart';
 
 class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
-  final LibraryRepository _libraryRepository;
+  final ContentRepository _contentRepository;
+  final UserRepository _userRepository;
 
   LibraryBloc({
-    required LibraryRepository libraryRepository,
-  })  : _libraryRepository = libraryRepository,
+    required ContentRepository contentRepository,
+    required UserRepository userRepository,
+  })  : _contentRepository = contentRepository,
+        _userRepository = userRepository,
         super(LibraryInitial()) {
     on<LibraryItemsRequested>(_onLibraryItemsRequested);
     on<LibraryItemToggleLiked>(_onLibraryItemToggleLiked);
@@ -25,10 +32,7 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
   ) async {
     try {
       emit(LibraryLoading());
-      final items = await _libraryRepository.getLibraryItems(
-        type: event.type,
-        query: event.query,
-      );
+      final items = await _getLibraryItems(event.type, event.query);
       emit(LibraryLoaded(
         items: items,
         currentType: event.type,
@@ -44,12 +48,9 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
     Emitter<LibraryState> emit,
   ) async {
     try {
-      await _libraryRepository.toggleLiked(
-        itemId: event.itemId,
-        type: event.type,
-      );
+      await _contentRepository.toggleLike(event.itemId, event.type);
       emit(const LibraryActionSuccess('Item like status updated'));
-      
+
       // Refresh the current view
       if (state is LibraryLoaded) {
         final currentState = state as LibraryLoaded;
@@ -64,21 +65,8 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
     LibraryItemToggleDownload event,
     Emitter<LibraryState> emit,
   ) async {
-    try {
-      await _libraryRepository.toggleDownloaded(
-        itemId: event.itemId,
-        type: event.type,
-      );
-      emit(const LibraryActionSuccess('Item download status updated'));
-      
-      // Refresh the current view
-      if (state is LibraryLoaded) {
-        final currentState = state as LibraryLoaded;
-        add(LibraryItemsRefreshRequested(type: currentState.currentType));
-      }
-    } catch (error) {
-      emit(LibraryActionFailure(error.toString()));
-    }
+    // TODO: Implement download functionality
+    emit(const LibraryActionFailure('Download not implemented'));
   }
 
   Future<void> _onLibraryItemPlayRequested(
@@ -86,10 +74,8 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
     Emitter<LibraryState> emit,
   ) async {
     try {
-      await _libraryRepository.playItem(
-        itemId: event.itemId,
-        type: event.type,
-      );
+      // Assume track for now
+      await _contentRepository.savePlayedTrack(event.itemId);
       emit(const LibraryActionSuccess('Started playing'));
     } catch (error) {
       emit(LibraryActionFailure(error.toString()));
@@ -100,34 +86,16 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
     LibraryPlaylistCreated event,
     Emitter<LibraryState> emit,
   ) async {
-    try {
-      await _libraryRepository.createPlaylist(
-        name: event.name,
-        description: event.description,
-        isPrivate: event.isPrivate,
-      );
-      emit(const LibraryActionSuccess('Playlist created successfully'));
-      
-      // Refresh playlists
-      add(const LibraryItemsRefreshRequested(type: 'playlists'));
-    } catch (error) {
-      emit(LibraryActionFailure(error.toString()));
-    }
+    // TODO: Implement playlist creation
+    emit(const LibraryActionFailure('Playlist creation not implemented'));
   }
 
   Future<void> _onLibraryPlaylistDeleted(
     LibraryPlaylistDeleted event,
     Emitter<LibraryState> emit,
   ) async {
-    try {
-      await _libraryRepository.deletePlaylist(event.playlistId);
-      emit(const LibraryActionSuccess('Playlist deleted successfully'));
-      
-      // Refresh playlists
-      add(const LibraryItemsRefreshRequested(type: 'playlists'));
-    } catch (error) {
-      emit(LibraryActionFailure(error.toString()));
-    }
+    // TODO: Implement playlist deletion
+    emit(const LibraryActionFailure('Playlist deletion not implemented'));
   }
 
   Future<void> _onLibraryItemsRefreshRequested(
@@ -136,10 +104,7 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
   ) async {
     try {
       emit(LibraryLoading());
-      final items = await _libraryRepository.getLibraryItems(
-        type: event.type,
-        refresh: true,
-      );
+      final items = await _getLibraryItems(event.type, null);
       emit(LibraryLoaded(
         items: items,
         currentType: event.type,
@@ -147,6 +112,21 @@ class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
       ));
     } catch (error) {
       emit(LibraryError(error.toString()));
+    }
+  }
+
+  Future<List<dynamic>> _getLibraryItems(String type, String? query) async {
+    switch (type) {
+      case 'tracks':
+        return await _contentRepository.getLikedTracks();
+      case 'artists':
+        return await _contentRepository.getLikedArtists();
+      case 'albums':
+        return await _contentRepository.getLikedAlbums();
+      case 'genres':
+        return await _contentRepository.getLikedGenres();
+      default:
+        return [];
     }
   }
 }

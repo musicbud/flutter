@@ -1,8 +1,9 @@
-import '../domain/models/common_genre.dart';
+import '../models/common_genre.dart';
 
 /// Represents a genre in the application
 class Genre {
   final String id;
+  final String uid;
   final String name;
   final String? source;
   final String? spotifyId;
@@ -13,6 +14,7 @@ class Genre {
 
   Genre({
     required this.id,
+    this.uid = '',
     required this.name,
     this.source,
     this.spotifyId,
@@ -24,7 +26,8 @@ class Genre {
 
   factory Genre.fromJson(Map<String, dynamic> json) {
     return Genre(
-      id: json['id'] as String,
+      id: json['id'] as String? ?? json['uid'] as String,
+      uid: json['uid'] as String? ?? '',
       name: json['name'] as String,
       source: json['source'] as String?,
       spotifyId: json['spotify_id'] as String?,
@@ -38,6 +41,7 @@ class Genre {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'uid': uid,
       'name': name,
       'source': source,
       'spotify_id': spotifyId,
@@ -51,6 +55,7 @@ class Genre {
   factory Genre.fromCommonGenre(CommonGenre genre) {
     return Genre(
       id: genre.id,
+      uid: genre.uid ?? '',
       name: genre.name,
       source: genre.source,
       spotifyId: genre.spotifyId,
@@ -63,6 +68,7 @@ class Genre {
 
   Genre copyWith({
     String? id,
+    String? uid,
     String? name,
     String? source,
     String? spotifyId,
@@ -73,6 +79,7 @@ class Genre {
   }) {
     return Genre(
       id: id ?? this.id,
+      uid: uid ?? this.uid,
       name: name ?? this.name,
       source: source ?? this.source,
       spotifyId: spotifyId ?? this.spotifyId,

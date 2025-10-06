@@ -1,29 +1,31 @@
-import '../models/track.dart';
-import '../models/common_artist.dart';
-import '../models/common_album.dart';
-import '../models/common_genre.dart';
-import '../models/common_anime.dart';
-import '../models/common_manga.dart';
-import '../models/user_profile.dart';
+import '../../models/track.dart';
+import '../../models/artist.dart';
+import '../../models/album.dart';
+import '../../models/genre.dart';
+import '../../models/common_anime.dart';
+import '../../models/common_manga.dart';
+import '../../models/user_profile.dart';
+import '../../models/parent_user.dart';
 
 abstract class UserRepository {
   // Profile operations
   Future<UserProfile> getUserProfile();
+  Future<ParentUser> getParentUser();
   Future<UserProfile> getBudProfile(String username);
   Future<void> updateMyProfile(UserProfile profile);
   Future<void> updateMyLikes();
   Future<void> updateUserProfile(String userId, Map<String, dynamic> profileData);
 
   // Liked items
-  Future<List<CommonArtist>> getLikedArtists();
+  Future<List<Artist>> getLikedArtists();
   Future<List<Track>> getLikedTracks();
-  Future<List<CommonAlbum>> getLikedAlbums();
-  Future<List<CommonGenre>> getLikedGenres();
+  Future<List<Album>> getLikedAlbums();
+  Future<List<Genre>> getLikedGenres();
 
   // Top items
-  Future<List<CommonArtist>> getTopArtists();
+  Future<List<Artist>> getTopArtists();
   Future<List<Track>> getTopTracks();
-  Future<List<CommonGenre>> getTopGenres();
+  Future<List<Genre>> getTopGenres();
   Future<List<CommonAnime>> getTopAnime();
   Future<List<CommonManga>> getTopManga();
 

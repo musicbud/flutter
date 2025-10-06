@@ -1,4 +1,4 @@
-import '../../../domain/models/admin.dart';
+import '../../../models/admin.dart';
 import '../../network/dio_client.dart';
 
 abstract class AdminRemoteDataSource {
@@ -7,6 +7,10 @@ abstract class AdminRemoteDataSource {
   Future<void> unbanUser(String userId);
   Future<void> deleteContent(String contentId, String contentType);
   Future<Map<String, dynamic>> getSystemHealth();
+  Future<List<AdminAction>> getRecentActions({int limit = 10});
+  Future<void> performAdminAction(AdminAction action);
+  Future<void> updateSystemSettings(Map<String, dynamic> settings);
+  Future<Map<String, dynamic>> getSystemSettings();
 }
 
 class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
@@ -60,6 +64,45 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to fetch system health: $e');
+    }
+  }
+
+  @override
+  Future<List<AdminAction>> getRecentActions({int limit = 10}) async {
+    try {
+      final response = await dioClient.get('/admin/actions', queryParameters: {'limit': limit});
+      final List<dynamic> data = response.data['actions'] ?? [];
+      return data.map((action) => AdminAction.fromJson(action)).toList();
+    } catch (e) {
+      throw Exception('Failed to fetch recent actions: $e');
+    }
+  }
+
+  @override
+  Future<void> performAdminAction(AdminAction action) async {
+    try {
+      await dioClient.post('/admin/actions', data: action.toJson());
+    } catch (e) {
+      throw Exception('Failed to perform admin action: $e');
+    }
+  }
+
+  @override
+  Future<void> updateSystemSettings(Map<String, dynamic> settings) async {
+    try {
+      await dioClient.post('/admin/settings', data: settings);
+    } catch (e) {
+      throw Exception('Failed to update system settings: $e');
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> getSystemSettings() async {
+    try {
+      final response = await dioClient.get('/admin/settings');
+      return response.data as Map<String, dynamic>;
+    } catch (e) {
+      throw Exception('Failed to fetch system settings: $e');
     }
   }
 }

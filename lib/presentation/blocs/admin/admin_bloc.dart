@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/repositories/admin_repository.dart';
-import '../../../domain/models/admin.dart';
+import '../../../models/admin.dart';
 import 'admin_event.dart';
 import 'admin_state.dart';
 
@@ -23,7 +23,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     final result = await repository.getAdminStats();
     result.fold(
       (failure) => emit(const AdminError('Failed to load admin stats')),
-      (stats) => emit(AdminStatsLoaded(stats)),
+      (stats) => emit(AdminStatsLoaded(stats as AdminStats)),
     );
   }
 
@@ -35,7 +35,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     final result = await repository.getRecentActions(limit: event.limit);
     result.fold(
       (failure) => emit(const AdminError('Failed to load recent actions')),
-      (actions) => emit(AdminActionsLoaded(actions)),
+      (actions) => emit(AdminActionsLoaded(actions as List<AdminAction>)),
     );
   }
 

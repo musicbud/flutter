@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'navigation_item.dart';
+import '../../navigation/navigation_item.dart';
 
 // Import the new screens from the screens directory
 import '../screens/home/home_screen.dart';
@@ -42,32 +42,44 @@ final List<NavigationItem> mainNavigationItems = [
   // Main Navigation Screens
   NavigationItem(
     icon: Icons.home_outlined,
+    activeIcon: Icons.home,
     label: 'Home',
+    route: '/home',
     pageBuilder: (context) => const HomeScreen(),
   ),
   NavigationItem(
     icon: Icons.search,
+    activeIcon: Icons.search,
     label: 'Search',
+    route: '/search',
     pageBuilder: (context) => const SearchScreen(),
   ),
   NavigationItem(
     icon: Icons.people,
+    activeIcon: Icons.people,
     label: 'Discover',
+    route: '/discover',
     pageBuilder: (context) => const DiscoverScreen(),
   ),
   NavigationItem(
     icon: Icons.chat_bubble_outline,
+    activeIcon: Icons.chat_bubble,
     label: 'Chat',
+    route: '/chat',
     pageBuilder: (context) => const ChatScreen(),
   ),
   NavigationItem(
     icon: Icons.music_note,
+    activeIcon: Icons.music_note,
     label: 'Library',
+    route: '/library',
     pageBuilder: (context) => const LibraryScreen(),
   ),
   NavigationItem(
     icon: Icons.person,
+    activeIcon: Icons.person,
     label: 'Profile',
+    route: '/profile',
     pageBuilder: (context) => const ProfileScreen(),
   ),
 ];

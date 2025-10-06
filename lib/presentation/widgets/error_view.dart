@@ -8,7 +8,7 @@ import 'base/base_state_display.dart';
 class ErrorView extends BaseStateDisplay {
   const ErrorView({
     super.key,
-    required super.title,
+    super.title,
     super.message,
     super.icon,
     super.actionCallback,
@@ -46,14 +46,16 @@ class ErrorView extends BaseStateDisplay {
       mainAxisSize: MainAxisSize.min,
       children: [
         // Title
-        Text(
-          title,
-          style: DesignSystem.titleMedium.copyWith(
-            color: DesignSystem.onSurface,
-            fontWeight: FontWeight.w600,
+        if (title != null) ...[
+          Text(
+            title!,
+            style: DesignSystem.titleMedium.copyWith(
+              color: DesignSystem.onSurface,
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
           ),
-          textAlign: TextAlign.center,
-        ),
+        ],
 
         // Message
         if (message != null) ...[

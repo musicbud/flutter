@@ -71,26 +71,23 @@ class LoadingStateWidget extends StatelessWidget {
     return Padding(
       padding: padding ?? EdgeInsets.all(design.designSystemSpacing.xl),
       child: Center(
-        child: _buildStateContent(context),
+        child: _buildStateContent(context, design),
       ),
     );
   }
 
-  Widget _buildStateContent(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
+  Widget _buildStateContent(BuildContext context, DesignSystemThemeExtension design) {
     switch (state) {
       case LoadingState.loading:
-        return _buildLoadingState();
+        return _buildLoadingState(design);
       case LoadingState.empty:
-        return emptyWidget ?? _buildDefaultEmptyState();
+        return emptyWidget ?? _buildDefaultEmptyState(design);
       case LoadingState.error:
-        return errorWidget ?? _buildDefaultErrorState();
+        return errorWidget ?? _buildDefaultErrorState(design);
     }
   }
 
-  Widget _buildLoadingState() {
+  Widget _buildLoadingState(DesignSystemThemeExtension design) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -113,10 +110,7 @@ class LoadingStateWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDefaultEmptyState() {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
+  Widget _buildDefaultEmptyState(DesignSystemThemeExtension design) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -155,17 +149,14 @@ class LoadingStateWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDefaultErrorState() {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
+  Widget _buildDefaultErrorState(DesignSystemThemeExtension design) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
           padding: EdgeInsets.all(design.designSystemSpacing.xl),
           decoration: BoxDecoration(
-            color: design.designSystemColors.error.withOpacity(0.1),
+            color: design.designSystemColors.error.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
           ),
           child: Icon(

@@ -97,7 +97,7 @@ abstract class BaseSectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final designColors = theme.designSystemColors;
+    final designColors = theme.designSystem?.designSystemColors;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -141,7 +141,7 @@ abstract class BaseSectionHeader extends StatelessWidget {
   @protected
   Widget _buildDivider(BuildContext context) {
     final theme = Theme.of(context);
-    final designColors = theme.designSystemColors;
+    final designColors = theme.designSystem?.designSystemColors;
 
     return Divider(
       height: 1,
@@ -154,7 +154,7 @@ abstract class BaseSectionHeader extends StatelessWidget {
   @protected
   Widget _buildDefaultTitle(BuildContext context) {
     final theme = Theme.of(context);
-    final designColors = theme.designSystemColors;
+    final designColors = theme.designSystem?.designSystemColors;
 
     return Expanded(
       child: Text(
@@ -172,7 +172,7 @@ abstract class BaseSectionHeader extends StatelessWidget {
   Widget _buildDefaultAction(BuildContext context) {
     if (onActionPressed != null && actionText != null) {
       final theme = Theme.of(context);
-      final designColors = theme.designSystemColors;
+      final designColors = theme.designSystem?.designSystemColors;
 
       return TextButton(
         onPressed: onActionPressed,
@@ -198,24 +198,66 @@ abstract class BaseSectionHeader extends StatelessWidget {
   /// Helper method to get design system colors
   @protected
   DesignSystemColors getDesignSystemColors(BuildContext context) {
-    return Theme.of(context).designSystemColors;
+    return Theme.of(context).designSystemColors ?? DesignSystemColors(
+      primary: DesignSystem.primary,
+      secondary: DesignSystem.secondary,
+      surface: DesignSystem.surface,
+      background: DesignSystem.background,
+      onSurface: DesignSystem.onSurface,
+      onSurfaceVariant: DesignSystem.onSurfaceVariant,
+      error: DesignSystem.error,
+      success: DesignSystem.success,
+      warning: DesignSystem.warning,
+      info: DesignSystem.info,
+      accentBlue: DesignSystem.accentBlue,
+      accentPurple: DesignSystem.accentPurple,
+      accentGreen: DesignSystem.accentGreen,
+      accentOrange: DesignSystem.accentOrange,
+      border: DesignSystem.border,
+      overlay: DesignSystem.overlay,
+      surfaceContainer: DesignSystem.surfaceContainer,
+      surfaceContainerHigh: DesignSystem.surfaceContainerHigh,
+      surfaceContainerHighest: DesignSystem.surfaceContainerHighest,
+      onPrimary: DesignSystem.onPrimary,
+      onError: DesignSystem.onError,
+      onErrorContainer: DesignSystem.onErrorContainer,
+    );
   }
 
   /// Helper method to get design system typography
   @protected
   DesignSystemTypography getDesignSystemTypography(BuildContext context) {
-    return Theme.of(context).designSystemTypography;
+    return Theme.of(context).designSystemTypography ?? DesignSystemTypography(
+      displayLarge: DesignSystem.displayLarge,
+      displayMedium: DesignSystem.displayMedium,
+      displaySmall: DesignSystem.displaySmall,
+      headlineLarge: DesignSystem.headlineLarge,
+      headlineMedium: DesignSystem.headlineMedium,
+      headlineSmall: DesignSystem.headlineSmall,
+      titleLarge: DesignSystem.titleLarge,
+      titleMedium: DesignSystem.titleMedium,
+      titleSmall: DesignSystem.titleSmall,
+      bodyLarge: DesignSystem.bodyLarge,
+      bodyMedium: DesignSystem.bodyMedium,
+      bodySmall: DesignSystem.bodySmall,
+      labelLarge: DesignSystem.labelLarge,
+      labelMedium: DesignSystem.labelMedium,
+      labelSmall: DesignSystem.labelSmall,
+      caption: DesignSystem.caption,
+      overline: DesignSystem.overline,
+      arabicText: DesignSystem.arabicText,
+    );
   }
 
   /// Helper method to get design system spacing
   @protected
   DesignSystemSpacing getDesignSystemSpacing(BuildContext context) {
-    return Theme.of(context).designSystemSpacing;
+    return Theme.of(context).designSystemSpacing ?? const DesignSystemSpacing();
   }
 
   /// Helper method to get design system radius
   @protected
   DesignSystemRadius getDesignSystemRadius(BuildContext context) {
-    return Theme.of(context).designSystemRadius;
+    return Theme.of(context).designSystemRadius ?? const DesignSystemRadius();
   }
 }

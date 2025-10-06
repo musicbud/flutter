@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../core/theme/design_system.dart';
+import '../../../core/theme/design_system.dart';
 
 /// Utility class for handling image loading, caching, and error states.
 /// Provides consistent image handling across the application.

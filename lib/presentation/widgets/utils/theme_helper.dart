@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/design_system.dart';
+import '../../../core/theme/design_system.dart';
 
 /// Utility class for theme-related operations and design system helpers.
 /// Provides convenient methods for accessing design tokens and creating consistent styling.
@@ -203,7 +203,7 @@ class ThemeHelper {
 
   /// Create a color with opacity
   static Color withOpacity(Color color, double opacity) {
-    return color.withOpacity(opacity);
+    return color.withValues(alpha: opacity);
   }
 
   /// Lighten a color by a percentage

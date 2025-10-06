@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:musicbud_flutter/core/theme/design_system.dart';
 
 /// A mixin that provides comprehensive error state management for widgets.
 ///
@@ -186,7 +187,7 @@ mixin ErrorStateMixin<T extends StatefulWidget> on State<T> {
         Container(
           padding: EdgeInsets.all(design.designSystemSpacing.xl),
           decoration: BoxDecoration(
-            color: design.designSystemColors.error.withOpacity(0.1),
+            color: design.designSystemColors.error.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
           ),
           child: Icon(
@@ -241,7 +242,7 @@ mixin ErrorStateMixin<T extends StatefulWidget> on State<T> {
     return Container(
       padding: EdgeInsets.all(design.designSystemSpacing.lg),
       decoration: BoxDecoration(
-        color: design.designSystemColors.error.withOpacity(0.1),
+        color: design.designSystemColors.error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
       ),
       child: Icon(
@@ -372,20 +373,20 @@ enum ErrorType {
 /// Common error classes for type detection
 class NetworkError extends Error {
   final String message;
-  const NetworkError(this.message);
+  NetworkError(this.message);
 }
 
 class TimeoutError extends Error {
   final String message;
-  const TimeoutError(this.message);
+  TimeoutError(this.message);
 }
 
 class ServerError extends Error {
   final String message;
-  const ServerError(this.message);
+  ServerError(this.message);
 }
 
 class ValidationError extends Error {
   final String? message;
-  const ValidationError(this.message);
+  ValidationError(this.message);
 }

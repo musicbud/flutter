@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import '../../../core/error/exceptions.dart';
 import '../../../config/api_config.dart';
+import '../../../utils/http_utils.dart';
 import '../../network/dio_client.dart';
 
 abstract class AuthRemoteDataSource {
@@ -33,7 +34,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       });
       return response.data;
     } on DioException catch (e) {
-      throw ServerException(message: e.message ?? 'Failed to login');
+      if (HttpUtils.isAuthenticationError(e)) {
+        throw AuthenticationException(
+          message: 'Invalid username or password. Please check your credentials and try again.'
+        );
+      } else if (HttpUtils.isNetworkError(e)) {
+        throw NetworkException(
+          message: 'Network error during login. Please check your internet connection.'
+        );
+      } else if (HttpUtils.isServerError(e)) {
+        throw ServerException(
+          message: 'Server error during login. Please try again in a few moments.'
+        );
+      } else {
+        throw ServerException(message: HttpUtils.handleDioException(e));
+      }
     }
   }
 
@@ -48,7 +63,29 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       });
       return response.data;
     } on DioException catch (e) {
-      throw ServerException(message: e.message ?? 'Failed to register');
+      if (HttpUtils.isNetworkError(e)) {
+        throw NetworkException(
+          message: 'Network error during registration. Please check your internet connection.'
+        );
+      } else if (HttpUtils.isServerError(e)) {
+        throw ServerException(
+          message: 'Server error during registration. Please try again in a few moments.'
+        );
+      } else {
+        // For validation errors (422) and conflicts (409), provide specific messages
+        final statusCode = e.response?.statusCode;
+        if (statusCode == 422) {
+          throw ServerException(
+            message: 'Registration validation failed. Please check your input data.'
+          );
+        } else if (statusCode == 409) {
+          throw ServerException(
+            message: 'Username or email already exists. Please choose different credentials.'
+          );
+        } else {
+          throw ServerException(message: HttpUtils.handleDioException(e));
+        }
+      }
     }
   }
 

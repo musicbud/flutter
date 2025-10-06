@@ -2,11 +2,11 @@ import 'package:dartz/dartz.dart';
 import '../../core/error/failures.dart';
 import '../../core/error/exceptions.dart';
 import '../../core/network/network_info.dart';
-import '../../domain/models/channel.dart';
-import '../../domain/models/channel_settings.dart';
-import '../../domain/models/channel_stats.dart';
+import '../../models/channel.dart';
+import '../../models/channel_settings.dart';
+import '../../models/channel_stats.dart';
 import '../../domain/repositories/channel_repository.dart';
-import '../datasources/channel_remote_data_source.dart';
+import '../data_sources/remote/channel_remote_data_source.dart';
 
 class ChannelRepositoryImpl implements ChannelRepository {
   final ChannelRemoteDataSource remoteDataSource;

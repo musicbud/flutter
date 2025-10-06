@@ -1,7 +1,7 @@
 import '../../domain/repositories/library_repository.dart';
 import '../../domain/repositories/content_repository.dart';
 import '../../domain/repositories/user_repository.dart';
-import '../../domain/models/library_item.dart';
+import '../../models/library_item.dart';
 
 class LibraryRepositoryImpl implements LibraryRepository {
   final ContentRepository _contentRepository;

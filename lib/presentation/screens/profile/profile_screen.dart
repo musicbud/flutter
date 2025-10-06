@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/user_profile/user_profile_bloc.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../widgets/common/index.dart';
+import '../../../widgets/common/app_button.dart';
+import '../../../widgets/common/index.dart';
 import 'profile_header_widget.dart';
 import 'profile_music_widget.dart';
 import 'profile_activity_widget.dart';
@@ -93,14 +94,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
-                      child: OutlineButton(
+                      child: AppButton.secondary(
                         text: 'Logout',
                         onPressed: () {
                           // Handle logout
                         },
                         icon: Icons.logout,
-                        size: ModernButtonSize.large,
-                        isFullWidth: true,
+                        size: AppButtonSize.large,
+                        width: double.infinity,
                       ),
                     ),
                   ),

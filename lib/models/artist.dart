@@ -1,4 +1,4 @@
-import 'package:musicbud_flutter/domain/models/common_artist.dart';
+import 'package:musicbud_flutter/models/common_artist.dart';
 
 class Artist {
   final String id;
@@ -60,6 +60,34 @@ class Artist {
       'popularity': popularity,
       'followers': followers,
     };
+  }
+
+  Artist copyWith({
+    String? id,
+    String? uid,
+    String? name,
+    List<String>? genres,
+    List<String>? imageUrls,
+    String? spotifyId,
+    String? ytmusicId,
+    String? lastfmId,
+    bool? isLiked,
+    int? popularity,
+    int? followers,
+  }) {
+    return Artist(
+      id: id ?? this.id,
+      uid: uid ?? this.uid,
+      name: name ?? this.name,
+      genres: genres ?? this.genres,
+      imageUrls: imageUrls ?? this.imageUrls,
+      spotifyId: spotifyId ?? this.spotifyId,
+      ytmusicId: ytmusicId ?? this.ytmusicId,
+      lastfmId: lastfmId ?? this.lastfmId,
+      isLiked: isLiked ?? this.isLiked,
+      popularity: popularity ?? this.popularity,
+      followers: followers ?? this.followers,
+    );
   }
 
   CommonArtist toCommonArtist() {

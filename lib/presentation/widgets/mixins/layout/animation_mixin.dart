@@ -1,5 +1,65 @@
 
+/// Represents a single step in an animation sequence
+import 'dart:async';
 import 'package:flutter/material.dart';
+
+class AnimationStep {
+  /// The name of the animation to play for this step
+  final String name;
+
+  /// Optional delay before playing this step
+  final Duration? delay;
+
+  /// Optional duration override for this specific step
+  final Duration? duration;
+
+  /// Optional curve override for this specific step
+  final Curve? curve;
+
+  const AnimationStep({
+    required this.name,
+    this.delay,
+    this.duration,
+    this.curve,
+  });
+}
+
+class AnimationConfig {
+  final Duration duration;
+  final Duration? reverseDuration;
+  final Curve curve;
+  final double lowerBound;
+  final double upperBound;
+  final String? debugLabel;
+
+  const AnimationConfig({
+    required this.duration,
+    this.reverseDuration,
+    this.curve = Curves.linear,
+    this.lowerBound = 0.0,
+    this.upperBound = 1.0,
+    this.debugLabel,
+  });
+
+  /// Creates a copy of this AnimationConfig with the given fields replaced.
+  AnimationConfig copyWith({
+    Duration? duration,
+    Duration? reverseDuration,
+    Curve? curve,
+    double? lowerBound,
+    double? upperBound,
+    String? debugLabel,
+  }) {
+    return AnimationConfig(
+      duration: duration ?? this.duration,
+      reverseDuration: reverseDuration ?? this.reverseDuration,
+      curve: curve ?? this.curve,
+      lowerBound: lowerBound ?? this.lowerBound,
+      upperBound: upperBound ?? this.upperBound,
+      debugLabel: debugLabel ?? this.debugLabel,
+    );
+  }
+}
 
 /// A mixin that provides comprehensive animation management for widgets.
 ///
@@ -352,12 +412,17 @@ mixin AnimationMixin<T extends StatefulWidget> on State<T>
       final previousName = names[i - 1];
 
       // Wait for previous animation to complete
-      _controllers[previousName]?.addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          playAnimation(name);
-          _controllers[previousName]?.removeStatusListener(arguments);
+      void addListener() {
+        void listener(AnimationStatus status) {
+          if (status == AnimationStatus.completed) {
+            playAnimation(name);
+            _controllers[previousName]?.removeStatusListener(listener);
+          }
         }
-      });
+        _controllers[previousName]?.addStatusListener(listener);
+      }
+
+      addListener();
     }
   }
 
@@ -977,12 +1042,17 @@ mixin AnimationMixin<T extends StatefulWidget> on State<T>
       playAnimation(step.name);
 
       // Wait for completion and play next
-      _controllers[step.name]?.addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          _controllers[step.name]?.removeStatusListener(arguments);
-          playNext(index + 1);
+      void addListener() {
+        void listener(AnimationStatus status) {
+          if (status == AnimationStatus.completed) {
+            _controllers[step.name]?.removeStatusListener(listener);
+            playNext(index + 1);
+          }
         }
-      });
+        _controllers[step.name]?.addStatusListener(listener);
+      }
+
+      addListener();
     }
 
     playNext(0);
@@ -998,15 +1068,20 @@ mixin AnimationMixin<T extends StatefulWidget> on State<T>
     for (final name in animationNames) {
       playAnimation(name);
 
-      _controllers[name]?.addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          completedCount++;
-          if (completedCount == animationNames.length) {
-            onComplete?.call();
+      void addListener() {
+        void listener(AnimationStatus status) {
+          if (status == AnimationStatus.completed) {
+            completedCount++;
+            if (completedCount == animationNames.length) {
+              onComplete?.call();
+            }
+            _controllers[name]?.removeStatusListener(listener);
           }
-          _controllers[name]?.removeStatusListener(arguments);
         }
-      });
+        _controllers[name]?.addStatusListener(listener);
+      }
+
+      addListener();
     }
   }
 
@@ -1980,22 +2055,6 @@ mixin AnimationMixin<T extends StatefulWidget> on State<T>
   AnimationController createSciFiAnimation({
     required String name,
     Duration duration = const Duration(milliseconds: 800),
-    VoidCallback? onComplete,
-  }) {
-    final controller = createAnimation(
-      name: name,
-      duration: duration,
-      curve: Curves.easeInOut,
-      onComplete: onComplete,
-    );
-
-    return controller;
-  }
-
-  /// Create a cyberpunk animation
-  AnimationController createCyberpunkAnimation({
-    required String name,
-    Duration duration = const Duration(milliseconds: 700),
     VoidCallback? onComplete,
   }) {
     final controller = createAnimation(
@@ -4191,3 +4250,12 @@ mixin AnimationMixin<T extends StatefulWidget> on State<T>
     VoidCallback? onComplete,
   }) {
     final controller = createAnimation(
+      name: name,
+      duration: duration,
+      curve: Curves.easeInOut,
+      onComplete: onComplete,
+    );
+
+    return controller;
+  }
+}

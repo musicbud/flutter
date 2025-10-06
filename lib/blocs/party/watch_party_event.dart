@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/models/watch_party.dart';
+import '../../models/watch_party.dart';
 
 abstract class WatchPartyEvent extends Equatable {
   const WatchPartyEvent();

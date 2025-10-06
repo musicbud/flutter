@@ -1,11 +1,12 @@
 import '../../domain/repositories/user_repository.dart';
-import '../../domain/models/user_profile.dart';
-import '../../domain/models/track.dart';
-import '../../domain/models/common_artist.dart';
-import '../../domain/models/common_album.dart';
-import '../../domain/models/common_genre.dart';
-import '../../domain/models/common_anime.dart';
-import '../../domain/models/common_manga.dart';
+import '../../models/user_profile.dart';
+import '../../models/parent_user.dart';
+import '../../models/track.dart';
+import '../../models/artist.dart';
+import '../../models/album.dart';
+import '../../models/genre.dart';
+import '../../models/common_anime.dart';
+import '../../models/common_manga.dart';
 import '../data_sources/remote/user_remote_data_source.dart';
 import '../data_sources/remote/user_remote_data_source_impl.dart';
 
@@ -19,6 +20,11 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<UserProfile> getUserProfile() async {
     return await _remoteDataSource.getUserProfile();
+  }
+
+  @override
+  Future<ParentUser> getParentUser() async {
+    return await _remoteDataSource.getParentUser();
   }
 
   @override
@@ -37,7 +43,7 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<List<CommonArtist>> getLikedArtists() async {
+  Future<List<Artist>> getLikedArtists() async {
     return await _remoteDataSource.getLikedArtists();
   }
 
@@ -52,17 +58,17 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<List<CommonAlbum>> getLikedAlbums() async {
+  Future<List<Album>> getLikedAlbums() async {
     return await _remoteDataSource.getLikedAlbums();
   }
 
   @override
-  Future<List<CommonGenre>> getLikedGenres() async {
+  Future<List<Genre>> getLikedGenres() async {
     return await _remoteDataSource.getLikedGenres();
   }
 
   @override
-  Future<List<CommonArtist>> getTopArtists() async {
+  Future<List<Artist>> getTopArtists() async {
     return await _remoteDataSource.getTopArtists();
   }
 
@@ -77,7 +83,7 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<List<CommonGenre>> getTopGenres() async {
+  Future<List<Genre>> getTopGenres() async {
     return await _remoteDataSource.getTopGenres();
   }
 

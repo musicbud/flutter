@@ -1,145 +1,100 @@
-import '../domain/models/common_track.dart';
+import 'package:equatable/equatable.dart';
+import 'common_track.dart';
+import 'artist.dart';
 
-/// Represents a track in the application
-class Track {
-  final String id;
-  final String title;
-  final String? artistName;
-  final String? albumName;
-  final String? source;
-  final String? spotifyId;
-  final String? ytmusicId;
-  final String? lastfmId;
-  final int? popularity;
-  final bool isLiked;
-  final DateTime? playedAt;
-  final double? latitude;
-  final double? longitude;
-  final String? imageUrl;
-  final List<String>? imageUrls;
-  final int? durationMs;
+class Track extends CommonTrack with EquatableMixin {
+  const Track({
+    required String uid,
+    required String title,
+    String? artistName,
+    String? albumName,
+    String? imageUrl,
+    double? latitude,
+    double? longitude,
+    DateTime? playedAt,
+    bool isLiked = false,
+  }) : super(
+          id: uid,
+          name: title,
+          artistName: artistName,
+          albumName: albumName,
+          imageUrl: imageUrl,
+          latitude: latitude,
+          longitude: longitude,
+          playedAt: playedAt,
+          isLiked: isLiked,
+        );
 
-  Track({
-    required this.id,
-    required this.title,
-    this.artistName,
-    this.albumName,
-    this.source,
-    this.spotifyId,
-    this.ytmusicId,
-    this.lastfmId,
-    this.popularity,
-    this.isLiked = false,
-    this.playedAt,
-    this.latitude,
-    this.longitude,
-    this.imageUrl,
-    this.imageUrls,
-    this.durationMs,
-  });
+ // Getter to provide artist object for compatibility
+ Artist? get artist {
+   if (artistName == null) return null;
+   return Artist(
+     id: '', // No artist ID available
+     name: artistName!,
+     isLiked: false,
+   );
+ }
 
-  factory Track.fromJson(Map<String, dynamic> json) {
+ factory Track.fromJson(Map<String, dynamic> json) {
+    // Handle backend response structure
+    // Backend returns 'uid' and 'name'
+    final uid = json['uid'] as String? ?? json['id'] as String? ?? '';
+    final title = json['name'] as String? ?? json['title'] as String? ?? '';
+
+    // Backend may not include artist info directly in track serialization
+    // This might need to be populated from related data
+    final artistName = json['artist_name'] as String?;
+    final albumName = json['album_name'] as String?;
+
+    // Handle image URL - backend returns images array, take first one
+    String? imageUrl = json['image_url'] as String?;
+    if (imageUrl == null && json['images'] is List && (json['images'] as List).isNotEmpty) {
+      final images = json['images'] as List;
+      if (images.isNotEmpty && images[0] is Map<String, dynamic>) {
+        imageUrl = images[0]['url'] as String?;
+      }
+    }
+
     return Track(
-      id: json['id'] as String,
-      title: json['title'] as String,
-      artistName: json['artist_name'] as String?,
-      albumName: json['album_name'] as String?,
-      source: json['source'] as String?,
-      spotifyId: json['spotify_id'] as String?,
-      ytmusicId: json['ytmusic_id'] as String?,
-      lastfmId: json['lastfm_id'] as String?,
-      popularity: json['popularity'] as int?,
-      isLiked: json['is_liked'] as bool? ?? false,
+      uid: uid,
+      title: title,
+      artistName: artistName,
+      albumName: albumName,
+      imageUrl: imageUrl,
+      latitude: json['latitude'] as double?,
+      longitude: json['longitude'] as double?,
       playedAt: json['played_at'] != null
           ? DateTime.parse(json['played_at'] as String)
           : null,
-      latitude: json['latitude'] as double?,
-      longitude: json['longitude'] as double?,
-      imageUrl: json['image_url'] as String?,
-      imageUrls: (json['image_urls'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
-      durationMs: json['duration_ms'] as int?,
+      isLiked: json['is_liked'] as bool? ?? false,
     );
   }
 
+  @override
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'title': title,
+      'uid': id,
+      'name': name,
       'artist_name': artistName,
       'album_name': albumName,
-      'source': source,
-      'spotify_id': spotifyId,
-      'ytmusic_id': ytmusicId,
-      'lastfm_id': lastfmId,
-      'popularity': popularity,
-      'is_liked': isLiked,
-      'played_at': playedAt?.toIso8601String(),
+      'image_url': imageUrl,
       'latitude': latitude,
       'longitude': longitude,
-      'image_url': imageUrl,
-      'image_urls': imageUrls,
-      'duration_ms': durationMs,
+      'played_at': playedAt?.toIso8601String(),
+      'is_liked': isLiked,
     };
   }
 
-  factory Track.fromCommonTrack(CommonTrack track) {
-    return Track(
-      id: track.id,
-      title: track.title,
-      artistName: track.artistName,
-      albumName: track.albumName,
-      source: track.source,
-      spotifyId: track.spotifyId,
-      ytmusicId: track.ytmusicId,
-      lastfmId: track.lastfmId,
-      popularity: track.popularity,
-      isLiked: track.isLiked,
-      playedAt: track.playedAt,
-      latitude: track.latitude,
-      longitude: track.longitude,
-      imageUrl: track.imageUrl,
-      imageUrls: track.imageUrls,
-      durationMs: track.durationMs,
-    );
-  }
-
-  Track copyWith({
-    String? id,
-    String? title,
-    String? artistName,
-    String? albumName,
-    String? source,
-    String? spotifyId,
-    String? ytmusicId,
-    String? lastfmId,
-    int? popularity,
-    bool? isLiked,
-    DateTime? playedAt,
-    double? latitude,
-    double? longitude,
-    String? imageUrl,
-    List<String>? imageUrls,
-    int? durationMs,
-  }) {
-    return Track(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      artistName: artistName ?? this.artistName,
-      albumName: albumName ?? this.albumName,
-      source: source ?? this.source,
-      spotifyId: spotifyId ?? this.spotifyId,
-      ytmusicId: ytmusicId ?? this.ytmusicId,
-      lastfmId: lastfmId ?? this.lastfmId,
-      popularity: popularity ?? this.popularity,
-      isLiked: isLiked ?? this.isLiked,
-      playedAt: playedAt ?? this.playedAt,
-      latitude: latitude ?? this.latitude,
-      longitude: longitude ?? this.longitude,
-      imageUrl: imageUrl ?? this.imageUrl,
-      imageUrls: imageUrls ?? this.imageUrls,
-      durationMs: durationMs ?? this.durationMs,
-    );
-  }
+  @override
+  List<Object?> get props => [
+        id,
+        name,
+        artistName,
+        albumName,
+        imageUrl,
+        latitude,
+        longitude,
+        playedAt,
+        isLiked,
+      ];
 }

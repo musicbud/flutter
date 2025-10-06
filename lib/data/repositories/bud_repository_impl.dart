@@ -1,7 +1,7 @@
-import '../../domain/models/bud_match.dart';
-import '../../domain/models/common_track.dart';
-import '../../domain/models/common_artist.dart';
-import '../../domain/models/common_genre.dart';
+import '../../models/bud_match.dart';
+import '../../models/common_track.dart';
+import '../../models/common_artist.dart';
+import '../../models/common_genre.dart';
 import '../../domain/repositories/bud_repository.dart';
 import '../data_sources/remote/bud_remote_data_source.dart';
 

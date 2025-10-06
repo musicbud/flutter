@@ -1,4 +1,4 @@
-import '../../models/story.dart';
+import '../../../models/story.dart';
 
 abstract class StoryRepository {
   Future<List<Story>> getStories({int page = 1});

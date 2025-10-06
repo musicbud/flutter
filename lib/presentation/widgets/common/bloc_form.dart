@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/theme/app_constants.dart';
 import '../../mixins/page_mixin.dart';
 import 'app_text_field.dart';
-import 'app_button.dart';
+import '../../../widgets/common/app_button.dart';
 import 'app_scaffold.dart';
-import '../loading_indicator.dart';
+import '../../../widgets/common/loading_indicator.dart';
 
 /// A dynamic form component that integrates with BLoC pattern
 /// Combines the functionality of legacy forms with modern styling

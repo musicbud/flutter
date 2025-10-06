@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/design_system.dart';
+import '../../../core/theme/design_system.dart';
 import '../builders/index.dart';
 
 /// A composer class for composing sections with headers and content.

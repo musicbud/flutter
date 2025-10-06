@@ -1,5 +1,5 @@
-import '../../domain/models/common_track.dart';
-import '../../domain/models/spotify_device.dart';
+import '../../models/common_track.dart';
+import '../../models/spotify_device.dart';
 
 /// Base class for all Spotify control states
 abstract class SpotifyControlState {}

@@ -49,7 +49,7 @@ class EmptyState extends BaseStateDisplay {
       children: [
         // Title
         Text(
-          title,
+          title!,
           style: appTheme.typography.headlineH6.copyWith(
             color: appTheme.colors.textPrimary,
             fontWeight: FontWeight.w600,

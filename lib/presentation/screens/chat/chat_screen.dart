@@ -153,8 +153,8 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
  Widget _buildLoadingState() {
-    final theme = Theme.of(context);
-    final colors = theme.designSystemColors;
+   final theme = Theme.of(context);
+   final colors = theme.designSystem?.designSystemColors;
 
     return Center(
       child: Column(
@@ -163,11 +163,11 @@ class _ChatScreenState extends State<ChatScreen> {
           Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              color: colors.surface,
+              color: colors?.surface ?? Colors.grey.shade100,
               borderRadius: BorderRadius.circular(50),
             ),
             child: CircularProgressIndicator(
-              color: colors.primary,
+              color: colors?.primary ?? Colors.blue,
               strokeWidth: 3,
             ),
           ),
@@ -175,7 +175,7 @@ class _ChatScreenState extends State<ChatScreen> {
           Text(
             'Loading chat...',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: colors.onSurfaceVariant,
+              color: colors?.onSurfaceVariant ?? Colors.grey,
             ),
           ),
         ],
@@ -185,7 +185,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildEmptyState() {
     final theme = Theme.of(context);
-    final colors = theme.designSystemColors;
+    final colors = theme.designSystem?.designSystemColors;
 
     return Center(
       child: Column(
@@ -194,27 +194,27 @@ class _ChatScreenState extends State<ChatScreen> {
           Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: colors.surface,
+              color: colors?.surface ?? Colors.grey.shade100,
               borderRadius: BorderRadius.circular(50),
             ),
             child: Icon(
               Icons.chat_bubble_outline,
               size: 64,
-              color: colors.onSurfaceVariant,
+              color: colors?.onSurfaceVariant ?? Colors.grey,
             ),
           ),
           const SizedBox(height: 16),
           Text(
             'No messages yet',
             style: theme.textTheme.titleMedium?.copyWith(
-              color: colors.onSurface,
+              color: colors?.onSurface ?? Colors.black,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Start a conversation by typing a message',
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: colors.onSurfaceVariant,
+              color: colors?.onSurfaceVariant ?? Colors.grey,
             ),
             textAlign: TextAlign.center,
           ),

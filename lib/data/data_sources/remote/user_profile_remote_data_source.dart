@@ -1,5 +1,5 @@
 import '../../network/dio_client.dart';
-import '../../../domain/models/user_profile.dart';
+import '../../../models/user_profile.dart';
 import '../../../config/api_config.dart';
 
 abstract class UserProfileRemoteDataSource {

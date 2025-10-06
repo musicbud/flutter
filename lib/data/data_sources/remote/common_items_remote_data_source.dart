@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../../../core/error/exceptions.dart';
-import '../../../domain/models/common_track.dart';
-import '../../../domain/models/common_artist.dart';
-import '../../../domain/models/common_album.dart';
-import '../../../domain/models/common_genre.dart';
-import '../../../domain/models/common_anime.dart';
-import '../../../domain/models/common_manga.dart';
-import '../../../domain/models/categorized_common_items.dart';
+import '../../../models/common_track.dart';
+import '../../../models/common_artist.dart';
+import '../../../models/common_album.dart';
+import '../../../models/common_genre.dart';
+import '../../../models/common_anime.dart';
+import '../../../models/common_manga.dart';
+import '../../../models/categorized_common_items.dart';
 
 abstract class CommonItemsRemoteDataSource {
   Future<List<CommonTrack>> getCommonLikedTracks(String username);

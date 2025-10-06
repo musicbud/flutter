@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/models/onboarding_step.dart';
+import '../../models/onboarding_step.dart';
 
 abstract class OnboardingState extends Equatable {
   const OnboardingState();

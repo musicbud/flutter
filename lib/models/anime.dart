@@ -1,4 +1,4 @@
-import 'package:musicbud_flutter/domain/models/common_anime.dart';
+import 'package:musicbud_flutter/models/common_anime.dart';
 
 class Anime {
   final String id;

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/design_system.dart';
+import '../../../core/theme/design_system.dart';
 import '../builders/index.dart';
 import '../composers/index.dart';
+import '../state/loading_state_widget.dart';
 
 /// A factory class for creating widgets dynamically based on type.
 /// Provides a centralized way to create widgets with consistent configuration and styling.
@@ -59,6 +60,7 @@ class WidgetFactory {
 
   /// Creates a widget based on the provided type
   Widget? createWidget({
+    required BuildContext context,
     required String type,
     Map<String, dynamic>? data,
     Key? key,
@@ -75,47 +77,48 @@ class WidgetFactory {
       }
 
       // Use built-in widget creation
-      return _createBuiltInWidget(type, data, key);
+      return _createBuiltInWidget(context, type, data, key);
     } catch (e) {
-      return _createErrorWidget(type, e);
+      return _createErrorWidget(context, type, e);
     }
   }
 
   /// Creates a list of widgets from a list of type configurations
-  List<Widget> createWidgets(List<WidgetConfig> configs) {
+  List<Widget> createWidgets(BuildContext context, List<WidgetConfig> configs) {
     return configs.map((config) {
       return createWidget(
+        context: context,
         type: config.type,
         data: config.data,
         key: config.key,
-      ) ?? _createErrorWidget(config.type, 'Failed to create widget');
+      ) ?? _createErrorWidget(context, config.type, 'Failed to create widget');
     }).toList();
   }
 
-  Widget _createBuiltInWidget(String type, Map<String, dynamic>? data, Key? key) {
+  Widget _createBuiltInWidget(BuildContext context, String type, Map<String, dynamic>? data, Key? key) {
     switch (type) {
       case 'card':
-        return _createCard(data, key);
+        return _createCard(context, data, key);
       case 'list':
-        return _createList(data, key);
+        return _createList(context, data, key);
       case 'state':
-        return _createState(data, key);
+        return _createState(context, data, key);
       case 'section':
-        return _createSection(data, key);
+        return _createSection(context, data, key);
       case 'responsive_layout':
-        return _createResponsiveLayout(data, key);
+        return _createResponsiveLayout(context, data, key);
       case 'music_tile':
-        return _createMusicTile(data, key);
+        return _createMusicTile(context, data, key);
       case 'playlist_card':
-        return _createPlaylistCard(data, key);
+        return _createPlaylistCard(context, data, key);
       case 'loading_state':
-        return _createLoadingState(data, key);
+        return _createLoadingState(context, data, key);
       default:
         throw UnsupportedError('Widget type "$type" is not supported');
     }
   }
 
-  Widget _createCard(Map<String, dynamic>? data, Key? key) {
+  Widget _createCard(BuildContext context, Map<String, dynamic>? data, Key? key) {
     final builder = CardBuilder();
 
     if (data != null) {
@@ -123,7 +126,7 @@ class WidgetFactory {
         builder.withVariant(_parseCardVariant(data['variant']));
       }
       if (data.containsKey('padding')) {
-        builder.withPadding(_parseEdgeInsets(data['padding']));
+        builder.withPadding(_parseEdgeInsets(context, data['padding']));
       }
       if (data.containsKey('title')) {
         builder.withHeader(
@@ -139,7 +142,7 @@ class WidgetFactory {
     return builder.build();
   }
 
-  Widget _createList(Map<String, dynamic>? data, Key? key) {
+  Widget _createList(BuildContext context, Map<String, dynamic>? data, Key? key) {
     final builder = ListBuilder<String>();
 
     if (data != null) {
@@ -157,7 +160,7 @@ class WidgetFactory {
     return builder.build();
   }
 
-  Widget _createState(Map<String, dynamic>? data, Key? key) {
+  Widget _createState(BuildContext context, Map<String, dynamic>? data, Key? key) {
     final builder = StateBuilder();
 
     if (data != null) {
@@ -174,7 +177,7 @@ class WidgetFactory {
     return builder.build();
   }
 
-  Widget _createSection(Map<String, dynamic>? data, Key? key) {
+  Widget _createSection(BuildContext context, Map<String, dynamic>? data, Key? key) {
     final composer = SectionComposer();
 
     if (data != null) {
@@ -195,7 +198,7 @@ class WidgetFactory {
     return composer.build();
   }
 
-  Widget _createResponsiveLayout(Map<String, dynamic>? data, Key? key) {
+  Widget _createResponsiveLayout(BuildContext context, Map<String, dynamic>? data, Key? key) {
     return ResponsiveLayout(
       key: key,
       builder: (context, breakpoint) {
@@ -207,27 +210,30 @@ class WidgetFactory {
     );
   }
 
-  Widget _createMusicTile(Map<String, dynamic>? data, Key? key) {
+  Widget _createMusicTile(BuildContext context, Map<String, dynamic>? data, Key? key) {
+    final theme = Theme.of(context);
+    final design = theme.extension<DesignSystemThemeExtension>()!;
+
     // This would integrate with existing MusicTile widget
     return Container(
       key: key,
-      padding: EdgeInsets.all(DesignSystem.spacingMD),
+      padding: EdgeInsets.all(design.designSystemSpacing.md),
       decoration: BoxDecoration(
-        color: DesignSystem.surfaceContainer,
-        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
+        color: design.designSystemColors.surfaceContainer,
+        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             data?['title'] ?? 'Music Title',
-            style: DesignSystem.titleMedium,
+            style: design.designSystemTypography.titleMedium,
           ),
-          SizedBox(height: DesignSystem.spacingXS),
+          SizedBox(height: design.designSystemSpacing.xs),
           Text(
             data?['artist'] ?? 'Artist',
-            style: DesignSystem.bodySmall.copyWith(
-              color: DesignSystem.onSurfaceVariant,
+            style: design.designSystemTypography.bodySmall.copyWith(
+              color: design.designSystemColors.onSurfaceVariant,
             ),
           ),
         ],
@@ -235,14 +241,17 @@ class WidgetFactory {
     );
   }
 
-  Widget _createPlaylistCard(Map<String, dynamic>? data, Key? key) {
+  Widget _createPlaylistCard(BuildContext context, Map<String, dynamic>? data, Key? key) {
+    final theme = Theme.of(context);
+    final design = theme.extension<DesignSystemThemeExtension>()!;
+
     // This would integrate with existing PlaylistCard widget
     return Container(
       key: key,
-      padding: EdgeInsets.all(DesignSystem.spacingMD),
+      padding: EdgeInsets.all(design.designSystemSpacing.md),
       decoration: BoxDecoration(
-        color: DesignSystem.surfaceContainer,
-        borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
+        color: design.designSystemColors.surfaceContainer,
+        borderRadius: BorderRadius.circular(design.designSystemRadius.lg),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,25 +259,25 @@ class WidgetFactory {
           Container(
             height: 120,
             decoration: BoxDecoration(
-              color: (data?['accentColor'] as Color?) ?? DesignSystem.primary,
-              borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
+              color: (data?['accentColor'] as Color?) ?? design.designSystemColors.primary,
+              borderRadius: BorderRadius.circular(design.designSystemRadius.lg),
             ),
           ),
-          SizedBox(height: DesignSystem.spacingMD),
+          SizedBox(height: design.designSystemSpacing.md),
           Text(
             data?['title'] ?? 'Playlist Title',
-            style: DesignSystem.titleSmall,
+            style: design.designSystemTypography.titleSmall,
           ),
           Text(
             data?['trackCount'] ?? '0 tracks',
-            style: DesignSystem.caption,
+            style: design.designSystemTypography.caption,
           ),
         ],
       ),
     );
   }
 
-  Widget _createLoadingState(Map<String, dynamic>? data, Key? key) {
+  Widget _createLoadingState(BuildContext context, Map<String, dynamic>? data, Key? key) {
     return LoadingStateWidget(
       key: key,
       state: data?['state'] == 'loading'
@@ -282,34 +291,37 @@ class WidgetFactory {
     );
   }
 
-  Widget _createErrorWidget(String type, Object error) {
+  Widget _createErrorWidget(BuildContext context, String type, Object error) {
+    final theme = Theme.of(context);
+    final design = theme.extension<DesignSystemThemeExtension>()!;
+
     return Container(
-      padding: EdgeInsets.all(DesignSystem.spacingMD),
+      padding: EdgeInsets.all(design.designSystemSpacing.md),
       decoration: BoxDecoration(
-        color: DesignSystem.error.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
-        border: Border.all(color: DesignSystem.error),
+        color: design.designSystemColors.error.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        border: Border.all(color: design.designSystemColors.error),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             Icons.error_outline,
-            color: DesignSystem.error,
+            color: design.designSystemColors.error,
             size: 32,
           ),
-          SizedBox(height: DesignSystem.spacingSM),
+          SizedBox(height: design.designSystemSpacing.sm),
           Text(
             'Widget Error',
-            style: DesignSystem.titleSmall.copyWith(
-              color: DesignSystem.error,
+            style: design.designSystemTypography.titleSmall.copyWith(
+              color: design.designSystemColors.error,
             ),
           ),
-          SizedBox(height: DesignSystem.spacingXS),
+          SizedBox(height: design.designSystemSpacing.xs),
           Text(
             'Type: $type\nError: $error',
-            style: DesignSystem.caption.copyWith(
-              color: DesignSystem.error,
+            style: design.designSystemTypography.caption.copyWith(
+              color: design.designSystemColors.error,
             ),
             textAlign: TextAlign.center,
           ),
@@ -338,7 +350,10 @@ class WidgetFactory {
     return CardVariant.primary;
   }
 
-  EdgeInsetsGeometry _parseEdgeInsets(dynamic value) {
+  EdgeInsetsGeometry _parseEdgeInsets(BuildContext context, dynamic value) {
+    final theme = Theme.of(context);
+    final design = theme.extension<DesignSystemThemeExtension>()!;
+
     if (value is EdgeInsetsGeometry) return value;
     if (value is double) return EdgeInsets.all(value);
     if (value is Map) {
@@ -349,7 +364,7 @@ class WidgetFactory {
         bottom: value['bottom'] ?? 0,
       );
     }
-    return EdgeInsets.all(DesignSystem.spacingMD);
+    return EdgeInsets.all(design.designSystemSpacing.md);
   }
 
   ListLoadingState _parseLoadingState(dynamic value) {

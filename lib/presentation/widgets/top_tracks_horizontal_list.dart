@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../domain/models/track.dart';
+import '../../models/track.dart';
 
 class TopTracksHorizontalList extends StatefulWidget {
   final List<Track> initialTracks;

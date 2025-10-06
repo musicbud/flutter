@@ -1,8 +1,8 @@
-import '../models/chat.dart';
-import '../models/chat_message.dart';
-import '../models/message.dart';
-import '../models/channel.dart';
-import '../models/user_profile.dart';
+import '../../models/chat.dart';
+import '../../models/chat_message.dart';
+import '../../models/message.dart';
+import '../../models/channel.dart';
+import '../../models/user_profile.dart';
 
 abstract class ChatRepository {
   // Direct chat operations

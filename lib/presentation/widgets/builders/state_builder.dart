@@ -251,7 +251,7 @@ class StateBuilder {
         Container(
           padding: EdgeInsets.all(DesignSystem.spacingLG),
           decoration: BoxDecoration(
-            color: DesignSystem.error.withOpacity(0.1),
+            color: DesignSystem.error.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
           ),
           child: Icon(
@@ -308,7 +308,7 @@ class StateBuilder {
         Container(
           padding: EdgeInsets.all(DesignSystem.spacingLG),
           decoration: BoxDecoration(
-            color: DesignSystem.success.withOpacity(0.1),
+            color: DesignSystem.success.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
           ),
           child: Icon(

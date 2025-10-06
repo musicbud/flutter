@@ -1,53 +1,68 @@
-class Message {
+import 'package:equatable/equatable.dart';
+
+/// A model class representing a chat message
+class Message extends Equatable {
   final int id;
   final String channelId;
+  final String userId;
   final String content;
-  final String senderUsername;
-  final String? senderDisplayName;
-  final String? senderAvatarUrl;
-  final DateTime createdAt;
-  final DateTime? editedAt;
-  final bool isDeleted;
+  final DateTime timestamp;
 
-  Message({
+  const Message({
     required this.id,
     required this.channelId,
+    required this.userId,
     required this.content,
-    required this.senderUsername,
-    this.senderDisplayName,
-    this.senderAvatarUrl,
-    required this.createdAt,
-    this.editedAt,
-    this.isDeleted = false,
+    required this.timestamp,
   });
 
+  DateTime get createdAt => timestamp;
+
+  /// Creates a [Message] from a JSON map
   factory Message.fromJson(Map<String, dynamic> json) {
     return Message(
       id: json['id'] as int,
       channelId: json['channel_id'] as String,
+      userId: json['user_id'] as String,
       content: json['content'] as String,
-      senderUsername: json['sender_username'] as String,
-      senderDisplayName: json['sender_display_name'] as String?,
-      senderAvatarUrl: json['sender_avatar_url'] as String?,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      editedAt: json['edited_at'] != null
-          ? DateTime.parse(json['edited_at'] as String)
-          : null,
-      isDeleted: json['is_deleted'] as bool? ?? false,
+      timestamp: DateTime.parse(json['timestamp'] as String),
     );
   }
 
+  /// Converts this [Message] to a JSON map
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'channel_id': channelId,
+      'user_id': userId,
       'content': content,
-      'sender_username': senderUsername,
-      'sender_display_name': senderDisplayName,
-      'sender_avatar_url': senderAvatarUrl,
-      'created_at': createdAt.toIso8601String(),
-      'edited_at': editedAt?.toIso8601String(),
-      'is_deleted': isDeleted,
+      'timestamp': timestamp.toIso8601String(),
     };
   }
+
+  /// Creates a copy of this [Message] with the given fields replaced with new values
+  Message copyWith({
+    int? id,
+    String? channelId,
+    String? userId,
+    String? content,
+    DateTime? timestamp,
+  }) {
+    return Message(
+      id: id ?? this.id,
+      channelId: channelId ?? this.channelId,
+      userId: userId ?? this.userId,
+      content: content ?? this.content,
+      timestamp: timestamp ?? this.timestamp,
+    );
+  }
+
+  @override
+  List<Object?> get props => [
+         id,
+         channelId,
+         userId,
+         content,
+         timestamp,
+       ];
 }

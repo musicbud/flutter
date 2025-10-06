@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/models/common_track.dart';
-import '../../../domain/models/common_artist.dart';
-import '../../../domain/models/common_genre.dart';
+import '../../../models/common_track.dart';
+import '../../../models/common_artist.dart';
+import '../../../models/common_genre.dart';
 
 abstract class BudCommonItemsState extends Equatable {
   const BudCommonItemsState();

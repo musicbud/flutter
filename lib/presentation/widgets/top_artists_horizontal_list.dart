@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'loading_indicator.dart';
-import '../../../domain/models/common_artist.dart';
+import '../../../models/common_artist.dart';
 import '../../blocs/top_artists/top_artists_bloc.dart';
 import '../../blocs/top_artists/top_artists_event.dart';
 import '../../blocs/top_artists/top_artists_state.dart';
@@ -138,7 +138,7 @@ class _TopArtistsHorizontalListState extends State<TopArtistsHorizontalList> {
                     }
                     return Padding(
                       padding: const EdgeInsets.only(right: 16),
-                      child: _buildArtistCard(artists[index]),
+                      child: _buildArtistCard(artists[index].toCommonArtist()),
                     );
                   },
                 ),

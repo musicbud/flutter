@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/models/user_profile.dart';
-import '../../domain/models/track.dart';
-import '../../domain/models/common_artist.dart';
-import '../../domain/models/common_album.dart';
-import '../../domain/models/common_genre.dart';
-import '../../domain/models/common_anime.dart';
-import '../../domain/models/common_manga.dart';
+import '../../models/user_profile.dart';
+import '../../models/track.dart';
+import '../../models/artist.dart';
+import '../../models/album.dart';
+import '../../models/genre.dart';
+import '../../models/common_anime.dart';
+import '../../models/common_manga.dart';
 
 abstract class UserState extends Equatable {
   const UserState();
@@ -28,10 +28,10 @@ class ProfileLoaded extends UserState {
 }
 
 class LikedItemsLoaded extends UserState {
-  final List<CommonArtist> likedArtists;
+  final List<Artist> likedArtists;
   final List<Track> likedTracks;
-  final List<CommonAlbum> likedAlbums;
-  final List<CommonGenre> likedGenres;
+  final List<Album> likedAlbums;
+  final List<Genre> likedGenres;
 
   const LikedItemsLoaded({
     required this.likedArtists,
@@ -50,9 +50,9 @@ class LikedItemsLoaded extends UserState {
 }
 
 class TopItemsLoaded extends UserState {
-  final List<CommonArtist> topArtists;
+  final List<Artist> topArtists;
   final List<Track> topTracks;
-  final List<CommonGenre> topGenres;
+  final List<Genre> topGenres;
   final List<CommonAnime> topAnime;
   final List<CommonManga> topManga;
 

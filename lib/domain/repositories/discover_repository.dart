@@ -1,4 +1,4 @@
-import '../../domain/models/discover_item.dart';
+import '../../../models/discover_item.dart';
 
 abstract class DiscoverRepository {
   /// Get available discovery categories

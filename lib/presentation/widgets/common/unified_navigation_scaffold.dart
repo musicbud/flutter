@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'app_bottom_navigation_bar.dart';
+import '../../../navigation/navigation_item.dart';
 
 /// A unified scaffold that manages all navigation elements to prevent overlapping
 class UnifiedNavigationScaffold extends StatefulWidget {

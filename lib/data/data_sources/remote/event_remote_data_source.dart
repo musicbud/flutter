@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import '../../../domain/models/event/event.dart';
+import '../../../models/event/event.dart';
 
 abstract class EventRemoteDataSource {
   Future<List<Event>> getEvents({int page = 1});

@@ -1,4 +1,4 @@
-import '../../domain/models/common_genre.dart';
+import '../../models/common_genre.dart';
 
 class CommonGenreModel extends CommonGenre {
   CommonGenreModel({

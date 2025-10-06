@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import '../../../domain/models/search.dart';
+import '../../../models/search.dart';
 
 abstract class SearchRemoteDataSource {
   Future<SearchResults> performSearch({

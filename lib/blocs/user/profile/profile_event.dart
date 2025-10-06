@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/models/user_profile.dart';
+import '../../../models/user_profile.dart';
 
 abstract class ProfileEvent extends Equatable {
   const ProfileEvent();

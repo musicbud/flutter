@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../domain/models/common_track.dart';
+import '../../models/common_track.dart';
 
 abstract class TopTracksState extends Equatable {
   const TopTracksState();

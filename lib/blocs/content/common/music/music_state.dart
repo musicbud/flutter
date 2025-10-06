@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import '../../../../domain/models/common_track.dart';
-import '../../../../domain/models/common_artist.dart';
-import '../../../../domain/models/common_album.dart';
+import '../../../../models/common_track.dart';
+import '../../../../models/common_artist.dart';
+import '../../../../models/common_album.dart';
 
 abstract class MusicState extends Equatable {
   const MusicState();

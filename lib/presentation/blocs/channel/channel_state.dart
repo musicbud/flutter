@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
-import '../../../domain/models/channel.dart';
-import '../../../domain/models/channel_stats.dart';
+import '../../../models/channel.dart';
+import '../../../models/channel_stats.dart';
+import '../../../models/channel_user.dart';
 
 abstract class ChannelState extends Equatable {
   const ChannelState();
@@ -32,7 +33,7 @@ class SingleChannelLoaded extends ChannelState {
 }
 
 class ChannelMembersLoaded extends ChannelState {
-  final List<String> members;
+  final List<ChannelUser> members;
 
   const ChannelMembersLoaded(this.members);
 

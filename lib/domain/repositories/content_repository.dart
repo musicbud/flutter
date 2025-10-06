@@ -1,11 +1,10 @@
-import '../models/common_track.dart';
-import '../models/spotify_device.dart';
-import '../models/common_artist.dart';
-import '../models/common_genre.dart';
-import '../models/common_album.dart';
-import '../models/common_anime.dart';
-import '../models/common_manga.dart';
-import '../models/track.dart';
+import '../../models/track.dart';
+import '../../models/artist.dart';
+import '../../models/album.dart';
+import '../../models/genre.dart';
+import '../../models/spotify_device.dart';
+import '../../models/common_anime.dart';
+import '../../models/common_manga.dart';
 
 /// Interface for content-related operations
 abstract class ContentRepository {
@@ -23,24 +22,24 @@ abstract class ContentRepository {
   Future<void> savePlayedTrack(String trackId);
 
   // Popular items methods
-  Future<List<CommonTrack>> getPopularTracks();
-  Future<List<CommonArtist>> getPopularArtists();
-  Future<List<CommonAlbum>> getPopularAlbums();
+  Future<List<Track>> getPopularTracks();
+  Future<List<Artist>> getPopularArtists();
+  Future<List<Album>> getPopularAlbums();
   Future<List<CommonAnime>> getPopularAnime();
   Future<List<CommonManga>> getPopularManga();
 
   // Top items methods
-  Future<List<CommonTrack>> getTopTracks();
-  Future<List<CommonArtist>> getTopArtists();
-  Future<List<CommonGenre>> getTopGenres();
+  Future<List<Track>> getTopTracks();
+  Future<List<Artist>> getTopArtists();
+  Future<List<Genre>> getTopGenres();
   Future<List<CommonAnime>> getTopAnime();
   Future<List<CommonManga>> getTopManga();
 
   // Liked items methods
-  Future<List<CommonTrack>> getLikedTracks();
-  Future<List<CommonArtist>> getLikedArtists();
-  Future<List<CommonAlbum>> getLikedAlbums();
-  Future<List<CommonGenre>> getLikedGenres();
+  Future<List<Track>> getLikedTracks();
+  Future<List<Artist>> getLikedArtists();
+  Future<List<Album>> getLikedAlbums();
+  Future<List<Genre>> getLikedGenres();
 
   // Like/Unlike methods
   Future<void> likeTrack(String trackId);
@@ -57,18 +56,18 @@ abstract class ContentRepository {
   Future<void> unlikeManga(String mangaId);
 
   // Search methods
-  Future<List<CommonTrack>> searchTracks(String query);
-  Future<List<CommonArtist>> searchArtists(String query);
-  Future<List<CommonAlbum>> searchAlbums(String query);
-  Future<List<CommonGenre>> searchGenres(String query);
+  Future<List<Track>> searchTracks(String query);
+  Future<List<Artist>> searchArtists(String query);
+  Future<List<Album>> searchAlbums(String query);
+  Future<List<Genre>> searchGenres(String query);
   Future<List<CommonAnime>> searchAnime(String query);
   Future<List<CommonManga>> searchManga(String query);
 
   // Details methods
-  Future<CommonTrack> getTrackDetails(String trackId);
-  Future<CommonArtist> getArtistDetails(String artistId);
-  Future<CommonAlbum> getAlbumDetails(String albumId);
-  Future<CommonGenre> getGenreDetails(String genreId);
+  Future<Track> getTrackDetails(String trackId);
+  Future<Artist> getArtistDetails(String artistId);
+  Future<Album> getAlbumDetails(String albumId);
+  Future<Genre> getGenreDetails(String genreId);
   Future<CommonAnime> getAnimeDetails(String animeId);
   Future<CommonManga> getMangaDetails(String mangaId);
 

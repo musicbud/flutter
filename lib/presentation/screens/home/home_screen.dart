@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/user_profile/user_profile_bloc.dart';
-import '../../../core/theme/design_system.dart';
-import '../../widgets/common/index.dart';
-import '../../widgets/navigation/main_navigation_scaffold.dart';
-import '../../navigation/main_navigation.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../widgets/common/index.dart';
+import '../../../presentation/widgets/navigation/main_navigation_scaffold.dart';
+import '../../../presentation/navigation/main_navigation.dart';
+import '../../../widgets/common/app_input_field.dart';
 import 'home_header_widget.dart';
 import 'home_quick_actions.dart';
 import 'home_recommendations.dart';
@@ -42,6 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final appTheme = AppTheme.of(context);
+
     return MainNavigationScaffold(
       navigationController: _navigationController,
       body: BlocListener<UserProfileBloc, UserProfileState>(
@@ -50,14 +53,14 @@ class _HomeScreenState extends State<HomeScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Error: ${state.message}'),
-                backgroundColor: DesignSystem.error,
+                backgroundColor: appTheme.colors.errorRed,
               ),
             );
           }
         },
         child: Container(
           decoration: BoxDecoration(
-            gradient: DesignSystem.gradientBackground,
+            gradient: appTheme.gradients.backgroundGradient,
           ),
           child: SafeArea(
             child: CustomScrollView(
@@ -70,9 +73,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Search Section
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
-                    child: ModernInputField(
-                      hintText: 'Search for music, artists, or playlists...',
+                    padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+                    child: AppInputField(
+                      hint: 'Search for music, artists, or playlists...',
                       controller: _searchController,
                       onChanged: (value) {
                         if (value.isNotEmpty) {
@@ -84,31 +87,32 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         }
                       },
-                      size: ModernInputFieldSize.large,
+                      variant: AppInputVariant.search,
+                      size: AppInputSize.large,
                     ),
                   ),
                 ),
 
                 SliverToBoxAdapter(
-                  child: SizedBox(height: DesignSystem.spacingLG),
+                  child: SizedBox(height: appTheme.spacing.lg),
                 ),
 
                 // Quick Actions Section
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
+                    padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
                     child: HomeQuickActions(),
                   ),
                 ),
 
                 SliverToBoxAdapter(
-                  child: SizedBox(height: DesignSystem.spacingXL),
+                  child: SizedBox(height: appTheme.spacing.xl),
                 ),
 
                 // Dynamic Content Sections
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
+                    padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
                     child: Column(
                       children: [
                         HomeRecommendations(),
@@ -119,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
 
                 SliverToBoxAdapter(
-                  child: SizedBox(height: DesignSystem.spacingXL),
+                  child: SizedBox(height: appTheme.spacing.xl),
                 ),
               ],
             ),
