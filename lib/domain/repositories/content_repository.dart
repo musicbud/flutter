@@ -88,4 +88,7 @@ abstract class ContentRepository {
 
   // Unified toggle method
   Future<void> toggleLike(String id, String type);
+
+  // Play track on specific service
+  Future<void> playTrackOnService(String trackIdentifier, {String? service});
 }

@@ -577,4 +577,15 @@ class ContentRepositoryImpl implements ContentRepository {
         throw ArgumentError('Unsupported content type: $type');
     }
   }
+
+  @override
+  Future<void> playTrackOnService(String trackIdentifier, {String? service}) async {
+    try {
+      await _remoteDataSource.playTrackOnService(trackIdentifier, service: service);
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
+  }
 }

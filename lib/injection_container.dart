@@ -115,6 +115,7 @@ Future<void> _registerExternalDependencies() async {
 
   // Token Provider
   sl.registerLazySingleton<TokenProvider>(() => TokenProvider());
+  await sl<TokenProvider>().initialize();
 
   // Network Info
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(

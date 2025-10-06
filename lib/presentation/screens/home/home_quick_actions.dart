@@ -11,7 +11,7 @@ class HomeQuickActions extends StatelessWidget {
     return BlocBuilder<UserProfileBloc, UserProfileState>(
       builder: (context, state) {
         return QuickActionsGrid(
-          crossAxisCount: 1,
+          crossAxisCount: 2,
           actions: [
             QuickAction(
               title: 'Discover',
@@ -26,6 +26,36 @@ class HomeQuickActions extends StatelessWidget {
               icon: Icons.library_music,
               onPressed: () {
                 Navigator.pushNamed(context, '/library');
+              },
+              isPrimary: false,
+            ),
+            QuickAction(
+              title: 'Chat',
+              icon: Icons.chat,
+              onPressed: () {
+                Navigator.pushNamed(context, '/chat');
+              },
+              isPrimary: false,
+            ),
+            QuickAction(
+              title: 'Spotify Control',
+              icon: Icons.play_circle_fill,
+              onPressed: () {
+                // TODO: Navigate to Spotify control page
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Spotify Control coming soon')),
+                );
+              },
+              isPrimary: false,
+            ),
+            QuickAction(
+              title: 'Connect Services',
+              icon: Icons.link,
+              onPressed: () {
+                // TODO: Navigate to connect services page
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Connect Services coming soon')),
+                );
               },
               isPrimary: false,
             ),

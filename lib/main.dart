@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'blocs/auth/auth_bloc.dart';
@@ -20,17 +21,27 @@ import 'injection_container.dart' as di;
 import 'blocs/profile/profile_bloc.dart';
 import 'utils/api_endpoint_validator.dart';
 import 'blocs/main/main_screen_bloc.dart';
+import 'core/error/error_handler.dart';
 
 /// Main entry point of the MusicBud Flutter application
 void main() async {
   // Ensure Flutter bindings are initialized
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize error handler
+  ErrorHandler.initialize();
+
   // Initialize dependency injection
   await di.init();
 
-  // Run the application
-  runApp(const MusicBudApp());
+  debugPrint('🚀 MusicBud App: Starting application');
+
+  // Run the application with error catching
+  runZonedGuarded(() {
+    runApp(const MusicBudApp());
+  }, (Object error, StackTrace stack) {
+    ErrorHandler.handleZoneError(error, stack);
+  });
 }
 
 /// Main application widget with BLoC providers
@@ -121,6 +132,8 @@ class MusicBudApp extends StatelessWidget {
     authBloc.stream.listen((state) {
       if (state is Authenticated) {
         _handleAuthenticationSuccess(context, state.token);
+      } else if (state is Unauthenticated) {
+        _handleLogout(context);
       }
     });
 
@@ -135,6 +148,21 @@ class MusicBudApp extends StatelessWidget {
 
       // Update user bloc with new token
       context.read<UserBloc>().add(UpdateToken(token: token));
+    }
+  }
+
+  /// Handles logout by clearing tokens
+  void _handleLogout(BuildContext context) {
+    if (context.mounted) {
+      // Clear token from storage
+      di.sl<TokenProvider>().clearToken();
+
+      // Navigate to login
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        '/login',
+        (route) => false,
+      );
     }
   }
 }

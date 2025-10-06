@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/design_system.dart';
 import 'navigation_items.dart';
 import 'main_navigation.dart';
+import '../../../utils/logger.dart';
+import '../../../core/error/error_handler.dart';
 
 /// Custom navigation drawer for the main screen
 class MainNavigationDrawer extends StatelessWidget {
@@ -105,8 +107,14 @@ class MainNavigationDrawer extends StatelessWidget {
             leading: Icon(item.icon),
             title: Text(item.label),
             onTap: () {
+              logger.d('Drawer navigation item tapped: ${item.label}');
               Navigator.pop(context);
               final index = mainNavigationItems.indexOf(item);
+              ErrorHandler.logNavigationEvent(
+                ModalRoute.of(context)?.settings.name ?? 'unknown',
+                item.route,
+                method: 'drawer'
+              );
               navigationController.navigateToPage(index, context);
               onDrawerItemTap?.call();
             },

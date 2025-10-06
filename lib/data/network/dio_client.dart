@@ -29,6 +29,8 @@ class DioClient {
           final token = _tokenProvider.token;
           if (token != null && token.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $token';
+          } else {
+            print('⚠️ DioClient: No token available for request to ${options.uri}');
           }
 
           // Log request details

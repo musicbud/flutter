@@ -1,5 +1,6 @@
 class CommonTrack {
-  final String id;
+  final String? uid;
+  final String? id;
   final String name;
   final String? artistName;
   final String? imageUrl;
@@ -19,7 +20,8 @@ class CommonTrack {
   String get title => name;
 
   const CommonTrack({
-    required this.id,
+    this.uid,
+    this.id,
     required this.name,
     this.artistName,
     this.imageUrl,
@@ -77,6 +79,7 @@ class CommonTrack {
 
   Map<String, dynamic> toJson() {
     return {
+      'uid': uid,
       'id': id,
       'name': name,
       'artist_name': artistName,
@@ -97,6 +100,7 @@ class CommonTrack {
   }
 
   CommonTrack copyWith({
+    String? uid,
     String? id,
     String? name,
     String? artistName,
@@ -115,6 +119,7 @@ class CommonTrack {
     double? longitude,
   }) {
     return CommonTrack(
+      uid: uid ?? this.uid,
       id: id ?? this.id,
       name: name ?? this.name,
       artistName: artistName ?? this.artistName,

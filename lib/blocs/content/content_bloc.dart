@@ -2,6 +2,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/repositories/content_repository.dart';
 import 'content_event.dart';
 import 'content_state.dart';
+import '../../../utils/logger.dart';
+import '../../../core/error/error_handler.dart';
 
 class ContentBloc extends Bloc<ContentEvent, ContentState> {
   final ContentRepository _contentRepository;
@@ -35,6 +37,8 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     Emitter<ContentState> emit,
   ) async {
     try {
+      logger.i('Loading top content for discover screen');
+      ErrorHandler.logContentLoadingEvent('DiscoverScreen', 'top_content', status: 'started');
       emit(ContentLoading());
       final topTracks = await _contentRepository.getTopTracks();
       final topArtists = await _contentRepository.getTopArtists();
@@ -49,7 +53,10 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
         topAnime: topAnime,
         topManga: topManga,
       ));
-    } catch (e) {
+      ErrorHandler.logContentLoadingEvent('DiscoverScreen', 'top_content', status: 'completed');
+      logger.i('Top content loaded - tracks: ${topTracks.length}, artists: ${topArtists.length}, genres: ${topGenres.length}, anime: ${topAnime.length}, manga: ${topManga.length}');
+    } catch (e, stack) {
+      ErrorHandler.logContentLoadingError('DiscoverScreen', 'top_content', e, stack);
       emit(ContentError(e.toString()));
     }
   }

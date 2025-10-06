@@ -15,11 +15,15 @@ import "domain/repositories/content_repository.dart";
 
 // Screens
 import "presentation/screens/home/home_screen.dart";
+import "presentation/screens/auth/login_screen.dart";
 import "presentation/screens/discover/discover_screen.dart";
 import "presentation/screens/library/library_screen.dart";
 import "presentation/screens/profile/profile_screen.dart";
 import "presentation/screens/chat/chat_screen.dart";
 import "presentation/screens/search/search_screen.dart";
+
+// Providers
+import "data/providers/token_provider.dart";
 
 // Design System
 import "core/theme/design_system.dart";
@@ -67,11 +71,14 @@ class App extends StatelessWidget {
 
   /// Builds the MaterialApp with theme and routing
   Widget _buildMaterialApp() {
+    final tokenProvider = GetIt.instance<TokenProvider>();
+    final hasToken = tokenProvider.token != null && tokenProvider.token!.isNotEmpty;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: AppConstants.appTitle,
       theme: DesignSystem.darkTheme, // Using the new unified design system
-      initialRoute: AppConstants.loginRoute,
+      initialRoute: hasToken ? AppConstants.homeRoute : AppConstants.loginRoute,
       routes: _buildAppRoutes(),
     );
   }
@@ -81,7 +88,7 @@ class App extends StatelessWidget {
   Map<String, WidgetBuilder> _buildAppRoutes() {
     return {
       AppConstants.homeRoute: (context) => const HomeScreen(),
-      AppConstants.loginRoute: (context) => const HomeScreen(), // Placeholder
+      AppConstants.loginRoute: (context) => const LoginScreen(),
       AppConstants.homePageRoute: (context) => const HomeScreen(),
       "/discover": (context) => const DiscoverScreen(),
       "/library": (context) => const LibraryScreen(),

@@ -28,6 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _navigationController = MainNavigationController();
 
     // Load user profile and dynamic content
+    debugPrint('🏠 HomeScreen: Making API calls on startup');
     context.read<UserProfileBloc>().add(FetchMyProfile());
     context.read<UserProfileBloc>().add(FetchMyLikedContent(contentType: 'tracks'));
     context.read<UserProfileBloc>().add(FetchMyTopContent(contentType: 'artists'));

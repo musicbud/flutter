@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/design_system.dart';
 
 /// Base widget for section headers with consistent styling
-class BaseSectionHeader extends StatelessWidget {
+abstract class BaseSectionHeader extends StatelessWidget {
   const BaseSectionHeader({
     super.key,
     required this.title,
@@ -78,17 +78,6 @@ class BaseSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveTitleStyle = titleStyle ??
-        DesignSystem.headlineSmall.copyWith(
-          color: DesignSystem.onSurface,
-          fontWeight: FontWeight.w600,
-        );
-
-    final effectiveSubtitleStyle = subtitleStyle ??
-        DesignSystem.bodySmall.copyWith(
-          color: DesignSystem.onSurfaceVariant,
-        );
-
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -104,51 +93,12 @@ class BaseSectionHeader extends StatelessWidget {
                   leading!,
                   const SizedBox(width: 12),
                 ],
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: effectiveTitleStyle,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      if (subtitle != null) ...[
-                        const SizedBox(height: 4),
-                        Text(
-                          subtitle!,
-                          style: effectiveSubtitleStyle,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
+                _buildTitle(context),
                 if (trailing != null) ...[
                   const SizedBox(width: 12),
                   trailing!,
                 ],
-                if (action != null) ...[
-                  const SizedBox(width: 8),
-                  action!,
-                ] else if (actionText != null && onActionPressed != null) ...[
-                  const SizedBox(width: 8),
-                  TextButton(
-                    onPressed: onActionPressed,
-                    child: Text(
-                      actionText!,
-                      style: effectiveTitleStyle?.copyWith(
-                        color: DesignSystem.primary,
-                        fontWeight: FontWeight.w600,
-                      ) ?? TextStyle(
-                        color: DesignSystem.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
+                _buildAction(context),
               ],
             ),
             if (showDivider) ...[
@@ -164,6 +114,12 @@ class BaseSectionHeader extends StatelessWidget {
       ),
     );
   }
+
+  @protected
+  Widget _buildTitle(BuildContext context);
+
+  @protected
+  Widget _buildAction(BuildContext context);
 }
 
 /// Convenience constructors for common use cases
@@ -202,6 +158,93 @@ class SectionHeader extends BaseSectionHeader {
   }) : super(
           leading: leading,
         );
+  const SectionHeader.full({
+    super.key,
+    required super.title,
+    super.subtitle,
+    super.action,
+    super.leading,
+    super.trailing,
+    super.padding,
+    super.titleStyle,
+    super.subtitleStyle,
+    super.actionStyle,
+    super.showDivider,
+    super.dividerColor,
+    super.dividerThickness,
+    super.onTap,
+    super.actionText,
+    super.onActionPressed,
+    super.mainAxisAlignment,
+    super.crossAxisAlignment,
+  }) : super();
+
+  @override
+
+  @override
+  Widget _buildTitle(BuildContext context) {
+    final effectiveTitleStyle = titleStyle ??
+        DesignSystem.headlineSmall.copyWith(
+          color: DesignSystem.onSurface,
+          fontWeight: FontWeight.w600,
+        );
+
+    final effectiveSubtitleStyle = subtitleStyle ??
+        DesignSystem.bodySmall.copyWith(
+          color: DesignSystem.onSurfaceVariant,
+        );
+
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: effectiveTitleStyle,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+          if (subtitle != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              subtitle!,
+              style: effectiveSubtitleStyle,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget _buildAction(BuildContext context) {
+    if (action != null) {
+      return Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: action!,
+      );
+    } else if (actionText != null && onActionPressed != null) {
+      return Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: TextButton(
+          onPressed: onActionPressed,
+          child: Text(
+            actionText!,
+            style: titleStyle?.copyWith(
+              color: DesignSystem.primary,
+              fontWeight: FontWeight.w600,
+            ) ?? TextStyle(
+              color: DesignSystem.primary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      );
+    }
+    return const SizedBox.shrink();
+  }
 }
 
 /// Extension for easy creation of section headers
@@ -219,7 +262,7 @@ extension SectionHeaderExtension on String {
     double dividerThickness = 1.0,
     VoidCallback? onTap,
   }) {
-    return BaseSectionHeader(
+    return SectionHeader.full(
       title: this,
       subtitle: subtitle,
       action: action,

@@ -5,7 +5,7 @@ class ApiConfig {
   // Base URLs
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://84.235.170.234:8000',
+    defaultValue: 'http://84.235.170.234',
   );
 
   static const String wsBaseUrl = String.fromEnvironment(
@@ -103,6 +103,7 @@ class ApiConfig {
   static String get budGenre => '$apiUrl/bud/genre';
   static String get budAlbum => '$apiUrl/bud/album';
   static String get budSearch => '$apiUrl/bud/search';
+  static String get play => '$apiUrl/play';
   static String get budCommonLikedArtists => '$apiUrl/bud/common/liked/artists';
   static String get budCommonLikedTracks => '$apiUrl/bud/common/liked/tracks';
   static String get budCommonLikedGenres => '$apiUrl/bud/common/liked/genres';

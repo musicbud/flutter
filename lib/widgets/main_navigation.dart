@@ -26,8 +26,16 @@ class MainNavigation extends StatelessWidget {
           label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.search),
+          icon: Icon(Icons.explore),
           label: 'Discover',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.library_music),
+          label: 'Library',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.chat),
+          label: 'Chat',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person),

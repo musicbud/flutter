@@ -2,6 +2,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../domain/repositories/user_profile_repository.dart';
 import '../../models/user_profile.dart';
+import '../../utils/logger.dart';
+import '../../core/error/error_handler.dart';
 
 // Events
 abstract class UserProfileEvent extends Equatable {
@@ -208,10 +210,15 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
     Emitter<UserProfileState> emit,
   ) async {
     try {
+      logger.i('Loading user profile');
+      ErrorHandler.logContentLoadingEvent('HomeScreen', 'user_profile', status: 'started');
       emit(UserProfileLoading());
       final userProfile = await _userProfileRepository.getMyProfile();
       emit(UserProfileLoaded(userProfile: userProfile));
-    } catch (e) {
+      ErrorHandler.logContentLoadingEvent('HomeScreen', 'user_profile', status: 'completed');
+      logger.i('User profile loaded successfully');
+    } catch (e, stack) {
+      ErrorHandler.logContentLoadingError('HomeScreen', 'user_profile', e, stack);
       emit(UserProfileError(e.toString()));
     }
   }
@@ -267,13 +274,18 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
     Emitter<UserProfileState> emit,
   ) async {
     try {
+      logger.i('Loading liked content: ${event.contentType}');
+      ErrorHandler.logContentLoadingEvent('HomeScreen', 'liked_${event.contentType}', status: 'started');
       emit(UserProfileLoading());
       final content = await _userProfileRepository.getMyLikedContent(event.contentType);
       emit(MyContentLoaded(
         contentType: event.contentType,
         content: content,
       ));
-    } catch (e) {
+      ErrorHandler.logContentLoadingEvent('HomeScreen', 'liked_${event.contentType}', status: 'completed');
+      logger.i('Liked content loaded: ${event.contentType}, count: ${content.length}');
+    } catch (e, stack) {
+      ErrorHandler.logContentLoadingError('HomeScreen', 'liked_${event.contentType}', e, stack);
       emit(UserProfileError(e.toString()));
     }
   }
@@ -303,13 +315,18 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
     Emitter<UserProfileState> emit,
   ) async {
     try {
+      logger.i('Loading top content: ${event.contentType}');
+      ErrorHandler.logContentLoadingEvent('HomeScreen', 'top_${event.contentType}', status: 'started');
       emit(UserProfileLoading());
       final content = await _userProfileRepository.getMyTopContent(event.contentType);
       emit(MyContentLoaded(
         contentType: event.contentType,
         content: content,
       ));
-    } catch (e) {
+      ErrorHandler.logContentLoadingEvent('HomeScreen', 'top_${event.contentType}', status: 'completed');
+      logger.i('Top content loaded: ${event.contentType}, count: ${content.length}');
+    } catch (e, stack) {
+      ErrorHandler.logContentLoadingError('HomeScreen', 'top_${event.contentType}', e, stack);
       emit(UserProfileError(e.toString()));
     }
   }
@@ -336,13 +353,18 @@ class UserProfileBloc extends Bloc<UserProfileEvent, UserProfileState> {
     Emitter<UserProfileState> emit,
   ) async {
     try {
+      logger.i('Loading played tracks');
+      ErrorHandler.logContentLoadingEvent('HomeScreen', 'played_tracks', status: 'started');
       emit(UserProfileLoading());
       final tracks = await _userProfileRepository.getMyPlayedTracks();
       emit(MyContentLoaded(
         contentType: 'played_tracks',
         content: tracks,
       ));
-    } catch (e) {
+      ErrorHandler.logContentLoadingEvent('HomeScreen', 'played_tracks', status: 'completed');
+      logger.i('Played tracks loaded, count: ${tracks.length}');
+    } catch (e, stack) {
+      ErrorHandler.logContentLoadingError('HomeScreen', 'played_tracks', e, stack);
       emit(UserProfileError(e.toString()));
     }
   }

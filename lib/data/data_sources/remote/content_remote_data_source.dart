@@ -38,6 +38,7 @@ abstract class ContentRemoteDataSource {
   // Content actions
   Future<void> toggleLike(String contentId, String contentType);
   Future<void> playTrack(String trackId, String? deviceId);
+  Future<void> playTrackOnService(String trackIdentifier, {String? service});
 }
 
 class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
@@ -241,6 +242,19 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       return results.map((json) => Track.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get played tracks');
+    }
+  }
+
+  @override
+  Future<void> playTrackOnService(String trackIdentifier, {String? service}) async {
+    try {
+      final data = {'track_id': trackIdentifier};
+      if (service != null) {
+        data['service'] = service;
+      }
+      await _dioClient.post(ApiConfig.play, data: data);
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to play track on service');
     }
   }
 }

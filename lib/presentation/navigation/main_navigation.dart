@@ -7,6 +7,8 @@ import '../../blocs/likes/likes_event.dart';
 import '../../blocs/chat/chat_bloc.dart';
 import '../../blocs/chat/chat_event.dart';
 import 'navigation_items.dart';
+import '../../../utils/logger.dart';
+import '../../../core/error/error_handler.dart';
 
 /// Main navigation controller that manages navigation state and data loading
 class MainNavigationController extends ChangeNotifier {
@@ -19,9 +21,11 @@ class MainNavigationController extends ChangeNotifier {
   /// Handle navigation item tap
   void onNavigationItemTapped(int index, BuildContext context) {
     if (index != _selectedIndex) {
+      logger.d('Navigation item tapped: $index (${mainNavigationItems[index].label})');
       _selectedIndex = index;
       notifyListeners();
       _loadTabData(index, context);
+      _navigateToPage(index, context);
     }
   }
 
@@ -73,5 +77,20 @@ class MainNavigationController extends ChangeNotifier {
   /// Navigate to a specific page by index
   void navigateToPage(int index, BuildContext context) {
     onNavigationItemTapped(index, context);
+  }
+
+  /// Navigate to the selected page
+  void _navigateToPage(int index, BuildContext context) {
+    final route = mainNavigationItems[index].route;
+    ErrorHandler.logNavigationEvent(
+      ModalRoute.of(context)?.settings.name ?? 'unknown',
+      route,
+      method: 'bottom_navigation'
+    );
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      route,
+      (route) => false, // Remove all previous routes
+    );
   }
 }
