@@ -34,11 +34,13 @@ abstract class ContentRemoteDataSource {
 
   // Track management
   Future<List<Track>> getPlayedTracks();
+  Future<List<Map<String, dynamic>>> getPlayedTracksWithLocation();
 
   // Content actions
   Future<void> toggleLike(String contentId, String contentType);
   Future<void> playTrack(String trackId, String? deviceId);
   Future<void> playTrackOnService(String trackIdentifier, {String? service});
+  Future<void> playTrackWithLocation(String trackUid, String trackName, double latitude, double longitude);
 }
 
 class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
@@ -255,6 +257,30 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       await _dioClient.post(ApiConfig.play, data: data);
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to play track on service');
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getPlayedTracksWithLocation() async {
+    try {
+      final response = await _dioClient.get('/spotify/played-tracks-with-location');
+      return (response.data['data'] as List).map((json) => json as Map<String, dynamic>).toList();
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to get played tracks with location');
+    }
+  }
+
+  @override
+  Future<void> playTrackWithLocation(String trackUid, String trackName, double latitude, double longitude) async {
+    try {
+      await _dioClient.post('/me/play-track-with-location', data: {
+        'track_id': trackUid,
+        'track_name': trackName,
+        'latitude': latitude,
+        'longitude': longitude,
+      });
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to play track with location');
     }
   }
 }

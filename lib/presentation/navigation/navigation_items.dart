@@ -8,6 +8,8 @@ import '../screens/chat/chat_screen.dart';
 import '../screens/library/library_screen.dart';
 import '../screens/discover/discover_screen.dart';
 import '../screens/profile/profile_screen.dart';
+import '../screens/spotify/spotify_control_screen.dart';
+import '../screens/spotify/played_tracks_map_screen.dart';
 
 // TODO: Missing page files - commented out until pages are created
 // import '../pages/event_page.dart' as MainEventPage;
@@ -180,5 +182,20 @@ final List<NavigationItem> additionalNavigationItems = [
 ];
 */
 
-// Temporary empty list to allow compilation
-final List<NavigationItem> additionalNavigationItems = [];
+// Additional navigation items
+final List<NavigationItem> additionalNavigationItems = [
+  NavigationItem(
+    icon: Icons.music_note,
+    activeIcon: Icons.music_note,
+    label: 'Spotify Control',
+    route: '/spotify-control',
+    pageBuilder: (context) => const SpotifyControlScreen(),
+  ),
+  NavigationItem(
+    icon: Icons.map,
+    activeIcon: Icons.map,
+    label: 'Played Tracks Map',
+    route: '/played-tracks-map',
+    pageBuilder: (context) => const PlayedTracksMapScreen(),
+  ),
+];

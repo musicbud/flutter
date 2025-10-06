@@ -18,7 +18,7 @@ abstract class ContentRepository {
       String trackId, double latitude, double longitude);
   Future<void> playTrack(String trackId, String deviceId);
   Future<void> playTrackWithLocation(
-      String trackId, String deviceId, double latitude, double longitude);
+      String trackId, String trackName, double latitude, double longitude);
   Future<void> savePlayedTrack(String trackId);
 
   // Popular items methods

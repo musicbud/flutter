@@ -31,6 +31,8 @@ import 'data/data_sources/remote/event_remote_data_source.dart';
 import 'data/data_sources/remote/channel_remote_data_source.dart';
 import 'data/data_sources/remote/search_remote_data_source.dart';
 import 'data/data_sources/remote/common_items_remote_data_source.dart';
+import 'data/data_sources/remote/spotify_remote_data_source.dart';
+import 'data/data_sources/remote/spotify_remote_data_source_impl.dart';
 
 // Repositories
 import 'data/repositories/auth_repository_impl.dart';
@@ -49,6 +51,7 @@ import 'data/repositories/search_repository_impl.dart';
 import 'data/repositories/services_repository_impl.dart';
 import 'data/repositories/library_repository_impl.dart';
 import 'data/repositories/common_items_repository_impl.dart';
+import 'data/repositories/spotify_repository_impl.dart';
 import 'data/data_sources/remote/admin_remote_data_source.dart';
 
 // Domain Interfaces
@@ -68,6 +71,7 @@ import 'domain/repositories/search_repository.dart';
 import 'domain/repositories/services_repository.dart';
 import 'domain/repositories/library_repository.dart';
 import 'domain/repositories/common_items_repository.dart';
+import 'domain/repositories/spotify_repository.dart';
 
 // BLoCs
 import 'blocs/user/user_bloc.dart';
@@ -88,6 +92,7 @@ import 'blocs/bud/bud_bloc.dart';
 import 'blocs/bud/common_items/bud_common_items_bloc.dart';
 import 'blocs/artist/artist_bloc.dart';
 import 'blocs/content/content_bloc.dart';
+import 'blocs/spotify/spotify_bloc.dart';
 
 /// Global GetIt instance for dependency injection
 final sl = GetIt.instance;
@@ -258,6 +263,11 @@ Future<void> _registerDataSources() async {
       token: '', // TODO: Get token from token provider
     ),
   );
+
+  // Spotify Data Source
+  sl.registerLazySingleton<SpotifyRemoteDataSource>(
+    () => SpotifyRemoteDataSourceImpl(dioClient: sl<DioClient>()),
+  );
 }
 
 /// Registers repository dependencies
@@ -377,6 +387,13 @@ Future<void> _registerRepositories() async {
       remoteDataSource: sl<CommonItemsRemoteDataSource>(),
     ),
   );
+
+  // Spotify Repository
+  sl.registerLazySingleton<SpotifyRepository>(
+    () => SpotifyRepositoryImpl(
+      remoteDataSource: sl<SpotifyRemoteDataSource>(),
+    ),
+  );
 }
 
 /// Registers BLoC dependencies
@@ -478,6 +495,11 @@ Future<void> _registerBlocs() async {
   sl.registerFactory<BudCommonItemsBloc>(() => BudCommonItemsBloc(
     budRepository: sl<BudRepository>(),
   ));
+
+  // Spotify BLoC
+  sl.registerFactory<SpotifyBloc>(() => SpotifyBloc(
+    sl<SpotifyRepository>(),
+  ));
 }
 
 /// Logs dependency registration for debugging
@@ -485,8 +507,8 @@ void _logDependencyRegistration() {
   debugPrint('🔧 Dependency Injection Registration Complete');
   debugPrint('📡 Network: DioClient, DioClientAdapter');
   debugPrint('💾 Data Sources: Content, User, Bud, UserProfile, BudMatching, ChatManagement, Settings, Event, Admin, Channel, Search');
-  debugPrint('🏗️ Repositories: Auth, Content, Bud, User, Profile, UserProfile, BudMatching, ChatManagement, Settings, Event, Admin, Channel, Search, CommonItems');
-  debugPrint('🧠 BLoCs: User, Auth, Profile, MainScreen, Chat, Content, Bud, UserProfile, BudMatching, ChatManagement, Settings, Event, Analytics, Admin, Channel, Search, Bud, Artist, BudCommonItems');
+  debugPrint('🏗️ Repositories: Auth, Content, Bud, User, Profile, UserProfile, BudMatching, ChatManagement, Settings, Event, Admin, Channel, Search, CommonItems, Spotify');
+  debugPrint('🧠 BLoCs: User, Auth, Profile, MainScreen, Chat, Content, Bud, UserProfile, BudMatching, ChatManagement, Settings, Event, Analytics, Admin, Channel, Search, Bud, Artist, BudCommonItems, Spotify');
 }
 
 /// Dependency injection utilities

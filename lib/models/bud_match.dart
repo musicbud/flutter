@@ -5,6 +5,7 @@ class BudMatch extends Equatable {
   final String id;
   final String userId;
   final String username;
+  final String? email;
   final String? avatarUrl;
   final double matchScore;
   final int commonArtists;
@@ -15,6 +16,7 @@ class BudMatch extends Equatable {
     required this.id,
     required this.userId,
     required this.username,
+    this.email,
     this.avatarUrl,
     required this.matchScore,
     required this.commonArtists,
@@ -31,6 +33,7 @@ class BudMatch extends Equatable {
     final id = budData['uid'] as String? ?? budData['id'] as String? ?? '';
     final userId = budData['uid'] as String? ?? budData['id'] as String? ?? '';
     final username = budData['username'] as String? ?? '';
+    final email = budData['email'] as String?;
 
     // Handle avatar URL - backend returns images array, take first one
     String? avatarUrl = budData['avatar_url'] as String?;
@@ -45,6 +48,7 @@ class BudMatch extends Equatable {
       id: id,
       userId: userId,
       username: username,
+      email: email,
       avatarUrl: avatarUrl,
       matchScore: similarityScore.toDouble(),
       commonArtists: 0, // Backend doesn't provide individual counts
@@ -59,6 +63,7 @@ class BudMatch extends Equatable {
       'id': id,
       'user_id': userId,
       'username': username,
+      'email': email,
       'avatar_url': avatarUrl,
       'match_score': matchScore,
       'common_artists': commonArtists,
@@ -72,6 +77,7 @@ class BudMatch extends Equatable {
         id,
         userId,
         username,
+        email,
         avatarUrl,
         matchScore,
         commonArtists,

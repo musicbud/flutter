@@ -115,4 +115,141 @@ class ApiService {
       throw Exception('Failed to play track: $e');
     }
   }
+
+  Future<List<Map<String, dynamic>>> getPlayedTracks({int page = 1}) async {
+    try {
+      final response = await _dio.post('/me/played/tracks', data: {'page': page});
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'] ?? [];
+        return data.map((json) => json as Map<String, dynamic>).toList();
+      } else {
+        print('Failed to load played tracks: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      print('Error fetching played tracks: $e');
+      return [];
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getCurrentlyPlayedTracks() async {
+    try {
+      final response = await _dio.get('/me/currently-played');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'] ?? [];
+        return data.map((json) => json as Map<String, dynamic>).toList();
+      } else {
+        throw Exception('Failed to load currently played tracks');
+      }
+    } catch (e) {
+      print('Error fetching currently played tracks: $e');
+      return [];
+    }
+  }
+
+  Future<void> playTrackWithLocation(String trackUid, String trackName, double latitude, double longitude) async {
+    if (trackUid.isEmpty) {
+      print('Error: trackUid is empty');
+      throw Exception('Invalid track UID');
+    }
+
+    try {
+      print('Sending request to play track with location:');
+      print('track_id (UID): $trackUid');
+      print('track_name: $trackName');
+      print('latitude: $latitude');
+      print('longitude: $longitude');
+
+      final response = await _dio.post(
+        '/me/play-track-with-location',
+        data: {
+          'track_id': trackUid,
+          'track_name': trackName,
+          'latitude': latitude,
+          'longitude': longitude,
+        },
+      );
+
+      if (response.statusCode != 200) {
+        print('Error response: ${response.statusCode}');
+        print('Error data: ${response.data}');
+        throw Exception('Failed to play track with location: ${response.statusCode}');
+      }
+
+      print('Successfully played track with location');
+    } catch (e) {
+      print('Error playing track with location: $e');
+      rethrow;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getSpotifyDevices() async {
+    try {
+      final response = await _dio.get('/spotify/devices');
+      if (response.statusCode == 200) {
+        final responseData = response.data;
+        if (responseData['data'] is List) {
+          return List<Map<String, dynamic>>.from(responseData['data']);
+        } else {
+          print('Unexpected data structure for Spotify devices: ${responseData['data']}');
+          return [];
+        }
+      } else {
+        throw Exception('Failed to load Spotify devices: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching Spotify devices: $e');
+      return [];
+    }
+  }
+
+  Future<bool> playSpotifyTrack(String trackId, {String? deviceId}) async {
+    try {
+      final response = await _dio.post(
+        '/spotify/play',
+        data: {
+          'track_id': trackId,
+          if (deviceId != null) 'device_id': deviceId,
+        },
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      print('Error playing Spotify track: $e');
+      return false;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getPlayedTracksWithLocation() async {
+    try {
+      final response = await _dio.get('/spotify/played-tracks-with-location');
+      if (response.statusCode == 200) {
+        final List<dynamic> data = response.data['data'] ?? [];
+        return data.map((json) => json as Map<String, dynamic>).toList();
+      } else {
+        throw Exception('Failed to load tracks with location');
+      }
+    } catch (e) {
+      print('Error fetching tracks with location: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> saveLocation(double latitude, double longitude) async {
+    try {
+      final response = await _dio.post(
+        '/me/location/save',
+        data: {
+          'latitude': latitude,
+          'longitude': longitude,
+        },
+      );
+      if (response.statusCode == 200) {
+        print('Location saved successfully');
+      } else {
+        print('Failed to save location');
+      }
+    } catch (e) {
+      print('Error saving location: $e');
+    }
+  }
 }

@@ -203,8 +203,14 @@ class ContentRepositoryImpl implements ContentRepository {
 
   @override
   Future<List<Track>> getPlayedTracksWithLocation() async {
-    // TODO: Implement actual logic
-    return [];
+    try {
+      final data = await _remoteDataSource.getPlayedTracksWithLocation();
+      return data.map((json) => Track.fromJson(json)).toList();
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
 
@@ -264,8 +270,14 @@ class ContentRepositoryImpl implements ContentRepository {
 
 
   @override
-  Future<void> playTrackWithLocation(String trackId, String deviceId, double latitude, double longitude) async {
-    // TODO: Implement actual logic
+  Future<void> playTrackWithLocation(String trackId, String trackName, double latitude, double longitude) async {
+    try {
+      await _remoteDataSource.playTrackWithLocation(trackId, trackName, latitude, longitude);
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
   }
 
 

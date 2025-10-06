@@ -471,6 +471,11 @@ class AppColors {
   Color get accentOrange => AppTheme.accentOrange;
   Color get borderColor => AppTheme.borderColor;
   Color get overlayColor => AppTheme.overlayColor;
+
+  // Material 3 colors
+  Color get onPrimary => AppTheme.white;
+  Color get onSurface => AppTheme.white;
+  Color get onSurfaceVariant => AppTheme.lightGray;
 }
 
 @deprecated
@@ -498,6 +503,7 @@ class AppTypography {
 
   // Additional typography for pages
   TextStyle get bodySmall => AppTheme.bodyH10;
+  TextStyle get headlineSmall => AppTheme.headlineH7;
 }
 
 @deprecated

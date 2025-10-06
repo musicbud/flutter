@@ -20,6 +20,7 @@ pkgs.mkShell {
     vulkan-loader
     vulkan-tools
     chromium
+    libsecret
   ];
 
   shellHook = ''

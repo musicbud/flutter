@@ -35,6 +35,8 @@ dependencies:
   json_annotation: ^4.8.1
   file_selector_linux: ^0.9.3+2
   url_launcher_linux: ^3.2.1
+  geolocator: ^10.1.0
+  # flutter_secure_storage: ^9.0.0
 
   bloc: any
 dev_dependencies:
