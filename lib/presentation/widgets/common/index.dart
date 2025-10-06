@@ -13,3 +13,5 @@ export 'modern_input_field.dart';
 
 // Re-export with aliases to avoid conflicts
 export 'modern_button.dart' show ModernTextButton;
+export 'modern_card.dart' show ModernCard;
+export 'modern_input_field.dart' show ModernInputField;

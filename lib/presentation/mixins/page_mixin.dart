@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../constants/app_constants.dart';
+import '../core/theme/app_constants.dart';
 
 /// A mixin that provides common functionality for pages
 mixin PageMixin<T extends StatefulWidget> on State<T> {

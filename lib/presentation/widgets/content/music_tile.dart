@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/design_system.dart';
 
 /// A reusable music tile widget for displaying track information
 class MusicTile extends StatelessWidget {
@@ -67,7 +68,7 @@ class MusicTile extends StatelessWidget {
                 onPressed: onBookmark,
                 icon: Icon(
                   isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-                  color: isBookmarked ? const Color(0xFFFF6B8F) : Colors.white,
+                  color: isBookmarked ? DesignSystem.primaryContainer : DesignSystem.onSurface,
                 ),
               )
             : null,

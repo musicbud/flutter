@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/design_system.dart';
 
-/// A reusable loading indicator widget
+/// A reusable loading indicator widget that supports theming
 class LoadingIndicator extends StatelessWidget {
   final double size;
   final Color? color;
@@ -15,14 +17,16 @@ class LoadingIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return SizedBox(
       width: size,
       height: size,
       child: CircularProgressIndicator(
         strokeWidth: strokeWidth,
-        valueColor: color != null
-            ? AlwaysStoppedAnimation<Color>(color!)
-            : null,
+        valueColor: AlwaysStoppedAnimation<Color>(
+          color ?? DesignSystem.primary,
+        ),
       ),
     );
   }

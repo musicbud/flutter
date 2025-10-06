@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import '../../../domain/models/user_profile.dart';
+import '../../../core/theme/design_system.dart';
 import '../../theme/app_theme.dart';
+import '../../navigation/navigation_constants.dart';
+import '../../navigation/navigation_mixins.dart';
+import '../../navigation/navigation_items.dart';
+import '../../navigation/navigation_item.dart';
 
-class AppNavigationDrawer extends StatelessWidget {
+class AppNavigationDrawer extends StatelessWidget with BaseNavigationMixin {
   final UserProfile? userProfile;
   final void Function(String)? onNavigate;
+  final NavigationConfig? config;
 
   const AppNavigationDrawer({
     super.key,
     this.userProfile,
     this.onNavigate,
+    this.config,
   });
 
   @override
@@ -31,10 +38,11 @@ class AppNavigationDrawer extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     final appTheme = AppTheme.of(context);
+    final effectiveConfig = config ?? const NavigationConfig();
 
     return DrawerHeader(
       decoration: BoxDecoration(
-        color: const Color(0xFF1AA34A),
+        color: effectiveConfig.selectedColor ?? DesignSystem.success,
         image: const DecorationImage(
           image: AssetImage('assets/dark_map_bg.jpg'),
           fit: BoxFit.cover,
@@ -50,7 +58,7 @@ class AppNavigationDrawer extends StatelessWidget {
                 ? NetworkImage(userProfile!.avatarUrl!)
                 : const AssetImage('assets/user_avatar.jpg') as ImageProvider,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: NavigationConstants.defaultItemSpacing),
           Text(
             userProfile?.displayName ?? 'Welcome',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
@@ -60,7 +68,7 @@ class AppNavigationDrawer extends StatelessWidget {
           Text(
             userProfile?.email ?? 'Guest',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: const Color(0xB3FFFFFF),
+              color: DesignSystem.onSurfaceVariant,
             ),
           ),
         ],
@@ -73,62 +81,60 @@ class AppNavigationDrawer extends StatelessWidget {
 
     return Column(
       children: [
-        _buildNavItem(
+        // Main navigation items from the centralized navigation items
+        ...mainNavigationItems.map((item) => _buildNavItemFromNavigationItem(
           context: context,
-          icon: Icons.home_outlined,
-          title: 'Home',
-          route: '/home',
-        ),
-        _buildNavItem(
-          context: context,
-          icon: Icons.search,
-          title: 'Search',
-          route: '/search',
-        ),
-        _buildNavItem(
-          context: context,
-          icon: Icons.library_music_outlined,
-          title: 'Library',
-          route: '/library',
-        ),
-        _buildNavItem(
-          context: context,
-          icon: Icons.explore_outlined,
-          title: 'Discover',
-          route: '/discover',
-        ),
-        _buildNavItem(
-          context: context,
-          icon: Icons.event_outlined,
-          title: 'Events',
-          route: '/events',
-        ),
-        _buildNavItem(
-          context: context,
-          icon: Icons.people_outline,
-          title: 'Buds',
-          route: '/buds',
-        ),
-        _buildNavItem(
-          context: context,
-          icon: Icons.chat_bubble_outline,
-          title: 'Chat',
-          route: '/chat',
-        ),
+          item: item,
+        )),
         const Divider(),
+        // Additional navigation items (Settings, etc.)
         _buildNavItem(
           context: context,
-          icon: Icons.person_outline,
-          title: 'Profile',
-          route: '/profile',
-        ),
-        _buildNavItem(
-          context: context,
-          icon: Icons.settings_outlined,
+          icon: NavigationConstants.settingsIcon,
           title: 'Settings',
-          route: '/settings',
+          route: NavigationConstants.settingsRoute,
         ),
       ],
+    );
+  }
+
+  Widget _buildNavItemFromNavigationItem({
+    required BuildContext context,
+    required NavigationItem item,
+  }) {
+    final appTheme = AppTheme.of(context);
+    final currentRoute = ModalRoute.of(context)?.settings.name;
+    final itemRoute = '/${mainNavigationItems.indexOf(item)}'; // Use index as route
+    final isSelected = currentRoute == itemRoute;
+
+    return ListTile(
+      leading: Icon(
+        item.icon,
+        color: isSelected
+            ? appTheme.colors.primary
+            : Colors.white,
+      ),
+      title: Text(
+        item.label,
+        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          color: isSelected
+              ? appTheme.colors.primary
+              : Colors.white,
+        ),
+      ),
+      selected: isSelected,
+      selectedColor: appTheme.colors.primary,
+      onTap: () {
+        Navigator.pop(context); // Close drawer
+        if (onNavigate != null) {
+          onNavigate!(itemRoute);
+        } else {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => item.pageBuilder(context)),
+          );
+        }
+      },
     );
   }
 
@@ -177,14 +183,14 @@ class AppNavigationDrawer extends StatelessWidget {
     return ListTile(
       leading: Icon(
         icon,
-        color: isSelected 
+        color: isSelected
             ? appTheme.colors.primary
             : Colors.white,
       ),
       title: Text(
         title,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-          color: isSelected 
+          color: isSelected
               ? appTheme.colors.primary
               : Colors.white,
         ),

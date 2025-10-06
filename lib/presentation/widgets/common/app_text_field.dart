@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/design_system.dart';
 
 /// A reusable text field widget with consistent styling
 class AppTextField extends StatelessWidget {
@@ -70,19 +71,19 @@ class AppTextField extends StatelessWidget {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(borderRadius),
           borderSide: BorderSide(
-            color: borderColor ?? const Color(0xFFCFD0FD),
+            color: borderColor ?? DesignSystem.borderLight,
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(borderRadius),
           borderSide: BorderSide(
-            color: borderColor ?? const Color(0xFFCFD0FD),
+            color: borderColor ?? DesignSystem.borderLight,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(borderRadius),
           borderSide: BorderSide(
-            color: borderColor ?? const Color(0xFFFF6B8F),
+            color: borderColor ?? DesignSystem.primaryContainer,
             width: 2,
           ),
         ),
@@ -101,11 +102,11 @@ class AppTextField extends StatelessWidget {
           ),
         ),
         hintStyle: TextStyle(
-          color: const Color(0xFFCFD0FD).withValues(alpha: 0.7),
+          color: DesignSystem.borderLight.withValues(alpha: 0.7),
           fontSize: 16,
         ),
         labelStyle: const TextStyle(
-          color: Color(0xFFCFD0FD),
+          color: DesignSystem.borderLight,
           fontSize: 16,
         ),
         errorStyle: const TextStyle(
@@ -114,7 +115,7 @@ class AppTextField extends StatelessWidget {
         ),
       ),
       style: const TextStyle(
-        color: Color(0xFFCFD0FD),
+        color: DesignSystem.borderLight,
         fontSize: 16,
       ),
     );

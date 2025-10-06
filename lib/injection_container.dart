@@ -79,6 +79,7 @@ import 'presentation/blocs/channel/channel_bloc.dart';
 import 'presentation/blocs/search/search_bloc.dart';
 import 'blocs/user_profile/user_profile_bloc.dart';
 import 'blocs/comprehensive_chat/comprehensive_chat_bloc.dart';
+import 'blocs/chat/chat_bloc.dart';
 import 'blocs/library/library_bloc.dart';
 import 'blocs/bud/bud_bloc.dart';
 import 'blocs/bud/common_items/bud_common_items_bloc.dart';
@@ -432,6 +433,11 @@ Future<void> _registerBlocs() async {
     userRepository: sl<UserRepository>(),
     servicesRepository: sl<ServicesRepository>(),
     authRepository: sl<AuthRepository>(),
+  ));
+
+  // Chat BLoC
+  sl.registerFactory<ChatBloc>(() => ChatBloc(
+    chatRepository: sl<ChatRepository>(),
   ));
 
   // Library BLoC

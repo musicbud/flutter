@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'dart:ui'; // Added for ImageFilter
+import '../../../core/theme/design_system.dart';
+import '../../navigation/navigation_constants.dart';
+import '../../navigation/navigation_mixins.dart';
+import '../../navigation/navigation_item.dart';
 
 /// A modern, combined bottom navigation bar widget with dark mode styling
-class AppBottomNavigationBar extends StatelessWidget {
+class AppBottomNavigationBar extends StatelessWidget with BaseNavigationMixin {
   final int currentIndex;
   final ValueChanged<int> onTap;
   final List<NavigationItem> items;
@@ -16,6 +20,7 @@ class AppBottomNavigationBar extends StatelessWidget {
   final Color? borderColor;
   final bool enableBlur;
   final bool enableGradient;
+  final NavigationConfig? config;
 
   const AppBottomNavigationBar({
     Key? key,
@@ -26,21 +31,26 @@ class AppBottomNavigationBar extends StatelessWidget {
     this.selectedItemColor,
     this.unselectedItemColor,
     this.elevation,
-    this.height = 90,
+    this.height = NavigationConstants.defaultBottomNavBarHeight,
     this.margin,
     this.borderRadius,
     this.borderColor,
     this.enableBlur = true,
     this.enableGradient = true,
+    this.config,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final effectiveConfig = config ?? const NavigationConfig();
+    final effectiveMargin = margin ?? effectiveConfig.margin ?? NavigationConstants.defaultMargin;
+    final effectiveBorderRadius = borderRadius ?? effectiveConfig.borderRadius ?? BorderRadius.circular(NavigationConstants.defaultBorderRadius);
+
     return Container(
       height: height,
-      margin: margin ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      margin: effectiveMargin,
       decoration: BoxDecoration(
-        borderRadius: borderRadius ?? BorderRadius.circular(30),
+        borderRadius: effectiveBorderRadius,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.3),
@@ -87,14 +97,22 @@ class AppBottomNavigationBar extends StatelessWidget {
   }
 
   Widget _buildNavigationBar() {
+    final effectiveConfig = config ?? const NavigationConfig();
+    final effectiveSelectedColor = selectedItemColor ??
+        effectiveConfig.selectedColor ??
+        DesignSystem.primaryContainer;
+    final effectiveUnselectedColor = unselectedItemColor ??
+        effectiveConfig.unselectedColor ??
+        NavigationConstants.defaultUnselectedColor;
+
     return BottomNavigationBar(
       currentIndex: currentIndex,
       onTap: onTap,
       type: BottomNavigationBarType.fixed,
       backgroundColor: Colors.transparent,
-      elevation: elevation ?? 0,
-      selectedItemColor: selectedItemColor ?? const Color(0xFFFF6B8F),
-      unselectedItemColor: unselectedItemColor ?? Colors.white.withValues(alpha: 0.6),
+      elevation: elevation ?? effectiveConfig.elevation ?? NavigationConstants.defaultElevation,
+      selectedItemColor: effectiveSelectedColor,
+      unselectedItemColor: effectiveUnselectedColor,
       selectedLabelStyle: const TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.w600,
@@ -120,26 +138,25 @@ class AppBottomNavigationBar extends StatelessWidget {
   }
 
   Widget _buildIcon(IconData icon, bool isActive) {
+    final effectiveConfig = config ?? const NavigationConfig();
+    final effectiveSelectedColor = selectedItemColor ??
+        effectiveConfig.selectedColor ??
+        DesignSystem.primaryContainer;
+    final effectiveUnselectedColor = unselectedItemColor ??
+        effectiveConfig.unselectedColor ??
+        NavigationConstants.defaultUnselectedColor;
+
     return Container(
       padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: isActive
-            ? (selectedItemColor ?? const Color(0xFFFF6B8F)).withValues(alpha: 0.2)
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(12),
-        border: isActive
-            ? Border.all(
-                color: (selectedItemColor ?? const Color(0xFFFF6B8F)).withValues(alpha: 0.3),
-                width: 1,
-              )
-            : null,
+      decoration: getNavigationItemDecoration(
+        isSelected: isActive,
+        selectedColor: effectiveSelectedColor,
+        borderRadius: 12,
       ),
       child: Icon(
         icon,
-        size: isActive ? 26 : 24,
-        color: isActive
-            ? (selectedItemColor ?? const Color(0xFFFF6B8F))
-            : (unselectedItemColor ?? Colors.white.withValues(alpha: 0.6)),
+        size: isActive ? NavigationConstants.defaultActiveIconSize : NavigationConstants.defaultIconSize,
+        color: isActive ? effectiveSelectedColor : effectiveUnselectedColor,
       ),
     );
   }
@@ -195,13 +212,13 @@ class FloatingBottomNavigationBar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected
-              ? (selectedItemColor ?? const Color(0xFFFF6B8F))
+              ? (selectedItemColor ?? DesignSystem.primaryContainer)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(25),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: (selectedItemColor ?? const Color(0xFFFF6B8F)).withValues(alpha: 0.4),
+                    color: (selectedItemColor ?? DesignSystem.primaryContainer).withValues(alpha: 0.4),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                     spreadRadius: 0,
@@ -237,18 +254,6 @@ class FloatingBottomNavigationBar extends StatelessWidget {
   }
 }
 
-/// Data class for navigation items
-class NavigationItem {
-  final IconData icon;
-  final String label;
-  final WidgetBuilder pageBuilder;
-
-  const NavigationItem({
-    required this.icon,
-    required this.label,
-    required this.pageBuilder,
-  });
-}
 
 /// Modern tab bar with animated indicators
 class ModernTabBar extends StatelessWidget {
@@ -300,19 +305,19 @@ class ModernTabBar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected
-              ? (selectedColor ?? const Color(0xFFFF6B8F))
+              ? (selectedColor ?? DesignSystem.primaryContainer)
               : (backgroundColor ?? const Color.fromARGB(200, 20, 20, 20)),
           borderRadius: BorderRadius.circular(25),
           border: Border.all(
             color: isSelected
-                ? (selectedColor ?? const Color(0xFFFF6B8F))
+                ? (selectedColor ?? DesignSystem.primaryContainer)
                 : Colors.white.withValues(alpha: 0.2),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: (selectedColor ?? const Color(0xFFFF6B8F)).withValues(alpha: 0.3),
+                    color: (selectedColor ?? DesignSystem.primaryContainer).withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                     spreadRadius: 0,

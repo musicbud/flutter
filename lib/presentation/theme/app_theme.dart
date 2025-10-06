@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+/// @deprecated Use DesignSystem instead. This file is deprecated and will be removed in a future version.
+/// Migrate to: import 'package:musicbud/core/theme/design_system.dart';
+/// All theme tokens are now available through DesignSystem and theme extensions.
+@deprecated
 // Extension to add custom text styles to TextTheme
 extension CustomTextTheme on TextTheme {
   TextStyle get headlineH7 => const TextStyle(
@@ -10,6 +14,7 @@ extension CustomTextTheme on TextTheme {
   );
 }
 
+@deprecated
 class AppTheme {
   final BuildContext context;
   
@@ -271,6 +276,7 @@ class AppTheme {
   }
 }
 
+@deprecated
 class _Spacing {
   const _Spacing();
   
@@ -283,6 +289,7 @@ class _Spacing {
   final double xxl = 48;
 }
 
+@deprecated
 class _BorderRadius {
   const _BorderRadius();
 
@@ -295,6 +302,7 @@ class _BorderRadius {
   final double circular = 999;
 }
 
+@deprecated
 class _Gradients {
   const _Gradients();
 
@@ -309,6 +317,7 @@ class _Gradients {
   );
 }
 
+@deprecated
 class _Shadows {
   const _Shadows();
 
