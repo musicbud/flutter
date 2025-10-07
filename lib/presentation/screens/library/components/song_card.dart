@@ -3,12 +3,12 @@ import '../../../widgets/common/index.dart';
 import '../../../../core/theme/design_system.dart';
 
 class SongCard extends StatelessWidget {
-  final String title;
-  final String artist;
-  final String genre;
-  final String imageUrl;
-  final Color accentColor;
-  final VoidCallback? onTap;
+   final String title;
+   final String artist;
+   final String genre;
+   final String? imageUrl;
+   final Color accentColor;
+   final VoidCallback? onTap;
 
   const SongCard({
     super.key,
@@ -37,21 +37,27 @@ class SongCard extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Icon(
-                    Icons.music_note,
-                    color: accentColor,
-                    size: 30,
-                  );
-                },
-              ),
+              child: imageUrl != null
+                  ? Image.network(
+                      imageUrl!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Icon(
+                          Icons.music_note,
+                          color: accentColor,
+                          size: 30,
+                        );
+                      },
+                    )
+                  : Icon(
+                      Icons.music_note,
+                      color: accentColor,
+                      size: 30,
+                    ),
             ),
           ),
 
-          SizedBox(width: DesignSystem.spacingMD),
+          const SizedBox(width: DesignSystem.spacingMD),
 
           // Song Info
           Expanded(
@@ -67,7 +73,7 @@ class SongCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: DesignSystem.spacingXS),
+                const SizedBox(height: DesignSystem.spacingXS),
                 Text(
                   artist,
                   style: DesignSystem.bodySmall.copyWith(
@@ -77,7 +83,7 @@ class SongCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Container(
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     horizontal: DesignSystem.spacingSM,
                     vertical: DesignSystem.spacingXS,
                   ),
@@ -101,19 +107,19 @@ class SongCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(DesignSystem.spacingSM),
+                padding: const EdgeInsets.all(DesignSystem.spacingSM),
                 decoration: BoxDecoration(
                   color: DesignSystem.primary,
                   borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.play_arrow,
                   color: DesignSystem.onPrimary,
                   size: 20,
                 ),
               ),
-              SizedBox(width: DesignSystem.spacingSM),
-              Icon(
+              const SizedBox(width: DesignSystem.spacingSM),
+              const Icon(
                 Icons.favorite,
                 color: DesignSystem.primary,
                 size: 24,

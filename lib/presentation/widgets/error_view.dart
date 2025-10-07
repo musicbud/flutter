@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/design_system.dart';
 import 'common/modern_button.dart';
 import 'base/base_state_display.dart';
@@ -22,10 +21,8 @@ class ErrorView extends BaseStateDisplay {
 
   @override
   Widget _buildIcon(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Container(
-      padding: EdgeInsets.all(DesignSystem.spacingLG),
+      padding: const EdgeInsets.all(DesignSystem.spacingLG),
       decoration: BoxDecoration(
         color: DesignSystem.surfaceContainer,
         borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
@@ -40,8 +37,6 @@ class ErrorView extends BaseStateDisplay {
 
   @override
   Widget _buildContent(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -59,7 +54,7 @@ class ErrorView extends BaseStateDisplay {
 
         // Message
         if (message != null) ...[
-          SizedBox(height: DesignSystem.spacingMD),
+          const SizedBox(height: DesignSystem.spacingMD),
           Text(
             message!,
             style: DesignSystem.bodyMedium.copyWith(

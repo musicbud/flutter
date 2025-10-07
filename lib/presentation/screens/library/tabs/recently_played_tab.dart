@@ -17,10 +17,10 @@ class RecentlyPlayedTab extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        SizedBox(height: DesignSystem.spacingMD),
+        const SizedBox(height: DesignSystem.spacingMD),
 
         // Recently Played List - Using static data for now as in original
-        Column(
+        const Column(
           children: [
             RecentlyPlayedCard(
               title: 'Electric Storm',
@@ -37,7 +37,7 @@ class RecentlyPlayedTab extends StatelessWidget {
               imageUrl: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop',
               accentColor: DesignSystem.accentBlue,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16),
             RecentlyPlayedCard(
               title: 'Urban Flow',
               artist: 'City Pulse',

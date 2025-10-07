@@ -51,7 +51,7 @@ class StateFactory {
         .withLoadingMessage(message ?? 'Loading...')
         .withLoadingWidget(
           showProgress
-              ? (customIndicator ?? SizedBox(
+              ? (customIndicator != null ? customIndicator : SizedBox(
                   width: progressSize ?? 48,
                   height: progressSize ?? 48,
                   child: CircularProgressIndicator(
@@ -59,7 +59,7 @@ class StateFactory {
                     valueColor: AlwaysStoppedAnimation<Color>(design.designSystemColors.primary),
                   ),
                 ))
-              : null,
+              : const SizedBox.shrink(),
         )
         .withPadding(padding ?? EdgeInsets.all(design.designSystemSpacing.xl))
         .build();
@@ -103,7 +103,7 @@ class StateFactory {
         .withState(StateType.error)
         .withErrorMessage(message ?? _getDefaultErrorMessage(type))
         .withErrorIcon(customIcon ?? _getDefaultErrorIcon(type))
-        .withOnRetry(onRetry)
+        .withOnRetry(onRetry != null ? onRetry : () {})
         .withPadding(padding ?? EdgeInsets.all(design.designSystemSpacing.xl))
         .build();
   }
@@ -216,7 +216,7 @@ class StateFactory {
               borderRadius: BorderRadius.circular(design.designSystemRadius.sm),
             ),
             child: AnimatedContainer(
-              duration: Duration(milliseconds: 1500),
+              duration: const Duration(milliseconds: 1500),
               curve: Curves.easeInOut,
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -255,7 +255,7 @@ class StateFactory {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(design.designSystemRadius.md),
         child: AnimatedContainer(
-          duration: Duration(milliseconds: 1500),
+          duration: const Duration(milliseconds: 1500),
           curve: Curves.easeInOut,
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -291,7 +291,6 @@ class StateFactory {
       case EmptyStateType.downloads:
         return 'No downloads yet';
       case EmptyStateType.general:
-      default:
         return 'No items found';
     }
   }
@@ -313,7 +312,6 @@ class StateFactory {
       case EmptyStateType.downloads:
         return Icons.download;
       case EmptyStateType.general:
-      default:
         return Icons.inbox_outlined;
     }
   }
@@ -331,7 +329,6 @@ class StateFactory {
       case ErrorStateType.playback:
         return 'Playback error occurred';
       case ErrorStateType.general:
-      default:
         return 'Something went wrong';
     }
   }
@@ -349,7 +346,6 @@ class StateFactory {
       case ErrorStateType.playback:
         return Icons.play_disabled;
       case ErrorStateType.general:
-      default:
         return Icons.error_outline;
     }
   }

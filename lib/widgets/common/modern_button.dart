@@ -59,9 +59,7 @@ class _ModernButtonState extends State<ModernButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-  late Animation<double> _shadowAnimation;
   bool _isHovered = false;
-  bool _isPressed = false;
 
   @override
   void initState() {
@@ -73,13 +71,6 @@ class _ModernButtonState extends State<ModernButton>
     _scaleAnimation = Tween<double>(
       begin: 1.0,
       end: 0.98,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-    _shadowAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.8,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
@@ -99,23 +90,14 @@ class _ModernButtonState extends State<ModernButton>
   }
 
   void _onTapDown(TapDownDetails details) {
-    setState(() {
-      _isPressed = true;
-    });
     _animationController.forward();
   }
 
   void _onTapUp(TapUpDetails details) {
-    setState(() {
-      _isPressed = false;
-    });
     _animationController.reverse();
   }
 
   void _onTapCancel() {
-    setState(() {
-      _isPressed = false;
-    });
     _animationController.reverse();
   }
 

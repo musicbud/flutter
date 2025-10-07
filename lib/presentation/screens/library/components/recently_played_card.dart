@@ -51,7 +51,7 @@ class RecentlyPlayedCard extends StatelessWidget {
             ),
           ),
 
-          SizedBox(width: DesignSystem.spacingMD),
+          const SizedBox(width: DesignSystem.spacingMD),
 
           // Song Info
           Expanded(
@@ -67,7 +67,7 @@ class RecentlyPlayedCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: DesignSystem.spacingXS),
+                const SizedBox(height: DesignSystem.spacingXS),
                 Text(
                   artist,
                   style: DesignSystem.bodySmall.copyWith(
@@ -90,19 +90,19 @@ class RecentlyPlayedCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(DesignSystem.spacingSM),
+                padding: const EdgeInsets.all(DesignSystem.spacingSM),
                 decoration: BoxDecoration(
                   color: DesignSystem.primary,
                   borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.play_arrow,
                   color: DesignSystem.onPrimary,
                   size: 20,
                 ),
               ),
-              SizedBox(width: DesignSystem.spacingSM),
-              Icon(
+              const SizedBox(width: DesignSystem.spacingSM),
+              const Icon(
                 Icons.history,
                 color: DesignSystem.onSurfaceVariant,
                 size: 24,

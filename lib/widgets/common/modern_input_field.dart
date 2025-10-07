@@ -63,23 +63,23 @@ class _ModernInputFieldState extends State<ModernInputField> {
   InputDecoration _getInputDecoration(ThemeData theme) {
     final borderRadius = BorderRadius.circular(theme.designSystem?.designSystemRadius?.md ?? 8.0);
     final borderSide = BorderSide(
-      color: widget.customBorderColor ?? theme.designSystem?.designSystemColors?.border ?? Colors.grey,
+      color: widget.customBorderColor ?? theme.designSystem?.designSystemColors.border ?? Colors.grey,
     );
     final focusedBorderSide = BorderSide(
-      color: widget.customBorderColor ?? theme.designSystem?.designSystemColors?.primary ?? Colors.blue,
+      color: widget.customBorderColor ?? theme.designSystem?.designSystemColors.primary ?? Colors.blue,
       width: 2,
     );
 
     var decoration = InputDecoration(
       labelText: widget.label,
       hintText: widget.hintText,
-      labelStyle: widget.customLabelStyle ?? theme.designSystem?.designSystemTypography?.bodyMedium ?? const TextStyle(),
-      hintStyle: widget.customHintStyle ?? theme.designSystem?.designSystemTypography?.bodyMedium?.copyWith(
-        color: theme.designSystem?.designSystemColors?.onSurfaceVariant ?? Colors.grey,
-      ) ?? TextStyle(color: Colors.grey),
+      labelStyle: widget.customLabelStyle ?? theme.designSystem?.designSystemTypography.bodyMedium ?? const TextStyle(),
+      hintStyle: widget.customHintStyle ?? theme.designSystem?.designSystemTypography.bodyMedium?.copyWith(
+        color: theme.designSystem?.designSystemColors.onSurfaceVariant ?? Colors.grey,
+      ) ?? const TextStyle(color: Colors.grey),
       filled: widget.variant == ModernInputFieldVariant.filled,
       fillColor: widget.customBackgroundColor ?? (widget.variant == ModernInputFieldVariant.filled
-        ? theme.designSystem?.designSystemColors?.surfaceContainer ?? Colors.grey.shade100
+        ? theme.designSystem?.designSystemColors.surfaceContainer ?? Colors.grey.shade100
         : Colors.transparent),
     );
 
@@ -132,13 +132,13 @@ class _ModernInputFieldState extends State<ModernInputField> {
     }
 
     // Apply size-specific padding
-    final verticalPadding = widget.size == ModernInputFieldSize.small ? (theme.designSystem?.designSystemSpacing?.xs ?? 8.0)
-      : widget.size == ModernInputFieldSize.medium ? (theme.designSystem?.designSystemSpacing?.sm ?? 12.0)
-      : (theme.designSystem?.designSystemSpacing?.md ?? 16.0);
+    final verticalPadding = widget.size == ModernInputFieldSize.small ? (theme.designSystem?.designSystemSpacing.xs ?? 8.0)
+      : widget.size == ModernInputFieldSize.medium ? (theme.designSystem?.designSystemSpacing.sm ?? 12.0)
+      : (theme.designSystem?.designSystemSpacing.md ?? 16.0);
 
     return decoration.copyWith(
       contentPadding: EdgeInsets.symmetric(
-        horizontal: theme.designSystem?.designSystemSpacing?.md ?? 16.0,
+        horizontal: theme.designSystem?.designSystemSpacing.md ?? 16.0,
         vertical: verticalPadding,
       ),
     );

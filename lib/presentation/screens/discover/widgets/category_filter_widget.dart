@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/design_system.dart';
 
 class CategoryFilterWidget extends StatelessWidget {
   final String selectedCategory;
@@ -15,19 +15,17 @@ class CategoryFilterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Categories',
-          style: appTheme.typography.headlineH7.copyWith(
-            color: appTheme.colors.textPrimary,
+          style: DesignSystem.headlineSmall.copyWith(
+            color: DesignSystem.onSurface,
             fontWeight: FontWeight.w700,
           ),
         ),
-        SizedBox(height: appTheme.spacing.md),
+        const SizedBox(height: DesignSystem.spacingMD),
         SizedBox(
           height: 50,
           child: ListView.builder(
@@ -39,37 +37,37 @@ class CategoryFilterWidget extends StatelessWidget {
 
               return Container(
                 margin: EdgeInsets.only(
-                  right: index < categories.length - 1 ? appTheme.spacing.md : 0,
+                  right: index < categories.length - 1 ? DesignSystem.spacingMD : 0,
                 ),
                 child: GestureDetector(
                   onTap: () => onCategorySelected(category),
                   child: Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: appTheme.spacing.lg,
-                      vertical: appTheme.spacing.sm,
+                      horizontal: DesignSystem.spacingLG,
+                      vertical: DesignSystem.spacingSM,
                     ),
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? appTheme.colors.primaryRed
-                          : appTheme.colors.surfaceDark,
-                      borderRadius: BorderRadius.circular(appTheme.radius.circular),
+                          ? DesignSystem.primary
+                          : DesignSystem.surfaceContainer,
+                      borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
                       border: Border.all(
                         color: isSelected
-                            ? appTheme.colors.primaryRed
-                            : appTheme.colors.borderColor,
+                            ? DesignSystem.primary
+                            : DesignSystem.border,
                         width: 1.5,
                       ),
                       boxShadow: isSelected
-                          ? appTheme.shadows.shadowMedium
-                          : appTheme.shadows.shadowSmall,
+                          ? DesignSystem.shadowMedium
+                          : DesignSystem.shadowSmall,
                     ),
                     child: Center(
                       child: Text(
                         category,
-                        style: appTheme.typography.bodySmall.copyWith(
+                        style: DesignSystem.bodySmall.copyWith(
                           color: isSelected
-                              ? appTheme.colors.white
-                              : appTheme.colors.textSecondary,
+                              ? DesignSystem.onPrimary
+                              : DesignSystem.onSurfaceVariant,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

@@ -48,7 +48,7 @@ class _LibraryTabManagerState extends State<LibraryTabManager> {
               child: GestureDetector(
                 onTap: () => _onTabTap(index, tab),
                 child: Container(
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     horizontal: 24,
                     vertical: 12,
                   ),

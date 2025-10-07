@@ -1,6 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:musicbud_flutter/core/theme/design_system.dart';
 
+/// Types of empty states
+enum EmptyStateType {
+  /// No data available
+  noData,
+
+  /// No search results found
+  noResults,
+
+  /// List/collection is empty
+  emptyList,
+
+  /// No favorite items
+  noFavorites,
+
+  /// No history available
+  noHistory,
+
+  /// No notifications
+  noNotifications,
+
+  /// No messages
+  noMessages,
+
+  /// Custom empty state
+  custom,
+}
+
+/// Configuration for empty state display
+class EmptyStateConfig {
+  /// Message to display in empty state
+  final String message;
+
+  /// Icon to display in empty state
+  final IconData icon;
+
+  /// Text for action button (if any)
+  final String? actionText;
+
+  /// Callback when action button is pressed
+  final VoidCallback? onActionPressed;
+
+  /// Custom widget to display instead of default empty state
+  final Widget? customWidget;
+
+  /// Type of empty state
+  final EmptyStateType type;
+
+  /// Search query for no results state
+  final String? searchQuery;
+
+  const EmptyStateConfig({
+    required this.message,
+    required this.icon,
+    this.actionText,
+    this.onActionPressed,
+    this.customWidget,
+    required this.type,
+    this.searchQuery,
+  });
+}
+
 /// A mixin that provides comprehensive empty state management for widgets.
 ///
 /// This mixin handles:
@@ -218,7 +279,6 @@ mixin EmptyStateMixin<T extends StatefulWidget> on State<T> {
       case EmptyStateType.noMessages:
         return 'No messages yet';
       case EmptyStateType.custom:
-      default:
         return 'Nothing to show';
     }
   }
@@ -241,7 +301,6 @@ mixin EmptyStateMixin<T extends StatefulWidget> on State<T> {
       case EmptyStateType.noMessages:
         return Icons.message_outlined;
       case EmptyStateType.custom:
-      default:
         return Icons.info_outline;
     }
   }
@@ -264,7 +323,6 @@ mixin EmptyStateMixin<T extends StatefulWidget> on State<T> {
       case EmptyStateType.noMessages:
         return Icons.send;
       case EmptyStateType.custom:
-      default:
         return Icons.arrow_forward;
     }
   }
@@ -284,66 +342,5 @@ mixin EmptyStateMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// Callback when empty state changes
-  void Function(bool isEmpty)? get onEmptyStateChanged => null;
-}
-
-/// Configuration for empty state display
-class EmptyStateConfig {
-  /// Message to display in empty state
-  final String message;
-
-  /// Icon to display in empty state
-  final IconData icon;
-
-  /// Text for action button (if any)
-  final String? actionText;
-
-  /// Callback when action button is pressed
-  final VoidCallback? onActionPressed;
-
-  /// Custom widget to display instead of default empty state
-  final Widget? customWidget;
-
-  /// Type of empty state
-  final EmptyStateType type;
-
-  /// Search query for no results state
-  final String? searchQuery;
-
-  const EmptyStateConfig({
-    required this.message,
-    required this.icon,
-    this.actionText,
-    this.onActionPressed,
-    this.customWidget,
-    required this.type,
-    this.searchQuery,
-  });
-}
-
-/// Types of empty states
-enum EmptyStateType {
-  /// No data available
-  noData,
-
-  /// No search results found
-  noResults,
-
-  /// List/collection is empty
-  emptyList,
-
-  /// No favorite items
-  noFavorites,
-
-  /// No history available
-  noHistory,
-
-  /// No notifications
-  noNotifications,
-
-  /// No messages
-  noMessages,
-
-  /// Custom empty state
-  custom,
+  void Function(bool isEmpty)? onEmptyStateChanged;
 }

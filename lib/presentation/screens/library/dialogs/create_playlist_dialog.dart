@@ -40,15 +40,15 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
             controller: _nameController,
             hintText: 'Playlist Name',
           ),
-          SizedBox(height: DesignSystem.spacingMD),
+          const SizedBox(height: DesignSystem.spacingMD),
           ModernInputField(
             controller: _descController,
             hintText: 'Description (optional)',
             maxLines: 3,
           ),
-          SizedBox(height: DesignSystem.spacingMD),
+          const SizedBox(height: DesignSystem.spacingMD),
           CheckboxListTile(
-            title: Text(
+            title: const Text(
               'Private Playlist',
               style: DesignSystem.bodyMedium,
             ),

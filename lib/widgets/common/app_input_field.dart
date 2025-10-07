@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/design_system.dart';
 
 enum AppInputVariant {
   primary,
@@ -109,8 +109,6 @@ class _AppInputFieldState extends State<AppInputField> {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -118,11 +116,11 @@ class _AppInputFieldState extends State<AppInputField> {
           Text(
             widget.label!,
             style: widget.labelStyle ??
-              appTheme.typography.titleSmall.copyWith(
-                color: appTheme.colors.white,
+              DesignSystem.titleSmall.copyWith(
+                color: DesignSystem.onPrimary,
               ),
           ),
-          SizedBox(height: appTheme.spacing.sm),
+          SizedBox(height: DesignSystem.spacingSM),
         ],
         TextFormField(
           controller: widget.controller,
@@ -137,18 +135,18 @@ class _AppInputFieldState extends State<AppInputField> {
           maxLines: widget.maxLines,
           maxLength: widget.maxLength,
           style: widget.textStyle ??
-            appTheme.typography.bodyMedium.copyWith(
-              color: appTheme.colors.white,
+            DesignSystem.bodyMedium.copyWith(
+              color: DesignSystem.onPrimary,
             ),
-          decoration: _getInputDecoration(appTheme),
+          decoration: _getInputDecoration(),
         ),
         if (widget.errorText != null) ...[
-          SizedBox(height: appTheme.spacing.sm),
+          SizedBox(height: DesignSystem.spacingSM),
           Text(
             widget.errorText!,
             style: widget.errorStyle ??
-              appTheme.typography.caption.copyWith(
-                color: appTheme.colors.error,
+              DesignSystem.caption.copyWith(
+                color: DesignSystem.error,
               ),
           ),
         ],
@@ -156,23 +154,23 @@ class _AppInputFieldState extends State<AppInputField> {
     );
   }
 
-  InputDecoration _getInputDecoration(AppTheme appTheme) {
+  InputDecoration _getInputDecoration() {
     final baseDecoration = InputDecoration(
       hintText: widget.hint,
       hintStyle: widget.hintStyle ??
-        appTheme.typography.bodyMedium.copyWith(
-          color: appTheme.colors.lightGray,
+        DesignSystem.bodyMedium.copyWith(
+          color: DesignSystem.onSurfaceVariant,
         ),
       prefixIcon: widget.prefixIcon,
       suffixIcon: _buildSuffixIcon(),
-      contentPadding: widget.contentPadding ?? _getContentPadding(appTheme),
-      border: widget.border ?? _getBorder(appTheme),
-      focusedBorder: widget.focusedBorder ?? _getFocusedBorder(appTheme),
-      errorBorder: widget.errorBorder ?? _getErrorBorder(appTheme),
-      enabledBorder: widget.enabledBorder ?? _getEnabledBorder(appTheme),
-      disabledBorder: widget.disabledBorder ?? _getDisabledBorder(appTheme),
+      contentPadding: widget.contentPadding ?? _getContentPadding(),
+      border: widget.border ?? _getBorder(),
+      focusedBorder: widget.focusedBorder ?? _getFocusedBorder(),
+      errorBorder: widget.errorBorder ?? _getErrorBorder(),
+      enabledBorder: widget.enabledBorder ?? _getEnabledBorder(),
+      disabledBorder: widget.disabledBorder ?? _getDisabledBorder(),
       filled: widget.variant == AppInputVariant.filled,
-      fillColor: widget.fillColor ?? _getFillColor(appTheme),
+      fillColor: widget.fillColor ?? _getFillColor(),
     );
 
     return baseDecoration;
@@ -195,94 +193,94 @@ class _AppInputFieldState extends State<AppInputField> {
     return widget.suffixIcon;
   }
 
-  EdgeInsetsGeometry _getContentPadding(AppTheme appTheme) {
+  EdgeInsetsGeometry _getContentPadding() {
     switch (widget.size) {
       case AppInputSize.small:
         return EdgeInsets.symmetric(
-          horizontal: appTheme.spacing.md,
-          vertical: appTheme.spacing.sm,
+          horizontal: DesignSystem.spacingMD,
+          vertical: DesignSystem.spacingSM,
         );
       case AppInputSize.medium:
         return EdgeInsets.symmetric(
-          horizontal: appTheme.spacing.md,
-          vertical: appTheme.spacing.md,
+          horizontal: DesignSystem.spacingMD,
+          vertical: DesignSystem.spacingMD,
         );
       case AppInputSize.large:
         return EdgeInsets.symmetric(
-          horizontal: appTheme.spacing.lg,
-          vertical: appTheme.spacing.md,
+          horizontal: DesignSystem.spacingLG,
+          vertical: DesignSystem.spacingMD,
         );
       case AppInputSize.xlarge:
         return EdgeInsets.symmetric(
-          horizontal: appTheme.spacing.xl,
-          vertical: appTheme.spacing.lg,
+          horizontal: DesignSystem.spacingXL,
+          vertical: DesignSystem.spacingLG,
         );
     }
   }
 
-  InputBorder _getBorder(AppTheme appTheme) {
+  InputBorder _getBorder() {
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(appTheme.radius.md),
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       borderSide: BorderSide(
-        color: appTheme.colors.primaryRed.withValues(alpha:  0.3),
+        color: DesignSystem.primary.withValues(alpha: 0.3),
       ),
     );
   }
 
-  InputBorder _getFocusedBorder(AppTheme appTheme) {
+  InputBorder _getFocusedBorder() {
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(appTheme.radius.md),
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       borderSide: BorderSide(
-        color: appTheme.colors.primaryRed,
+        color: DesignSystem.primary,
         width: 2,
       ),
     );
   }
 
-  InputBorder _getErrorBorder(AppTheme appTheme) {
+  InputBorder _getErrorBorder() {
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(appTheme.radius.md),
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       borderSide: BorderSide(
-        color: appTheme.colors.error,
+        color: DesignSystem.error,
         width: 2,
       ),
     );
   }
 
-  InputBorder _getEnabledBorder(AppTheme appTheme) {
+  InputBorder _getEnabledBorder() {
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(appTheme.radius.md),
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       borderSide: BorderSide(
-        color: appTheme.colors.lightGray.withValues(alpha:  0.3),
+        color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.3),
       ),
     );
   }
 
-  InputBorder _getDisabledBorder(AppTheme appTheme) {
+  InputBorder _getDisabledBorder() {
     return OutlineInputBorder(
-      borderRadius: BorderRadius.circular(appTheme.radius.md),
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       borderSide: BorderSide(
-        color: appTheme.colors.lightGray.withValues(alpha:  0.2),
+        color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
       ),
     );
   }
 
-  Color _getFillColor(AppTheme appTheme) {
+  Color _getFillColor() {
     switch (widget.variant) {
       case AppInputVariant.primary:
-        return appTheme.colors.white;
+        return DesignSystem.onPrimary;
       case AppInputVariant.secondary:
-        return appTheme.colors.lightGray.withValues(alpha:  0.1);
+        return DesignSystem.onSurfaceVariant.withValues(alpha: 0.1);
       case AppInputVariant.outline:
-        return appTheme.colors.white;
+        return DesignSystem.onPrimary;
       case AppInputVariant.filled:
-        return appTheme.colors.lightGray.withValues(alpha:  0.1);
+        return DesignSystem.onSurfaceVariant.withValues(alpha: 0.1);
       case AppInputVariant.transparent:
-        return appTheme.colors.transparent;
+        return DesignSystem.transparent;
       case AppInputVariant.search:
-        return appTheme.colors.white;
+        return DesignSystem.onPrimary;
       case AppInputVariant.chat:
-        return appTheme.colors.white;
+        return DesignSystem.onPrimary;
     }
   }
 }

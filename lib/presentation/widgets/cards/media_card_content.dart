@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/design_system.dart';
 import '../base/base_card.dart';
 
 /// A reusable content widget for media cards.
@@ -18,14 +19,16 @@ class MediaCardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final designSystem = Theme.of(context).designSystem!;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Title
         Text(
           title,
-          style: BaseCard.getDesignSystemTypography(context).titleMedium.copyWith(
-            color: BaseCard.getDesignSystemColors(context).onSurface,
+          style: designSystem.designSystemTypography.titleMedium.copyWith(
+            color: designSystem.designSystemColors.onSurface,
             fontWeight: FontWeight.w600,
           ),
           maxLines: 2,
@@ -34,11 +37,11 @@ class MediaCardContent extends StatelessWidget {
 
         // Subtitle
         if (subtitle != null) ...[
-          SizedBox(height: BaseCard.getDesignSystemSpacing(context).xs),
+          SizedBox(height: designSystem.designSystemSpacing.xs),
           Text(
             subtitle!,
-            style: BaseCard.getDesignSystemTypography(context).bodySmall.copyWith(
-              color: BaseCard.getDesignSystemColors(context).onSurfaceVariant,
+            style: designSystem.designSystemTypography.bodySmall.copyWith(
+              color: designSystem.designSystemColors.onSurfaceVariant,
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -46,18 +49,5 @@ class MediaCardContent extends StatelessWidget {
         ],
       ],
     );
-  }
-
-  // Static helper methods to access BaseCard helpers
-  static DesignSystemColors getDesignSystemColors(BuildContext context) {
-    return Theme.of(context).extension<DesignSystemThemeExtension>()!.designSystemColors;
-  }
-
-  static DesignSystemTypography getDesignSystemTypography(BuildContext context) {
-    return Theme.of(context).extension<DesignSystemThemeExtension>()!.designSystemTypography;
-  }
-
-  static DesignSystemSpacing getDesignSystemSpacing(BuildContext context) {
-    return Theme.of(context).extension<DesignSystemThemeExtension>()!.designSystemSpacing;
   }
 }

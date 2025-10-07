@@ -1,5 +1,4 @@
 import '../../models/common_track.dart';
-import '../../models/spotify_device.dart';
 
 /// Base class for all Spotify control states
 abstract class SpotifyControlState {}
@@ -17,16 +16,6 @@ class SpotifyPlayedTracksLoaded extends SpotifyControlState {
   SpotifyPlayedTracksLoaded({required this.tracks});
 }
 
-/// State when devices are loaded
-class SpotifyDevicesLoaded extends SpotifyControlState {
-  final List<SpotifyDevice> devices;
-  final SpotifyDevice? selectedDevice;
-
-  SpotifyDevicesLoaded({
-    required this.devices,
-    this.selectedDevice,
-  });
-}
 
 /// State when playback state changes
 class SpotifyPlaybackStateChanged extends SpotifyControlState {

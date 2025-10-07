@@ -6,28 +6,25 @@ abstract class SpotifyControlEvent {}
 /// Event to request played tracks
 class SpotifyPlayedTracksRequested extends SpotifyControlEvent {}
 
-/// Event to request available devices
-class SpotifyDevicesRequested extends SpotifyControlEvent {}
-
 /// Event to control playback (play, pause, etc.)
 class SpotifyPlaybackControlRequested extends SpotifyControlEvent {
   final String command;
-  final String deviceId;
+  final String? deviceId;
 
   SpotifyPlaybackControlRequested({
     required this.command,
-    required this.deviceId,
+    this.deviceId,
   });
 }
 
 /// Event to change volume
 class SpotifyVolumeChangeRequested extends SpotifyControlEvent {
   final int volume;
-  final String deviceId;
+  final String? deviceId;
 
   SpotifyVolumeChangeRequested({
     required this.volume,
-    required this.deviceId,
+    this.deviceId,
   });
 }
 
@@ -47,11 +44,11 @@ class SpotifyTrackLocationSaveRequested extends SpotifyControlEvent {
 /// Event to play a specific track
 class SpotifyPlayTrackRequested extends SpotifyControlEvent {
   final String trackId;
-  final String deviceId;
+  final String? deviceId;
 
   SpotifyPlayTrackRequested({
     required this.trackId,
-    required this.deviceId,
+    this.deviceId,
   });
 }
 

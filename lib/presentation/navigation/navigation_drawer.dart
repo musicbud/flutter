@@ -22,11 +22,11 @@ class MainNavigationDrawer extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-          DrawerHeader(
-            decoration: BoxDecoration(
+          const DrawerHeader(
+            decoration: const BoxDecoration(
               color: DesignSystem.primary, // Primary red color
             ),
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -38,9 +38,9 @@ class MainNavigationDrawer extends StatelessWidget {
                       size: 32,
                     ),
                     SizedBox(width: 12),
-                    Text(
+                    const Text(
                       'MusicBud',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: DesignSystem.onPrimary,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -71,8 +71,8 @@ class MainNavigationDrawer extends StatelessWidget {
 
           // Main Navigation Section
           Container(
-            margin: const EdgeInsets.all(16.0),
-            padding: const EdgeInsets.all(12.0),
+            margin: EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(12.0),
             decoration: BoxDecoration(
               color: DesignSystem.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
@@ -81,7 +81,7 @@ class MainNavigationDrawer extends StatelessWidget {
                 width: 2,
               ),
             ),
-            child: const Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -122,10 +122,10 @@ class MainNavigationDrawer extends StatelessWidget {
 
           // Only show additional sections if there are additional navigation items
           if (additionalNavigationItems.isNotEmpty) ...[
-            const Divider(),
+            Divider(),
 
             // Auth Pages Section
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
                 'Auth Pages',
@@ -138,7 +138,7 @@ class MainNavigationDrawer extends StatelessWidget {
             ),
             ...additionalNavigationItems.take(5).map((item) => ListTile(
               leading: Icon(item.icon, size: 20),
-              title: Text(item.label, style: const TextStyle(fontSize: 14)),
+              title: Text(item.label, style: TextStyle(fontSize: 14)),
               onTap: () {
                 Navigator.pop(context);
                 if (item.pageBuilder != null) {
@@ -151,10 +151,10 @@ class MainNavigationDrawer extends StatelessWidget {
               },
             )),
 
-            const Divider(),
+            Divider(),
 
             // Onboarding Pages Section
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
                 'Onboarding Pages',
@@ -167,7 +167,7 @@ class MainNavigationDrawer extends StatelessWidget {
             ),
             ...additionalNavigationItems.skip(5).take(4).map((item) => ListTile(
               leading: Icon(item.icon, size: 20),
-              title: Text(item.label, style: const TextStyle(fontSize: 14)),
+              title: Text(item.label, style: TextStyle(fontSize: 14)),
               onTap: () {
                 Navigator.pop(context);
                 if (item.pageBuilder != null) {
@@ -180,10 +180,10 @@ class MainNavigationDrawer extends StatelessWidget {
               },
             )),
 
-            const Divider(),
+            Divider(),
 
             // Other Pages Section
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
                 'Other Pages',
@@ -196,7 +196,7 @@ class MainNavigationDrawer extends StatelessWidget {
             ),
             ...additionalNavigationItems.skip(9).map((item) => ListTile(
               leading: Icon(item.icon, size: 20),
-              title: Text(item.label, style: const TextStyle(fontSize: 14)),
+              title: Text(item.label, style: TextStyle(fontSize: 14)),
               onTap: () {
                 Navigator.pop(context);
                 if (item.pageBuilder != null) {

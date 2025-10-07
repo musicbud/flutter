@@ -17,13 +17,13 @@ class DownloadsTab extends StatelessWidget {
             fontWeight: FontWeight.w700,
           ),
         ),
-        SizedBox(height: DesignSystem.spacingMD),
+        const SizedBox(height: DesignSystem.spacingMD),
 
         // Downloads Grid - Using static data for now as in original
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: DesignSystem.spacingMD,
             mainAxisSpacing: DesignSystem.spacingMD,

@@ -3,8 +3,7 @@ import 'package:flutter/material.dart';
 /// @deprecated Use DesignSystem instead. This file is deprecated and will be removed in a future version.
 /// Migrate to: import 'package:musicbud/core/theme/design_system.dart';
 /// All theme tokens are now available through DesignSystem and theme extensions.
-@deprecated
-// Extension to add custom text styles to TextTheme
+@Deprecated('Use DesignSystem instead. This file is deprecated and will be removed in a future version.')
 extension CustomTextTheme on TextTheme {
   TextStyle get headlineH7 => const TextStyle(
     color: Color(0xFFFFFFFF),
@@ -14,7 +13,7 @@ extension CustomTextTheme on TextTheme {
   );
 }
 
-@deprecated
+@Deprecated('Use DesignSystem instead. This file is deprecated and will be removed in a future version.')
 class AppTheme {
   final BuildContext context;
   
@@ -37,8 +36,8 @@ class AppTheme {
   TextTheme get typography => theme.textTheme;
   
   // Instance getters for convenience
-  _Spacing get spacing => const _Spacing();
-  _BorderRadius get radius => const _BorderRadius();
+  AppSpacing get spacing => AppSpacing();
+  AppBorderRadius get radius => AppBorderRadius();
 
   // Custom text styles
   TextStyle get headlineH7 => const TextStyle(
@@ -47,15 +46,15 @@ class AppTheme {
     fontWeight: FontWeight.w600,
     height: 1.30,
   );
-  
+
   static const Color textPrimaryColor = Colors.white;
   static const Color textSecondaryColor = Color(0xB3FFFFFF);
   static const Color textTertiaryColor = Color(0x80FFFFFF);
-  
+
 
   // Instance getters for gradients and shadows
-  _Gradients get gradients => _Gradients();
-  _Shadows get shadows => _Shadows();
+  AppGradients get gradients => AppGradients();
+  AppShadows get shadows => AppShadows();
 
   // Custom color getters
   Color get surfaceDark => const Color(0xFF282828);
@@ -130,31 +129,31 @@ class AppTheme {
         backgroundColor: backgroundColor,
         elevation: 0,
       ),
-      textTheme: TextTheme(
-        headlineLarge: const TextStyle(
+      textTheme: const TextTheme(
+        headlineLarge: TextStyle(
           color: textPrimaryColor,
           fontSize: 32,
           fontWeight: FontWeight.bold,
         ),
-        headlineMedium: const TextStyle(
+        headlineMedium: TextStyle(
           color: textPrimaryColor,
           fontSize: 24,
           fontWeight: FontWeight.bold,
         ),
-        headlineSmall: const TextStyle(
+        headlineSmall: TextStyle(
           color: textPrimaryColor,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         ),
-        bodyLarge: const TextStyle(
+        bodyLarge: TextStyle(
           color: textPrimaryColor,
           fontSize: 16,
         ),
-        bodyMedium: const TextStyle(
+        bodyMedium: TextStyle(
           color: textSecondaryColor,
           fontSize: 14,
         ),
-        bodySmall: const TextStyle(
+        bodySmall: TextStyle(
           color: textTertiaryColor,
           fontSize: 12,
         ),
@@ -207,11 +206,11 @@ class AppTheme {
         surface: Colors.white,
         error: errorColor,
       ),
-      appBarTheme: AppBarTheme(
-        backgroundColor: Colors.grey[100],
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFFF5F5F5),
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-        titleTextStyle: const TextStyle(
+        iconTheme: IconThemeData(color: Colors.black),
+        titleTextStyle: TextStyle(
           color: Colors.black,
           fontSize: 20,
           fontWeight: FontWeight.bold,
@@ -276,10 +275,10 @@ class AppTheme {
   }
 }
 
-@deprecated
-class _Spacing {
-  const _Spacing();
-  
+@Deprecated('Use DesignSystem instead. This file is deprecated and will be removed in a future version.')
+class AppSpacing {
+  AppSpacing();
+
   final double xxs = 4;
   final double xs = 8;
   final double sm = 12;
@@ -289,9 +288,9 @@ class _Spacing {
   final double xxl = 48;
 }
 
-@deprecated
-class _BorderRadius {
-  const _BorderRadius();
+@Deprecated('Use DesignSystem instead. This file is deprecated and will be removed in a future version.')
+class AppBorderRadius {
+  AppBorderRadius();
 
   final double xs = 4;
   final double sm = 8;
@@ -302,11 +301,11 @@ class _BorderRadius {
   final double circular = 999;
 }
 
-@deprecated
-class _Gradients {
-  const _Gradients();
+@Deprecated('Use DesignSystem instead. This file is deprecated and will be removed in a future version.')
+class AppGradients {
+  AppGradients();
 
-  LinearGradient get backgroundGradient => const LinearGradient(
+  LinearGradient get backgroundGradient => LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
@@ -317,15 +316,15 @@ class _Gradients {
   );
 }
 
-@deprecated
-class _Shadows {
-  const _Shadows();
+@Deprecated('Use DesignSystem instead. This file is deprecated and will be removed in a future version.')
+class AppShadows {
+  AppShadows();
 
   List<BoxShadow> get shadowCard => [
     BoxShadow(
       color: Colors.black.withOpacity(0.3),
       blurRadius: 8,
-      offset: const Offset(0, 4),
+      offset: Offset(0, 4),
     ),
   ];
 
@@ -333,7 +332,7 @@ class _Shadows {
     BoxShadow(
       color: Colors.black.withOpacity(0.2),
       blurRadius: 6,
-      offset: const Offset(0, 3),
+      offset: Offset(0, 3),
     ),
   ];
 
@@ -341,7 +340,7 @@ class _Shadows {
     BoxShadow(
       color: Colors.black.withOpacity(0.1),
       blurRadius: 4,
-      offset: const Offset(0, 2),
+      offset: Offset(0, 2),
     ),
   ];
 }

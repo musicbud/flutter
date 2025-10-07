@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/design_system.dart';
+import 'package:musicbud_flutter/core/theme/design_system.dart';
 
 /// A builder class for composing list and grid items with consistent layouts.
 /// Provides a fluent API for building lists with proper spacing, dividers, and styling.
@@ -219,7 +219,7 @@ class ListBuilder<T> {
   }
 
   Widget _buildDefaultSeparator(BuildContext context, int index) {
-    return Divider(
+    return const Divider(
       height: 1,
       thickness: 1,
       color: DesignSystem.border,
@@ -238,7 +238,7 @@ class ListBuilder<T> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.inbox_outlined,
             size: 64,
             color: DesignSystem.onSurfaceVariant,
@@ -267,7 +267,7 @@ class ListBuilder<T> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(
+          const SizedBox(
             width: 48,
             height: 48,
             child: CircularProgressIndicator(
@@ -323,8 +323,8 @@ class ListBuilder<T> {
             SizedBox(height: DesignSystem.spacingXL),
             ElevatedButton.icon(
               onPressed: _onRetry,
-              icon: Icon(Icons.refresh, size: 20),
-              label: Text('Try Again'),
+              icon: const Icon(Icons.refresh, size: 20),
+              label: const Text('Try Again'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: DesignSystem.primary,
                 foregroundColor: DesignSystem.onPrimary,

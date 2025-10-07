@@ -2,9 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/repositories/user_profile_repository.dart';
 import '../../../domain/repositories/content_repository.dart';
 import '../../../domain/repositories/user_repository.dart';
-import '../../../models/bud_match.dart';
 import '../../../models/user_profile.dart';
-import '../../../models/parent_user.dart';
 import 'profile_event.dart';
 import 'profile_state.dart';
 
@@ -71,7 +69,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     // TODO: Implement avatar update using appropriate repository
-    emit(ProfileFailure(error: 'Avatar update not implemented'));
+    emit(const ProfileFailure(error: 'Avatar update not implemented'));
   }
 
   Future<void> _onProfileAuthenticationChecked(
@@ -79,7 +77,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     Emitter<ProfileState> emit,
   ) async {
     // TODO: Implement authentication check using appropriate repository
-    emit(ProfileAuthenticationStatus(isAuthenticated: true));
+    emit(const ProfileAuthenticationStatus(isAuthenticated: true));
   }
 
   Future<void> _onProfileLogoutRequested(

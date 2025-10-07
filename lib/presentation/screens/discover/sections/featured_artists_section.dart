@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/design_system.dart';
 import '../../../../models/artist.dart';
 import '../../../widgets/common/section_header.dart';
 import '../components/artist_card.dart';
@@ -18,10 +18,8 @@ class FeaturedArtistsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
-
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+      padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -30,17 +28,17 @@ class FeaturedArtistsSection extends StatelessWidget {
             actionText: 'View All',
             onActionPressed: onViewAllPressed,
           ),
-          SizedBox(height: appTheme.spacing.md),
+          SizedBox(height: DesignSystem.spacingMD),
           SizedBox(
             height: 120,
             child: isLoading
-                ? const Center(child: CircularProgressIndicator())
+                ? Center(child: CircularProgressIndicator())
                 : ListView(
                     scrollDirection: Axis.horizontal,
                     children: artists.isEmpty
-                        ? [const Center(child: Text('No artists available'))]
+                        ? [Center(child: Text('No artists available'))]
                         : artists.map((artist) => Padding(
-                            padding: EdgeInsets.only(right: appTheme.spacing.md),
+                            padding: EdgeInsets.only(right: DesignSystem.spacingMD),
                             child: ArtistCard(
                               name: artist.name,
                               genre: artist.genres?.first ?? 'Unknown',

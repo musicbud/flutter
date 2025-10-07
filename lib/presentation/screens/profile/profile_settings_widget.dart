@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'components/settings_option.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/design_system.dart';
 import '../../../widgets/common/index.dart';
 
 class ProfileSettingsWidget extends StatelessWidget {
@@ -8,17 +8,17 @@ class ProfileSettingsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
+    final designSystemSpacing = Theme.of(context).designSystemSpacing!;
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+      padding: EdgeInsets.symmetric(horizontal: designSystemSpacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionHeader(
             title: 'Settings',
           ),
-          SizedBox(height: appTheme.spacing.md),
+          SizedBox(height: designSystemSpacing.md),
 
           // Settings Options
           const SettingsOption(
@@ -26,19 +26,19 @@ class ProfileSettingsWidget extends StatelessWidget {
             subtitle: 'Manage your account preferences',
             icon: Icons.settings,
           ),
-          SizedBox(height: appTheme.spacing.sm),
+          SizedBox(height: designSystemSpacing.sm),
           const SettingsOption(
             title: 'Privacy',
             subtitle: 'Control your privacy settings',
             icon: Icons.privacy_tip,
           ),
-          SizedBox(height: appTheme.spacing.sm),
+          SizedBox(height: designSystemSpacing.sm),
           const SettingsOption(
             title: 'Notifications',
             subtitle: 'Customize notification preferences',
             icon: Icons.notifications,
           ),
-          SizedBox(height: appTheme.spacing.sm),
+          SizedBox(height: designSystemSpacing.sm),
           const SettingsOption(
             title: 'Help & Support',
             subtitle: 'Get help and contact support',

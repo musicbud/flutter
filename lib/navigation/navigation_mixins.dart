@@ -25,17 +25,17 @@ mixin BaseNavigationMixin {
 /// Mixin for navigation functionality
 mixin NavigationMixin<T extends StatefulWidget> on State<T> {
   /// Navigate to a named route
-  Future<T?> pushNamed<T>(String routeName, {Object? arguments}) {
-    return Navigator.of(context).pushNamed<T>(routeName, arguments: arguments);
+  Future<R?> pushNamed<R>(String routeName, {Object? arguments}) {
+    return Navigator.of(context).pushNamed<R>(routeName, arguments: arguments);
   }
 
   /// Navigate to a named route and remove all previous routes
-  Future<T?> pushNamedAndRemoveUntil<T>(
+  Future<R?> pushNamedAndRemoveUntil<R>(
     String routeName, {
     Object? arguments,
     required RoutePredicate predicate,
   }) {
-    return Navigator.of(context).pushNamedAndRemoveUntil<T>(
+    return Navigator.of(context).pushNamedAndRemoveUntil<R>(
       routeName,
       predicate,
       arguments: arguments,
@@ -43,12 +43,12 @@ mixin NavigationMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// Replace current route with a named route
-  Future<T?> pushReplacementNamed<T, TO>(
+  Future<R?> pushReplacementNamed<R, TO>(
     String routeName, {
     Object? arguments,
     TO? result,
   }) {
-    return Navigator.of(context).pushReplacementNamed<T, TO>(
+    return Navigator.of(context).pushReplacementNamed<R, TO>(
       routeName,
       arguments: arguments,
       result: result,
@@ -56,8 +56,8 @@ mixin NavigationMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// Pop current route
-  void pop<T>([T? result]) {
-    Navigator.of(context).pop<T>(result);
+  void pop<R>([R? result]) {
+    Navigator.of(context).pop<R>(result);
   }
 
   /// Pop until a specific route

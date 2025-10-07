@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/design_system.dart';
+import '../../../core/theme/design_system.dart';
 
 /// A builder class for composing state displays with proper fallbacks.
 /// Provides a fluent API for building consistent state-based UI components.
@@ -42,7 +42,6 @@ class StateBuilder {
   EdgeInsetsGeometry? _padding;
   bool _showRetryButton = true;
   double _iconSize = 64.0;
-  AnimationController? _animationController;
   Duration _animationDuration = const Duration(milliseconds: 300);
 
   /// Creates a new StateBuilder instance
@@ -144,12 +143,6 @@ class StateBuilder {
     return this;
   }
 
-  /// Sets animation controller for state transitions
-  StateBuilder withAnimationController(AnimationController controller) {
-    _animationController = controller;
-    return this;
-  }
-
   /// Sets animation duration for state transitions
   StateBuilder withAnimationDuration(Duration duration) {
     _animationDuration = duration;
@@ -192,7 +185,7 @@ class StateBuilder {
             color: DesignSystem.surfaceContainer,
             borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
           ),
-          child: SizedBox(
+          child: const SizedBox(
             width: 48,
             height: 48,
             child: CircularProgressIndicator(
@@ -230,7 +223,7 @@ class StateBuilder {
             color: DesignSystem.onSurfaceVariant,
           ),
         ),
-        SizedBox(height: DesignSystem.spacingLG),
+        const SizedBox(height: DesignSystem.spacingLG),
         Text(
           _emptyMessage ?? 'No items found',
           style: DesignSystem.titleMedium.copyWith(
@@ -260,7 +253,7 @@ class StateBuilder {
             color: DesignSystem.error,
           ),
         ),
-        SizedBox(height: DesignSystem.spacingLG),
+        const SizedBox(height: DesignSystem.spacingLG),
         Text(
           'Something went wrong',
           style: DesignSystem.titleMedium.copyWith(
@@ -269,7 +262,7 @@ class StateBuilder {
           ),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: DesignSystem.spacingSM),
+        const SizedBox(height: DesignSystem.spacingSM),
         Text(
           _errorMessage ?? 'Please check your connection and try again',
           style: DesignSystem.bodyMedium.copyWith(
@@ -278,18 +271,18 @@ class StateBuilder {
           textAlign: TextAlign.center,
         ),
         if (_showRetryButton && _onRetry != null) ...[
-          SizedBox(height: DesignSystem.spacingXL),
+          const SizedBox(height: DesignSystem.spacingXL),
           ElevatedButton.icon(
             onPressed: _onRetry,
-            icon: Icon(Icons.refresh, size: 20),
-            label: Text('Try Again'),
+            icon: const Icon(Icons.refresh, size: 20),
+            label: const Text('Try Again'),
             style: ElevatedButton.styleFrom(
               backgroundColor: DesignSystem.primary,
               foregroundColor: DesignSystem.onPrimary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
               ),
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: DesignSystem.spacingLG,
                 vertical: DesignSystem.spacingMD,
               ),
@@ -317,7 +310,7 @@ class StateBuilder {
             color: DesignSystem.success,
           ),
         ),
-        SizedBox(height: DesignSystem.spacingLG),
+        const SizedBox(height: DesignSystem.spacingLG),
         Text(
           _successMessage ?? 'Success!',
           style: DesignSystem.titleMedium.copyWith(

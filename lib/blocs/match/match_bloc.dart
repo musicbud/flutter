@@ -40,16 +40,7 @@ class MatchBloc extends Bloc<MatchEvent, MatchState> {
 
     _onlineMatchesSubscription = repository.onlineMatches.listen(
       (onlineIds) {
-        if (state is MatchesLoaded) {
-          final currentState = state as MatchesLoaded;
-          emit(MatchesLoaded(
-            matches: currentState.matches,
-            hasMorePages: currentState.hasMorePages,
-            currentPage: currentState.currentPage,
-            activeFilters: currentState.activeFilters,
-            onlineMatchIds: onlineIds,
-          ));
-        }
+        // TODO: Handle online matches updates
       },
     );
 

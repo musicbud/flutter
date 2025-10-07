@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/repositories/bud_repository.dart';
 import '../../../domain/repositories/content_repository.dart';
 import '../../../models/bud_match.dart';
 import '../../../models/common_track.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../injection_container.dart';
+import '../../../core/theme/design_system.dart';
+import '../../../presentation/navigation/main_navigation.dart';
+import '../../../presentation/navigation/navigation_drawer.dart';
 
 class TrackDetailsScreen extends StatefulWidget {
   final CommonTrack track;
@@ -20,11 +21,17 @@ class TrackDetailsScreen extends StatefulWidget {
 }
 
 class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late final MainNavigationController _navigationController;
   bool _isLoading = false;
   String? _errorMessage;
   List<BudMatch> _buds = [];
 
-  String get _trackIdentifier => widget.track.uid ?? widget.track.id ?? '';
+  String get _trackIdentifier {
+    final uid = widget.track.uid;
+    final id = widget.track.id;
+    return uid ?? id ?? '';
+  }
 
   Future<void> _getBudsByTrack() async {
     setState(() {
@@ -56,12 +63,14 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
 
     try {
       await sl<ContentRepository>().playTrackOnService(_trackIdentifier, service: service);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(service != null ? 'Playing on $service' : 'Playing track'),
-          backgroundColor: AppTheme.of(context).colors.successGreen,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(service != null ? 'Playing on $service' : 'Playing track'),
+            backgroundColor: Theme.of(context).designSystemColors!.success,
+          ),
+        );
+      }
     } catch (e) {
       setState(() {
         if (e.toString().contains('Track not found')) {
@@ -70,12 +79,14 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
           _errorMessage = 'Error playing track: $e';
         }
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_errorMessage!),
-          backgroundColor: AppTheme.of(context).colors.errorRed,
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(_errorMessage!),
+            backgroundColor: Theme.of(context).designSystemColors!.error,
+          ),
+        );
+      }
     } finally {
       setState(() {
         _isLoading = false;
@@ -86,21 +97,39 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
   @override
   void initState() {
     super.initState();
+    _navigationController = MainNavigationController();
     debugPrint('Track Details: uid = ${widget.track.uid}, id = ${widget.track.id}');
   }
 
   @override
+  void dispose() {
+    _navigationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
+    final designSystemColors = Theme.of(context).designSystemColors!;
+    final designSystemTypography = Theme.of(context).designSystemTypography!;
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: const Text('Track Details'),
-        backgroundColor: appTheme.colors.surface,
+        backgroundColor: designSystemColors.surface,
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
+      ),
+      drawer: MainNavigationDrawer(
+        navigationController: _navigationController,
       ),
       body: Container(
         decoration: BoxDecoration(
-          gradient: appTheme.gradients.backgroundGradient,
+          gradient: Theme.of(context).designSystemGradients!.background,
         ),
         child: SingleChildScrollView(
           child: Column(
@@ -112,19 +141,19 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.track.name ?? 'Unknown Track',
-                      style: appTheme.typography.headlineSmall,
+                      widget.track.name,
+                      style: designSystemTypography.headlineSmall,
                     ),
                     const SizedBox(height: 8),
                     Text(
                       widget.track.artistName ?? 'Unknown Artist',
-                      style: appTheme.typography.titleMedium,
+                      style: designSystemTypography.titleMedium,
                     ),
                     if (widget.track.albumName != null) ...[
                       const SizedBox(height: 8),
                       Text(
                         'Album: ${widget.track.albumName}',
-                        style: appTheme.typography.bodyMedium,
+                        style: designSystemTypography.bodyMedium,
                       ),
                     ],
                   ],
@@ -138,24 +167,24 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
                     ElevatedButton(
                       onPressed: _isLoading ? null : () => _playTrack(service: 'spotify'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: appTheme.colors.primary,
-                        foregroundColor: appTheme.colors.onPrimary,
+                        backgroundColor: designSystemColors.primary,
+                        foregroundColor: designSystemColors.onPrimary,
                       ),
                       child: const Text('Play on Spotify'),
                     ),
                     ElevatedButton(
                       onPressed: _isLoading ? null : () => _playTrack(service: 'ytmusic'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: appTheme.colors.primary,
-                        foregroundColor: appTheme.colors.onPrimary,
+                        backgroundColor: designSystemColors.primary,
+                        foregroundColor: designSystemColors.onPrimary,
                       ),
                       child: const Text('Play on YouTube Music'),
                     ),
                     ElevatedButton(
                       onPressed: _isLoading ? null : () => _playTrack(service: 'lastfm'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: appTheme.colors.primary,
-                        foregroundColor: appTheme.colors.onPrimary,
+                        backgroundColor: designSystemColors.primary,
+                        foregroundColor: designSystemColors.onPrimary,
                       ),
                       child: const Text('Play on Last.fm'),
                     ),
@@ -168,8 +197,8 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _getBudsByTrack,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: appTheme.colors.primary,
-                    foregroundColor: appTheme.colors.onPrimary,
+                    backgroundColor: designSystemColors.primary,
+                    foregroundColor: designSystemColors.onPrimary,
                   ),
                   child: _isLoading
                       ? const CircularProgressIndicator()
@@ -181,7 +210,7 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
                     _errorMessage!,
-                    style: TextStyle(color: appTheme.colors.errorRed),
+                    style: TextStyle(color: designSystemColors.error),
                   ),
                 ),
               if (_buds.isNotEmpty)
@@ -192,7 +221,7 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
                     children: [
                       Text(
                         'Buds who like this track:',
-                        style: appTheme.typography.titleLarge,
+                        style: designSystemTypography.titleLarge,
                       ),
                       const SizedBox(height: 8),
                       ListView.builder(
@@ -202,15 +231,15 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
                         itemBuilder: (context, index) {
                           final bud = _buds[index];
                           return Card(
-                            color: appTheme.colors.surface,
+                            color: designSystemColors.surface,
                             child: ListTile(
                               title: Text(
-                                bud.username ?? 'Unknown User',
-                                style: TextStyle(color: appTheme.colors.onSurface),
+                                bud.username,
+                                style: TextStyle(color: designSystemColors.onSurface),
                               ),
                               subtitle: Text(
                                 bud.email ?? '',
-                                style: TextStyle(color: appTheme.colors.onSurfaceVariant),
+                                style: TextStyle(color: designSystemColors.onSurfaceVariant),
                               ),
                             ),
                           );

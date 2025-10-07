@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
+import '../../../core/theme/design_system.dart';
 
 class AppBackButton extends StatelessWidget {
   final Color? color;
@@ -13,10 +13,9 @@ class AppBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
     return IconButton(
       icon: const Icon(Icons.arrow_back),
-      color: color ?? appTheme.colors.primary,
+      color: color ?? DesignSystem.primary,
       onPressed: onPressed ?? () => Navigator.of(context).pop(),
     );
   }

@@ -186,8 +186,8 @@ class LoadingStateWidget extends StatelessWidget {
           SizedBox(height: design.designSystemSpacing.xl),
           ElevatedButton.icon(
             onPressed: onRetry,
-            icon: Icon(Icons.refresh, size: 20),
-            label: Text('Try Again'),
+            icon: const Icon(Icons.refresh, size: 20),
+            label: const Text('Try Again'),
             style: ElevatedButton.styleFrom(
               backgroundColor: design.designSystemColors.primary,
               foregroundColor: design.designSystemColors.onPrimary,

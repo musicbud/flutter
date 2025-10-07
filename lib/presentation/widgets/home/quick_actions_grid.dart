@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/design_system.dart';
 import '../common/modern_button.dart';
 
 class QuickAction {
@@ -30,12 +30,13 @@ class QuickActionsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
+    final theme = Theme.of(context);
+    final design = theme.extension<DesignSystemThemeExtension>()!;
 
     if (crossAxisCount == 1) {
       // Single row layout
       return Padding(
-        padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+        padding: EdgeInsets.symmetric(horizontal: design.designSystemSpacing.lg),
         child: Row(
           children: actions.asMap().entries.map((entry) {
             final index = entry.key;
@@ -43,9 +44,9 @@ class QuickActionsGrid extends StatelessWidget {
             return Expanded(
               child: Container(
                 margin: EdgeInsets.only(
-                  right: index < actions.length - 1 ? appTheme.spacing.md : 0,
+                  right: index < actions.length - 1 ? design.designSystemSpacing.md : 0,
                 ),
-                child: _buildActionButton(action, appTheme),
+                child: _buildActionButton(action),
               ),
             );
           }).toList(),
@@ -54,7 +55,7 @@ class QuickActionsGrid extends StatelessWidget {
     } else {
       // Grid layout
       return Padding(
-        padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+        padding: EdgeInsets.symmetric(horizontal: design.designSystemSpacing.lg),
         child: GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -67,14 +68,14 @@ class QuickActionsGrid extends StatelessWidget {
           itemCount: actions.length,
           itemBuilder: (context, index) {
             final action = actions[index];
-            return _buildActionButton(action, appTheme);
+            return _buildActionButton(action);
           },
         ),
       );
     }
   }
 
-  Widget _buildActionButton(QuickAction action, AppTheme appTheme) {
+  Widget _buildActionButton(QuickAction action) {
     if (action.isPrimary) {
       return PrimaryButton(
         text: action.title,

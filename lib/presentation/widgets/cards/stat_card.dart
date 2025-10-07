@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/design_system.dart';
 import '../base/base_card.dart';
 
 /// A reusable stat card widget for displaying profile statistics.

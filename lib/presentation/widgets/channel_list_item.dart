@@ -26,7 +26,7 @@ class ChannelListItem extends StatelessWidget {
         ),
         title: Text(channel.name),
         subtitle: Text(
-          channel.description,
+          channel.description ?? 'No description',
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),

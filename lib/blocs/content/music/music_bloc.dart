@@ -37,7 +37,6 @@ class MusicBloc extends Bloc<MusicEvent, MusicState> {
     on<AlbumsSearched>(_onAlbumsSearched);
 
     // Playback operations
-    on<SpotifyDevicesRequested>(_onSpotifyDevicesRequested);
     on<TrackPlayRequested>(_onTrackPlayRequested);
     on<TrackPlayWithLocationRequested>(_onTrackPlayWithLocationRequested);
     on<PlayedTrackSaved>(_onPlayedTrackSaved);
@@ -264,19 +263,6 @@ class MusicBloc extends Bloc<MusicEvent, MusicState> {
     }
   }
 
-  Future<void> _onSpotifyDevicesRequested(
-    SpotifyDevicesRequested event,
-    Emitter<MusicState> emit,
-  ) async {
-    try {
-      emit(MusicLoading());
-      final devices = await _contentRepository.getSpotifyDevices();
-      emit(SpotifyDevicesLoaded(devices));
-    } catch (error) {
-      emit(MusicFailure(error.toString()));
-    }
-  }
-
   Future<void> _onTrackPlayRequested(
     TrackPlayRequested event,
     Emitter<MusicState> emit,
@@ -298,9 +284,10 @@ class MusicBloc extends Bloc<MusicEvent, MusicState> {
       emit(MusicLoading());
       await _contentRepository.playTrackWithLocation(
         event.trackId,
-        event.deviceId,
+        event.trackName,
         event.latitude,
         event.longitude,
+        event.deviceId,
       );
       emit(TrackPlayWithLocationSuccess());
     } catch (error) {

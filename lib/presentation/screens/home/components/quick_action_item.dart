@@ -33,7 +33,7 @@ class QuickActionItem extends StatelessWidget {
         onTap: action.onPressed,
         borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
         child: Container(
-          padding: EdgeInsets.symmetric(
+          padding: const EdgeInsets.symmetric(
             horizontal: DesignSystem.spacingLG,
             vertical: DesignSystem.spacingMD,
           ),
@@ -58,7 +58,7 @@ class QuickActionItem extends StatelessWidget {
                 color: DesignSystem.onPrimary,
                 size: 24,
               ),
-              SizedBox(width: DesignSystem.spacingXS),
+              const SizedBox(width: DesignSystem.spacingXS),
               Text(
                 action.title,
                 style: DesignSystem.bodyLarge.copyWith(

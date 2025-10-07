@@ -375,10 +375,7 @@ Future<void> _registerRepositories() async {
 
   // Library Repository
   sl.registerLazySingleton<LibraryRepository>(
-    () => LibraryRepositoryImpl(
-      contentRepository: sl<ContentRepository>(),
-      userRepository: sl<UserRepository>(),
-    ),
+    () => LibraryRepositoryImpl(),
   );
 
   // Common Items Repository
@@ -471,7 +468,6 @@ Future<void> _registerBlocs() async {
   // Library BLoC
   sl.registerFactory<LibraryBloc>(() => LibraryBloc(
     contentRepository: sl<ContentRepository>(),
-    userRepository: sl<UserRepository>(),
   ));
 
   // Content BLoC

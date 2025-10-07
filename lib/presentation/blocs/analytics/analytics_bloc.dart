@@ -61,7 +61,6 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
       await analyticsRepository.trackEvent(event.eventName, event.properties);
     } catch (e) {
       // Silently handle tracking errors to avoid disrupting user experience
-      print('Failed to track event: $e');
     }
   }
 
@@ -73,7 +72,6 @@ class AnalyticsBloc extends Bloc<AnalyticsEvent, AnalyticsState> {
       await analyticsRepository.trackMetric(event.metricName, event.value);
     } catch (e) {
       // Silently handle tracking errors to avoid disrupting user experience
-      print('Failed to track metric: $e');
     }
   }
 }

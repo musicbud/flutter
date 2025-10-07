@@ -42,7 +42,7 @@ class MediaCard extends BaseCard {
   /// Border radius for the image
   final BorderRadius? imageBorderRadius;
 
-  const MediaCard({
+  MediaCard({
     super.key,
     super.onTap,
     super.shape,
@@ -137,7 +137,7 @@ class MediaCard extends BaseCard {
         borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         gradient: DesignSystem.gradientCard,
       ),
-      child: Icon(
+      child: const Icon(
         Icons.music_note,
         size: 48,
         color: DesignSystem.onSurfaceVariant,

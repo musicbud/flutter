@@ -23,9 +23,9 @@ class ArtistListItem extends StatelessWidget {
           shape: BoxShape.circle,
           color: Colors.grey[300],
         ),
-        child: artist.imageUrl != null
+        child: artist.imageUrls?.isNotEmpty == true
             ? ClipOval(
-                child: Image.network(artist.imageUrl!, fit: BoxFit.cover),
+                child: Image.network(artist.imageUrls!.first, fit: BoxFit.cover),
               )
             : const Icon(Icons.person, color: Colors.grey),
       ),

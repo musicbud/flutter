@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/design_system.dart';
-import '../builders/index.dart';
 
 /// A composer class for composing sections with headers and content.
 /// Provides a fluent API for creating consistent section layouts throughout the app.
@@ -237,7 +236,7 @@ class SectionComposer {
           TextButton(
             onPressed: _onActionPressed,
             style: TextButton.styleFrom(
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: DesignSystem.spacingMD,
                 vertical: DesignSystem.spacingSM,
               ),

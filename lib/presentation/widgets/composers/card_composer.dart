@@ -148,11 +148,10 @@ class CardComposer {
 
   /// Builds and returns the final card widget
   Widget build() {
-    return CardBuilder()
+    var builder = CardBuilder()
         .withVariant(_variant)
-        .withPadding(_padding ?? EdgeInsets.all(DesignSystem.spacingMD))
+        .withPadding(_padding ?? const EdgeInsets.all(DesignSystem.spacingMD))
         .withMargin(_margin ?? EdgeInsets.zero)
-        .withOnTap(_isInteractive ? _onTap : null)
         .withElevation(_elevation ?? 0)
         .withContent(
           child: Column(
@@ -160,21 +159,26 @@ class CardComposer {
             children: [
               if (_layout == CardLayout.featured && _mediaUrl != null) ...[
                 _buildMediaSection(),
-                SizedBox(height: DesignSystem.spacingMD),
+                const SizedBox(height: DesignSystem.spacingMD),
               ],
               if (_title != null || _subtitle != null || _badge != null) ...[
                 _buildHeaderSection(),
-                SizedBox(height: DesignSystem.spacingMD),
+                const SizedBox(height: DesignSystem.spacingMD),
               ],
               ..._buildContentSections(),
               if (_footerActions.isNotEmpty) ...[
-                SizedBox(height: DesignSystem.spacingMD),
+                const SizedBox(height: DesignSystem.spacingMD),
                 _buildFooterSection(),
               ],
             ],
           ),
-        )
-        .build();
+        );
+
+    if (_isInteractive && _onTap != null) {
+      builder = builder.withOnTap(_onTap!);
+    }
+
+    return builder.build();
   }
 
   Widget _buildMediaSection() {
@@ -230,7 +234,7 @@ class CardComposer {
                 ),
               ],
               if (_subtitle != null) ...[
-                SizedBox(height: DesignSystem.spacingXXS),
+                const SizedBox(height: DesignSystem.spacingXXS),
                 Text(
                   _subtitle!,
                   style: DesignSystem.bodyMedium.copyWith(

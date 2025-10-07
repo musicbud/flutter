@@ -3,7 +3,7 @@ import 'navigation_constants.dart';
 import 'navigation_item.dart';
 
 /// Main navigation items for the bottom navigation bar
-final List<NavigationItem> mainNavigationItems = [
+const List<NavigationItem> mainNavigationItems = [
   NavigationItem(
     label: 'Home',
     icon: Icons.home_outlined,
@@ -37,7 +37,7 @@ final List<NavigationItem> mainNavigationItems = [
 ];
 
 /// Additional navigation items for drawer or other menus
-final List<NavigationItem> secondaryNavigationItems = [
+const List<NavigationItem> secondaryNavigationItems = [
   NavigationItem(
     label: 'Search',
     icon: Icons.search_outlined,

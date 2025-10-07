@@ -5,7 +5,6 @@ import '../../../blocs/auth/login/login_event.dart';
 import '../../../blocs/auth/login/login_state.dart';
 import '../../../blocs/auth/auth_bloc.dart';
 import '../../../core/theme/design_system.dart';
-import '../../../widgets/common/app_input_field.dart';
 import '../../../widgets/common/index.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -31,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -80,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Logo/Title
-                    Text(
+                    const Text(
                       'MusicBud',
                       style: TextStyle(
                         fontSize: 32,
@@ -90,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
-                    Text(
+                    const Text(
                       'Connect through music',
                       style: TextStyle(
                         fontSize: 16,
@@ -146,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         // TODO: Navigate to register screen
                       },
-                      child: Text(
+                      child: const Text(
                         'Don\'t have an account? Sign up',
                         style: TextStyle(color: DesignSystem.primary),
                       ),

@@ -468,7 +468,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
       } : null,
       child: IconButton(
         onPressed: _focusEnabled ? onPressed : null,
-        icon: icon,
+        icon: Icon(icon),
         iconSize: size ?? 24,
         color: color ?? design.designSystemColors.onSurface,
         padding: padding ?? EdgeInsets.all(design.designSystemSpacing.sm),
@@ -716,11 +716,11 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// Build focusable radio button
-  Widget buildFocusableRadio<T>({
+  Widget buildFocusableRadio<U>({
     required BuildContext context,
-    required T value,
-    required T groupValue,
-    required ValueChanged<T> onChanged,
+    required U value,
+    required U groupValue,
+    required ValueChanged<U?> onChanged,
     required VoidCallback? onFocus,
     required VoidCallback? onUnfocus,
     Color? activeColor,
@@ -728,8 +728,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
   }) {
     final theme = Theme.of(context);
     final design = theme.extension<DesignSystemThemeExtension>()!;
-
-    final isSelected = value == groupValue;
 
     return Focus(
       focusNode: _focusNode,
@@ -740,11 +738,11 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
           onUnfocus?.call();
         }
       } : null,
-      child: Radio<T>(
+      child: Radio<U>(
         value: value,
         groupValue: groupValue,
-        onChanged: _focusEnabled ? (value) => onChanged(value as T) : null,
-        activeColor: activeColor ?? design.designSystemColors.primary,
+        onChanged: _focusEnabled ? onChanged : null,
+        activeColor: activeColor ?? design.designSystemColors!.primary,
       ),
     );
   }
@@ -783,7 +781,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
   Widget buildFocusableSlider({
     required BuildContext context,
     required double value,
-    required ValueChanged<double> onChanged,
+    required ValueChanged<double?> onChanged,
     required VoidCallback? onFocus,
     required VoidCallback? onUnfocus,
     double min = 0.0,
@@ -837,14 +835,14 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.surfaceContainer,
+        color: backgroundColor ?? design.designSystemColors!.surfaceContainer,
         child: ExpansionTile(
           title: title,
-          children: children,
           initiallyExpanded: initiallyExpanded,
-          backgroundColor: backgroundColor ?? design.designSystemColors.surfaceContainer,
-          collapsedBackgroundColor: backgroundColor ?? design.designSystemColors.surfaceContainer,
-          childrenPadding: EdgeInsets.all(design.designSystemSpacing.md),
+          backgroundColor: backgroundColor ?? design.designSystemColors!.surfaceContainer,
+          collapsedBackgroundColor: backgroundColor ?? design.designSystemColors!.surfaceContainer,
+          childrenPadding: EdgeInsets.all(design.designSystemSpacing!.md),
+          children: children,
         ),
       ),
     );
@@ -1063,12 +1061,10 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
           return IconButton(
             focusNode: _focusNode,
             onPressed: _focusEnabled ? () => onRatingChanged(starValue.toDouble()) : null,
-            icon: Icon(
-              isActive ? Icons.star : Icons.star_border,
-              color: isActive
-                  ? (activeColor ?? design.designSystemColors.warning)
-                  : design.designSystemColors.onSurfaceVariant,
-            ),
+            icon: Icon(isActive ? Icons.star : Icons.star_border),
+            color: isActive
+                ? (activeColor ?? design.designSystemColors!.warning)
+                : design.designSystemColors!.onSurfaceVariant,
             iconSize: size ?? 24,
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
@@ -1350,11 +1346,10 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
           children: tabs.asMap().entries.map((entry) {
             final index = entry.key;
             final tab = entry.value;
-            final isSelected = index == currentIndex;
 
             return Expanded(
               child: Material(
-                color: isSelected
+                color: index == currentIndex
                     ? (selectedColor ?? design.designSystemColors.primary)
                     : Colors.transparent,
                 child: InkWell(
@@ -1418,19 +1413,21 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(
-                          isSelected ? item.activeIcon : item.icon,
-                          color: isSelected
-                              ? design.designSystemColors.onPrimary
-                              : design.designSystemColors.onSurfaceVariant,
+                        IconTheme(
+                          data: IconThemeData(
+                            color: isSelected
+                                ? design.designSystemColors!.onPrimary
+                                : design.designSystemColors!.onSurfaceVariant,
+                          ),
+                          child: isSelected ? item.activeIcon : item.icon,
                         ),
-                        SizedBox(height: design.designSystemSpacing.xs),
+                        SizedBox(height: design.designSystemSpacing!.xs),
                         Text(
                           item.label!,
-                          style: design.designSystemTypography.caption.copyWith(
+                          style: design.designSystemTypography!.caption.copyWith(
                             color: isSelected
-                                ? design.designSystemColors.onPrimary
-                                : design.designSystemColors.onSurfaceVariant,
+                                ? design.designSystemColors!.onPrimary
+                                : design.designSystemColors!.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -1446,12 +1443,12 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// Build focusable segmented control
-  Widget buildFocusableSegmentedControl<T>({
+  Widget buildFocusableSegmentedControl<U>({
     required BuildContext context,
-    required List<T> segments,
-    required T selectedValue,
-    required ValueChanged<T> onChanged,
-    required Widget Function(T value) builder,
+    required List<U> segments,
+    required U selectedValue,
+    required ValueChanged<U> onChanged,
+    required Widget Function(U value) builder,
     required VoidCallback? onFocus,
     required VoidCallback? onUnfocus,
     Color? backgroundColor,
@@ -1544,7 +1541,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
                       focusNode: _focusNode,
                       child: ElevatedButton(
                         onPressed: _focusEnabled ? details.onStepContinue : null,
-                        child: Text('Continue'),
+                        child: const Text('Continue'),
                       ),
                     ),
                   if (currentStep > 0) ...[
@@ -1553,7 +1550,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
                       focusNode: _focusNode,
                       child: ElevatedButton(
                         onPressed: _focusEnabled ? details.onStepCancel : null,
-                        child: Text('Back'),
+                        child: const Text('Back'),
                       ),
                     ),
                   ],

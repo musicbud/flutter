@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/design_system.dart';
 import '../../../widgets/common/index.dart';
 
 class MusicCategoryCard extends StatelessWidget {
@@ -20,7 +20,6 @@ class MusicCategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
 
     return ModernCard(
       variant: ModernCardVariant.primary,
@@ -28,10 +27,10 @@ class MusicCategoryCard extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(appTheme.spacing.md),
+            padding: EdgeInsets.all(DesignSystem.spacingMD),
             decoration: BoxDecoration(
               color: iconColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(appTheme.radius.md),
+              borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             ),
             child: Icon(
               icon,
@@ -39,20 +38,20 @@ class MusicCategoryCard extends StatelessWidget {
               size: 32,
             ),
           ),
-          SizedBox(height: appTheme.spacing.sm),
+          SizedBox(height: DesignSystem.spacingSM),
           Text(
             title,
-            style: appTheme.typography.titleSmall.copyWith(
-              color: appTheme.colors.textPrimary,
+            style: DesignSystem.titleSmall.copyWith(
+              color: DesignSystem.onSurface,
               fontWeight: FontWeight.w600,
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: appTheme.spacing.xs),
+          SizedBox(height: DesignSystem.spacingXS),
           Text(
             count,
-            style: appTheme.typography.caption.copyWith(
-              color: appTheme.colors.textMuted,
+            style: DesignSystem.caption.copyWith(
+              color: DesignSystem.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),

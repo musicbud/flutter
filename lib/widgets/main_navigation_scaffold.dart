@@ -18,10 +18,10 @@ class MainNavigationScaffold extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MainNavigationScaffoldState createState() => _MainNavigationScaffoldState();
+  State<MainNavigationScaffold> createState() => MainNavigationScaffoldState();
 }
 
-class _MainNavigationScaffoldState extends State<MainNavigationScaffold> {
+class MainNavigationScaffoldState extends State<MainNavigationScaffold> {
   late int _currentIndex;
   late final List<Widget> _pages;
 

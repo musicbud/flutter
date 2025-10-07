@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/repositories/bud_repository.dart';
 import '../../../models/bud_match.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/design_system.dart';
 import '../../../injection_container.dart';
+import '../../../presentation/navigation/main_navigation.dart';
+import '../../../presentation/navigation/navigation_drawer.dart';
 
 class ArtistDetailsScreen extends StatefulWidget {
   final String artistId;
@@ -20,9 +21,23 @@ class ArtistDetailsScreen extends StatefulWidget {
 }
 
 class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late final MainNavigationController _navigationController;
   bool _isLoading = false;
   String? _errorMessage;
   List<BudMatch> _buds = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _navigationController = MainNavigationController();
+  }
+
+  @override
+  void dispose() {
+    _navigationController.dispose();
+    super.dispose();
+  }
 
   Future<void> _getBudsByArtist() async {
     setState(() {
@@ -48,16 +63,25 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
 
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: const Text('Artist Details'),
-        backgroundColor: appTheme.colors.surface,
+        backgroundColor: DesignSystem.surface,
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
+      ),
+      drawer: MainNavigationDrawer(
+        navigationController: _navigationController,
       ),
       body: Container(
         decoration: BoxDecoration(
-          gradient: appTheme.gradients.backgroundGradient,
+          gradient: DesignSystem.gradientBackground,
         ),
         child: SingleChildScrollView(
           child: Column(
@@ -67,7 +91,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
                   widget.artistName,
-                  style: appTheme.typography.headlineSmall,
+                  style: DesignSystem.headlineSmall,
                 ),
               ),
               Padding(
@@ -75,8 +99,8 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _getBudsByArtist,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: appTheme.colors.primary,
-                    foregroundColor: appTheme.colors.onPrimary,
+                    backgroundColor: DesignSystem.primary,
+                    foregroundColor: DesignSystem.onPrimary,
                   ),
                   child: _isLoading
                       ? const CircularProgressIndicator()
@@ -88,7 +112,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
                     _errorMessage!,
-                    style: TextStyle(color: appTheme.colors.errorRed),
+                    style: TextStyle(color: DesignSystem.error),
                   ),
                 ),
               if (_buds.isNotEmpty)
@@ -99,7 +123,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                     children: [
                       Text(
                         'Buds who like this artist:',
-                        style: appTheme.typography.titleLarge,
+                        style: DesignSystem.titleLarge,
                       ),
                       const SizedBox(height: 8),
                       ListView.builder(
@@ -109,15 +133,15 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                         itemBuilder: (context, index) {
                           final bud = _buds[index];
                           return Card(
-                            color: appTheme.colors.surface,
+                            color: DesignSystem.surface,
                             child: ListTile(
                               title: Text(
-                                bud.username ?? 'Unknown User',
-                                style: TextStyle(color: appTheme.colors.onSurface),
+                                bud.username,
+                                style: TextStyle(color: DesignSystem.onSurface),
                               ),
                               subtitle: Text(
-                                bud.email ?? '',
-                                style: TextStyle(color: appTheme.colors.onSurfaceVariant),
+                                bud.email ?? 'No email',
+                                style: TextStyle(color: DesignSystem.onSurfaceVariant),
                               ),
                             ),
                           );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/user_profile/user_profile_bloc.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/design_system.dart';
 import '../../../widgets/common/index.dart';
 import '../../../presentation/widgets/navigation/main_navigation_scaffold.dart';
 import '../../../presentation/navigation/main_navigation.dart';
@@ -44,8 +44,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
-
     return MainNavigationScaffold(
       navigationController: _navigationController,
       body: BlocListener<UserProfileBloc, UserProfileState>(
@@ -54,27 +52,27 @@ class _HomeScreenState extends State<HomeScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('Error: ${state.message}'),
-                backgroundColor: appTheme.colors.errorRed,
+                backgroundColor: DesignSystem.error,
               ),
             );
           }
         },
         child: Container(
-          decoration: BoxDecoration(
-            gradient: appTheme.gradients.backgroundGradient,
+          decoration: const BoxDecoration(
+            gradient: DesignSystem.gradientBackground,
           ),
           child: SafeArea(
             child: CustomScrollView(
               slivers: [
                 // Header Section
                 SliverToBoxAdapter(
-                  child: HomeHeaderWidget(),
+                  child: const HomeHeaderWidget(),
                 ),
 
                 // Search Section
                 SliverToBoxAdapter(
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+                    padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
                     child: AppInputField(
                       hint: 'Search for music, artists, or playlists...',
                       controller: _searchController,
@@ -95,36 +93,36 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
 
                 SliverToBoxAdapter(
-                  child: SizedBox(height: appTheme.spacing.lg),
+                  child: const SizedBox(height: DesignSystem.spacingLG),
                 ),
 
                 // Quick Actions Section
                 SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
-                    child: HomeQuickActions(),
+                  child: const Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
+                    child: const HomeQuickActions(),
                   ),
                 ),
 
                 SliverToBoxAdapter(
-                  child: SizedBox(height: appTheme.spacing.xl),
+                  child: const SizedBox(height: DesignSystem.spacingXL),
                 ),
 
                 // Dynamic Content Sections
                 SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
-                    child: Column(
+                  child: const Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
+                    child: const Column(
                       children: [
-                        HomeRecommendations(),
-                        HomeRecentActivity(),
+                        const HomeRecommendations(),
+                        const HomeRecentActivity(),
                       ],
                     ),
                   ),
                 ),
 
                 SliverToBoxAdapter(
-                  child: SizedBox(height: appTheme.spacing.xl),
+                  child: const SizedBox(height: DesignSystem.spacingXL),
                 ),
               ],
             ),

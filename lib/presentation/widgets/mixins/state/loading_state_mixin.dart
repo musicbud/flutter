@@ -43,9 +43,6 @@ mixin LoadingStateMixin<T extends StatefulWidget> on State<T>
   /// Animation controller for loading animations
   late AnimationController _loadingAnimationController;
 
-  /// Animation for the loading indicator
-  late Animation<double> _loadingAnimation;
-
   /// Duration for loading animations
   final Duration loadingAnimationDuration = const Duration(milliseconds: 200);
 
@@ -82,14 +79,6 @@ mixin LoadingStateMixin<T extends StatefulWidget> on State<T>
       duration: loadingAnimationDuration,
       vsync: this,
     );
-
-    _loadingAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _loadingAnimationController,
-      curve: Curves.easeInOut,
-    ));
   }
 
   /// Dispose of loading animations
@@ -184,11 +173,8 @@ mixin LoadingStateMixin<T extends StatefulWidget> on State<T>
             ),
           ),
           SizedBox(height: design.designSystemSpacing.lg),
-          Text(
+          const Text(
             'Loading...',
-            style: design.designSystemTypography.bodyMedium.copyWith(
-              color: design.designSystemColors.onSurfaceVariant,
-            ),
           ),
         ],
       ),
@@ -227,18 +213,15 @@ mixin LoadingStateMixin<T extends StatefulWidget> on State<T>
             textAlign: TextAlign.center,
           ),
           SizedBox(height: design.designSystemSpacing.sm),
-          Text(
+          const Text(
             'Please check your connection and try again',
-            style: design.designSystemTypography.bodyMedium.copyWith(
-              color: design.designSystemColors.onSurfaceVariant,
-            ),
             textAlign: TextAlign.center,
           ),
           SizedBox(height: design.designSystemSpacing.xl),
           ElevatedButton.icon(
             onPressed: () => retryLoading?.call(),
-            icon: Icon(Icons.refresh, size: 20),
-            label: Text('Try Again'),
+            icon: const Icon(Icons.refresh, size: 20),
+            label: const Text('Try Again'),
             style: ElevatedButton.styleFrom(
               backgroundColor: design.designSystemColors.primary,
               foregroundColor: design.designSystemColors.onPrimary,

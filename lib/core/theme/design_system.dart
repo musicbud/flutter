@@ -440,10 +440,10 @@ class DesignSystem {
         color: neutral900,
         fontWeight: FontWeight.w600,
       ),
-      iconTheme: IconThemeData(color: neutral900),
+      iconTheme: const IconThemeData(color: neutral900),
     ),
 
-    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: neutral50,
       selectedItemColor: primary,
       unselectedItemColor: neutral600,
@@ -458,7 +458,7 @@ class DesignSystem {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(radiusMD),
-        borderSide: BorderSide(color: neutral400),
+        borderSide: const BorderSide(color: neutral400),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(radiusMD),
@@ -478,7 +478,7 @@ class DesignSystem {
 
     // Design system extensions
     extensions: <ThemeExtension<dynamic>>[
-      DesignSystemColors(
+      const DesignSystemColors(
         primary: primary,
         secondary: secondary,
         surface: neutral50,
@@ -501,6 +501,14 @@ class DesignSystem {
         onPrimary: onPrimary,
         onError: onError,
         onErrorContainer: onErrorContainer,
+        textMuted: onSurfaceVariant,
+        primaryRed: primary,
+        white: neutral50,
+        surfaceDark: surface,
+        surfaceLight: surfaceContainer,
+        cardBackground: surfaceContainer,
+        borderColor: border,
+        textPrimary: onSurface,
       ),
       DesignSystemTypography(
         displayLarge: displayLarge.copyWith(color: neutral900),
@@ -527,7 +535,7 @@ class DesignSystem {
       const DesignSystemShadows(),
       const DesignSystemGradients(),
       DesignSystemThemeExtension(
-        designSystemColors: DesignSystemColors(
+        designSystemColors: const DesignSystemColors(
           primary: primary,
           secondary: secondary,
           surface: neutral50,
@@ -550,6 +558,14 @@ class DesignSystem {
           onPrimary: onPrimary,
           onError: onError,
           onErrorContainer: onErrorContainer,
+          textMuted: onSurfaceVariant,
+          primaryRed: primary,
+          white: neutral50,
+          surfaceDark: surface,
+          surfaceLight: surfaceContainer,
+          cardBackground: surfaceContainer,
+          borderColor: border,
+          textPrimary: onSurface,
         ),
         designSystemSpacing: const DesignSystemSpacing(),
         designSystemTypography: DesignSystemTypography(
@@ -643,10 +659,10 @@ class DesignSystem {
         color: onSurface,
         fontWeight: FontWeight.w600,
       ),
-      iconTheme: IconThemeData(color: onSurface),
+      iconTheme: const IconThemeData(color: onSurface),
     ),
 
-    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: surface,
       selectedItemColor: primary,
       unselectedItemColor: onSurfaceVariant,
@@ -681,7 +697,7 @@ class DesignSystem {
 
     // Design system extensions
     extensions: <ThemeExtension<dynamic>>[
-      DesignSystemColors(
+      const DesignSystemColors(
         primary: primary,
         secondary: secondary,
         surface: surface,
@@ -704,6 +720,14 @@ class DesignSystem {
         onPrimary: onPrimary,
         onError: onError,
         onErrorContainer: onErrorContainer,
+        textMuted: neutral700,
+        primaryRed: primary,
+        white: neutral50,
+        surfaceDark: neutral900,
+        surfaceLight: neutral100,
+        cardBackground: neutral50,
+        borderColor: neutral400,
+        textPrimary: neutral900,
       ),
       DesignSystemTypography(
         displayLarge: displayLarge.copyWith(color: onSurface),
@@ -730,7 +754,7 @@ class DesignSystem {
       const DesignSystemShadows(),
       const DesignSystemGradients(),
       DesignSystemThemeExtension(
-        designSystemColors: DesignSystemColors(
+        designSystemColors: const DesignSystemColors(
           primary: primary,
           secondary: secondary,
           surface: surface,
@@ -753,6 +777,14 @@ class DesignSystem {
           onPrimary: onPrimary,
           onError: onError,
           onErrorContainer: onErrorContainer,
+          textMuted: neutral700,
+          primaryRed: primary,
+          white: neutral50,
+          surfaceDark: neutral900,
+          surfaceLight: neutral100,
+          cardBackground: neutral50,
+          borderColor: neutral400,
+          textPrimary: neutral900,
         ),
         designSystemSpacing: const DesignSystemSpacing(),
         designSystemTypography: DesignSystemTypography(
@@ -837,6 +869,14 @@ class DesignSystemColors extends ThemeExtension<DesignSystemColors> {
     required this.onPrimary,
     required this.onError,
     required this.onErrorContainer,
+    required this.textMuted,
+    required this.primaryRed,
+    required this.white,
+    required this.surfaceDark,
+    required this.surfaceLight,
+    required this.cardBackground,
+    required this.borderColor,
+    required this.textPrimary,
   });
 
   final Color primary;
@@ -861,6 +901,14 @@ class DesignSystemColors extends ThemeExtension<DesignSystemColors> {
   final Color onPrimary;
   final Color onError;
   final Color onErrorContainer;
+  final Color textMuted;
+  final Color primaryRed;
+  final Color white;
+  final Color surfaceDark;
+  final Color surfaceLight;
+  final Color cardBackground;
+  final Color borderColor;
+  final Color textPrimary;
 
   @override
   DesignSystemColors copyWith({
@@ -886,6 +934,14 @@ class DesignSystemColors extends ThemeExtension<DesignSystemColors> {
     Color? onPrimary,
     Color? onError,
     Color? onErrorContainer,
+    Color? textMuted,
+    Color? primaryRed,
+    Color? white,
+    Color? surfaceDark,
+    Color? surfaceLight,
+    Color? cardBackground,
+    Color? borderColor,
+    Color? textPrimary,
   }) {
     return DesignSystemColors(
       primary: primary ?? this.primary,
@@ -910,6 +966,14 @@ class DesignSystemColors extends ThemeExtension<DesignSystemColors> {
       onPrimary: onPrimary ?? this.onPrimary,
       onError: onError ?? this.onError,
       onErrorContainer: onErrorContainer ?? this.onErrorContainer,
+      textMuted: textMuted ?? this.textMuted,
+      primaryRed: primaryRed ?? this.primaryRed,
+      white: white ?? this.white,
+      surfaceDark: surfaceDark ?? this.surfaceDark,
+      surfaceLight: surfaceLight ?? this.surfaceLight,
+      cardBackground: cardBackground ?? this.cardBackground,
+      borderColor: borderColor ?? this.borderColor,
+      textPrimary: textPrimary ?? this.textPrimary,
     );
   }
 
@@ -939,13 +1003,21 @@ class DesignSystemColors extends ThemeExtension<DesignSystemColors> {
       onPrimary: Color.lerp(onPrimary, other.onPrimary, t)!,
       onError: Color.lerp(onError, other.onError, t)!,
       onErrorContainer: Color.lerp(onErrorContainer, other.onErrorContainer, t)!,
+      textMuted: Color.lerp(textMuted, other.textMuted, t)!,
+      primaryRed: Color.lerp(primaryRed, other.primaryRed, t)!,
+      white: Color.lerp(white, other.white, t)!,
+      surfaceDark: Color.lerp(surfaceDark, other.surfaceDark, t)!,
+      surfaceLight: Color.lerp(surfaceLight, other.surfaceLight, t)!,
+      cardBackground: Color.lerp(cardBackground, other.cardBackground, t)!,
+      borderColor: Color.lerp(borderColor, other.borderColor, t)!,
+      textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
     );
   }
 }
 
 /// Typography extension class
 class DesignSystemTypography extends ThemeExtension<DesignSystemTypography> {
-  const DesignSystemTypography({
+  DesignSystemTypography({
     required this.displayLarge,
     required this.displayMedium,
     required this.displaySmall,
@@ -1080,13 +1152,13 @@ class DesignSystemSpacing extends ThemeExtension<DesignSystemSpacing> {
     double? xxxl,
     double? huge,
   }) {
-    return DesignSystemSpacing();
+    return const DesignSystemSpacing();
   }
 
   @override
   DesignSystemSpacing lerp(DesignSystemSpacing? other, double t) {
     if (other is! DesignSystemSpacing) return this;
-    return DesignSystemSpacing();
+    return const DesignSystemSpacing();
   }
 }
 
@@ -1114,13 +1186,13 @@ class DesignSystemRadius extends ThemeExtension<DesignSystemRadius> {
     double? xxl,
     double? circular,
   }) {
-    return DesignSystemRadius();
+    return const DesignSystemRadius();
   }
 
   @override
   DesignSystemRadius lerp(DesignSystemRadius? other, double t) {
     if (other is! DesignSystemRadius) return this;
-    return DesignSystemRadius();
+    return const DesignSystemRadius();
   }
 }
 
@@ -1144,13 +1216,13 @@ class DesignSystemShadows extends ThemeExtension<DesignSystemShadows> {
     List<BoxShadow>? card,
     List<BoxShadow>? cardHover,
   }) {
-    return DesignSystemShadows();
+    return const DesignSystemShadows();
   }
 
   @override
   DesignSystemShadows lerp(DesignSystemShadows? other, double t) {
     if (other is! DesignSystemShadows) return this;
-    return DesignSystemShadows();
+    return const DesignSystemShadows();
   }
 }
 
@@ -1174,19 +1246,19 @@ class DesignSystemGradients extends ThemeExtension<DesignSystemGradients> {
     LinearGradient? overlay,
     LinearGradient? accent,
   }) {
-    return DesignSystemGradients();
+    return const DesignSystemGradients();
   }
 
   @override
   DesignSystemGradients lerp(DesignSystemGradients? other, double t) {
     if (other is! DesignSystemGradients) return this;
-    return DesignSystemGradients();
+    return const DesignSystemGradients();
   }
 }
 
 /// Main theme extension that combines all design system components
 class DesignSystemThemeExtension extends ThemeExtension<DesignSystemThemeExtension> {
-  const DesignSystemThemeExtension({
+  DesignSystemThemeExtension({
     required this.designSystemColors,
     required this.designSystemSpacing,
     required this.designSystemTypography,

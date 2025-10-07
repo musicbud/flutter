@@ -25,7 +25,6 @@ abstract class ContentRemoteDataSource {
   Future<List<dynamic>> getMyTopManga();
 
   // Spotify integration
-  Future<List<dynamic>> getSpotifyDevices();
   Future<void> controlSpotifyPlayback(String command, String deviceId);
   Future<void> setSpotifyVolume(String deviceId, int volume);
 
@@ -40,7 +39,7 @@ abstract class ContentRemoteDataSource {
   Future<void> toggleLike(String contentId, String contentType);
   Future<void> playTrack(String trackId, String? deviceId);
   Future<void> playTrackOnService(String trackIdentifier, {String? service});
-  Future<void> playTrackWithLocation(String trackUid, String trackName, double latitude, double longitude);
+  Future<void> playTrackWithLocation(String trackUid, String trackName, double latitude, double longitude, [String? deviceId]);
 }
 
 class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
@@ -192,16 +191,6 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   }
 
   @override
-  Future<List<dynamic>> getSpotifyDevices() async {
-    try {
-      final response = await _dioClient.get('/spotify/devices');
-      return (response.data as List).map((json) => json).toList();
-    } on DioException catch (e) {
-      throw ServerException(message: e.message ?? 'Failed to get Spotify devices');
-    }
-  }
-
-  @override
   Future<void> controlSpotifyPlayback(String command, String deviceId) async {
     try {
       await _dioClient.post('/spotify/control', data: {
@@ -271,14 +260,18 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   }
 
   @override
-  Future<void> playTrackWithLocation(String trackUid, String trackName, double latitude, double longitude) async {
+  Future<void> playTrackWithLocation(String trackUid, String trackName, double latitude, double longitude, [String? deviceId]) async {
     try {
-      await _dioClient.post('/me/play-track-with-location', data: {
+      final data = {
         'track_id': trackUid,
         'track_name': trackName,
         'latitude': latitude,
         'longitude': longitude,
-      });
+      };
+      if (deviceId != null) {
+        data['device_id'] = deviceId;
+      }
+      await _dioClient.post('/me/play-track-with-location', data: data);
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to play track with location');
     }

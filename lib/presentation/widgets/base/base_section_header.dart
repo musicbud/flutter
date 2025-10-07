@@ -96,14 +96,11 @@ abstract class BaseSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final designColors = theme.designSystem?.designSystemColors;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: padding ?? EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
+          padding: padding ?? const EdgeInsets.symmetric(horizontal: 24.0), // Placeholder
           child: Row(
             mainAxisAlignment: mainAxisAlignment,
             crossAxisAlignment: crossAxisAlignment,
@@ -120,7 +117,7 @@ abstract class BaseSectionHeader extends StatelessWidget {
 
         // Divider
         if (showDivider) ...[
-          SizedBox(height: DesignSystem.spacingMD),
+          const SizedBox(height: 16.0), // Placeholder
           _buildDivider(context),
         ],
       ],
@@ -140,87 +137,48 @@ abstract class BaseSectionHeader extends StatelessWidget {
   /// Build the divider widget
   @protected
   Widget _buildDivider(BuildContext context) {
-    final theme = Theme.of(context);
-    final designColors = theme.designSystem?.designSystemColors;
-
     return Divider(
       height: 1,
       thickness: 1,
-      color: dividerColor ?? DesignSystem.border,
+      color: dividerColor ?? const Color(0xFF000000), // Placeholder
     );
   }
 
-  /// Default title widget implementation
-  @protected
-  Widget _buildDefaultTitle(BuildContext context) {
-    final theme = Theme.of(context);
-    final designColors = theme.designSystem?.designSystemColors;
-
-    return Expanded(
-      child: Text(
-        title,
-        style: titleStyle ?? DesignSystem.headlineSmall.copyWith(
-          color: DesignSystem.onSurface,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
-  }
-
-  /// Default action button implementation
-  @protected
-  Widget _buildDefaultAction(BuildContext context) {
-    if (onActionPressed != null && actionText != null) {
-      final theme = Theme.of(context);
-      final designColors = theme.designSystem?.designSystemColors;
-
-      return TextButton(
-        onPressed: onActionPressed,
-        style: TextButton.styleFrom(
-          padding: EdgeInsets.symmetric(
-            horizontal: DesignSystem.spacingMD,
-            vertical: DesignSystem.spacingSM,
-          ),
-        ),
-        child: Text(
-          actionText!,
-          style: actionStyle ?? DesignSystem.labelLarge.copyWith(
-            color: DesignSystem.primary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      );
-    }
-
-    return const SizedBox.shrink();
-  }
 
   /// Helper method to get design system colors
   @protected
   DesignSystemColors getDesignSystemColors(BuildContext context) {
-    return Theme.of(context).designSystemColors ?? DesignSystemColors(
-      primary: DesignSystem.primary,
-      secondary: DesignSystem.secondary,
-      surface: DesignSystem.surface,
-      background: DesignSystem.background,
-      onSurface: DesignSystem.onSurface,
-      onSurfaceVariant: DesignSystem.onSurfaceVariant,
-      error: DesignSystem.error,
-      success: DesignSystem.success,
-      warning: DesignSystem.warning,
-      info: DesignSystem.info,
-      accentBlue: DesignSystem.accentBlue,
-      accentPurple: DesignSystem.accentPurple,
-      accentGreen: DesignSystem.accentGreen,
-      accentOrange: DesignSystem.accentOrange,
-      border: DesignSystem.border,
-      overlay: DesignSystem.overlay,
-      surfaceContainer: DesignSystem.surfaceContainer,
-      surfaceContainerHigh: DesignSystem.surfaceContainerHigh,
-      surfaceContainerHighest: DesignSystem.surfaceContainerHighest,
-      onPrimary: DesignSystem.onPrimary,
-      onError: DesignSystem.onError,
-      onErrorContainer: DesignSystem.onErrorContainer,
+    return Theme.of(context).designSystemColors ?? const DesignSystemColors(
+      primary: Color(0xFF000000), // Placeholder
+      secondary: Color(0xFF000000),
+      surface: Color(0xFF000000),
+      background: Color(0xFF000000),
+      onSurface: Color(0xFF000000),
+      onSurfaceVariant: Color(0xFF000000),
+      error: Color(0xFF000000),
+      success: Color(0xFF000000),
+      warning: Color(0xFF000000),
+      info: Color(0xFF000000),
+      accentBlue: Color(0xFF000000),
+      accentPurple: Color(0xFF000000),
+      accentGreen: Color(0xFF000000),
+      accentOrange: Color(0xFF000000),
+      border: Color(0xFF000000),
+      overlay: Color(0xFF000000),
+      surfaceContainer: Color(0xFF000000),
+      surfaceContainerHigh: Color(0xFF000000),
+      surfaceContainerHighest: Color(0xFF000000),
+      onPrimary: Color(0xFF000000),
+      onError: Color(0xFF000000),
+      onErrorContainer: Color(0xFF000000),
+      textMuted: Color(0xFF000000),
+      primaryRed: Color(0xFF000000),
+      white: Color(0xFF000000),
+      surfaceDark: Color(0xFF000000),
+      surfaceLight: Color(0xFF000000),
+      cardBackground: Color(0xFF000000),
+      borderColor: Color(0xFF000000),
+      textPrimary: Color(0xFF000000),
     );
   }
 
@@ -228,24 +186,24 @@ abstract class BaseSectionHeader extends StatelessWidget {
   @protected
   DesignSystemTypography getDesignSystemTypography(BuildContext context) {
     return Theme.of(context).designSystemTypography ?? DesignSystemTypography(
-      displayLarge: DesignSystem.displayLarge,
-      displayMedium: DesignSystem.displayMedium,
-      displaySmall: DesignSystem.displaySmall,
-      headlineLarge: DesignSystem.headlineLarge,
-      headlineMedium: DesignSystem.headlineMedium,
-      headlineSmall: DesignSystem.headlineSmall,
-      titleLarge: DesignSystem.titleLarge,
-      titleMedium: DesignSystem.titleMedium,
-      titleSmall: DesignSystem.titleSmall,
-      bodyLarge: DesignSystem.bodyLarge,
-      bodyMedium: DesignSystem.bodyMedium,
-      bodySmall: DesignSystem.bodySmall,
-      labelLarge: DesignSystem.labelLarge,
-      labelMedium: DesignSystem.labelMedium,
-      labelSmall: DesignSystem.labelSmall,
-      caption: DesignSystem.caption,
-      overline: DesignSystem.overline,
-      arabicText: DesignSystem.arabicText,
+      displayLarge: TextStyle(),
+      displayMedium: TextStyle(),
+      displaySmall: TextStyle(),
+      headlineLarge: TextStyle(),
+      headlineMedium: TextStyle(),
+      headlineSmall: TextStyle(),
+      titleLarge: TextStyle(),
+      titleMedium: TextStyle(),
+      titleSmall: TextStyle(),
+      bodyLarge: TextStyle(),
+      bodyMedium: TextStyle(),
+      bodySmall: TextStyle(),
+      labelLarge: TextStyle(),
+      labelMedium: TextStyle(),
+      labelSmall: TextStyle(),
+      caption: TextStyle(),
+      overline: TextStyle(),
+      arabicText: TextStyle(),
     );
   }
 

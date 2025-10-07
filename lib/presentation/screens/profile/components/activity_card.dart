@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/design_system.dart';
 import '../../../widgets/common/index.dart';
 
 class ActivityCard extends StatelessWidget {
@@ -22,7 +22,6 @@ class ActivityCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
 
     return ModernCard(
       variant: ModernCardVariant.primary,
@@ -30,10 +29,10 @@ class ActivityCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(appTheme.spacing.sm),
+            padding: EdgeInsets.all(DesignSystem.spacingSM),
             decoration: BoxDecoration(
               color: iconColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(appTheme.radius.md),
+              borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             ),
             child: Icon(
               icon,
@@ -41,30 +40,30 @@ class ActivityCard extends StatelessWidget {
               size: 24,
             ),
           ),
-          SizedBox(width: appTheme.spacing.md),
+          SizedBox(width: DesignSystem.spacingMD),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: appTheme.typography.titleSmall.copyWith(
-                    color: appTheme.colors.textPrimary,
+                  style: DesignSystem.titleSmall.copyWith(
+                    color: DesignSystem.onSurface,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: appTheme.spacing.xs),
+                SizedBox(height: DesignSystem.spacingXS),
                 Text(
                   description,
-                  style: appTheme.typography.bodySmall.copyWith(
-                    color: appTheme.colors.textMuted,
+                  style: DesignSystem.bodySmall.copyWith(
+                    color: DesignSystem.onSurfaceVariant,
                   ),
                 ),
-                SizedBox(height: appTheme.spacing.xs),
+                SizedBox(height: DesignSystem.spacingXS),
                 Text(
                   timeAgo,
-                  style: appTheme.typography.caption.copyWith(
-                    color: appTheme.colors.textMuted,
+                  style: DesignSystem.caption.copyWith(
+                    color: DesignSystem.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -72,7 +71,7 @@ class ActivityCard extends StatelessWidget {
           ),
           Icon(
             Icons.chevron_right,
-            color: appTheme.colors.textSecondary,
+            color: DesignSystem.onSurfaceVariant,
             size: 20,
           ),
         ],

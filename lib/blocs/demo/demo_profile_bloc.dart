@@ -21,20 +21,14 @@ class DemoProfileBloc extends Bloc<DemoProfileEvent, DemoProfileState> {
     // Subscribe to profile updates
     _profileSubscription = repository.profileUpdates.listen(
       (profile) {
-        if (state is DemoProfileLoaded) {
-          final currentState = state as DemoProfileLoaded;
-          emit(currentState.copyWith(profile: profile));
-        }
+        // TODO: Handle profile updates
       },
     );
 
     // Subscribe to stats updates
     _statsSubscription = repository.statsUpdates.listen(
       (stats) {
-        if (state is DemoProfileLoaded) {
-          final currentState = state as DemoProfileLoaded;
-          emit(currentState.copyWith(stats: stats));
-        }
+        // TODO: Handle stats updates
       },
     );
   }

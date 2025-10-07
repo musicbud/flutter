@@ -8,6 +8,7 @@ import "blocs/auth/register/register_bloc.dart";
 import "blocs/likes/likes_bloc.dart";
 import "blocs/settings/settings_bloc.dart";
 import "blocs/event/event_bloc.dart";
+import "blocs/spotify/spotify_bloc.dart";
 
 // Repositories
 import "domain/repositories/auth_repository.dart";
@@ -65,6 +66,10 @@ class App extends StatelessWidget {
       // Event BLoC
       BlocProvider<EventBloc>(
         create: (context) => sl<EventBloc>(),
+      ),
+      // Spotify BLoC
+      BlocProvider<SpotifyBloc>(
+        create: (context) => sl<SpotifyBloc>(),
       ),
     ];
   }

@@ -53,12 +53,6 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
   /// Scale animation for hover feedback
   Animation<double>? _hoverScaleAnimation;
 
-  /// Opacity animation for hover feedback
-  Animation<double>? _hoverOpacityAnimation;
-
-  /// Color animation for hover feedback
-  Animation<Color?>? _hoverColorAnimation;
-
   /// Whether hover is enabled
   bool get hoverEnabled => _hoverEnabled;
 
@@ -90,14 +84,6 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     _hoverScaleAnimation = Tween<double>(
       begin: 1.0,
       end: 1.05,
-    ).animate(CurvedAnimation(
-      parent: _hoverAnimationController!,
-      curve: Curves.easeInOut,
-    ));
-
-    _hoverOpacityAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.8,
     ).animate(CurvedAnimation(
       parent: _hoverAnimationController!,
       curve: Curves.easeInOut,
@@ -255,9 +241,6 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     double? height,
     Alignment? alignment,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
       width: width,
       height: height,
@@ -664,11 +647,11 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
           onExit: onExit,
           child: title,
         ),
-        children: children,
         initiallyExpanded: initiallyExpanded,
         backgroundColor: backgroundColor ?? design.designSystemColors.surfaceContainer,
         collapsedBackgroundColor: backgroundColor ?? design.designSystemColors.surfaceContainer,
         childrenPadding: EdgeInsets.all(design.designSystemSpacing.md),
+        children: children,
       ),
     );
   }
@@ -869,11 +852,11 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// Build hoverable radio button
-  Widget buildHoverableRadio<T>({
+  Widget buildHoverableRadio<U>({
     required BuildContext context,
-    required T value,
-    required T groupValue,
-    required ValueChanged<T> onChanged,
+    required U value,
+    required U groupValue,
+    required ValueChanged<U> onChanged,
     required VoidCallback? onHover,
     VoidCallback? onExit,
     Color? activeColor,
@@ -882,18 +865,16 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     final theme = Theme.of(context);
     final design = theme.extension<DesignSystemThemeExtension>()!;
 
-    final isSelected = value == groupValue;
-
     return Material(
       color: Colors.transparent,
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
-        child: Radio<T>(
+        child: Radio<U>(
           value: value,
           groupValue: groupValue,
-          onChanged: _hoverEnabled ? (value) => onChanged(value as T) : null,
+          onChanged: _hoverEnabled ? (value) => onChanged(value as U) : null,
           activeColor: activeColor ?? design.designSystemColors.primary,
         ),
       ),
@@ -1004,7 +985,7 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
               onPressed: _hoverEnabled && currentPage > 1
                   ? () => onPageChanged(currentPage - 1)
                   : null,
-              icon: Icon(Icons.chevron_left),
+              icon: const Icon(Icons.chevron_left),
               padding: EdgeInsets.all(design.designSystemSpacing.sm),
             ),
           ),
@@ -1023,7 +1004,7 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
               onPressed: _hoverEnabled && currentPage < totalPages
                   ? () => onPageChanged(currentPage + 1)
                   : null,
-              icon: Icon(Icons.chevron_right),
+              icon: const Icon(Icons.chevron_right),
               padding: EdgeInsets.all(design.designSystemSpacing.sm),
             ),
           ),
@@ -1322,11 +1303,13 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(
-                      isSelected ? item.activeIcon : item.icon,
-                      color: isSelected
-                          ? (selectedColor ?? design.designSystemColors.primary)
-                          : design.designSystemColors.onSurfaceVariant,
+                    IconTheme(
+                      data: IconThemeData(
+                        color: isSelected
+                            ? (selectedColor ?? design.designSystemColors.primary)
+                            : design.designSystemColors.onSurfaceVariant,
+                      ),
+                      child: isSelected ? item.activeIcon : item.icon,
                     ),
                     SizedBox(height: design.designSystemSpacing.xs),
                     Text(
@@ -1348,12 +1331,12 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// Build hoverable segmented control
-  Widget buildHoverableSegmentedControl<T>({
+  Widget buildHoverableSegmentedControl<U>({
     required BuildContext context,
-    required List<T> segments,
-    required T selectedValue,
-    required ValueChanged<T> onChanged,
-    required Widget Function(T value) builder,
+    required List<U> segments,
+    required U selectedValue,
+    required ValueChanged<U> onChanged,
+    required Widget Function(U value) builder,
     required VoidCallback? onHover,
     VoidCallback? onExit,
     Color? backgroundColor,
@@ -1427,7 +1410,7 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
                     context: context,
                     onHover: onHover,
                     onExit: onExit,
-                    child: Text('Continue'),
+                    child: const Text('Continue'),
                   ),
                 if (currentStep > 0) ...[
                   SizedBox(width: design.designSystemSpacing.md),
@@ -1435,7 +1418,7 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
                     context: context,
                     onHover: onHover,
                     onExit: onExit,
-                    child: Text('Back'),
+                    child: const Text('Back'),
                   ),
                 ],
               ],

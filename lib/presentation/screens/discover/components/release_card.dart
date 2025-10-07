@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/design_system.dart';
 import '../../../widgets/common/index.dart';
 
 class ReleaseCard extends StatelessWidget {
@@ -24,8 +24,6 @@ class ReleaseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
-
     return SizedBox(
       width: 200,
       child: ModernCard(
@@ -38,12 +36,12 @@ class ReleaseCard extends StatelessWidget {
               height: 120,
               width: double.infinity,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(appTheme.radius.lg),
+                borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
                 color: accentColor.withValues(alpha: 0.1),
               ),
               child: (imageUrl?.isNotEmpty ?? false)
                   ? ClipRRect(
-                      borderRadius: BorderRadius.circular(appTheme.radius.lg),
+                      borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
                       child: Image.network(
                         imageUrl!,
                         fit: BoxFit.cover,
@@ -55,52 +53,52 @@ class ReleaseCard extends StatelessWidget {
                       size: 48,
                     ),
             ),
-            SizedBox(height: appTheme.spacing.md),
+            const SizedBox(height: DesignSystem.spacingMD),
             Text(
               title,
-              style: appTheme.typography.titleMedium.copyWith(
-                color: appTheme.colors.textPrimary,
+              style: DesignSystem.titleMedium.copyWith(
+                color: DesignSystem.onSurface,
                 fontWeight: FontWeight.w600,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            SizedBox(height: appTheme.spacing.xs),
+            const SizedBox(height: DesignSystem.spacingXS),
             Text(
               artist,
-              style: appTheme.typography.bodySmall.copyWith(
-                color: appTheme.colors.textSecondary,
+              style: DesignSystem.bodySmall.copyWith(
+                color: DesignSystem.onSurfaceVariant,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
             Text(
               type,
-              style: appTheme.typography.caption.copyWith(
-                color: appTheme.colors.textMuted,
+              style: DesignSystem.caption.copyWith(
+                color: DesignSystem.onSurfaceVariant,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            SizedBox(height: appTheme.spacing.md),
+            const SizedBox(height: DesignSystem.spacingMD),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: EdgeInsets.all(appTheme.spacing.sm),
+                  padding: EdgeInsets.all(DesignSystem.spacingSM),
                   decoration: BoxDecoration(
-                    color: appTheme.colors.primaryRed,
-                    borderRadius: BorderRadius.circular(appTheme.radius.circular),
+                    color: DesignSystem.primary,
+                    borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
                   ),
                   child: Icon(
                     Icons.play_arrow,
-                    color: appTheme.colors.white,
+                    color: DesignSystem.onPrimary,
                     size: 20,
                   ),
                 ),
-                Icon(
+                const Icon(
                   Icons.favorite_border,
-                  color: appTheme.colors.textMuted,
+                  color: DesignSystem.onSurfaceVariant,
                   size: 24,
                 ),
               ],

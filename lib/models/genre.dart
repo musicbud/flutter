@@ -55,7 +55,7 @@ class Genre {
   factory Genre.fromCommonGenre(CommonGenre genre) {
     return Genre(
       id: genre.id,
-      uid: genre.uid ?? '',
+      uid: genre.uid,
       name: genre.name,
       source: genre.source,
       spotifyId: genre.spotifyId,

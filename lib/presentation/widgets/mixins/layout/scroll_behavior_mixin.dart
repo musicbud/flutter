@@ -165,7 +165,7 @@ mixin ScrollBehaviorMixin<T extends StatefulWidget> on State<T> {
       _isLoadingMore = true;
       onLoadingMoreChanged?.call(true);
 
-      _paginationConfig!.onLoadMore!().then((canLoadMore) {
+      _paginationConfig!.onLoadMore().then((canLoadMore) {
         _canLoadMore = canLoadMore;
         _isLoadingMore = false;
         onLoadingMoreChanged?.call(false);
@@ -377,7 +377,8 @@ mixin ScrollBehaviorMixin<T extends StatefulWidget> on State<T> {
   /// Get scroll velocity
   double getScrollVelocity() {
     if (!_isScrollControllerInitialized) return 0.0;
-    return _scrollController.position.activity?.velocity ?? 0.0;
+    // Note: activity is a protected member and not accessible here
+    return 0.0;
   }
 
   /// Check if scrolling

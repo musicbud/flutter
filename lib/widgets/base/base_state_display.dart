@@ -140,7 +140,7 @@ class BaseStateDisplay extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline,
               size: 64,
               color: DesignSystem.error,
@@ -180,7 +180,7 @@ class BaseStateDisplay extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.inbox,
               size: 64,
               color: DesignSystem.onSurfaceVariant,
@@ -251,7 +251,7 @@ class BaseStateDisplay extends StatelessWidget {
         ),
 
         if (message != null) ...[
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
           Text(
             message!,
             style: DesignSystem.bodyMedium.copyWith(
@@ -263,7 +263,7 @@ class BaseStateDisplay extends StatelessWidget {
 
         // Action section
         if (actionText != null && actionCallback != null) ...[
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           ElevatedButton(
             onPressed: actionCallback,
             style: ElevatedButton.styleFrom(

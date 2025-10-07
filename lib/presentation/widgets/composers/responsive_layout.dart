@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/design_system.dart';
 
 /// A composer class for handling responsive design patterns.
 /// Provides a fluent API for creating responsive layouts that adapt to different screen sizes.
@@ -48,7 +47,6 @@ class ResponsiveLayout extends StatelessWidget {
   final EdgeInsetsGeometry? _padding;
   final EdgeInsetsGeometry? _margin;
   final AlignmentGeometry? _alignment;
-  final ResponsiveBreakpoint _defaultBreakpoint;
 
   /// Creates a new ResponsiveLayout
   const ResponsiveLayout._({
@@ -64,13 +62,11 @@ class ResponsiveLayout extends StatelessWidget {
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
     AlignmentGeometry? alignment,
-    ResponsiveBreakpoint defaultBreakpoint = ResponsiveBreakpoint.md,
   })  : _builder = builder,
         _breakpoints = breakpoints,
         _padding = padding,
         _margin = margin,
-        _alignment = alignment,
-        _defaultBreakpoint = defaultBreakpoint;
+        _alignment = alignment;
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +102,6 @@ class ResponsiveLayout extends StatelessWidget {
     EdgeInsetsGeometry? padding,
     EdgeInsetsGeometry? margin,
     AlignmentGeometry? alignment,
-    ResponsiveBreakpoint? defaultBreakpoint,
   }) {
     return ResponsiveLayout._(
       key: key,
@@ -121,7 +116,6 @@ class ResponsiveLayout extends StatelessWidget {
       padding: padding,
       margin: margin,
       alignment: alignment,
-      defaultBreakpoint: defaultBreakpoint ?? ResponsiveBreakpoint.md,
     );
   }
 

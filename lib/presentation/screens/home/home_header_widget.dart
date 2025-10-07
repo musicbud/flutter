@@ -11,18 +11,18 @@ class HomeHeaderWidget extends StatelessWidget {
     return BlocBuilder<UserProfileBloc, UserProfileState>(
       builder: (context, state) {
         return Container(
-          padding: EdgeInsets.all(DesignSystem.spacingLG),
+          padding: const EdgeInsets.all(DesignSystem.spacingLG),
           child: Row(
             children: [
               // Profile Avatar
               _ProfileAvatar(state: state),
-              SizedBox(width: DesignSystem.spacingMD),
+              const SizedBox(width: DesignSystem.spacingMD),
               // Welcome Text
               Expanded(
                 child: _WelcomeText(state: state),
               ),
               // Notification Icon
-              _NotificationIcon(),
+              const _NotificationIcon(),
             ],
           ),
         );
@@ -54,7 +54,7 @@ class _ProfileAvatar extends StatelessWidget {
             ? NetworkImage((state as UserProfileLoaded).userProfile.avatarUrl!)
             : null,
         child: state is UserProfileLoaded && (state as UserProfileLoaded).userProfile.avatarUrl == null
-            ? Icon(
+            ? const Icon(
                 Icons.person,
                 color: DesignSystem.onPrimary,
                 size: 28,
@@ -82,7 +82,7 @@ class _WelcomeText extends StatelessWidget {
             fontWeight: FontWeight.w500,
           ),
         ),
-        SizedBox(height: DesignSystem.spacingXS),
+        const SizedBox(height: DesignSystem.spacingXS),
         Text(
           state is UserProfileLoaded
               ? ((state as UserProfileLoaded).userProfile.displayName ?? (state as UserProfileLoaded).userProfile.username)
@@ -103,13 +103,13 @@ class _NotificationIcon extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(DesignSystem.spacingXS),
+      padding: const EdgeInsets.all(DesignSystem.spacingXS),
       decoration: BoxDecoration(
         color: DesignSystem.surfaceContainer,
         borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         boxShadow: DesignSystem.shadowSmall,
       ),
-      child: Icon(
+      child: const Icon(
         Icons.notifications_outlined,
         color: DesignSystem.onSurfaceVariant,
         size: 24,

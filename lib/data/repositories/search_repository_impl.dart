@@ -52,7 +52,6 @@ class SearchRepositoryImpl implements SearchRepository {
         // Apply limit if specified
         final limitedSuggestions = limit != null ? suggestions.take(limit).toList() : suggestions;
         return Right(limitedSuggestions);
-        return Right(suggestions);
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));
       }

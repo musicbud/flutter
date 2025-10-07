@@ -207,7 +207,7 @@ class ImageWithFallback extends StatelessWidget {
           height: 24,
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(DesignSystem.primary),
+            color: DesignSystem.primary,
           ),
         ),
       ),
@@ -217,18 +217,18 @@ class ImageWithFallback extends StatelessWidget {
   Widget _buildErrorPlaceholder() {
     return Container(
       color: DesignSystem.surfaceContainer,
-      child: Column(
+      child: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
             Icons.broken_image,
-            size: placeholderIconSize,
+            size: 24, // placeholderIconSize is not const, so use fixed
             color: DesignSystem.onSurfaceVariant,
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             'Failed to load',
-            style: TextStyle(
+            style: const TextStyle(
               color: DesignSystem.onSurfaceVariant,
               fontSize: 12,
             ),

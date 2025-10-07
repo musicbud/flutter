@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
 
 class LoadingOverlay extends StatelessWidget {
   final Widget child;
@@ -15,8 +14,6 @@ class LoadingOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
-
     return Stack(
       children: [
         child,

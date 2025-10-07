@@ -1,21 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/content_repository.dart';
-import '../../domain/repositories/user_repository.dart';
-import '../../models/artist.dart';
-import '../../models/album.dart';
-import '../../models/genre.dart';
 import 'library_event.dart';
 import 'library_state.dart';
 
 class LibraryBloc extends Bloc<LibraryEvent, LibraryState> {
   final ContentRepository _contentRepository;
-  final UserRepository _userRepository;
 
   LibraryBloc({
     required ContentRepository contentRepository,
-    required UserRepository userRepository,
   })  : _contentRepository = contentRepository,
-        _userRepository = userRepository,
         super(LibraryInitial()) {
     on<LibraryItemsRequested>(_onLibraryItemsRequested);
     on<LibraryItemToggleLiked>(_onLibraryItemToggleLiked);

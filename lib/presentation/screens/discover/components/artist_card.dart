@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/design_system.dart';
 import '../../../widgets/common/index.dart';
 
 class ArtistCard extends StatelessWidget {
@@ -20,8 +20,6 @@ class ArtistCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
-
     return SizedBox(
       width: 100,
       child: ModernCard(
@@ -33,12 +31,12 @@ class ArtistCard extends StatelessWidget {
               width: 80,
               height: 80,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(appTheme.radius.circular),
+                borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
                 color: accentColor.withValues(alpha: 0.1),
               ),
               child: (imageUrl?.isNotEmpty ?? false)
                   ? ClipRRect(
-                      borderRadius: BorderRadius.circular(appTheme.radius.circular),
+                      borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
                       child: Image.network(
                         imageUrl!,
                         fit: BoxFit.cover,
@@ -50,11 +48,11 @@ class ArtistCard extends StatelessWidget {
                       size: 40,
                     ),
             ),
-            SizedBox(height: appTheme.spacing.sm),
+            const SizedBox(height: DesignSystem.spacingSM),
             Text(
               name,
-              style: appTheme.typography.bodySmall.copyWith(
-                color: appTheme.colors.textPrimary,
+              style: DesignSystem.bodySmall.copyWith(
+                color: DesignSystem.onSurface,
                 fontWeight: FontWeight.w600,
               ),
               textAlign: TextAlign.center,
@@ -63,8 +61,8 @@ class ArtistCard extends StatelessWidget {
             ),
             Text(
               genre,
-              style: appTheme.typography.caption.copyWith(
-                color: appTheme.colors.textMuted,
+              style: DesignSystem.caption.copyWith(
+                color: DesignSystem.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
               maxLines: 1,

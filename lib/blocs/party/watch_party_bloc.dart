@@ -6,9 +6,9 @@ import 'watch_party_state.dart';
 
 class WatchPartyBloc extends Bloc<WatchPartyEvent, WatchPartyState> {
   final WatchPartyRepository repository;
-  String? _currentPartyId;
   StreamSubscription? _partyUpdatesSubscription;
   StreamSubscription? _chatSubscription;
+  String? _currentPartyId;
 
   WatchPartyBloc({required this.repository}) : super(const WatchPartyInitial()) {
     on<WatchPartiesRequested>(_onWatchPartiesRequested);

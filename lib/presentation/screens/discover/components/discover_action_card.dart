@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/design_system.dart';
 import '../../../widgets/common/index.dart';
 
 class DiscoverActionCard extends StatelessWidget {
@@ -20,18 +20,16 @@ class DiscoverActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
-
     return ModernCard(
       variant: ModernCardVariant.accent,
       onTap: onTap,
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(appTheme.spacing.lg),
+            padding: const EdgeInsets.all(DesignSystem.spacingLG),
             decoration: BoxDecoration(
               color: accentColor.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(appTheme.radius.md),
+              borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             ),
             child: Icon(
               icon,
@@ -39,20 +37,20 @@ class DiscoverActionCard extends StatelessWidget {
               size: 32,
             ),
           ),
-          SizedBox(height: appTheme.spacing.md),
-          Text(
+        const SizedBox(height: DesignSystem.spacingMD),
+        Text(
             title,
-            style: appTheme.typography.titleSmall.copyWith(
-              color: appTheme.colors.textPrimary,
+            style: DesignSystem.titleSmall.copyWith(
+              color: DesignSystem.onSurface,
               fontWeight: FontWeight.w600,
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: appTheme.spacing.xs),
+          const SizedBox(height: DesignSystem.spacingXS),
           Text(
             subtitle,
-            style: appTheme.typography.caption.copyWith(
-              color: appTheme.colors.textMuted,
+            style: DesignSystem.caption.copyWith(
+              color: DesignSystem.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
             maxLines: 2,

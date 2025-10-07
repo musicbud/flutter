@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../models/user_profile.dart';
 import '../../../core/theme/design_system.dart';
-import '../../theme/app_theme.dart';
 import '../../../navigation/navigation_config.dart';
 import '../../../navigation/navigation_constants.dart';
 import '../../../navigation/navigation_mixins.dart';
@@ -38,7 +37,6 @@ class AppNavigationDrawer extends StatelessWidget with BaseNavigationMixin {
   }
 
   Widget _buildHeader(BuildContext context) {
-    final appTheme = AppTheme.of(context);
     final effectiveConfig = config ?? const NavigationConfig();
 
     return DrawerHeader(
@@ -78,8 +76,6 @@ class AppNavigationDrawer extends StatelessWidget with BaseNavigationMixin {
   }
 
   Widget _buildNavItems(BuildContext context) {
-    final appTheme = AppTheme.of(context);
-
     return Column(
       children: [
         // Main navigation items from the centralized navigation items
@@ -103,7 +99,6 @@ class AppNavigationDrawer extends StatelessWidget with BaseNavigationMixin {
     required BuildContext context,
     required NavigationItem item,
   }) {
-    final appTheme = AppTheme.of(context);
     final currentRoute = ModalRoute.of(context)?.settings.name;
     final itemRoute = '/${mainNavigationItems.indexOf(item)}'; // Use index as route
     final isSelected = currentRoute == itemRoute;
@@ -112,19 +107,19 @@ class AppNavigationDrawer extends StatelessWidget with BaseNavigationMixin {
       leading: Icon(
         item.icon,
         color: isSelected
-            ? appTheme.colors.primary
+            ? DesignSystem.primary
             : Colors.white,
       ),
       title: Text(
         item.label,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
           color: isSelected
-              ? appTheme.colors.primary
+              ? DesignSystem.primary
               : Colors.white,
         ),
       ),
       selected: isSelected,
-      selectedColor: appTheme.colors.primary,
+      selectedColor: DesignSystem.primary,
       onTap: () {
         Navigator.pop(context); // Close drawer
         if (onNavigate != null) {
@@ -177,7 +172,6 @@ class AppNavigationDrawer extends StatelessWidget with BaseNavigationMixin {
     required String title,
     required String route,
   }) {
-    final appTheme = AppTheme.of(context);
     final currentRoute = ModalRoute.of(context)?.settings.name;
     final isSelected = currentRoute == route;
 
@@ -185,19 +179,19 @@ class AppNavigationDrawer extends StatelessWidget with BaseNavigationMixin {
       leading: Icon(
         icon,
         color: isSelected
-            ? appTheme.colors.primary
+            ? DesignSystem.primary
             : Colors.white,
       ),
       title: Text(
         title,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
           color: isSelected
-              ? appTheme.colors.primary
+              ? DesignSystem.primary
               : Colors.white,
         ),
       ),
       selected: isSelected,
-      selectedColor: appTheme.colors.primary,
+      selectedColor: DesignSystem.primary,
       onTap: () {
         Navigator.pop(context); // Close drawer
         if (onNavigate != null) {

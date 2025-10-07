@@ -55,7 +55,7 @@ class MapBloc extends Bloc<MapEvent, MapState> {
       if (track.latitude != null && track.longitude != null) {
         markers.add(
           Marker(
-            markerId: MarkerId(track.id),
+            markerId: MarkerId(track.id!),
             position: LatLng(track.latitude!, track.longitude!),
             infoWindow: InfoWindow(
               title: track.title,

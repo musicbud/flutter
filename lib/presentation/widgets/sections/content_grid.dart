@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-import '../../../core/theme/design_system.dart';
 import '../base/base_content_container.dart';
-import '../utils/theme_helper.dart' as ThemeHelper;
 
 /// A reusable grid layout widget for displaying content in a grid format.
 /// Provides consistent spacing, responsive columns, and loading states.
@@ -41,58 +38,4 @@ class ContentGrid<T> extends BaseContentContainer<T> {
     this.aspectRatio = 1,
   });
 
-  @override
-  Widget _buildContent(BuildContext context) {
-    return GridView.builder(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount ?? getResponsiveCrossAxisCount(context),
-        crossAxisSpacing: spacing,
-        mainAxisSpacing: spacing,
-        childAspectRatio: aspectRatio,
-      ),
-      itemCount: hasMoreItems ? items.length + 1 : items.length,
-      itemBuilder: (context, index) {
-        // Show loading indicator for pagination
-        if (hasMoreItems && index == items.length) {
-          _handlePagination();
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-
-        return itemBuilder(context, items[index], index);
-      },
-      shrinkWrap: shrinkWrap,
-      physics: physics ?? getDefaultScrollPhysics(),
-      controller: scrollController,
-    );
-  }
-
-  @override
-  Widget _buildLoadingState() {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
-  }
-
-  @override
-  Widget _buildEmptyState(BuildContext context) {
-    return Center(
-      child: Text(
-        'No items to display',
-        style: TextStyle(
-          color: getDesignSystemColors(context).onSurfaceVariant,
-          fontSize: 16,
-        ),
-      ),
-    );
-  }
-
-  @override
-  void _handlePagination() {
-    triggerLoadMore();
-  }
 }

@@ -459,7 +459,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
   ) async {
     try {
       final channel = await _chatRepository.getChannel(event.channelId);
-      final updatedResult = await _chatRepository.updateChannel(
+      await _chatRepository.updateChannel(
         event.channelId,
         channel.name,
         channel.description ?? '',
@@ -680,7 +680,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
       final invitations = await _chatRepository.getChannelInvitations(event.channelId);
       // Convert dynamic list to List<ChannelInvitation>
       final typedInvitations = invitations.map((invitation) =>
-        ChannelInvitation.fromJson(invitation as Map<String, dynamic>)
+        ChannelInvitation.fromJson(invitation)
       ).toList();
       emit(ChannelInvitationsLoaded(typedInvitations));
     } catch (e) {
@@ -697,7 +697,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
       final invitations = await _chatRepository.getUserInvitations(event.userId);
       // Convert dynamic list to List<ChannelInvitation>
       final typedInvitations = invitations.map((invitation) =>
-        ChannelInvitation.fromJson(invitation as Map<String, dynamic>)
+        ChannelInvitation.fromJson(invitation)
       ).toList();
       emit(UserInvitationsLoaded(typedInvitations));
     } catch (e) {

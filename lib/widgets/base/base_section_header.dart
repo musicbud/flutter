@@ -93,12 +93,12 @@ abstract class BaseSectionHeader extends StatelessWidget {
                   leading!,
                   const SizedBox(width: 12),
                 ],
-                _buildTitle(context),
+                buildTitle(context),
                 if (trailing != null) ...[
                   const SizedBox(width: 12),
                   trailing!,
                 ],
-                _buildAction(context),
+                buildAction(context),
               ],
             ),
             if (showDivider) ...[
@@ -115,11 +115,9 @@ abstract class BaseSectionHeader extends StatelessWidget {
     );
   }
 
-  @protected
-  Widget _buildTitle(BuildContext context);
+  Widget buildTitle(BuildContext context);
 
-  @protected
-  Widget _buildAction(BuildContext context);
+  Widget buildAction(BuildContext context);
 }
 
 /// Convenience constructors for common use cases
@@ -182,7 +180,7 @@ class SectionHeader extends BaseSectionHeader {
   @override
 
   @override
-  Widget _buildTitle(BuildContext context) {
+  Widget buildTitle(BuildContext context) {
     final effectiveTitleStyle = titleStyle ??
         DesignSystem.headlineSmall.copyWith(
           color: DesignSystem.onSurface,
@@ -219,7 +217,7 @@ class SectionHeader extends BaseSectionHeader {
   }
 
   @override
-  Widget _buildAction(BuildContext context) {
+  Widget buildAction(BuildContext context) {
     if (action != null) {
       return Padding(
         padding: const EdgeInsets.only(left: 8),

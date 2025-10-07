@@ -131,33 +131,33 @@ class AlbumsSearched extends MusicEvent {
 }
 
 // Playback operations
-class SpotifyDevicesRequested extends MusicEvent {}
-
 class TrackPlayRequested extends MusicEvent {
   final String trackId;
-  final String deviceId;
+  final String? deviceId;
 
-  const TrackPlayRequested(this.trackId, this.deviceId);
+  const TrackPlayRequested(this.trackId, [this.deviceId]);
 
   @override
-  List<Object> get props => [trackId, deviceId];
+  List<Object?> get props => [trackId, deviceId];
 }
 
 class TrackPlayWithLocationRequested extends MusicEvent {
   final String trackId;
-  final String deviceId;
+  final String trackName;
+  final String? deviceId;
   final double latitude;
   final double longitude;
 
-  const TrackPlayWithLocationRequested(
-    this.trackId,
+  const TrackPlayWithLocationRequested({
+    required this.trackId,
+    required this.trackName,
+    required this.latitude,
+    required this.longitude,
     this.deviceId,
-    this.latitude,
-    this.longitude,
-  );
+  });
 
   @override
-  List<Object> get props => [trackId, deviceId, latitude, longitude];
+  List<Object?> get props => [trackId, trackName, deviceId, latitude, longitude];
 }
 
 class PlayedTrackSaved extends MusicEvent {

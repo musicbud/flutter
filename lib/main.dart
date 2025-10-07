@@ -130,6 +130,7 @@ class MusicBudApp extends StatelessWidget {
 
     // Listen to authentication state changes for token management
     authBloc.stream.listen((state) {
+      if (!context.mounted) return;
       if (state is Authenticated) {
         _handleAuthenticationSuccess(context, state.token);
       } else if (state is Unauthenticated) {

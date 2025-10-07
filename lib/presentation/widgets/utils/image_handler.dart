@@ -42,7 +42,7 @@ import '../../../core/theme/design_system.dart';
 /// ```
 class ImageHandler {
   /// Private constructor to prevent instantiation
-  const ImageHandler._();
+  ImageHandler._();
 
   /// Build a cached network image with consistent styling
   static Widget network({
@@ -212,13 +212,13 @@ class ImageHandler {
     return Container(
       width: 56,
       height: 56,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         shape: BoxShape.circle,
         color: DesignSystem.primary,
       ),
       child: IconButton(
         onPressed: onPressed,
-        icon: Icon(
+        icon: const Icon(
           Icons.play_arrow_rounded,
           size: 32,
           color: DesignSystem.onPrimary,

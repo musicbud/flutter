@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// @deprecated Use DesignSystem instead. This class is deprecated and will be removed in a future version.
-/// Migrate to: import 'package:musicbud/core/theme/design_system.dart';
-@deprecated
 class AppColors {
   static const Color primary = Color(0xFF6200EE);
   static const Color secondary = Color(0xFF03DAC5);
@@ -18,7 +15,7 @@ class AppColors {
   static const Color darkBlue = Color(0xFF232C4E);
   static const Color brightRed = Color(0xFFFF265A);
 
-  static const ColorScheme colorScheme = ColorScheme(
+  static final ColorScheme colorScheme = ColorScheme(
     primary: Color(0xFF6200EE),
     primaryContainer: Color(0xFFB0B0FD),
     secondary: Color(0xFF03DAC5),

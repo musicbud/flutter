@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/design_system.dart';
 import '../../navigation/navigation_constants.dart';
-import '../../navigation/navigation_mixins.dart';
 
 /// Custom app bar for the main navigation screen
 class CustomAppBar extends StatelessWidget {

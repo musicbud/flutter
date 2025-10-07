@@ -62,32 +62,32 @@ class PlaylistCard extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
-          SizedBox(height: DesignSystem.spacingXS),
+          const SizedBox(height: DesignSystem.spacingXS),
           Text(
             trackCount,
             style: DesignSystem.caption.copyWith(
               color: DesignSystem.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: DesignSystem.spacingMD),
+          const SizedBox(height: DesignSystem.spacingMD),
 
           // Action Row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: EdgeInsets.all(DesignSystem.spacingSM),
+                padding: const EdgeInsets.all(DesignSystem.spacingSM),
                 decoration: BoxDecoration(
                   color: DesignSystem.primary,
                   borderRadius: BorderRadius.circular(999),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.play_arrow,
                   color: DesignSystem.onPrimary,
                   size: 20,
                 ),
               ),
-              Icon(
+              const Icon(
                 Icons.more_vert,
                 color: DesignSystem.onSurfaceVariant,
                 size: 20,

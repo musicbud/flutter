@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/design_system.dart';
 import '../../../widgets/common/index.dart';
 
 class SettingsOption extends StatelessWidget {
@@ -18,7 +18,6 @@ class SettingsOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
 
     return ModernCard(
       variant: ModernCardVariant.secondary,
@@ -26,34 +25,34 @@ class SettingsOption extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(appTheme.spacing.sm),
+            padding: EdgeInsets.all(DesignSystem.spacingSM),
             decoration: BoxDecoration(
-              color: appTheme.colors.surfaceLight,
-              borderRadius: BorderRadius.circular(appTheme.radius.md),
+              color: DesignSystem.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             ),
             child: Icon(
               icon,
-              color: appTheme.colors.textSecondary,
+              color: DesignSystem.onSurfaceVariant,
               size: 24,
             ),
           ),
-          SizedBox(width: appTheme.spacing.md),
+          SizedBox(width: DesignSystem.spacingMD),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: appTheme.typography.titleSmall.copyWith(
-                    color: appTheme.colors.textPrimary,
+                  style: DesignSystem.titleSmall.copyWith(
+                    color: DesignSystem.onSurface,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: appTheme.spacing.xs),
+                SizedBox(height: DesignSystem.spacingXS),
                 Text(
                   subtitle,
-                  style: appTheme.typography.bodySmall.copyWith(
-                    color: appTheme.colors.textMuted,
+                  style: DesignSystem.bodySmall.copyWith(
+                    color: DesignSystem.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -61,7 +60,7 @@ class SettingsOption extends StatelessWidget {
           ),
           Icon(
             Icons.chevron_right,
-            color: appTheme.colors.textSecondary,
+            color: DesignSystem.onSurfaceVariant,
             size: 20,
           ),
         ],

@@ -24,7 +24,7 @@ class HomeRecommendations extends StatelessWidget {
                     Navigator.pushNamed(context, '/library', arguments: {'tab': 'liked_songs'});
                   },
                 ),
-                SizedBox(height: DesignSystem.spacingXL),
+                const SizedBox(height: DesignSystem.spacingXL),
               ],
               if (state.contentType == 'artists' && state.content.isNotEmpty) ...[
                 _RecommendationsSection(
@@ -34,7 +34,7 @@ class HomeRecommendations extends StatelessWidget {
                     Navigator.pushNamed(context, '/library', arguments: {'tab': 'top_artists'});
                   },
                 ),
-                SizedBox(height: DesignSystem.spacingXL),
+                const SizedBox(height: DesignSystem.spacingXL),
               ],
             ],
           );

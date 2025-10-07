@@ -25,8 +25,6 @@ class PlayTrackWithLocation extends SpotifyEvent {
   List<Object> get props => [trackId, trackName, latitude, longitude];
 }
 
-class LoadSpotifyDevices extends SpotifyEvent {}
-
 class PlaySpotifyTrack extends SpotifyEvent {
   final String trackId;
   final String? deviceId;
@@ -70,15 +68,6 @@ class PlayedTracksLoaded extends SpotifyState {
   List<Object> get props => [tracks];
 }
 
-class SpotifyDevicesLoaded extends SpotifyState {
-  final List<Map<String, dynamic>> devices;
-
-  const SpotifyDevicesLoaded(this.devices);
-
-  @override
-  List<Object> get props => [devices];
-}
-
 class TrackPlayed extends SpotifyState {}
 
 class LocationSaved extends SpotifyState {}
@@ -108,7 +97,6 @@ class SpotifyBloc extends Bloc<SpotifyEvent, SpotifyState> {
   SpotifyBloc(this.repository) : super(SpotifyInitial()) {
     on<LoadPlayedTracks>(_onLoadPlayedTracks);
     on<PlayTrackWithLocation>(_onPlayTrackWithLocation);
-    on<LoadSpotifyDevices>(_onLoadSpotifyDevices);
     on<PlaySpotifyTrack>(_onPlaySpotifyTrack);
     on<SaveLocation>(_onSaveLocation);
     on<LoadPlayedTracksWithLocation>(_onLoadPlayedTracksWithLocation);
@@ -136,18 +124,8 @@ class SpotifyBloc extends Bloc<SpotifyEvent, SpotifyState> {
       if (success) {
         emit(TrackPlayed());
       } else {
-        emit(SpotifyError('Failed to play track'));
+        emit(const SpotifyError('Failed to play track'));
       }
-    } catch (e) {
-      emit(SpotifyError(e.toString()));
-    }
-  }
-
-  Future<void> _onLoadSpotifyDevices(LoadSpotifyDevices event, Emitter<SpotifyState> emit) async {
-    emit(SpotifyLoading());
-    try {
-      final devices = await repository.getSpotifyDevices();
-      emit(SpotifyDevicesLoaded(devices));
     } catch (e) {
       emit(SpotifyError(e.toString()));
     }
@@ -160,7 +138,7 @@ class SpotifyBloc extends Bloc<SpotifyEvent, SpotifyState> {
       if (success) {
         emit(TrackPlayed());
       } else {
-        emit(SpotifyError('Failed to play track'));
+        emit(const SpotifyError('Failed to play track'));
       }
     } catch (e) {
       emit(SpotifyError(e.toString()));

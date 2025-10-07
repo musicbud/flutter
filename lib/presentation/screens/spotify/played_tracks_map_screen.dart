@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:musicbud_flutter/blocs/spotify/spotify_bloc.dart';
-import 'package:musicbud_flutter/injection_container.dart';
 
 class PlayedTracksMapScreen extends StatelessWidget {
   const PlayedTracksMapScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: BlocProvider.of<SpotifyBloc>(context),
-      child: const _PlayedTracksMapScreenContent(),
-    );
+    return const _PlayedTracksMapScreenContent();
   }
 }
 

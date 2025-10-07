@@ -3,7 +3,6 @@
 /// All theme tokens are now available through DesignSystem and theme extensions.
 import 'package:flutter/material.dart';
 
-@deprecated
 class AppTheme {
   static AppTheme? _instance;
 
@@ -433,7 +432,6 @@ class AppTheme {
 }
 
 // Enhanced Helper classes for instance-based access
-@deprecated
 class AppColors {
   Color get primaryRed => AppTheme.primaryRed;
   Color get secondaryRed => AppTheme.secondaryRed;
@@ -478,7 +476,6 @@ class AppColors {
   Color get onSurfaceVariant => AppTheme.lightGray;
 }
 
-@deprecated
 class AppTypography {
   TextStyle get displayH1 => AppTheme.displayH1;
   TextStyle get displayH2 => AppTheme.displayH2;
@@ -506,7 +503,6 @@ class AppTypography {
   TextStyle get headlineSmall => AppTheme.headlineH7;
 }
 
-@deprecated
 class AppSpacing {
   double get xs => AppTheme.spacingXS;
   double get sm => AppTheme.spacingS;
@@ -521,7 +517,6 @@ class AppSpacing {
   double get paddingMedium => AppTheme.spacingM;
 }
 
-@deprecated
 class AppRadius {
   double get xs => AppTheme.radiusXS;
   double get sm => AppTheme.radiusS;
@@ -532,7 +527,6 @@ class AppRadius {
   double get circular => AppTheme.radiusCircular;
 }
 
-@deprecated
 class AppShadows {
   List<BoxShadow> get shadowSmall => AppTheme.shadowSmall;
   List<BoxShadow> get shadowMedium => AppTheme.shadowMedium;
@@ -542,7 +536,6 @@ class AppShadows {
   List<BoxShadow> get shadowCardHover => AppTheme.shadowCardHover;
 }
 
-@deprecated
 class AppGradients {
   LinearGradient get primaryGradient => AppTheme.gradientPrimary;
   LinearGradient get secondaryGradient => AppTheme.gradientSecondary;

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/design_system.dart';
 import '../base/base_content_container.dart';
 
 /// A reusable list layout widget for displaying content in a vertical list.
@@ -27,7 +26,7 @@ class ContentList<T> extends BaseContentContainer<T> {
   /// Whether to enable pull-to-refresh
   final bool enablePullToRefresh;
 
-  const ContentList({
+  ContentList({
     super.key,
     required List<T> items,
     required Widget Function(BuildContext context, T item, int index) itemBuilder,
@@ -56,70 +55,17 @@ class ContentList<T> extends BaseContentContainer<T> {
     shrinkWrap: shrinkWrap,
   );
 
-  @override
-  Widget _buildContent(BuildContext context) {
-    final listWidget = ListView.separated(
-      itemCount: hasMoreItems ? items.length + 1 : items.length,
-      itemBuilder: (context, index) {
-        // Show loading indicator for pagination
-        if (hasMoreItems && index == items.length) {
-          _handlePagination();
-          return _buildDefaultLoadingIndicator();
-        }
 
-        return itemBuilder(context, items[index], index);
-      },
-      separatorBuilder: separatorBuilder ?? (context, index) {
-        if (hasMoreItems && index == items.length - 1) {
-          return const SizedBox.shrink();
-        }
-        return SizedBox(height: spacing);
-      },
-      shrinkWrap: shrinkWrap,
-      physics: physics ?? getDefaultScrollPhysics(),
-      controller: scrollController,
-    );
 
-    // Wrap with RefreshIndicator if pull-to-refresh is enabled
-    if (enablePullToRefresh && onRefresh != null) {
-      return RefreshIndicator(
-        onRefresh: onRefresh!,
-        child: listWidget,
-      );
-    }
 
-    return listWidget;
-  }
-
-  @override
-  Widget _buildLoadingState() {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
-  }
-
-  @override
-  Widget _buildEmptyState() {
-    return const Center(
-      child: Text(
-        'No items to display',
-        style: TextStyle(
-          color: Colors.grey,
-          fontSize: 16,
-        ),
-      ),
-    );
-  }
-
-  @override
   void _handlePagination() {
     triggerLoadMore();
   }
 
   Widget _buildDefaultLoadingIndicator() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: const Center(
+      padding: EdgeInsets.symmetric(vertical: 16),
+      child: Center(
         child: SizedBox(
           width: 24,
           height: 24,
@@ -130,17 +76,4 @@ class ContentList<T> extends BaseContentContainer<T> {
       ),
     );
   }
-
-  Widget _buildDefaultEmptyState(BuildContext context) {
-    return Center(
-      child: Text(
-        'No items to display',
-        style: TextStyle(
-          color: Colors.grey,
-          fontSize: 16,
-        ),
-      ),
-    );
-  }
-
 }

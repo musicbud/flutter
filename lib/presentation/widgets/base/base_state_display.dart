@@ -116,7 +116,7 @@ abstract class BaseStateDisplay extends StatelessWidget {
         // Icon section
         if (icon != null) ...[
           _buildIcon(context),
-          SizedBox(height: theme.designSystemSpacing?.xl ?? 32.0),
+          const SizedBox(height: 32.0),
         ],
 
         // Content section
@@ -124,7 +124,7 @@ abstract class BaseStateDisplay extends StatelessWidget {
 
         // Action section
         if (actionText != null && actionCallback != null) ...[
-          SizedBox(height: theme.designSystemSpacing?.xl ?? 32.0),
+          const SizedBox(height: 32.0),
           _buildAction(context),
         ],
       ],
@@ -135,7 +135,7 @@ abstract class BaseStateDisplay extends StatelessWidget {
     }
 
     return Padding(
-      padding: padding ?? EdgeInsets.all(theme.designSystemSpacing?.xl ?? 32.0),
+      padding: padding ?? const EdgeInsets.all(32.0),
       child: Container(
         color: backgroundColor,
         child: content,
@@ -158,116 +158,41 @@ abstract class BaseStateDisplay extends StatelessWidget {
   @protected
   Widget _buildAction(BuildContext context);
 
-  /// Default icon widget implementation
-  @protected
-  Widget _buildDefaultIcon(BuildContext context) {
-    if (icon == null) {
-      return const SizedBox.shrink();
-    }
-
-    final theme = Theme.of(context);
-    final designColors = theme.designSystemColors;
-
-    return Container(
-      padding: EdgeInsets.all(theme.designSystemSpacing?.lg ?? 24.0),
-      decoration: BoxDecoration(
-        color: designColors?.surfaceContainer ?? Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(theme.designSystemRadius?.xl ?? 31.0),
-      ),
-      child: Icon(
-        icon,
-        size: iconSize,
-        color: designColors?.onSurfaceVariant ?? Colors.grey.shade600,
-      ),
-    );
-  }
-
-  /// Default content layout implementation
-  @protected
-  Widget _buildDefaultContent(BuildContext context) {
-    final theme = Theme.of(context);
-    final designColors = theme.designSystemColors;
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Title
-        if (title != null) ...[
-          Text(
-            title!,
-            style: getDesignSystemTypography(context).titleMedium.copyWith(
-              color: getDesignSystemColors(context).onSurface,
-              fontWeight: FontWeight.w600,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-
-        // Message
-        if (message != null) ...[
-          SizedBox(height: theme.designSystemSpacing?.md ?? 16.0),
-          Text(
-            message!,
-            style: getDesignSystemTypography(context).bodyMedium.copyWith(
-              color: getDesignSystemColors(context).onSurfaceVariant,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ],
-    );
-  }
-
-  /// Default action button implementation
-  @protected
-  Widget _buildDefaultAction(BuildContext context) {
-    if (actionText != null && actionCallback != null) {
-      return ElevatedButton(
-        onPressed: actionCallback,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: getDesignSystemColors(context).primary,
-          foregroundColor: getDesignSystemColors(context).onPrimary,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(getDesignSystemRadius(context).md),
-          ),
-        ),
-        child: Text(
-          actionText!,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-      );
-    }
-
-    return const SizedBox.shrink();
-  }
 
   /// Helper method to get design system colors
   @protected
   DesignSystemColors getDesignSystemColors(BuildContext context) {
-    return Theme.of(context).designSystemColors ?? DesignSystemColors(
-      primary: DesignSystem.primary,
-      secondary: DesignSystem.secondary,
-      surface: DesignSystem.surface,
-      background: DesignSystem.background,
-      onSurface: DesignSystem.onSurface,
-      onSurfaceVariant: DesignSystem.onSurfaceVariant,
-      error: DesignSystem.error,
-      success: DesignSystem.success,
-      warning: DesignSystem.warning,
-      info: DesignSystem.info,
-      accentBlue: DesignSystem.accentBlue,
-      accentPurple: DesignSystem.accentPurple,
-      accentGreen: DesignSystem.accentGreen,
-      accentOrange: DesignSystem.accentOrange,
-      border: DesignSystem.border,
-      overlay: DesignSystem.overlay,
-      surfaceContainer: DesignSystem.surfaceContainer,
-      surfaceContainerHigh: DesignSystem.surfaceContainerHigh,
-      surfaceContainerHighest: DesignSystem.surfaceContainerHighest,
-      onPrimary: DesignSystem.onPrimary,
-      onError: DesignSystem.onError,
-      onErrorContainer: DesignSystem.onErrorContainer,
+    return Theme.of(context).designSystemColors ?? const DesignSystemColors(
+      primary: Color(0xFF000000), // Placeholder
+      secondary: Color(0xFF000000),
+      surface: Color(0xFF000000),
+      background: Color(0xFF000000),
+      onSurface: Color(0xFF000000),
+      onSurfaceVariant: Color(0xFF000000),
+      error: Color(0xFF000000),
+      success: Color(0xFF000000),
+      warning: Color(0xFF000000),
+      info: Color(0xFF000000),
+      accentBlue: Color(0xFF000000),
+      accentPurple: Color(0xFF000000),
+      accentGreen: Color(0xFF000000),
+      accentOrange: Color(0xFF000000),
+      border: Color(0xFF000000),
+      overlay: Color(0xFF000000),
+      surfaceContainer: Color(0xFF000000),
+      surfaceContainerHigh: Color(0xFF000000),
+      surfaceContainerHighest: Color(0xFF000000),
+      onPrimary: Color(0xFF000000),
+      onError: Color(0xFF000000),
+      onErrorContainer: Color(0xFF000000),
+      textMuted: Color(0xFF000000),
+      primaryRed: Color(0xFF000000),
+      white: Color(0xFF000000),
+      surfaceDark: Color(0xFF000000),
+      surfaceLight: Color(0xFF000000),
+      cardBackground: Color(0xFF000000),
+      borderColor: Color(0xFF000000),
+      textPrimary: Color(0xFF000000),
     );
   }
 
@@ -275,24 +200,24 @@ abstract class BaseStateDisplay extends StatelessWidget {
   @protected
   DesignSystemTypography getDesignSystemTypography(BuildContext context) {
     return Theme.of(context).designSystemTypography ?? DesignSystemTypography(
-      displayLarge: DesignSystem.displayLarge,
-      displayMedium: DesignSystem.displayMedium,
-      displaySmall: DesignSystem.displaySmall,
-      headlineLarge: DesignSystem.headlineLarge,
-      headlineMedium: DesignSystem.headlineMedium,
-      headlineSmall: DesignSystem.headlineSmall,
-      titleLarge: DesignSystem.titleLarge,
-      titleMedium: DesignSystem.titleMedium,
-      titleSmall: DesignSystem.titleSmall,
-      bodyLarge: DesignSystem.bodyLarge,
-      bodyMedium: DesignSystem.bodyMedium,
-      bodySmall: DesignSystem.bodySmall,
-      labelLarge: DesignSystem.labelLarge,
-      labelMedium: DesignSystem.labelMedium,
-      labelSmall: DesignSystem.labelSmall,
-      caption: DesignSystem.caption,
-      overline: DesignSystem.overline,
-      arabicText: DesignSystem.arabicText,
+      displayLarge: TextStyle(),
+      displayMedium: TextStyle(),
+      displaySmall: TextStyle(),
+      headlineLarge: TextStyle(),
+      headlineMedium: TextStyle(),
+      headlineSmall: TextStyle(),
+      titleLarge: TextStyle(),
+      titleMedium: TextStyle(),
+      titleSmall: TextStyle(),
+      bodyLarge: TextStyle(),
+      bodyMedium: TextStyle(),
+      bodySmall: TextStyle(),
+      labelLarge: TextStyle(),
+      labelMedium: TextStyle(),
+      labelSmall: TextStyle(),
+      caption: TextStyle(),
+      overline: TextStyle(),
+      arabicText: TextStyle(),
     );
   }
 

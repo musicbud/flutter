@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/design_system.dart';
 import '../../../widgets/common/index.dart';
 
 class TrackCard extends StatelessWidget {
@@ -24,8 +24,6 @@ class TrackCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
-
     return ModernCard(
       variant: ModernCardVariant.primary,
       onTap: onTap,
@@ -35,12 +33,12 @@ class TrackCard extends StatelessWidget {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(appTheme.radius.md),
+              borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
               color: accentColor.withValues(alpha: 0.1),
             ),
             child: (imageUrl?.isNotEmpty ?? false)
                 ? ClipRRect(
-                    borderRadius: BorderRadius.circular(appTheme.radius.md),
+                    borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
                     child: Image.network(
                       imageUrl!,
                       fit: BoxFit.cover,
@@ -52,33 +50,33 @@ class TrackCard extends StatelessWidget {
                     size: 30,
                   ),
           ),
-          SizedBox(width: appTheme.spacing.md),
+          const SizedBox(width: DesignSystem.spacingMD),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   title,
-                  style: appTheme.typography.titleSmall.copyWith(
-                    color: appTheme.colors.textPrimary,
+                  style: DesignSystem.titleSmall.copyWith(
+                    color: DesignSystem.onSurface,
                     fontWeight: FontWeight.w600,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: appTheme.spacing.xs),
+                const SizedBox(height: DesignSystem.spacingXS),
                 Text(
                   artist,
-                  style: appTheme.typography.bodySmall.copyWith(
-                    color: appTheme.colors.textSecondary,
+                  style: DesignSystem.bodySmall.copyWith(
+                    color: DesignSystem.onSurfaceVariant,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   genre,
-                  style: appTheme.typography.caption.copyWith(
-                    color: appTheme.colors.textMuted,
+                  style: DesignSystem.caption.copyWith(
+                    color: DesignSystem.onSurfaceVariant,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -87,14 +85,14 @@ class TrackCard extends StatelessWidget {
             ),
           ),
           Container(
-            padding: EdgeInsets.all(appTheme.spacing.sm),
+            padding: EdgeInsets.all(DesignSystem.spacingSM),
             decoration: BoxDecoration(
-              color: appTheme.colors.primaryRed,
-              borderRadius: BorderRadius.circular(appTheme.radius.circular),
+              color: DesignSystem.primary,
+              borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
             ),
             child: Icon(
               Icons.play_arrow,
-              color: appTheme.colors.white,
+              color: DesignSystem.onPrimary,
               size: 20,
             ),
           ),

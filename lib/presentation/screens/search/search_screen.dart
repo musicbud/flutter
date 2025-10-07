@@ -4,6 +4,8 @@ import '../../../models/search.dart' as search_models;
 import '../../blocs/search/search_bloc.dart';
 import '../../blocs/search/search_event.dart';
 import '../../blocs/search/search_state.dart';
+import '../../../presentation/navigation/main_navigation.dart';
+import '../../../presentation/navigation/navigation_drawer.dart';
 import 'search_app_bar.dart';
 import 'search_filters.dart';
 import 'search_results.dart' as search_widget;
@@ -20,9 +22,11 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
+  late final MainNavigationController _navigationController;
 
   final List<String> _selectedTypes = [];
   final Map<String, dynamic> _activeFilters = {};
@@ -31,6 +35,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
+    _navigationController = MainNavigationController();
     _loadInitialData();
     _scrollController.addListener(_onScroll);
   }
@@ -40,6 +45,7 @@ class _SearchScreenState extends State<SearchScreen> {
     _searchController.dispose();
     _searchFocusNode.dispose();
     _scrollController.dispose();
+    _navigationController.dispose();
     super.dispose();
   }
 
@@ -148,6 +154,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: SearchAppBar(
         searchController: _searchController,
         searchFocusNode: _searchFocusNode,
@@ -156,6 +163,15 @@ class _SearchScreenState extends State<SearchScreen> {
         onSearchSubmitted: _onSearch,
         onClearSearch: _onClearSearch,
         onToggleFilters: _onToggleFilters,
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
+      ),
+      drawer: MainNavigationDrawer(
+        navigationController: _navigationController,
       ),
       body: Column(
         children: [

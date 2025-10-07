@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/design_system.dart';
 import '../../../widgets/common/index.dart';
 import 'widgets/category_filter_widget.dart';
 
@@ -36,28 +36,26 @@ class _DiscoverSearchSectionState extends State<DiscoverSearchSection> {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
-
     return Column(
       children: [
         // Header Section
         Container(
-          padding: EdgeInsets.all(appTheme.spacing.lg),
+          padding: EdgeInsets.all(DesignSystem.spacingLG),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 'Discover Music',
-                style: appTheme.typography.headlineH5.copyWith(
-                  color: appTheme.colors.textPrimary,
+                style: DesignSystem.headlineMedium.copyWith(
+                  color: DesignSystem.onSurface,
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(height: appTheme.spacing.sm),
+              SizedBox(height: DesignSystem.spacingSM),
               Text(
                 'Find your next favorite track',
-                style: appTheme.typography.bodyMedium.copyWith(
-                  color: appTheme.colors.textMuted,
+                style: DesignSystem.bodyMedium.copyWith(
+                  color: DesignSystem.onSurfaceVariant,
                 ),
               ),
             ],
@@ -66,7 +64,7 @@ class _DiscoverSearchSectionState extends State<DiscoverSearchSection> {
 
         // Search Section
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+          padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
           child: ModernInputField(
             hintText: 'Search for artists, tracks, or genres...',
             controller: _searchController,
@@ -75,14 +73,14 @@ class _DiscoverSearchSectionState extends State<DiscoverSearchSection> {
           ),
         ),
 
-        SizedBox(height: appTheme.spacing.lg),
+        SizedBox(height: DesignSystem.spacingLG),
 
         // Categories Section
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+          padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
           child: CategoryFilterWidget(
             selectedCategory: widget.selectedCategory,
-            categories: const [
+            categories: [
               'All',
               'Pop',
               'Rock',
@@ -96,7 +94,7 @@ class _DiscoverSearchSectionState extends State<DiscoverSearchSection> {
           ),
         ),
 
-        SizedBox(height: appTheme.spacing.xl),
+        const SizedBox(height: DesignSystem.spacingXL),
       ],
     );
   }

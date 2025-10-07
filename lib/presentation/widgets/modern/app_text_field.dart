@@ -73,7 +73,6 @@ class AppTextField extends StatefulWidget {
 
 class _AppTextFieldState extends State<AppTextField> {
   late FocusNode _focusNode;
-  bool _isFocused = false;
 
   @override
   void initState() {
@@ -92,9 +91,7 @@ class _AppTextFieldState extends State<AppTextField> {
   }
 
   void _onFocusChange() {
-    setState(() {
-      _isFocused = _focusNode.hasFocus;
-    });
+    // Focus change handled without state update
   }
 
   @override

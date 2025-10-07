@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/design_system.dart';
 import '../components/discover_action_card.dart';
 import '../discover_content_manager.dart';
 
@@ -8,28 +8,27 @@ class DiscoverMoreSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
     final actions = DiscoverContentManager.getDiscoverActions();
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+      padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Discover More',
-            style: appTheme.typography.headlineH7.copyWith(
-              color: appTheme.colors.textPrimary,
+            style: DesignSystem.headlineSmall.copyWith(
+              color: DesignSystem.onSurface,
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: appTheme.spacing.md),
+          SizedBox(height: DesignSystem.spacingMD),
           Row(
             children: [
               ...actions.map((action) => Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(
-                    right: actions.last == action ? 0 : appTheme.spacing.md,
+                    right: actions.last == action ? 0 : DesignSystem.spacingMD,
                   ),
                   child: DiscoverActionCard(
                     title: action['title'] as String,

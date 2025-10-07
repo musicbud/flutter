@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../models/user_profile.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/design_system.dart';
 
 class ProfileStatsWidget extends StatelessWidget {
   final UserProfile userProfile;
@@ -12,33 +12,35 @@ class ProfileStatsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
+    final designSystemColors = Theme.of(context).designSystemColors!;
+    final designSystemSpacing = Theme.of(context).designSystemSpacing!;
+    final designSystemTypography = Theme.of(context).designSystemTypography!;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _buildStatItem('Followers', userProfile.followersCount?.toString() ?? '0', appTheme),
-        _buildStatItem('Following', '856', appTheme),
-        _buildStatItem('Tracks', '324', appTheme),
+        _buildStatItem('Followers', userProfile.followersCount.toString(), designSystemColors, designSystemSpacing, designSystemTypography),
+        _buildStatItem('Following', '856', designSystemColors, designSystemSpacing, designSystemTypography),
+        _buildStatItem('Tracks', '324', designSystemColors, designSystemSpacing, designSystemTypography),
       ],
     );
   }
 
-  Widget _buildStatItem(String label, String value, AppTheme appTheme) {
+  Widget _buildStatItem(String label, String value, DesignSystemColors designSystemColors, DesignSystemSpacing designSystemSpacing, DesignSystemTypography designSystemTypography) {
     return Column(
       children: [
         Text(
           value,
-          style: appTheme.typography.headlineH7.copyWith(
-            color: appTheme.colors.primaryRed,
+          style: designSystemTypography.titleSmall.copyWith(
+            color: designSystemColors.error,
             fontWeight: FontWeight.w700,
           ),
         ),
-        SizedBox(height: appTheme.spacing.xs),
+        SizedBox(height: designSystemSpacing.xs),
         Text(
           label,
-          style: appTheme.typography.caption.copyWith(
-            color: appTheme.colors.textMuted,
+          style: designSystemTypography.caption.copyWith(
+            color: designSystemColors.onSurfaceVariant,
           ),
         ),
       ],

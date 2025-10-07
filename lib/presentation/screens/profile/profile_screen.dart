@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/user_profile/user_profile_bloc.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../widgets/common/app_button.dart';
+import '../../../core/theme/design_system.dart';
 import '../../../widgets/common/index.dart';
+import '../../../presentation/navigation/main_navigation.dart';
+import '../../../presentation/navigation/navigation_drawer.dart';
 import 'profile_header_widget.dart';
 import 'profile_music_widget.dart';
 import 'profile_activity_widget.dart';
@@ -20,6 +21,8 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  late final MainNavigationController _navigationController;
   int _selectedIndex = 0;
 
   // Top content data
@@ -35,8 +38,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
+    _navigationController = MainNavigationController();
     // Load user profile when page initializes
     context.read<UserProfileBloc>().add(FetchMyProfile());
+  }
+
+  @override
+  void dispose() {
+    _navigationController.dispose();
+    super.dispose();
   }
 
   void _onTabChanged(int index) {
@@ -69,7 +79,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
+    final designSystemColors = Theme.of(context).designSystemColors!;
+    final designSystemSpacing = Theme.of(context).designSystemSpacing!;
+    final designSystemGradients = Theme.of(context).designSystemGradients!;
 
     return BlocListener<UserProfileBloc, UserProfileState>(
       listener: (context, state) {
@@ -77,14 +89,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Error: ${state.message}'),
-              backgroundColor: appTheme.colors.errorRed,
+              backgroundColor: designSystemColors.error,
             ),
           );
         } else if (state is UserProfileUpdated) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Text('Profile updated successfully'),
-              backgroundColor: appTheme.colors.successGreen,
+              backgroundColor: designSystemColors.success,
             ),
           );
           // Refresh profile after update
@@ -121,18 +133,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
           }
 
           return Scaffold(
+            key: _scaffoldKey,
+            appBar: AppBar(
+              title: const Text('Profile'),
+              leading: IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () {
+                  _scaffoldKey.currentState?.openDrawer();
+                },
+              ),
+            ),
+            drawer: MainNavigationDrawer(
+              navigationController: _navigationController,
+            ),
             body: Container(
               decoration: BoxDecoration(
-                gradient: appTheme.gradients.backgroundGradient,
+                gradient: designSystemGradients.background,
               ),
               child: _buildBody(state),
             ),
             bottomNavigationBar: BottomNavigationBar(
               currentIndex: _selectedIndex,
               onTap: _onTabChanged,
-              backgroundColor: appTheme.colors.surface,
-              selectedItemColor: appTheme.colors.primary,
-              unselectedItemColor: appTheme.colors.onSurfaceVariant,
+              backgroundColor: designSystemColors.surface,
+              selectedItemColor: designSystemColors.primary,
+              unselectedItemColor: designSystemColors.onSurfaceVariant,
               items: const [
                 BottomNavigationBarItem(
                   icon: Icon(Icons.person),
@@ -174,7 +199,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildProfileTab(UserProfileState state) {
-    final appTheme = AppTheme.of(context);
+    final designSystemSpacing = Theme.of(context).designSystemSpacing!;
     return CustomScrollView(
       slivers: [
         // Profile Header Section
@@ -188,106 +213,106 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
         // Profile Sections
         if (state is UserProfileLoaded) ...[
-          SliverToBoxAdapter(child: SizedBox(height: appTheme.spacing.xl)),
-
-          // My Music Section
-          SliverToBoxAdapter(
-            child: ProfileMusicWidget(),
-          ),
-
-          SliverToBoxAdapter(child: SizedBox(height: appTheme.spacing.xl)),
-
-          // Recent Activity Section
-          SliverToBoxAdapter(
-            child: ProfileActivityWidget(),
-          ),
-
-          SliverToBoxAdapter(child: SizedBox(height: appTheme.spacing.xl)),
-
-          // Settings Section
-          SliverToBoxAdapter(
-            child: ProfileSettingsWidget(),
-          ),
-
-          SliverToBoxAdapter(child: SizedBox(height: appTheme.spacing.xl)),
-
-          // Logout Section
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
-              child: AppButton.secondary(
-                text: 'Logout',
-                onPressed: () {
-                  // Handle logout
-                },
-                icon: Icons.logout,
-                size: AppButtonSize.large,
-                width: double.infinity,
+          const SliverToBoxAdapter(child: SizedBox(height: 32)),
+ 
+            // My Music Section
+            SliverToBoxAdapter(
+              child: const ProfileMusicWidget(),
+            ),
+ 
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+ 
+            // Recent Activity Section
+            SliverToBoxAdapter(
+              child: const ProfileActivityWidget(),
+            ),
+ 
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+ 
+            // Settings Section
+            SliverToBoxAdapter(
+              child: const ProfileSettingsWidget(),
+            ),
+ 
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+ 
+            // Logout Section
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: designSystemSpacing.lg),
+                child: AppButton.secondary(
+                  text: 'Logout',
+                  onPressed: () {
+                    // Handle logout
+                  },
+                  icon: Icons.logout,
+                  size: AppButtonSize.large,
+                  width: double.infinity,
+                ),
               ),
             ),
-          ),
-
-          SliverToBoxAdapter(child: SizedBox(height: appTheme.spacing.xl)),
+ 
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
         ],
       ],
     );
   }
 
   Widget _buildTopTab(UserProfileState state) {
-    final appTheme = AppTheme.of(context);
+    final designSystemSpacing = Theme.of(context).designSystemSpacing!;
 
     return CustomScrollView(
       slivers: [
         // Top Tracks Section
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+            padding: EdgeInsets.symmetric(horizontal: designSystemSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SectionHeader(title: 'Top Tracks'),
-                SizedBox(height: appTheme.spacing.md),
+                SizedBox(height: designSystemSpacing.md),
                 _buildTopTracksList(),
               ],
             ),
           ),
         ),
 
-        SliverToBoxAdapter(child: SizedBox(height: appTheme.spacing.xl)),
+        SliverToBoxAdapter(child: SizedBox(height: designSystemSpacing.xl)),
 
         // Top Artists Section
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+            padding: EdgeInsets.symmetric(horizontal: designSystemSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SectionHeader(title: 'Top Artists'),
-                SizedBox(height: appTheme.spacing.md),
+                SizedBox(height: designSystemSpacing.md),
                 _buildTopArtistsList(),
               ],
             ),
           ),
         ),
 
-        SliverToBoxAdapter(child: SizedBox(height: appTheme.spacing.xl)),
+        SliverToBoxAdapter(child: SizedBox(height: designSystemSpacing.xl)),
 
         // Top Genres Section
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+            padding: EdgeInsets.symmetric(horizontal: designSystemSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SectionHeader(title: 'Top Genres'),
-                SizedBox(height: appTheme.spacing.md),
+                SizedBox(height: designSystemSpacing.md),
                 _buildTopGenresList(),
               ],
             ),
           ),
         ),
 
-        SliverToBoxAdapter(child: SizedBox(height: appTheme.spacing.xl)),
+        SliverToBoxAdapter(child: SizedBox(height: designSystemSpacing.xl)),
       ],
     );
   }
@@ -378,60 +403,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildLikedTab(UserProfileState state) {
-    final appTheme = AppTheme.of(context);
+    final designSystemSpacing = Theme.of(context).designSystemSpacing!;
 
     return CustomScrollView(
       slivers: [
         // Liked Tracks Section
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+            padding: EdgeInsets.symmetric(horizontal: designSystemSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SectionHeader(title: 'Liked Tracks'),
-                SizedBox(height: appTheme.spacing.md),
+                SizedBox(height: designSystemSpacing.md),
                 _buildLikedTracksList(),
               ],
             ),
           ),
         ),
 
-        SliverToBoxAdapter(child: SizedBox(height: appTheme.spacing.xl)),
+        SliverToBoxAdapter(child: SizedBox(height: designSystemSpacing.xl)),
 
         // Liked Artists Section
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+            padding: EdgeInsets.symmetric(horizontal: designSystemSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SectionHeader(title: 'Liked Artists'),
-                SizedBox(height: appTheme.spacing.md),
+                SizedBox(height: designSystemSpacing.md),
                 _buildLikedArtistsList(),
               ],
             ),
           ),
         ),
 
-        SliverToBoxAdapter(child: SizedBox(height: appTheme.spacing.xl)),
+        SliverToBoxAdapter(child: SizedBox(height: designSystemSpacing.xl)),
 
         // Liked Genres Section
         SliverToBoxAdapter(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+            padding: EdgeInsets.symmetric(horizontal: designSystemSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SectionHeader(title: 'Liked Genres'),
-                SizedBox(height: appTheme.spacing.md),
+                SizedBox(height: designSystemSpacing.md),
                 _buildLikedGenresList(),
               ],
             ),
           ),
         ),
 
-        SliverToBoxAdapter(child: SizedBox(height: appTheme.spacing.xl)),
+        SliverToBoxAdapter(child: SizedBox(height: designSystemSpacing.xl)),
       ],
     );
   }

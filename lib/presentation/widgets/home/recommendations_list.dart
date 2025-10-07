@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/design_system.dart';
 import '../common/modern_card.dart';
 
 class RecommendationItem {
@@ -42,10 +42,12 @@ class RecommendationsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
+    final colors = Theme.of(context).designSystemColors!;
+    final typography = Theme.of(context).designSystemTypography!;
+    final spacing = Theme.of(context).designSystemSpacing!;
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+      padding: EdgeInsets.symmetric(horizontal: spacing.lg),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -55,8 +57,8 @@ class RecommendationsList extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: appTheme.typography.headlineH6.copyWith(
-                  color: appTheme.colors.textPrimary,
+                style: typography.headlineSmall.copyWith(
+                  color: colors.onSurface,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -65,15 +67,15 @@ class RecommendationsList extends StatelessWidget {
                   onPressed: onSeeAll,
                   child: Text(
                     'See All',
-                    style: appTheme.typography.bodySmall.copyWith(
-                      color: appTheme.colors.primaryRed,
+                    style: typography.bodySmall.copyWith(
+                      color: colors.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
             ],
           ),
-          SizedBox(height: appTheme.spacing.md),
+          SizedBox(height: spacing.md),
 
           // Horizontal list
           SizedBox(
@@ -86,9 +88,9 @@ class RecommendationsList extends StatelessWidget {
                 return Container(
                   width: itemWidth,
                   margin: EdgeInsets.only(
-                    right: index < items.length - 1 ? appTheme.spacing.md : 0,
+                    right: index < items.length - 1 ? spacing.md : 0,
                   ),
-                  child: _buildRecommendationCard(item, appTheme),
+                  child: _buildRecommendationCard(item, context),
                 );
               },
             ),
@@ -98,7 +100,12 @@ class RecommendationsList extends StatelessWidget {
     );
   }
 
-  Widget _buildRecommendationCard(RecommendationItem item, AppTheme appTheme) {
+  Widget _buildRecommendationCard(RecommendationItem item, BuildContext context) {
+    final colors = Theme.of(context).designSystemColors!;
+    final typography = Theme.of(context).designSystemTypography!;
+    final spacing = Theme.of(context).designSystemSpacing!;
+    final radius = Theme.of(context).designSystemRadius!;
+
     return ModernCard(
       variant: ModernCardVariant.primary,
       onTap: item.onTap,
@@ -110,30 +117,30 @@ class RecommendationsList extends StatelessWidget {
             height: 100,
             width: double.infinity,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(appTheme.radius.lg),
-              color: appTheme.colors.surfaceDark,
+              borderRadius: BorderRadius.circular(radius.lg),
+              color: colors.surfaceContainer,
             ),
             child: item.imageUrl != null
                 ? ClipRRect(
-                    borderRadius: BorderRadius.circular(appTheme.radius.lg),
+                    borderRadius: BorderRadius.circular(radius.lg),
                     child: Image.network(
                       item.imageUrl!,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
-                        return _buildIconFallback(appTheme, item.icon);
+                        return _buildIconFallback(context, item.icon);
                       },
                     ),
                   )
-                : _buildIconFallback(appTheme, item.icon),
+                : _buildIconFallback(context, item.icon),
           ),
 
-          SizedBox(height: appTheme.spacing.md),
+          SizedBox(height: spacing.md),
 
           // Title
           Text(
             item.title,
-            style: appTheme.typography.titleMedium.copyWith(
-              color: appTheme.colors.textPrimary,
+            style: typography.titleMedium.copyWith(
+              color: colors.onSurface,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -141,18 +148,18 @@ class RecommendationsList extends StatelessWidget {
 
           // Subtitle
           if (item.subtitle != null) ...[
-            SizedBox(height: appTheme.spacing.xs),
+            SizedBox(height: spacing.xs),
             Text(
               item.subtitle!,
-              style: appTheme.typography.bodySmall.copyWith(
-                color: appTheme.colors.textMuted,
+              style: typography.bodySmall.copyWith(
+                color: colors.onSurfaceVariant,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ],
 
-          SizedBox(height: appTheme.spacing.md),
+          SizedBox(height: spacing.md),
 
           // Action row
           Row(
@@ -160,14 +167,14 @@ class RecommendationsList extends StatelessWidget {
             children: [
               // Play button
               Container(
-                padding: EdgeInsets.all(appTheme.spacing.sm),
+                padding: EdgeInsets.all(spacing.sm),
                 decoration: BoxDecoration(
-                  color: appTheme.colors.primaryRed,
-                  borderRadius: BorderRadius.circular(appTheme.radius.circular),
+                  color: colors.primary,
+                  borderRadius: BorderRadius.circular(radius.circular),
                 ),
                 child: Icon(
                   item.isPlaying ? Icons.pause : Icons.play_arrow,
-                  color: appTheme.colors.white,
+                  color: colors.onPrimary,
                   size: 16,
                 ),
               ),
@@ -175,7 +182,7 @@ class RecommendationsList extends StatelessWidget {
               // Like button
               Icon(
                 item.isLiked ? Icons.favorite : Icons.favorite_border,
-                color: item.isLiked ? appTheme.colors.primaryRed : appTheme.colors.textMuted,
+                color: item.isLiked ? colors.primary : colors.onSurfaceVariant,
                 size: 20,
               ),
             ],
@@ -185,15 +192,19 @@ class RecommendationsList extends StatelessWidget {
     );
   }
 
-  Widget _buildIconFallback(AppTheme appTheme, IconData? icon) {
+  Widget _buildIconFallback(BuildContext context, IconData? icon) {
+    final colors = Theme.of(context).designSystemColors!;
+    final gradients = Theme.of(context).designSystemGradients!;
+    final radius = Theme.of(context).designSystemRadius!;
+
     return Container(
       decoration: BoxDecoration(
-        gradient: appTheme.gradients.cardGradient,
-        borderRadius: BorderRadius.circular(appTheme.radius.lg),
+        gradient: gradients.card,
+        borderRadius: BorderRadius.circular(radius.lg),
       ),
       child: Icon(
         icon ?? Icons.music_note,
-        color: appTheme.colors.primaryRed,
+        color: colors.primary,
         size: 40,
       ),
     );

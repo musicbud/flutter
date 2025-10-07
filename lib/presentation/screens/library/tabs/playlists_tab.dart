@@ -40,13 +40,13 @@ class PlaylistsTab extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(height: DesignSystem.spacingMD),
+              const SizedBox(height: DesignSystem.spacingMD),
 
               // Playlists Grid
               GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: DesignSystem.spacingMD,
                   mainAxisSpacing: DesignSystem.spacingMD,
@@ -89,36 +89,36 @@ class PlaylistsTab extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: DesignSystem.spacingMD),
-            Center(
-              child: Padding(
-                padding: EdgeInsets.all(DesignSystem.spacingXL),
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.queue_music,
-                      size: 64,
-                      color: DesignSystem.onSurfaceVariant,
-                    ),
-                    SizedBox(height: DesignSystem.spacingMD),
-                    Text(
-                      'No playlists yet',
-                      style: DesignSystem.headlineSmall.copyWith(
-                        color: DesignSystem.onSurfaceVariant,
-                      ),
-                    ),
-                    SizedBox(height: DesignSystem.spacingSM),
-                    Text(
-                      'Create your first playlist to get started',
-                      style: DesignSystem.bodyMedium.copyWith(
-                        color: DesignSystem.onSurfaceVariant,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
+            const SizedBox(height: DesignSystem.spacingMD),
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.all(DesignSystem.spacingXL),
+            child: Column(
+              children: [
+                const Icon(
+                  Icons.queue_music,
+                  size: 64,
+                  color: DesignSystem.onSurfaceVariant,
                 ),
-              ),
+                const SizedBox(height: DesignSystem.spacingMD),
+                Text(
+                  'No playlists yet',
+                  style: DesignSystem.headlineSmall.copyWith(
+                    color: DesignSystem.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: DesignSystem.spacingSM),
+                Text(
+                  'Create your first playlist to get started',
+                  style: DesignSystem.bodyMedium.copyWith(
+                    color: DesignSystem.onSurfaceVariant,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
+          ),
+        ),
           ],
         );
       },

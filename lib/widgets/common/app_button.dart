@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/design_system.dart';
 
 enum AppButtonVariant {
   primary,
@@ -48,15 +48,14 @@ class AppButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
 
     return SizedBox(
       width: width,
       height: _getHeight(),
       child: ElevatedButton(
         onPressed: (isDisabled || isLoading) ? null : onPressed,
-        style: _getButtonStyle(appTheme),
-        child: _buildContent(appTheme),
+        style: _getButtonStyle(),
+        child: _buildContent(context),
       ),
     );
   }
@@ -74,7 +73,7 @@ class AppButton extends StatelessWidget {
     }
   }
 
-  ButtonStyle _getButtonStyle(AppTheme appTheme) {
+  ButtonStyle _getButtonStyle() {
     Color? buttonColor;
     Color? buttonTextColor;
     Color? buttonBorderColor;
@@ -83,24 +82,24 @@ class AppButton extends StatelessWidget {
     // Set colors based on variant
     switch (variant) {
       case AppButtonVariant.primary:
-        buttonColor = backgroundColor ?? appTheme.colors.primaryRed;
-        buttonTextColor = textColor ?? appTheme.colors.white;
-        buttonBorderColor = borderColor ?? appTheme.colors.primaryRed;
+        buttonColor = backgroundColor ?? DesignSystem.primary;
+        buttonTextColor = textColor ?? DesignSystem.onPrimary;
+        buttonBorderColor = borderColor ?? DesignSystem.primary;
         break;
       case AppButtonVariant.secondary:
-        buttonColor = backgroundColor ?? appTheme.colors.transparent;
-        buttonTextColor = textColor ?? appTheme.colors.primaryRed;
-        buttonBorderColor = borderColor ?? appTheme.colors.primaryRed;
+        buttonColor = backgroundColor ?? DesignSystem.transparent;
+        buttonTextColor = textColor ?? DesignSystem.primary;
+        buttonBorderColor = borderColor ?? DesignSystem.primary;
         break;
       case AppButtonVariant.text:
-        buttonColor = backgroundColor ?? appTheme.colors.transparent;
-        buttonTextColor = textColor ?? appTheme.colors.primaryRed;
-        buttonBorderColor = borderColor ?? appTheme.colors.transparent;
+        buttonColor = backgroundColor ?? DesignSystem.transparent;
+        buttonTextColor = textColor ?? DesignSystem.primary;
+        buttonBorderColor = borderColor ?? DesignSystem.transparent;
         break;
       case AppButtonVariant.ghost:
-        buttonColor = backgroundColor ?? appTheme.colors.transparent;
-        buttonTextColor = textColor ?? appTheme.colors.white;
-        buttonBorderColor = borderColor ?? appTheme.colors.lightGray;
+        buttonColor = backgroundColor ?? DesignSystem.transparent;
+        buttonTextColor = textColor ?? DesignSystem.onPrimary;
+        buttonBorderColor = borderColor ?? DesignSystem.onSurfaceVariant;
         break;
     }
 
@@ -108,46 +107,46 @@ class AppButton extends StatelessWidget {
     switch (size) {
       case AppButtonSize.small:
         padding = EdgeInsets.symmetric(
-          horizontal: appTheme.spacing.md,
-          vertical: appTheme.spacing.sm,
+          horizontal: DesignSystem.spacingMD,
+          vertical: DesignSystem.spacingSM,
         );
         break;
       case AppButtonSize.medium:
         padding = EdgeInsets.symmetric(
-          horizontal: appTheme.spacing.lg,
-          vertical: appTheme.spacing.md,
+          horizontal: DesignSystem.spacingLG,
+          vertical: DesignSystem.spacingMD,
         );
         break;
       case AppButtonSize.large:
         padding = EdgeInsets.symmetric(
-          horizontal: appTheme.spacing.xl,
-          vertical: appTheme.spacing.lg,
+          horizontal: DesignSystem.spacingXL,
+          vertical: DesignSystem.spacingLG,
         );
         break;
       case AppButtonSize.xlarge:
         padding = EdgeInsets.symmetric(
-          horizontal: appTheme.spacing.xxl,
-          vertical: appTheme.spacing.xl,
+          horizontal: DesignSystem.spacingXXL,
+          vertical: DesignSystem.spacingXL,
         );
         break;
     }
 
     return ElevatedButton.styleFrom(
-      backgroundColor: isOutlined ? appTheme.colors.transparent : buttonColor,
+      backgroundColor: isOutlined ? DesignSystem.transparent : buttonColor,
       foregroundColor: buttonTextColor,
-      side: isOutlined || buttonBorderColor != appTheme.colors.transparent
+      side: isOutlined || buttonBorderColor != DesignSystem.transparent
           ? BorderSide(color: buttonBorderColor, width: 2)
           : null,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(appTheme.radius.md),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       ),
       padding: padding,
       elevation: isOutlined ? 0 : (variant == AppButtonVariant.primary ? 4 : 0),
-      shadowColor: isOutlined ? null : appTheme.colors.primaryRed.withValues(alpha:  0.3),
+      shadowColor: isOutlined ? null : DesignSystem.primary.withValues(alpha: 0.3),
     );
   }
 
-  Widget _buildContent(AppTheme appTheme) {
+  Widget _buildContent(BuildContext context) {
     if (isLoading) {
       return SizedBox(
         width: 20,
@@ -156,8 +155,8 @@ class AppButton extends StatelessWidget {
           strokeWidth: 2,
           valueColor: AlwaysStoppedAnimation<Color>(
             variant == AppButtonVariant.primary
-                ? appTheme.colors.white
-                : appTheme.colors.primaryRed,
+                ? DesignSystem.onPrimary
+                : DesignSystem.primary,
           ),
         ),
       );
@@ -167,12 +166,12 @@ class AppButton extends StatelessWidget {
 
     if (icon != null) {
       children.add(Icon(icon, size: _getIconSize()));
-      children.add(SizedBox(width: appTheme.spacing.sm));
+      children.add(SizedBox(width: DesignSystem.spacingSM));
     }
 
     children.add(Text(
       text,
-      style: _getTextStyle(appTheme),
+      style: _getTextStyle(),
     ));
 
     return Row(
@@ -195,22 +194,22 @@ class AppButton extends StatelessWidget {
     }
   }
 
-  TextStyle _getTextStyle(AppTheme appTheme) {
+  TextStyle _getTextStyle() {
     switch (size) {
       case AppButtonSize.small:
-        return appTheme.typography.titleSmall.copyWith(
+        return DesignSystem.titleSmall.copyWith(
           fontWeight: FontWeight.w600,
         );
       case AppButtonSize.medium:
-        return appTheme.typography.titleMedium.copyWith(
+        return DesignSystem.titleMedium.copyWith(
           fontWeight: FontWeight.w600,
         );
       case AppButtonSize.large:
-        return appTheme.typography.titleLarge.copyWith(
+        return DesignSystem.titleLarge.copyWith(
           fontWeight: FontWeight.w600,
         );
       case AppButtonSize.xlarge:
-        return appTheme.typography.headlineH7.copyWith(
+        return DesignSystem.headlineSmall.copyWith(
           fontWeight: FontWeight.w600,
         );
     }

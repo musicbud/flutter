@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:musicbud_flutter/blocs/spotify/spotify_bloc.dart';
 import 'package:musicbud_flutter/data/models/common_track.dart';
-import 'package:musicbud_flutter/injection_container.dart';
 import 'package:musicbud_flutter/presentation/screens/spotify/played_tracks_map_screen.dart';
 
 class SpotifyControlScreen extends StatelessWidget {
@@ -11,10 +10,7 @@ class SpotifyControlScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<SpotifyBloc>(),
-      child: const _SpotifyControlScreenContent(),
-    );
+    return const _SpotifyControlScreenContent();
   }
 }
 
@@ -27,33 +23,29 @@ class _SpotifyControlScreenContent extends StatefulWidget {
 
 class _SpotifyControlScreenContentState extends State<_SpotifyControlScreenContent> {
   List<CommonTrack> _playedTracks = [];
-  List<Map<String, dynamic>> _spotifyDevices = [];
-  String? _selectedDeviceId;
 
   @override
   void initState() {
     super.initState();
     context.read<SpotifyBloc>().add(LoadPlayedTracks());
-    context.read<SpotifyBloc>().add(LoadSpotifyDevices());
   }
 
   Future<void> _sendLocation() async {
     try {
       final position = await _getCurrentLocation();
-      context.read<SpotifyBloc>().add(SaveLocation(position.latitude, position.longitude));
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Location sent successfully')),
-      );
+      if (mounted) {
+        context.read<SpotifyBloc>().add(SaveLocation(position.latitude, position.longitude));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Location sent successfully')),
+        );
+      }
     } catch (e) {
-      print('Error sending location: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to send location')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to send location')),
+        );
+      }
     }
-  }
-
-  Future<void> _playSpotifyTrack(String trackId) async {
-    context.read<SpotifyBloc>().add(PlaySpotifyTrack(trackId, _selectedDeviceId));
   }
 
   Widget _buildPlayedTracksList() {
@@ -77,20 +69,23 @@ class _SpotifyControlScreenContentState extends State<_SpotifyControlScreenConte
                 onPressed: () async {
                   try {
                     final position = await Geolocator.getCurrentPosition();
-                    context.read<SpotifyBloc>().add(PlayTrackWithLocation(
-                      track.id ?? '',
-                      track.name,
-                      position.latitude,
-                      position.longitude,
-                    ));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Track played with location')),
-                    );
+                    if (mounted) {
+                      context.read<SpotifyBloc>().add(PlayTrackWithLocation(
+                        track.id ?? '',
+                        track.name,
+                        position.latitude,
+                        position.longitude,
+                      ));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Track played with location')),
+                      );
+                    }
                   } catch (e) {
-                    print('Error playing track with location: $e');
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Failed to play track with location')),
-                    );
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Failed to play track with location')),
+                      );
+                    }
                   }
                 },
               ),
@@ -101,33 +96,6 @@ class _SpotifyControlScreenContentState extends State<_SpotifyControlScreenConte
     );
   }
 
-  Widget _buildSpotifyDeviceDropdown() {
-    return BlocBuilder<SpotifyBloc, SpotifyState>(
-      builder: (context, state) {
-        if (state is SpotifyDevicesLoaded) {
-          _spotifyDevices = state.devices;
-          if (_spotifyDevices.isNotEmpty && _selectedDeviceId == null) {
-            _selectedDeviceId = _spotifyDevices[0]['id'];
-          }
-        }
-        return DropdownButton<String>(
-          value: _selectedDeviceId,
-          items: _spotifyDevices.map((device) {
-            return DropdownMenuItem<String>(
-              value: device['id'],
-              child: Text(device['name']),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
-            setState(() {
-              _selectedDeviceId = newValue;
-            });
-          },
-          hint: const Text('Select Spotify Device'),
-        );
-      },
-    );
-  }
 
   Future<Position> _getCurrentLocation() async {
     bool serviceEnabled;
@@ -159,28 +127,6 @@ class _SpotifyControlScreenContentState extends State<_SpotifyControlScreenConte
       appBar: AppBar(
         title: const Text('Spotify Control'),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.devices),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text('Select Spotify Device'),
-                    content: _buildSpotifyDeviceDropdown(),
-                    actions: [
-                      TextButton(
-                        child: const Text('Close'),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ),
           IconButton(
             icon: const Icon(Icons.location_on),
             onPressed: _sendLocation,

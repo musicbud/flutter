@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/design_system.dart';
 
 enum AppCardVariant {
   primary,
@@ -39,54 +39,52 @@ class AppCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: width,
         height: height,
         margin: margin,
-        padding: padding ?? EdgeInsets.all(appTheme.spacing.md),
-        decoration: _getDecoration(appTheme),
+        padding: padding ?? EdgeInsets.all(DesignSystem.spacingMD),
+        decoration: _getDecoration(),
         child: child,
       ),
     );
   }
 
-  BoxDecoration _getDecoration(AppTheme appTheme) {
+  BoxDecoration _getDecoration() {
     switch (variant) {
       case AppCardVariant.primary:
         return BoxDecoration(
-          color: appTheme.colors.darkTone,
-          borderRadius: BorderRadius.circular(appTheme.radius.lg),
+          color: DesignSystem.surface,
+          borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
           border: Border.all(
-            color: appTheme.colors.lightGray.withValues(alpha:  0.2),
+            color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
           ),
         );
       case AppCardVariant.secondary:
         return BoxDecoration(
-          color: appTheme.colors.darkTone,
-          borderRadius: BorderRadius.circular(appTheme.radius.lg),
+          color: DesignSystem.surface,
+          borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
           border: Border.all(
-            color: appTheme.colors.primaryRed.withValues(alpha:  0.3),
+            color: DesignSystem.primary.withValues(alpha: 0.3),
           ),
         );
       case AppCardVariant.outline:
         return BoxDecoration(
-          color: appTheme.colors.darkTone,
-          borderRadius: BorderRadius.circular(appTheme.radius.lg),
+          color: DesignSystem.surface,
+          borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
           border: Border.all(
-            color: appTheme.colors.lightGray.withValues(alpha:  0.3),
+            color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.3),
           ),
         );
       case AppCardVariant.elevated:
         return BoxDecoration(
-          color: appTheme.colors.darkTone,
-          borderRadius: BorderRadius.circular(appTheme.radius.lg),
+          color: DesignSystem.surface,
+          borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
           boxShadow: [
             BoxShadow(
-              color: appTheme.colors.darkTone.withValues(alpha:  0.3),
+              color: DesignSystem.surface.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -94,49 +92,41 @@ class AppCard extends StatelessWidget {
         );
       case AppCardVariant.musicTrack:
         return BoxDecoration(
-          color: appTheme.colors.darkTone,
-          borderRadius: BorderRadius.circular(appTheme.radius.lg),
+          color: DesignSystem.surface,
+          borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
           border: Border.all(
-            color: appTheme.colors.lightGray.withValues(alpha:  0.2),
+            color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
           ),
         );
       case AppCardVariant.profile:
         return BoxDecoration(
-          color: appTheme.colors.darkTone,
-          borderRadius: BorderRadius.circular(appTheme.radius.lg),
+          color: DesignSystem.surface,
+          borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
           border: Border.all(
-            color: appTheme.colors.lightGray.withValues(alpha:  0.2),
+            color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
           ),
         );
       case AppCardVariant.event:
         return BoxDecoration(
-          color: appTheme.colors.darkTone,
-          borderRadius: BorderRadius.circular(appTheme.radius.lg),
+          color: DesignSystem.surface,
+          borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
           border: Border.all(
-            color: appTheme.colors.lightGray.withValues(alpha:  0.2),
+            color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
           ),
         );
       case AppCardVariant.gradient:
         return BoxDecoration(
-          gradient: appTheme.gradients.primaryGradient,
-          borderRadius: BorderRadius.circular(appTheme.radius.lg),
+          gradient: DesignSystem.gradientPrimary,
+          borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
         );
       case AppCardVariant.transparent:
         return BoxDecoration(
-          color: appTheme.colors.transparent,
-          borderRadius: BorderRadius.circular(appTheme.radius.lg),
+          color: DesignSystem.transparent,
+          borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
         );
     }
   }
 
-  BorderRadius _getBorderRadius(AppTheme appTheme) {
-    switch (variant) {
-      case AppCardVariant.gradient:
-        return BorderRadius.circular(appTheme.radius.xl);
-      default:
-        return BorderRadius.circular(appTheme.radius.lg);
-    }
-  }
 }
 
 // Factory constructors for common card types

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/design_system.dart';
 import '../../../../models/track.dart';
 import '../../../widgets/common/section_header.dart';
 import '../components/track_card.dart';
@@ -18,10 +18,8 @@ class TrendingTracksSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
-
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+      padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -30,15 +28,15 @@ class TrendingTracksSection extends StatelessWidget {
             actionText: 'View All',
             onActionPressed: onViewAllPressed,
           ),
-          SizedBox(height: appTheme.spacing.md),
+          const SizedBox(height: DesignSystem.spacingMD),
           isLoading
               ? const Center(child: CircularProgressIndicator())
               : tracks.isEmpty
                   ? const Center(child: Text('No tracks available'))
                   : Column(
-                      children: tracks.map((track) => Padding(
-                        padding: EdgeInsets.only(bottom: appTheme.spacing.md),
-                        child: TrackCard(
+                    children: tracks.map((track) => Padding(
+                      padding: EdgeInsets.only(bottom: DesignSystem.spacingMD),
+                      child: TrackCard(
                           title: track.name,
                           artist: track.artistName ?? 'Unknown Artist',
                           genre: 'Unknown', // Track doesn't have genre directly

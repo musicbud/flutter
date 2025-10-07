@@ -8,6 +8,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   final ValueChanged<String> onSearchSubmitted;
   final VoidCallback onClearSearch;
   final VoidCallback onToggleFilters;
+  final Widget? leading;
 
   const SearchAppBar({
     super.key,
@@ -18,6 +19,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.onSearchSubmitted,
     required this.onClearSearch,
     required this.onToggleFilters,
+    this.leading,
   });
 
   @override
@@ -26,6 +28,7 @@ class SearchAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      leading: leading,
       title: TextField(
         controller: searchController,
         focusNode: searchFocusNode,

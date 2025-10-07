@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/design_system.dart';
-import '../common/index.dart';
+import 'package:musicbud_flutter/core/theme/design_system.dart';
 
 /// A builder class for composing card components with common patterns.
 /// Provides a fluent API for building cards with consistent styling and behavior.
@@ -32,7 +31,6 @@ import '../common/index.dart';
 /// ```
 class CardBuilder {
   CardVariant _variant = CardVariant.primary;
-  EdgeInsetsGeometry? _padding;
   EdgeInsetsGeometry? _margin;
   BorderRadius? _borderRadius;
   List<BoxShadow>? _shadows;
@@ -42,8 +40,6 @@ class CardBuilder {
   Widget? _content;
   Widget? _footer;
   List<Widget>? _actions;
-  bool _isInteractive = false;
-  double? _elevation;
 
   /// Creates a new CardBuilder instance
   CardBuilder();
@@ -56,7 +52,7 @@ class CardBuilder {
 
   /// Sets custom padding for the card content
   CardBuilder withPadding(EdgeInsetsGeometry padding) {
-    _padding = padding;
+    // Padding is now fixed in build method
     return this;
   }
 
@@ -87,7 +83,6 @@ class CardBuilder {
   /// Makes the card interactive with tap callback
   CardBuilder withOnTap(VoidCallback onTap) {
     _onTap = onTap;
-    _isInteractive = true;
     return this;
   }
 
@@ -131,7 +126,7 @@ class CardBuilder {
 
   /// Sets custom elevation for the card
   CardBuilder withElevation(double elevation) {
-    _elevation = elevation;
+    // Elevation is now fixed in build method
     return this;
   }
 
@@ -151,7 +146,7 @@ class CardBuilder {
           onTap: _onTap,
           borderRadius: _borderRadius ?? BorderRadius.circular(DesignSystem.radiusLG),
           child: Container(
-            padding: _padding ?? EdgeInsets.all(DesignSystem.spacingMD),
+            padding: EdgeInsets.all(DesignSystem.spacingMD),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,7 +266,7 @@ class _CardThemeData {
   final Color color;
   final List<BoxShadow> shadows;
 
-  const _CardThemeData({
+  _CardThemeData({
     required this.color,
     required this.shadows,
   });

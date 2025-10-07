@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/repositories/search_repository.dart';
-import '../../../models/search.dart';
 import 'search_event.dart';
 import 'search_state.dart';
 
@@ -54,16 +53,15 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     await result.fold(
       (failure) async => emit(const SearchError('Failed to perform search')),
       (searchResults) async {
-        final results = searchResults as SearchResults;
-        if (event.saveToRecent && results.items.isNotEmpty) {
+        if (event.saveToRecent && searchResults.items.isNotEmpty) {
           await repository.saveRecentSearch(event.query);
         }
 
-        if (results.items.isEmpty) {
+        if (searchResults.items.isEmpty) {
           emit(SearchEmpty(event.query));
         } else {
           emit(SearchResultsLoaded(
-            results: results,
+            results: searchResults,
             query: event.query,
             selectedTypes: event.types,
             activeFilters: event.filters,

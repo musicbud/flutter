@@ -27,8 +27,8 @@ class LikedSongsTab extends StatelessWidget {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(height: DesignSystem.spacingMD),
-
+              const SizedBox(height: DesignSystem.spacingMD),
+ 
               // Liked Songs List
               Column(
                 children: state.items.map((item) {
@@ -41,7 +41,7 @@ class LikedSongsTab extends StatelessWidget {
                         imageUrl: item.imageUrl ?? 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop',
                         accentColor: DesignSystem.accentBlue,
                       ),
-                      SizedBox(height: DesignSystem.spacingMD),
+                      const SizedBox(height: DesignSystem.spacingMD),
                     ],
                   );
                 }).toList(),
@@ -61,25 +61,25 @@ class LikedSongsTab extends StatelessWidget {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            SizedBox(height: DesignSystem.spacingMD),
+            const SizedBox(height: DesignSystem.spacingMD),
             Center(
               child: Padding(
-                padding: EdgeInsets.all(DesignSystem.spacingXL),
+                padding: const EdgeInsets.all(DesignSystem.spacingXL),
                 child: Column(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.favorite_border,
                       size: 64,
                       color: DesignSystem.onSurfaceVariant,
                     ),
-                    SizedBox(height: DesignSystem.spacingMD),
+                    const SizedBox(height: DesignSystem.spacingMD),
                     Text(
                       'No liked songs yet',
                       style: DesignSystem.headlineSmall.copyWith(
                         color: DesignSystem.onSurfaceVariant,
                       ),
                     ),
-                    SizedBox(height: DesignSystem.spacingSM),
+                    const SizedBox(height: DesignSystem.spacingSM),
                     Text(
                       'Songs you like will appear here',
                       style: DesignSystem.bodyMedium.copyWith(

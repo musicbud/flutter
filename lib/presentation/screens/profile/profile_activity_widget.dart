@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import '../../widgets/common/section_header.dart';
 import 'components/activity_card.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/design_system.dart';
 
 class ProfileActivityWidget extends StatelessWidget {
   const ProfileActivityWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: appTheme.spacing.lg),
+      padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionHeader(
             title: 'Recent Activity',
           ),
-          SizedBox(height: appTheme.spacing.md),
+          SizedBox(height: DesignSystem.spacingMD),
 
           // Activity Cards
           const ActivityCard(
@@ -28,7 +27,7 @@ class ProfileActivityWidget extends StatelessWidget {
             icon: Icons.music_note,
             iconColor: Colors.red,
           ),
-          SizedBox(height: appTheme.spacing.md),
+          SizedBox(height: DesignSystem.spacingMD),
           const ActivityCard(
             title: 'Playlist Created',
             description: 'Created "Chill Vibes" playlist',
@@ -36,7 +35,7 @@ class ProfileActivityWidget extends StatelessWidget {
             icon: Icons.playlist_add,
             iconColor: Colors.blue,
           ),
-          SizedBox(height: appTheme.spacing.md),
+          SizedBox(height: DesignSystem.spacingMD),
           const ActivityCard(
             title: 'Bud Connected',
             description: 'Sarah Johnson started following you',

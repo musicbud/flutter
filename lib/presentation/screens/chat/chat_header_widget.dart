@@ -23,7 +23,7 @@ class ChatHeaderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: DesignSystem.surfaceContainer,
         boxShadow: DesignSystem.shadowCard,
       ),
@@ -39,7 +39,7 @@ class ChatHeaderWidget extends StatelessWidget {
                   color: DesignSystem.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.arrow_back_ios,
                   color: Colors.white,
                   size: 20,
@@ -127,7 +127,7 @@ class ChatHeaderWidget extends StatelessWidget {
                       color: DesignSystem.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.video_call,
                       color: DesignSystem.onSurfaceVariant,
                       size: 20,
@@ -143,7 +143,7 @@ class ChatHeaderWidget extends StatelessWidget {
                       color: DesignSystem.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.call,
                       color: DesignSystem.onSurfaceVariant,
                       size: 20,

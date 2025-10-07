@@ -728,11 +728,11 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// Build tappable radio button
-  Widget buildTappableRadio<T>({
+  Widget buildTappableRadio<U>({
     required BuildContext context,
-    required T value,
-    required T groupValue,
-    required ValueChanged<T> onChanged,
+    required U value,
+    required U groupValue,
+    required ValueChanged<U> onChanged,
     Color? activeColor,
     Color? pressedColor,
   }) {
@@ -796,11 +796,11 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// Build tappable dropdown
-  Widget buildTappableDropdown<T>({
+  Widget buildTappableDropdown<U>({
     required BuildContext context,
-    required T value,
-    required List<DropdownMenuItem<T>> items,
-    required ValueChanged<T> onChanged,
+    required U value,
+    required List<DropdownMenuItem<U>> items,
+    required ValueChanged<U> onChanged,
     Color? backgroundColor,
     Color? pressedColor,
     EdgeInsetsGeometry? padding,
@@ -875,12 +875,12 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// Build tappable segmented control
-  Widget buildTappableSegmentedControl<T>({
+  Widget buildTappableSegmentedControl<U>({
     required BuildContext context,
-    required List<T> segments,
-    required T selectedValue,
-    required ValueChanged<T> onChanged,
-    required Widget Function(T value) builder,
+    required List<U> segments,
+    required U selectedValue,
+    required ValueChanged<U> onChanged,
+    required Widget Function(U value) builder,
     Color? backgroundColor,
     Color? selectedColor,
     Color? pressedColor,
@@ -948,14 +948,14 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
                   buildTappableButton(
                     context: context,
                     onTap: details.onStepContinue,
-                    child: Text('Continue'),
+                    child: const Text('Continue'),
                   ),
                 if (currentStep > 0) ...[
                   SizedBox(width: design.designSystemSpacing.md),
                   buildTappableButton(
                     context: context,
                     onTap: details.onStepCancel,
-                    child: Text('Back'),
+                    child: const Text('Back'),
                   ),
                 ],
               ],

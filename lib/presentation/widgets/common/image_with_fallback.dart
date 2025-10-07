@@ -207,7 +207,6 @@ class ImageWithFallback extends StatelessWidget {
           height: 24,
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(DesignSystem.primary),
           ),
         ),
       ),
@@ -222,10 +221,10 @@ class ImageWithFallback extends StatelessWidget {
         children: [
           Icon(
             Icons.broken_image,
-            size: placeholderIconSize,
+            size: 48, // placeholderIconSize is not const, so can't const the whole
             color: DesignSystem.onSurfaceVariant,
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             'Failed to load',
             style: TextStyle(

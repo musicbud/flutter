@@ -23,7 +23,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     final result = await repository.getAdminStats();
     result.fold(
       (failure) => emit(const AdminError('Failed to load admin stats')),
-      (stats) => emit(AdminStatsLoaded(stats as AdminStats)),
+      (stats) => emit(AdminStatsLoaded(stats)),
     );
   }
 
@@ -35,7 +35,7 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
     final result = await repository.getRecentActions(limit: event.limit);
     result.fold(
       (failure) => emit(const AdminError('Failed to load recent actions')),
-      (actions) => emit(AdminActionsLoaded(actions as List<AdminAction>)),
+      (actions) => emit(AdminActionsLoaded(actions)),
     );
   }
 

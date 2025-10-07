@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/theme/design_system.dart';
+import '../../../../core/theme/design_system.dart';
 
 /// Abstract base class for all card widgets in the application.
 /// Provides common functionality and consistent styling patterns.

@@ -24,7 +24,7 @@ class HomeRecentActivity extends StatelessWidget {
                     Navigator.pushNamed(context, '/library', arguments: {'tab': 'recently_played'});
                   },
                 ),
-                SizedBox(height: DesignSystem.spacingXL),
+                const SizedBox(height: DesignSystem.spacingXL),
               ],
             ],
           );

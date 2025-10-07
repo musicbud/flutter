@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/design_system.dart';
 import '../builders/card_builder.dart';
 import '../utils/theme_helper.dart';
 
@@ -244,7 +243,7 @@ class CardFactory {
                     ),
                     padding: EdgeInsets.symmetric(vertical: spacing.sm),
                   ),
-                  child: Text('Follow'),
+                  child: const Text('Follow'),
                 ),
               ),
             ],
@@ -275,7 +274,7 @@ class CardFactory {
         .withVariant(CardVariant.primary)
         .withElevation(elevation ?? 1)
         .withMargin(margin ?? EdgeInsets.symmetric(vertical: spacing.xxs))
-        .withOnTap(onTap ?? () {})
+        .withOnTap(onTap != null ? onTap : () {})
         .withContent(
           child: Row(
             children: [
@@ -488,8 +487,8 @@ class CardFactory {
                 width: double.infinity,
                 child: ElevatedButton.icon(
                   onPressed: () {},
-                  icon: Icon(Icons.play_arrow, size: 20),
-                  label: Text('Play'),
+                  icon: const Icon(Icons.play_arrow, size: 20),
+                  label: const Text('Play'),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: colors.primary,
                     foregroundColor: colors.onPrimary,
@@ -524,7 +523,7 @@ class CardFactory {
         .withVariant(CardVariant.secondary)
         .withElevation(elevation ?? 1)
         .withMargin(margin ?? EdgeInsets.all(spacing.xs))
-        .withOnTap(onTap)
+        .withOnTap(onTap ?? () {})
         .withContent(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -619,7 +618,6 @@ class CardFactory {
                         fontWeight: FontWeight.w600,
                         fontSize: 12,
                         fontFamily: 'Josefin Sans',
-                        fontWeight: FontWeight.w400,
                         height: 1.50,
                       ),
                     ),
@@ -663,7 +661,7 @@ class CardFactory {
                             borderRadius: BorderRadius.circular(radius.md),
                           ),
                         ),
-                        child: Text('Learn More'),
+                        child: const Text('Learn More'),
                       ),
                     ],
                   ),

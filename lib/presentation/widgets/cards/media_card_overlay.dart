@@ -38,17 +38,19 @@ class MediaCardOverlay extends StatelessWidget {
   }
 
   Widget _buildDefaultPlayButton() {
-    return Container(
+    return const SizedBox(
       width: 56,
       height: 56,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: DesignSystem.primary,
-      ),
-      child: Icon(
-        Icons.play_arrow_rounded,
-        size: 32,
-        color: DesignSystem.onPrimary,
+      child: const DecoratedBox(
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          color: DesignSystem.primary,
+        ),
+        child: const Icon(
+          Icons.play_arrow_rounded,
+          size: 32,
+          color: DesignSystem.onPrimary,
+        ),
       ),
     );
   }

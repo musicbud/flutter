@@ -4,6 +4,8 @@ import '../../../blocs/comprehensive_chat/comprehensive_chat_bloc.dart';
 import '../../../blocs/comprehensive_chat/comprehensive_chat_event.dart';
 import '../../../blocs/comprehensive_chat/comprehensive_chat_state.dart';
 import '../../../core/theme/design_system.dart';
+import '../../../presentation/navigation/main_navigation.dart';
+import '../../../presentation/navigation/navigation_drawer.dart';
 import 'chat_header_widget.dart';
 import 'message_list_widget.dart';
 import 'message_input_widget.dart';
@@ -16,12 +18,15 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  late final MainNavigationController _navigationController;
 
   @override
   void initState() {
     super.initState();
+    _navigationController = MainNavigationController();
     // Load chat data when page initializes
     context.read<ComprehensiveChatBloc>().add(ChannelsRequested());
   }
@@ -30,6 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
+    _navigationController.dispose();
     super.dispose();
   }
 
@@ -99,52 +105,67 @@ class _ChatScreenState extends State<ChatScreen> {
             userName = 'Chat';
           }
 
-          return Container(
-            decoration: BoxDecoration(
-              gradient: DesignSystem.gradientBackground,
+          return Scaffold(
+            key: _scaffoldKey,
+            appBar: AppBar(
+              title: const Text('Chat'),
+              leading: IconButton(
+                icon: const Icon(Icons.menu),
+                onPressed: () {
+                  _scaffoldKey.currentState?.openDrawer();
+                },
+              ),
             ),
-            child: Column(
-              children: [
-                // Chat Header
-                ChatHeaderWidget(
-                  userName: userName,
-                  avatarUrl: avatarUrl,
-                  status: status,
-                  onBackPressed: () {
-                    // TODO: Handle back navigation
-                  },
-                  onVideoCallPressed: () {
-                    // TODO: Handle video call
-                  },
-                  onVoiceCallPressed: () {
-                    // TODO: Handle voice call
-                  },
-                ),
-
-                // Messages Area
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: state is ChannelsLoaded || state is MessagesLoaded
-                        ? MessageListWidget(
-                            messages: chats,
-                            scrollController: _scrollController,
-                          )
-                        : state is ComprehensiveChatLoading
-                            ? _buildLoadingState()
-                            : _buildEmptyState(),
+            drawer: MainNavigationDrawer(
+              navigationController: _navigationController,
+            ),
+            body: Container(
+              decoration: const BoxDecoration(
+                gradient: DesignSystem.gradientBackground,
+              ),
+              child: Column(
+                children: [
+                  // Chat Header
+                  ChatHeaderWidget(
+                    userName: userName,
+                    avatarUrl: avatarUrl,
+                    status: status,
+                    onBackPressed: () {
+                      // TODO: Handle back navigation
+                    },
+                    onVideoCallPressed: () {
+                      // TODO: Handle video call
+                    },
+                    onVoiceCallPressed: () {
+                      // TODO: Handle voice call
+                    },
                   ),
-                ),
 
-                // Message Input Area
-                MessageInputWidget(
-                  messageController: _messageController,
-                  onSendPressed: _sendMessage,
-                  onMessageChanged: (value) {
-                    // Handle input changes
-                  },
-                ),
-              ],
+                  // Messages Area
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: state is ChannelsLoaded || state is MessagesLoaded
+                          ? MessageListWidget(
+                              messages: chats,
+                              scrollController: _scrollController,
+                            )
+                          : state is ComprehensiveChatLoading
+                              ? _buildLoadingState()
+                              : _buildEmptyState(),
+                    ),
+                  ),
+
+                  // Message Input Area
+                  MessageInputWidget(
+                    messageController: _messageController,
+                    onSendPressed: _sendMessage,
+                    onMessageChanged: (value) {
+                      // Handle input changes
+                    },
+                  ),
+                ],
+              ),
             ),
           );
         },

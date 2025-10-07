@@ -1,442 +1,513 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/design_system.dart';
 
 class AppTypography extends StatelessWidget {
   const AppTypography({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
+    final design = Theme.of(context).extension<DesignSystemThemeExtension>()!;
 
     return Scaffold(
-      backgroundColor: appTheme.colors.darkTone,
+      backgroundColor: design.designSystemColors.surface,
       appBar: AppBar(
         title: Text(
           'Typography System',
-          style: appTheme.typography.headlineH4.copyWith(
-            color: appTheme.colors.white,
+          style: design.designSystemTypography.headlineMedium.copyWith(
+            color: design.designSystemColors.white,
           ),
         ),
-        backgroundColor: appTheme.colors.darkTone,
-        foregroundColor: appTheme.colors.white,
+        backgroundColor: design.designSystemColors.surface,
+        foregroundColor: design.designSystemColors.white,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(appTheme.spacing.lg),
+        padding: EdgeInsets.all(design.designSystemSpacing.lg),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildTypographySection(
               context,
+              design,
               'Display Typography',
               [
                 _buildTypographyExample(
                   context,
-                  'Display H1',
-                  appTheme.typography.displayH1.copyWith(
-                    color: appTheme.colors.primaryRed,
+                  design,
+                  'Display Large',
+                  design.designSystemTypography.displayLarge.copyWith(
+                    color: design.designSystemColors.primaryRed,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
-                  'Display H2',
-                  appTheme.typography.displayH2.copyWith(
-                    color: appTheme.colors.primaryRed,
+                  design,
+                  'Display Medium',
+                  design.designSystemTypography.displayMedium.copyWith(
+                    color: design.designSystemColors.primaryRed,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
-                  'Display H3',
-                  appTheme.typography.displayH3.copyWith(
-                    color: appTheme.colors.primaryRed,
+                  design,
+                  'Display Small',
+                  design.designSystemTypography.displaySmall.copyWith(
+                    color: design.designSystemColors.primaryRed,
                   ),
                 ),
               ],
             ),
-            SizedBox(height: appTheme.spacing.xl),
+            SizedBox(height: design.designSystemSpacing.xl),
             _buildTypographySection(
               context,
+              design,
               'Headline Typography',
               [
                 _buildTypographyExample(
                   context,
-                  'Headline H4',
-                  appTheme.typography.headlineH4.copyWith(
-                    color: appTheme.colors.white,
+                  design,
+                  'Headline Medium',
+                  design.designSystemTypography.headlineMedium.copyWith(
+                    color: design.designSystemColors.white,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
-                  'Headline H5',
-                  appTheme.typography.headlineH5.copyWith(
-                    color: appTheme.colors.white,
+                  design,
+                  'Headline Small',
+                  design.designSystemTypography.headlineSmall.copyWith(
+                    color: design.designSystemColors.white,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
-                  'Headline H6',
-                  appTheme.typography.headlineH6.copyWith(
-                    color: appTheme.colors.white,
+                  design,
+                  'Title Large',
+                  design.designSystemTypography.titleLarge.copyWith(
+                    color: design.designSystemColors.white,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
-                  'Headline H7',
-                  appTheme.typography.headlineH7.copyWith(
-                    color: appTheme.colors.white,
+                  design,
+                  'Title Medium',
+                  design.designSystemTypography.titleMedium.copyWith(
+                    color: design.designSystemColors.white,
                   ),
                 ),
               ],
             ),
-            SizedBox(height: appTheme.spacing.xl),
+            SizedBox(height: design.designSystemSpacing.xl),
             _buildTypographySection(
               context,
+              design,
               'Body Typography',
               [
                 _buildTypographyExample(
                   context,
+                  design,
                   'Body H8',
-                  appTheme.typography.bodyH8.copyWith(
-                    color: appTheme.colors.white,
+                  design.designSystemTypography.bodyLarge.copyWith(
+                    color: design.designSystemColors.white,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
+                  design,
                   'Body H9',
-                  appTheme.typography.bodyH9.copyWith(
-                    color: appTheme.colors.white,
+                  design.designSystemTypography.bodyMedium.copyWith(
+                    color: design.designSystemColors.white,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
+                  design,
                   'Body H10',
-                  appTheme.typography.bodyH10.copyWith(
-                    color: appTheme.colors.white,
+                  design.designSystemTypography.bodySmall.copyWith(
+                    color: design.designSystemColors.white,
                   ),
                 ),
               ],
             ),
-            SizedBox(height: appTheme.spacing.xl),
+            SizedBox(height: design.designSystemSpacing.xl),
             _buildTypographySection(
               context,
+              design,
               'Title Typography',
               [
                 _buildTypographyExample(
                   context,
+                  design,
                   'Title Large',
-                  appTheme.typography.titleLarge.copyWith(
-                    color: appTheme.colors.white,
+                  design.designSystemTypography.titleLarge.copyWith(
+                    color: design.designSystemColors.white,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
+                  design,
                   'Title Medium',
-                  appTheme.typography.titleMedium.copyWith(
-                    color: appTheme.colors.white,
+                  design.designSystemTypography.titleMedium.copyWith(
+                    color: design.designSystemColors.white,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
+                  design,
                   'Title Small',
-                  appTheme.typography.titleSmall.copyWith(
-                    color: appTheme.colors.white,
+                  design.designSystemTypography.titleSmall.copyWith(
+                    color: design.designSystemColors.white,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
+                  design,
                   'Caption',
-                  appTheme.typography.caption.copyWith(
-                    color: appTheme.colors.lightGray,
+                  design.designSystemTypography.caption.copyWith(
+                    color: design.designSystemColors.onSurfaceVariant,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
+                  design,
                   'Overline',
-                  appTheme.typography.overline.copyWith(
-                    color: appTheme.colors.lightGray,
+                  design.designSystemTypography.overline.copyWith(
+                    color: design.designSystemColors.onSurfaceVariant,
                   ),
                 ),
               ],
             ),
-            SizedBox(height: appTheme.spacing.xl),
+            SizedBox(height: design.designSystemSpacing.xl),
             _buildTypographySection(
               context,
+              design,
               'Arabic Typography',
               [
                 _buildTypographyExample(
                   context,
+                  design,
                   'Arabic Text',
-                  appTheme.typography.arabicText.copyWith(
-                    color: appTheme.colors.white,
+                  design.designSystemTypography.arabicText.copyWith(
+                    color: design.designSystemColors.white,
                   ),
                 ),
               ],
             ),
-            SizedBox(height: appTheme.spacing.xl),
+            SizedBox(height: design.designSystemSpacing.xl),
             _buildTypographySection(
               context,
+              design,
               'Font Families',
               [
                 _buildFontFamilyExample(
                   context,
+                  design,
                   'Primary Font',
-                  appTheme.typography.fontFamilyPrimary,
-                  appTheme.colors.white,
+                  DesignSystem.fontFamilyPrimary,
+                  design.designSystemColors.white,
                 ),
                 _buildFontFamilyExample(
                   context,
+                  design,
                   'Secondary Font',
-                  appTheme.typography.fontFamilySecondary,
-                  appTheme.colors.white,
+                  DesignSystem.fontFamilySecondary,
+                  design.designSystemColors.white,
                 ),
                 _buildFontFamilyExample(
                   context,
+                  design,
                   'Arabic Font',
-                  appTheme.typography.fontFamilyArabic,
-                  appTheme.colors.white,
+                  DesignSystem.fontFamilyArabic,
+                  design.designSystemColors.white,
                 ),
               ],
             ),
-            SizedBox(height: appTheme.spacing.xl),
+            SizedBox(height: design.designSystemSpacing.xl),
             _buildTypographySection(
               context,
+              design,
               'Color Palette',
               [
                 _buildColorExample(
                   context,
+                  design,
                   'Primary Red',
-                  appTheme.colors.primaryRed,
+                  design.designSystemColors.primaryRed,
                 ),
                 _buildColorExample(
                   context,
-                  'Secondary Red',
-                  appTheme.colors.secondaryRed,
+                  design,
+                  'Secondary',
+                  design.designSystemColors.secondary,
                 ),
                 _buildColorExample(
                   context,
-                  'Accent',
-                  appTheme.colors.accent,
+                  design,
+                  'Accent Blue',
+                  design.designSystemColors.accentBlue,
                 ),
               ],
             ),
-            SizedBox(height: appTheme.spacing.xl),
+            SizedBox(height: design.designSystemSpacing.xl),
             _buildTypographySection(
               context,
+              design,
               'Neutral Colors',
               [
                 _buildColorExample(
                   context,
+                  design,
                   'Dark Tone',
-                  appTheme.colors.darkTone,
+                  design.designSystemColors.surface,
                 ),
                 _buildColorExample(
                   context,
+                  design,
                   'Light Gray',
-                  appTheme.colors.lightGray,
+                  design.designSystemColors.onSurfaceVariant,
                 ),
                 _buildColorExample(
                   context,
+                  design,
                   'White',
-                  appTheme.colors.white,
+                  design.designSystemColors.white,
                 ),
                 _buildColorExample(
                   context,
+                  design,
                   'Black',
-                  appTheme.colors.black,
+                  design.designSystemColors.onSurface,
                 ),
               ],
             ),
-            SizedBox(height: appTheme.spacing.xl),
+            SizedBox(height: design.designSystemSpacing.xl),
             _buildTypographySection(
               context,
+              design,
               'Semantic Colors',
               [
                 _buildColorExample(
                   context,
+                  design,
                   'Success',
-                  appTheme.colors.success,
+                  design.designSystemColors.success,
                 ),
                 _buildColorExample(
                   context,
+                  design,
                   'Warning',
-                  appTheme.colors.warning,
+                  design.designSystemColors.warning,
                 ),
                 _buildColorExample(
                   context,
+                  design,
                   'Error',
-                  appTheme.colors.error,
+                  design.designSystemColors.error,
                 ),
                 _buildColorExample(
                   context,
+                  design,
                   'Info',
-                  appTheme.colors.info,
+                  design.designSystemColors.info,
                 ),
               ],
             ),
-            SizedBox(height: appTheme.spacing.xl),
+            SizedBox(height: design.designSystemSpacing.xl),
             _buildTypographySection(
               context,
+              design,
               'Neutral Palette',
               [
                 _buildColorExample(
                   context,
+                  design,
                   'Neutral 50',
-                  appTheme.colors.neutral[50]!,
+                  DesignSystem.neutral[50]!,
                 ),
                 _buildColorExample(
                   context,
+                  design,
                   'Neutral 100',
-                  appTheme.colors.neutral[100]!,
+                  DesignSystem.neutral[100]!,
                 ),
                 _buildColorExample(
                   context,
+                  design,
                   'Neutral 200',
-                  appTheme.colors.neutral[200]!,
+                  DesignSystem.neutral[200]!,
                 ),
                 _buildColorExample(
                   context,
+                  design,
                   'Neutral 300',
-                  appTheme.colors.neutral[300]!,
+                  DesignSystem.neutral[300]!,
                 ),
                 _buildColorExample(
                   context,
+                  design,
                   'Neutral 400',
-                  appTheme.colors.neutral[400]!,
+                  DesignSystem.neutral[400]!,
                 ),
                 _buildColorExample(
                   context,
+                  design,
                   'Neutral 500',
-                  appTheme.colors.neutral[500]!,
+                  DesignSystem.neutral[500]!,
                 ),
                 _buildColorExample(
                   context,
+                  design,
                   'Neutral 600',
-                  appTheme.colors.neutral[600]!,
+                  DesignSystem.neutral[600]!,
                 ),
                 _buildColorExample(
                   context,
+                  design,
                   'Neutral 700',
-                  appTheme.colors.neutral[700]!,
+                  DesignSystem.neutral[700]!,
                 ),
                 _buildColorExample(
                   context,
+                  design,
                   'Neutral 800',
-                  appTheme.colors.neutral[800]!,
+                  DesignSystem.neutral[800]!,
                 ),
                 _buildColorExample(
                   context,
+                  design,
                   'Neutral 900',
-                  appTheme.colors.neutral[900]!,
+                  DesignSystem.neutral[900]!,
                 ),
               ],
             ),
-            SizedBox(height: appTheme.spacing.xl),
+            SizedBox(height: design.designSystemSpacing.xl),
             _buildTypographySection(
               context,
+              design,
               'Spacing System',
               [
                 _buildSpacingExample(
                   context,
+                  design,
                   'Spacing XS',
-                  appTheme.spacing.xs,
+                  design.designSystemSpacing.xs,
                 ),
                 _buildSpacingExample(
                   context,
+                  design,
                   'Spacing S',
-                  appTheme.spacing.sm,
+                  design.designSystemSpacing.sm,
                 ),
                 _buildSpacingExample(
                   context,
+                  design,
                   'Spacing M',
-                  appTheme.spacing.md,
+                  design.designSystemSpacing.md,
                 ),
                 _buildSpacingExample(
                   context,
+                  design,
                   'Spacing L',
-                  appTheme.spacing.lg,
+                  design.designSystemSpacing.lg,
                 ),
                 _buildSpacingExample(
                   context,
+                  design,
                   'Spacing XL',
-                  appTheme.spacing.xl,
+                  design.designSystemSpacing.xl,
                 ),
                 _buildSpacingExample(
                   context,
+                  design,
                   'Spacing XXL',
-                  appTheme.spacing.xxl,
+                  design.designSystemSpacing.xxl,
                 ),
                 _buildSpacingExample(
                   context,
+                  design,
                   'Spacing XXXL',
-                  appTheme.spacing.xxxl,
+                  design.designSystemSpacing.xxxl,
                 ),
                 _buildSpacingExample(
                   context,
+                  design,
                   'Spacing Huge',
-                  appTheme.spacing.huge,
+                  design.designSystemSpacing.huge,
                 ),
               ],
             ),
-            SizedBox(height: appTheme.spacing.xl),
+            SizedBox(height: design.designSystemSpacing.xl),
             _buildTypographySection(
               context,
+              design,
               'Border Radius',
               [
                 _buildRadiusExample(
                   context,
+                  design,
                   'Radius XS',
-                  appTheme.radius.xs,
+                  design.designSystemRadius.xs,
                 ),
                 _buildRadiusExample(
                   context,
+                  design,
                   'Radius S',
-                  appTheme.radius.sm,
+                  design.designSystemRadius.sm,
                 ),
                 _buildRadiusExample(
                   context,
+                  design,
                   'Radius M',
-                  appTheme.radius.md,
+                  design.designSystemRadius.md,
                 ),
                 _buildRadiusExample(
                   context,
+                  design,
                   'Radius L',
-                  appTheme.radius.lg,
+                  design.designSystemRadius.lg,
                 ),
                 _buildRadiusExample(
                   context,
+                  design,
                   'Radius XL',
-                  appTheme.radius.xl,
+                  design.designSystemRadius.xl,
                 ),
                 _buildRadiusExample(
                   context,
+                  design,
                   'Radius XXL',
-                  appTheme.radius.xxl,
+                  design.designSystemRadius.xxl,
                 ),
                 _buildRadiusExample(
                   context,
+                  design,
                   'Radius Circular',
-                  appTheme.radius.circular,
+                  design.designSystemRadius.circular,
                 ),
               ],
             ),
-            SizedBox(height: appTheme.spacing.xl),
+            SizedBox(height: design.designSystemSpacing.xl),
             _buildTypographySection(
               context,
+              design,
               'Shadows',
               [
                 _buildShadowExample(
                   context,
+                  design,
                   'Shadow Small',
-                  appTheme.shadows.shadowSmall,
+                  design.designSystemShadows.small,
                 ),
                 _buildShadowExample(
                   context,
+                  design,
                   'Shadow Medium',
-                  appTheme.shadows.shadowMedium,
+                  design.designSystemShadows.medium,
                 ),
                 _buildShadowExample(
                   context,
+                  design,
                   'Shadow Large',
-                  appTheme.shadows.shadowLarge,
+                  design.designSystemShadows.large,
                 ),
               ],
             ),
@@ -448,28 +519,27 @@ class AppTypography extends StatelessWidget {
 
   Widget _buildTypographySection(
     BuildContext context,
+    DesignSystemThemeExtension design,
     String title,
     List<Widget> children,
   ) {
-    final appTheme = AppTheme.of(context);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           title,
-          style: appTheme.typography.headlineH6.copyWith(
-            color: appTheme.colors.primaryRed,
+          style: design.designSystemTypography.titleLarge.copyWith(
+            color: design.designSystemColors.primaryRed,
           ),
         ),
-        SizedBox(height: appTheme.spacing.md),
+        SizedBox(height: design.designSystemSpacing.md),
         Container(
-          padding: EdgeInsets.all(appTheme.spacing.md),
+          padding: EdgeInsets.all(design.designSystemSpacing.md),
           decoration: BoxDecoration(
-            color: appTheme.colors.surface,
-            borderRadius: BorderRadius.circular(appTheme.radius.md),
+            color: design.designSystemColors.surface,
+            borderRadius: BorderRadius.circular(design.designSystemRadius.md),
             border: Border.all(
-              color: appTheme.colors.lightGray.withValues(alpha:  0.2),
+              color: design.designSystemColors.onSurfaceVariant.withOpacity(0.2),
             ),
           ),
           child: Column(
@@ -483,23 +553,22 @@ class AppTypography extends StatelessWidget {
 
   Widget _buildTypographyExample(
     BuildContext context,
+    DesignSystemThemeExtension design,
     String label,
     TextStyle style,
   ) {
-    final appTheme = AppTheme.of(context);
-
     return Padding(
-      padding: EdgeInsets.only(bottom: appTheme.spacing.md),
+      padding: EdgeInsets.only(bottom: design.designSystemSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: appTheme.typography.caption.copyWith(
-              color: appTheme.colors.lightGray,
+            style: design.designSystemTypography.caption.copyWith(
+              color: design.designSystemColors.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: appTheme.spacing.sm),
+          SizedBox(height: design.designSystemSpacing.sm),
           Text(
             'The quick brown fox jumps over the lazy dog',
             style: style,
@@ -511,24 +580,23 @@ class AppTypography extends StatelessWidget {
 
   Widget _buildFontFamilyExample(
     BuildContext context,
+    DesignSystemThemeExtension design,
     String label,
     String fontFamily,
     Color color,
   ) {
-    final appTheme = AppTheme.of(context);
-
     return Padding(
-      padding: EdgeInsets.only(bottom: appTheme.spacing.md),
+      padding: EdgeInsets.only(bottom: design.designSystemSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: appTheme.typography.caption.copyWith(
-              color: appTheme.colors.lightGray,
+            style: design.designSystemTypography.caption.copyWith(
+              color: design.designSystemColors.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: appTheme.spacing.sm),
+          SizedBox(height: design.designSystemSpacing.sm),
           Text(
             'Sample text with $fontFamily',
             style: TextStyle(
@@ -544,13 +612,12 @@ class AppTypography extends StatelessWidget {
 
   Widget _buildColorExample(
     BuildContext context,
+    DesignSystemThemeExtension design,
     String label,
     Color color,
   ) {
-    final appTheme = AppTheme.of(context);
-
     return Padding(
-      padding: EdgeInsets.only(bottom: appTheme.spacing.md),
+      padding: EdgeInsets.only(bottom: design.designSystemSpacing.md),
       child: Row(
         children: [
           Container(
@@ -558,27 +625,27 @@ class AppTypography extends StatelessWidget {
             height: 40,
             decoration: BoxDecoration(
               color: color,
-              borderRadius: BorderRadius.circular(appTheme.radius.sm),
+              borderRadius: BorderRadius.circular(design.designSystemRadius.sm),
               border: Border.all(
-                color: appTheme.colors.lightGray.withValues(alpha:  0.3),
+                color: design.designSystemColors.onSurfaceVariant.withOpacity(0.3),
               ),
             ),
           ),
-          SizedBox(width: appTheme.spacing.md),
+          SizedBox(width: design.designSystemSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
-                  style: appTheme.typography.bodyH9.copyWith(
-                    color: appTheme.colors.white,
+                  style: design.designSystemTypography.bodyMedium.copyWith(
+                    color: design.designSystemColors.white,
                   ),
                 ),
                 Text(
-                  '#${color.value.toRadixString(16).toUpperCase()}',
-                  style: appTheme.typography.caption.copyWith(
-                    color: appTheme.colors.lightGray,
+                  '#${color.toARGB32().toRadixString(16).toUpperCase()}',
+                  style: design.designSystemTypography.caption.copyWith(
+                    color: design.designSystemColors.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -591,28 +658,27 @@ class AppTypography extends StatelessWidget {
 
   Widget _buildSpacingExample(
     BuildContext context,
+    DesignSystemThemeExtension design,
     String label,
     double spacing,
   ) {
-    final appTheme = AppTheme.of(context);
-
     return Padding(
-      padding: EdgeInsets.only(bottom: appTheme.spacing.md),
+      padding: EdgeInsets.only(bottom: design.designSystemSpacing.md),
       child: Row(
         children: [
           Container(
             width: spacing,
             height: 20,
             decoration: BoxDecoration(
-              color: appTheme.colors.primaryRed,
-              borderRadius: BorderRadius.circular(appTheme.radius.sm),
+              color: design.designSystemColors.primaryRed,
+              borderRadius: BorderRadius.circular(design.designSystemRadius.sm),
             ),
           ),
-          SizedBox(width: appTheme.spacing.md),
+          SizedBox(width: design.designSystemSpacing.md),
           Text(
             '$label: ${spacing.toStringAsFixed(0)}px',
-            style: appTheme.typography.caption.copyWith(
-              color: appTheme.colors.lightGray,
+            style: design.designSystemTypography.caption.copyWith(
+              color: design.designSystemColors.onSurfaceVariant,
             ),
           ),
         ],
@@ -622,28 +688,27 @@ class AppTypography extends StatelessWidget {
 
   Widget _buildRadiusExample(
     BuildContext context,
+    DesignSystemThemeExtension design,
     String label,
     double radius,
   ) {
-    final appTheme = AppTheme.of(context);
-
     return Padding(
-      padding: EdgeInsets.only(bottom: appTheme.spacing.md),
+      padding: EdgeInsets.only(bottom: design.designSystemSpacing.md),
       child: Row(
         children: [
           Container(
             width: 60,
             height: 40,
             decoration: BoxDecoration(
-              color: appTheme.colors.primaryRed,
+              color: design.designSystemColors.primaryRed,
               borderRadius: BorderRadius.circular(radius),
             ),
           ),
-          SizedBox(width: appTheme.spacing.md),
+          SizedBox(width: design.designSystemSpacing.md),
           Text(
             '$label: ${radius.toStringAsFixed(0)}px',
-            style: appTheme.typography.caption.copyWith(
-              color: appTheme.colors.lightGray,
+            style: design.designSystemTypography.caption.copyWith(
+              color: design.designSystemColors.onSurfaceVariant,
             ),
           ),
         ],
@@ -653,29 +718,28 @@ class AppTypography extends StatelessWidget {
 
   Widget _buildShadowExample(
     BuildContext context,
+    DesignSystemThemeExtension design,
     String label,
     List<BoxShadow> shadows,
   ) {
-    final appTheme = AppTheme.of(context);
-
     return Padding(
-      padding: EdgeInsets.only(bottom: appTheme.spacing.md),
+      padding: EdgeInsets.only(bottom: design.designSystemSpacing.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: appTheme.typography.caption.copyWith(
-              color: appTheme.colors.lightGray,
+            style: design.designSystemTypography.caption.copyWith(
+              color: design.designSystemColors.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: appTheme.spacing.sm),
+          SizedBox(height: design.designSystemSpacing.sm),
           Container(
             width: 80,
             height: 40,
             decoration: BoxDecoration(
-              color: appTheme.colors.white,
-              borderRadius: BorderRadius.circular(appTheme.radius.md),
+              color: design.designSystemColors.white,
+              borderRadius: BorderRadius.circular(design.designSystemRadius.md),
               boxShadow: shadows,
             ),
           ),

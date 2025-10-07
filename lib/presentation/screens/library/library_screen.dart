@@ -5,6 +5,8 @@ import '../../../blocs/library/library_event.dart';
 import '../../../blocs/library/library_state.dart';
 import '../../../core/theme/design_system.dart';
 import '../../../widgets/common/index.dart';
+import '../../../presentation/navigation/main_navigation.dart';
+import '../../../presentation/navigation/navigation_drawer.dart';
 import 'library_tab_manager.dart';
 import 'library_search_section.dart';
 import 'tabs/playlists_tab.dart';
@@ -20,13 +22,16 @@ class LibraryScreen extends StatefulWidget {
 }
 
 class _LibraryScreenState extends State<LibraryScreen> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final TextEditingController _searchController = TextEditingController();
+  late final MainNavigationController _navigationController;
   String _selectedTab = 'Playlists';
   int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
+    _navigationController = MainNavigationController();
     // Load initial playlists
     context.read<LibraryBloc>().add(const LibraryItemsRequested(type: 'playlists'));
   }
@@ -34,6 +39,7 @@ class _LibraryScreenState extends State<LibraryScreen> {
   @override
   void dispose() {
     _searchController.dispose();
+    _navigationController.dispose();
     super.dispose();
   }
 
@@ -46,131 +52,146 @@ class _LibraryScreenState extends State<LibraryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: DesignSystem.gradientBackground,
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: const Text('Library'),
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
       ),
-      child: BlocConsumer<LibraryBloc, LibraryState>(
-        listener: (context, state) {
-          if (state is LibraryActionSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(state.message)),
-            );
-          } else if (state is LibraryActionFailure) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.error),
-                backgroundColor: DesignSystem.error,
-              ),
-            );
-          }
-        },
-        builder: (context, state) {
-          return CustomScrollView(
-            slivers: [
-              // Header Section
-              SliverToBoxAdapter(
-                child: Container(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'My Library',
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        'Your personal music collection',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: DesignSystem.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
+      drawer: MainNavigationDrawer(
+        navigationController: _navigationController,
+      ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: DesignSystem.gradientBackground,
+        ),
+        child: BlocConsumer<LibraryBloc, LibraryState>(
+          listener: (context, state) {
+            if (state is LibraryActionSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(state.message)),
+              );
+            } else if (state is LibraryActionFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.error),
+                  backgroundColor: DesignSystem.error,
                 ),
-              ),
-
-              // Search Section
-              SliverToBoxAdapter(
-                child: LibrarySearchSection(
-                  selectedTab: _selectedTab,
-                  searchController: _searchController,
-                ),
-              ),
-
-              SliverToBoxAdapter(
-                child: const SizedBox(height: 24),
-              ),
-
-              // Create Playlist Button (only show in Playlists tab)
-              if (_selectedTab == 'Playlists')
+              );
+            }
+          },
+          builder: (context, state) {
+            return CustomScrollView(
+              slivers: [
+                // Header Section
                 SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: PrimaryButton(
-                      text: 'Create New Playlist',
-                      onPressed: () {
-                        // Dialog is handled by PlaylistsTab
-                      },
-                      icon: Icons.add,
-                      size: ModernButtonSize.large,
+                  child: Container(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'My Library',
+                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Your personal music collection',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: DesignSystem.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
 
-              SliverToBoxAdapter(
-                child: const SizedBox(height: 24),
-              ),
-
-              // Library Items Section (for search results)
-              if (state is LibraryLoaded && state.items.isNotEmpty) ...[
+                // Search Section
                 SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Text(
-                      '${state.totalCount} $_selectedTab',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: DesignSystem.onSurfaceVariant,
-                      ),
-                    ),
+                  child: LibrarySearchSection(
+                    selectedTab: _selectedTab,
+                    searchController: _searchController,
                   ),
                 ),
+
                 SliverToBoxAdapter(
                   child: const SizedBox(height: 24),
                 ),
+
+                // Create Playlist Button (only show in Playlists tab)
+                if (_selectedTab == 'Playlists')
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: PrimaryButton(
+                        text: 'Create New Playlist',
+                        onPressed: () {
+                          // Dialog is handled by PlaylistsTab
+                        },
+                        icon: Icons.add,
+                        size: ModernButtonSize.large,
+                      ),
+                    ),
+                  ),
+
+                SliverToBoxAdapter(
+                  child: const SizedBox(height: 24),
+                ),
+
+                // Library Items Section (for search results)
+                if (state is LibraryLoaded && state.items.isNotEmpty) ...[
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
+                      child: Text(
+                        '${state.totalCount} $_selectedTab',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: DesignSystem.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: const SizedBox(height: 24),
+                  ),
+                ],
+
+                // Tab Manager
+                SliverToBoxAdapter(
+                  child: LibraryTabManager(
+                    selectedTab: _selectedTab,
+                    selectedIndex: _selectedIndex,
+                    onTabChanged: _onTabChanged,
+                  ),
+                ),
+
+                SliverToBoxAdapter(
+                  child: const SizedBox(height: 32),
+                ),
+
+                // Content based on selected tab
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: _buildTabContent(),
+                  ),
+                ),
+
+                SliverToBoxAdapter(
+                  child: const SizedBox(height: 32),
+                ),
               ],
-
-              // Tab Manager
-              SliverToBoxAdapter(
-                child: LibraryTabManager(
-                  selectedTab: _selectedTab,
-                  selectedIndex: _selectedIndex,
-                  onTabChanged: _onTabChanged,
-                ),
-              ),
-
-              SliverToBoxAdapter(
-                child: const SizedBox(height: 32),
-              ),
-
-              // Content based on selected tab
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: _buildTabContent(),
-                ),
-              ),
-
-              SliverToBoxAdapter(
-                child: const SizedBox(height: 32),
-              ),
-            ],
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -189,7 +210,4 @@ class _LibraryScreenState extends State<LibraryScreen> {
         return const PlaylistsTab();
     }
   }
-
-
-
 }

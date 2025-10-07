@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import '../../../models/common_track.dart';
 import '../../../models/artist.dart';
 import '../../../models/album.dart';
-import '../../../models/spotify_device.dart';
 
 abstract class MusicState extends Equatable {
   const MusicState();
@@ -141,15 +140,6 @@ class AlbumsSearchResultLoaded extends MusicState {
 }
 
 // Playback operations
-class SpotifyDevicesLoaded extends MusicState {
-  final List<SpotifyDevice> devices;
-
-  const SpotifyDevicesLoaded(this.devices);
-
-  @override
-  List<Object> get props => [devices];
-}
-
 class TrackPlaySuccess extends MusicState {}
 
 class TrackPlayWithLocationSuccess extends MusicState {}

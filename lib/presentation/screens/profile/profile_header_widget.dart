@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/user_profile/user_profile_bloc.dart';
 import '../../../models/user_profile.dart';
-import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/design_system.dart';
 import '../../../widgets/common/index.dart';
 
 class ProfileHeaderWidget extends StatefulWidget {
@@ -79,39 +79,43 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final appTheme = AppTheme.of(context);
+    final designSystemColors = Theme.of(context).designSystemColors!;
+    final designSystemSpacing = Theme.of(context).designSystemSpacing!;
+    final designSystemRadius = Theme.of(context).designSystemRadius!;
+    final designSystemShadows = Theme.of(context).designSystemShadows!;
+    final designSystemTypography = Theme.of(context).designSystemTypography!;
 
     return Container(
-      padding: EdgeInsets.all(appTheme.spacing.lg),
+      padding: EdgeInsets.all(designSystemSpacing.lg),
       child: Column(
         children: [
           // Profile Avatar with enhanced styling
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(appTheme.radius.circular),
-              boxShadow: appTheme.shadows.shadowCardHover,
+              borderRadius: BorderRadius.circular(designSystemRadius.circular),
+              boxShadow: designSystemShadows.cardHover,
               border: Border.all(
-                color: appTheme.colors.primaryRed.withValues(alpha: 0.3),
+                color: designSystemColors.primary.withValues(alpha: 0.3),
                 width: 3,
               ),
             ),
             child: CircleAvatar(
               radius: 60,
-              backgroundColor: appTheme.colors.primaryRed,
+              backgroundColor: designSystemColors.primary,
               backgroundImage: widget.userProfile?.avatarUrl != null
                   ? NetworkImage(widget.userProfile!.avatarUrl!)
                   : null,
               child: widget.userProfile?.avatarUrl == null
                   ? Icon(
                       Icons.person,
-                      color: appTheme.colors.white,
+                      color: designSystemColors.onPrimary,
                       size: 60,
                     )
                   : null,
             ),
           ),
 
-          SizedBox(height: appTheme.spacing.lg),
+          SizedBox(height: designSystemSpacing.lg),
 
           // Profile Info or Edit Form
           if (widget.isLoading) ...[
@@ -119,19 +123,19 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
               height: 24,
               width: 24,
               child: CircularProgressIndicator(
-                color: appTheme.colors.primaryRed,
+                color: designSystemColors.primary,
                 strokeWidth: 2,
               ),
             ),
           ] else if (widget.hasError) ...[
             Text(
               'Unable to load profile',
-              style: appTheme.typography.titleMedium.copyWith(
-                color: appTheme.colors.textPrimary,
+              style: designSystemTypography.titleMedium.copyWith(
+                color: designSystemColors.onSurface,
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: appTheme.spacing.md),
+            SizedBox(height: designSystemSpacing.md),
             PrimaryButton(
               onPressed: () {
                 context.read<UserProfileBloc>().add(FetchMyProfile());
@@ -151,20 +155,20 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
                       label: 'Display Name',
                       hintText: 'Enter your display name',
                     ),
-                    SizedBox(height: appTheme.spacing.md),
+                    SizedBox(height: designSystemSpacing.md),
                     ModernInputField(
                       controller: _bioController,
                       label: 'Bio',
                       hintText: 'Tell us about yourself',
                       maxLines: 3,
                     ),
-                    SizedBox(height: appTheme.spacing.md),
+                    SizedBox(height: designSystemSpacing.md),
                     ModernInputField(
                       controller: _locationController,
                       label: 'Location',
                       hintText: 'Enter your location',
                     ),
-                    SizedBox(height: appTheme.spacing.md),
+                    SizedBox(height: designSystemSpacing.md),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -184,50 +188,50 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
             ] else ...[
               Text(
                 widget.userProfile!.displayName ?? widget.userProfile!.username,
-                style: appTheme.typography.headlineH5.copyWith(
-                  color: appTheme.colors.textPrimary,
+                style: designSystemTypography.headlineSmall.copyWith(
+                  color: designSystemColors.onSurface,
                   fontWeight: FontWeight.w700,
                 ),
                 textAlign: TextAlign.center,
               ),
 
               if (widget.userProfile!.displayName != null) ...[
-                SizedBox(height: appTheme.spacing.xs),
+                SizedBox(height: designSystemSpacing.xs),
                 Text(
                   '@${widget.userProfile!.username}',
-                  style: appTheme.typography.bodyMedium.copyWith(
-                    color: appTheme.colors.textMuted,
+                  style: designSystemTypography.bodyMedium.copyWith(
+                    color: designSystemColors.onSurfaceVariant,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ],
 
               if (widget.userProfile!.bio != null && widget.userProfile!.bio!.isNotEmpty) ...[
-                SizedBox(height: appTheme.spacing.md),
+                SizedBox(height: designSystemSpacing.md),
                 Text(
                   widget.userProfile!.bio!,
-                  style: appTheme.typography.bodyMedium.copyWith(
-                    color: appTheme.colors.textSecondary,
+                  style: designSystemTypography.bodyMedium.copyWith(
+                    color: designSystemColors.onSurfaceVariant,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ],
 
               if (widget.userProfile!.location != null && widget.userProfile!.location!.isNotEmpty) ...[
-                SizedBox(height: appTheme.spacing.sm),
+                SizedBox(height: designSystemSpacing.sm),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
                       Icons.location_on,
                       size: 16,
-                      color: appTheme.colors.textMuted,
+                      color: designSystemColors.onSurfaceVariant,
                     ),
-                    SizedBox(width: appTheme.spacing.xs),
+                    SizedBox(width: designSystemSpacing.xs),
                     Text(
                       widget.userProfile!.location!,
-                      style: appTheme.typography.bodySmall.copyWith(
-                        color: appTheme.colors.textMuted,
+                      style: designSystemTypography.bodySmall.copyWith(
+                        color: designSystemColors.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -235,12 +239,12 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
               ],
             ],
 
-            SizedBox(height: appTheme.spacing.md),
+            SizedBox(height: designSystemSpacing.md),
 
             // Profile Stats - TODO: Implement ProfileStatsWidget
             // ProfileStatsWidget(userProfile: widget.userProfile!),
 
-            SizedBox(height: appTheme.spacing.lg),
+            SizedBox(height: designSystemSpacing.lg),
 
             // Edit Profile Button
             PrimaryButton(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/auth/auth_bloc.dart';
-import '../../../models/auth_user.dart';
 import 'app_navigation_drawer.dart';
 
 /// A reusable scaffold widget that provides consistent styling across the app
@@ -41,7 +40,7 @@ class AppScaffold extends StatelessWidget {
         return Scaffold(
           backgroundColor: backgroundColor ?? Colors.black,
           appBar: appBar,
-          drawer: drawer ?? (showDrawer ? AppNavigationDrawer(userProfile: null) : null),
+          drawer: drawer ?? (showDrawer ? const AppNavigationDrawer(userProfile: null) : null),
           body: useSafeArea
               ? SafeArea(
                   child: padding != null

@@ -27,7 +27,6 @@ class ModernCard extends StatefulWidget {
 class _ModernCardState extends State<ModernCard> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
-  bool _isPressed = false;
 
   @override
   void initState() {
@@ -54,14 +53,12 @@ class _ModernCardState extends State<ModernCard> with SingleTickerProviderStateM
 
   void _handleTapDown(TapDownDetails details) {
     if (widget.isClickable) {
-      setState(() => _isPressed = true);
       _controller.forward();
     }
   }
 
   void _handleTapUp(TapUpDetails details) {
     if (widget.isClickable) {
-      setState(() => _isPressed = false);
       _controller.reverse();
       widget.onTap?.call();
     }
@@ -69,7 +66,6 @@ class _ModernCardState extends State<ModernCard> with SingleTickerProviderStateM
 
   void _handleTapCancel() {
     if (widget.isClickable) {
-      setState(() => _isPressed = false);
       _controller.reverse();
     }
   }

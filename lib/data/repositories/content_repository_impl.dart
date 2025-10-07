@@ -5,7 +5,6 @@ import '../../models/album.dart';
 import '../../models/genre.dart';
 import '../../models/common_anime.dart';
 import '../../models/common_manga.dart';
-import '../../models/spotify_device.dart';
 import '../data_sources/remote/content_remote_data_source.dart';
 import '../../core/error/exceptions.dart';
 import '../../core/error/failures.dart';
@@ -214,17 +213,6 @@ class ContentRepositoryImpl implements ContentRepository {
   }
 
 
-  @override
-  Future<List<SpotifyDevice>> getSpotifyDevices() async {
-    try {
-      final data = await _remoteDataSource.getSpotifyDevices();
-      return data.map((json) => SpotifyDevice.fromJson(json)).toList();
-    } on ServerException catch (e) {
-      throw ServerFailure(message: e.message);
-    } catch (e) {
-      throw ServerFailure(message: e.toString());
-    }
-  }
 
 
   @override
@@ -258,7 +246,7 @@ class ContentRepositoryImpl implements ContentRepository {
 
 
   @override
-  Future<void> playTrack(String trackId, String deviceId) async {
+  Future<void> playTrack(String trackId, String? deviceId) async {
     try {
       await _remoteDataSource.playTrack(trackId, deviceId);
     } on ServerException catch (e) {
@@ -270,9 +258,9 @@ class ContentRepositoryImpl implements ContentRepository {
 
 
   @override
-  Future<void> playTrackWithLocation(String trackId, String trackName, double latitude, double longitude) async {
+  Future<void> playTrackWithLocation(String trackId, String trackName, double latitude, double longitude, [String? deviceId]) async {
     try {
-      await _remoteDataSource.playTrackWithLocation(trackId, trackName, latitude, longitude);
+      await _remoteDataSource.playTrackWithLocation(trackId, trackName, latitude, longitude, deviceId);
     } on ServerException catch (e) {
       throw ServerFailure(message: e.message);
     } catch (e) {

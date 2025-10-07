@@ -95,13 +95,13 @@ class CardActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
+    final design = theme.extension<DesignSystemThemeExtension>()!;
 
     return Container(
       decoration: showBackground
           ? BoxDecoration(
-              color: backgroundColor ?? design?.designSystemColors.surfaceContainer?.withValues(alpha: 0.8) ?? Colors.grey.shade100.withOpacity(0.8),
-              borderRadius: borderRadius ?? BorderRadius.circular(design?.designSystemRadius.md ?? 16.0),
+              color: backgroundColor ?? (design.designSystemColors.surfaceContainer).withValues(alpha: 0.8),
+              borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.md),
             )
           : null,
       padding: padding,
@@ -127,7 +127,7 @@ class CardActions extends StatelessWidget {
     );
   }
 
-  Widget _buildLikeButton(BuildContext context, ThemeData theme, DesignSystemThemeExtension? design) {
+  Widget _buildLikeButton(BuildContext context, ThemeData theme, DesignSystemThemeExtension design) {
     return Column(
       children: [
         IconButton(
@@ -136,8 +136,8 @@ class CardActions extends StatelessWidget {
             isLiked ? Icons.favorite : Icons.favorite_border,
             size: iconSize,
             color: isLiked
-                ? (likedButtonColor ?? design?.designSystemColors.error ?? Colors.red)
-                : (likeButtonColor ?? design?.designSystemColors.onSurfaceVariant ?? Colors.grey.shade600),
+                ? (likedButtonColor ?? design.designSystemColors.error)
+                : (likeButtonColor ?? design.designSystemColors.onSurfaceVariant),
           ),
           style: IconButton.styleFrom(
             fixedSize: Size(buttonSize, buttonSize),
@@ -147,15 +147,15 @@ class CardActions extends StatelessWidget {
         if (showLabels)
           Text(
             isLiked ? 'Liked' : 'Like',
-            style: labelStyle ?? design?.designSystemTypography.caption?.copyWith(
-              color: design?.designSystemColors.onSurfaceVariant ?? Colors.grey.shade600,
-            ) ?? TextStyle(color: Colors.grey.shade600, fontSize: 12.0),
+            style: labelStyle ?? design.designSystemTypography.caption.copyWith(
+              color: design.designSystemColors.onSurfaceVariant,
+            ),
           ),
       ],
     );
   }
 
-  Widget _buildShareButton(BuildContext context, ThemeData theme, DesignSystemThemeExtension? design) {
+  Widget _buildShareButton(BuildContext context, ThemeData theme, DesignSystemThemeExtension design) {
     return Column(
       children: [
         IconButton(
@@ -163,7 +163,7 @@ class CardActions extends StatelessWidget {
           icon: Icon(
             Icons.share,
             size: iconSize,
-            color: shareButtonColor ?? design?.designSystemColors.onSurfaceVariant ?? Colors.grey.shade600,
+            color: shareButtonColor ?? design.designSystemColors.onSurfaceVariant,
           ),
           style: IconButton.styleFrom(
             fixedSize: Size(buttonSize, buttonSize),
@@ -173,15 +173,15 @@ class CardActions extends StatelessWidget {
         if (showLabels)
           Text(
             'Share',
-            style: labelStyle ?? design?.designSystemTypography.caption?.copyWith(
-              color: design?.designSystemColors.onSurfaceVariant ?? Colors.grey.shade600,
-            ) ?? TextStyle(color: Colors.grey.shade600, fontSize: 12.0),
+            style: labelStyle ?? design.designSystemTypography.caption.copyWith(
+              color: design.designSystemColors.onSurfaceVariant,
+            ),
           ),
       ],
     );
   }
 
-  Widget _buildMoreButton(BuildContext context, ThemeData theme, DesignSystemThemeExtension? design) {
+  Widget _buildMoreButton(BuildContext context, ThemeData theme, DesignSystemThemeExtension design) {
     return Column(
       children: [
         PopupMenuButton<String>(
@@ -214,7 +214,7 @@ class CardActions extends StatelessWidget {
                 value: 'more',
                 child: Text(
                   'More options',
-                  style: design?.designSystemTypography.bodyMedium ?? const TextStyle(fontSize: 14.0),
+                  style: design.designSystemTypography.bodyMedium,
                 ),
               ),
             ];
@@ -224,7 +224,7 @@ class CardActions extends StatelessWidget {
             icon: Icon(
               Icons.more_vert,
               size: iconSize,
-              color: moreButtonColor ?? design?.designSystemColors.onSurfaceVariant ?? Colors.grey.shade600,
+              color: moreButtonColor ?? design.designSystemColors.onSurfaceVariant,
             ),
             style: IconButton.styleFrom(
               fixedSize: Size(buttonSize, buttonSize),
@@ -235,9 +235,9 @@ class CardActions extends StatelessWidget {
         if (showLabels)
           Text(
             'More',
-            style: labelStyle ?? design?.designSystemTypography.caption?.copyWith(
-              color: design?.designSystemColors.onSurfaceVariant ?? Colors.grey.shade600,
-            ) ?? TextStyle(color: Colors.grey.shade600, fontSize: 12.0),
+            style: labelStyle ?? design.designSystemTypography.caption.copyWith(
+              color: design.designSystemColors.onSurfaceVariant,
+            ),
           ),
       ],
     );

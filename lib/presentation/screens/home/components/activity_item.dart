@@ -39,7 +39,7 @@ class ActivityItem extends StatelessWidget {
         onTap: activity.onTap ?? () {},
         borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: Container(
-          padding: EdgeInsets.all(DesignSystem.spacingMD),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           decoration: BoxDecoration(
             color: DesignSystem.surfaceContainer,
             borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
@@ -65,20 +65,20 @@ class ActivityItem extends StatelessWidget {
                       : null,
                 ),
                 child: activity.imageUrl == null && activity.icon != null
-                    ? Icon(
-                        activity.icon,
+                    ? const Icon(
+                        Icons.music_note,
                         color: DesignSystem.onSurfaceVariant,
                         size: 24,
                       )
                     : activity.imageUrl == null
-                        ? Icon(
+                        ? const Icon(
                             Icons.music_note,
                             color: DesignSystem.onSurfaceVariant,
                             size: 24,
                           )
                         : null,
               ),
-              SizedBox(width: DesignSystem.spacingMD),
+              const SizedBox(width: DesignSystem.spacingMD),
 
               // Activity Details
               Expanded(
@@ -95,7 +95,7 @@ class ActivityItem extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     if (activity.subtitle != null) ...[
-                      SizedBox(height: DesignSystem.spacingXS),
+                      const SizedBox(height: DesignSystem.spacingXS),
                       Text(
                         activity.subtitle!,
                         style: DesignSystem.bodySmall.copyWith(
@@ -106,7 +106,7 @@ class ActivityItem extends StatelessWidget {
                       ),
                     ],
                     if (activity.timestamp != null) ...[
-                      SizedBox(height: DesignSystem.spacingXS),
+                      const SizedBox(height: DesignSystem.spacingXS),
                       Text(
                         _formatTimestamp(activity.timestamp!),
                         style: DesignSystem.bodySmall.copyWith(
@@ -120,7 +120,7 @@ class ActivityItem extends StatelessWidget {
               ),
 
               // Activity Action
-              Icon(
+              const Icon(
                 Icons.arrow_forward_ios,
                 color: DesignSystem.onSurfaceVariant,
                 size: 16,
@@ -182,9 +182,9 @@ class ActivityList extends StatelessWidget {
               if (onSeeAll != null)
                 TextButton(
                   onPressed: onSeeAll,
-                  child: Text(
+                  child: const Text(
                     'See All',
-                    style: DesignSystem.bodySmall.copyWith(
+                    style: TextStyle(
                       color: DesignSystem.primary,
                       fontWeight: FontWeight.w600,
                     ),
@@ -192,13 +192,13 @@ class ActivityList extends StatelessWidget {
                 ),
             ],
           ),
-          SizedBox(height: DesignSystem.spacingMD),
+          const SizedBox(height: DesignSystem.spacingMD),
         ],
         ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: activities.length,
-          separatorBuilder: (context, index) => SizedBox(height: DesignSystem.spacingXS),
+          separatorBuilder: (context, index) => const SizedBox(height: DesignSystem.spacingXS),
           itemBuilder: (context, index) {
             return ActivityItem(activity: activities[index]);
           },

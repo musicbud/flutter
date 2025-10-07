@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'app_back_button.dart';
-import '../../theme/app_theme.dart';
 
 /// A reusable app bar widget that provides consistent styling across the app
 class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -36,7 +35,6 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     final hasDrawer = Scaffold.maybeOf(context)?.hasDrawer ?? false;
-    final appTheme = AppTheme.of(context);
     final canPop = Navigator.of(context).canPop();
     final effectiveBackgroundColor = backgroundColor ?? Colors.black;
     final effectiveForegroundColor = foregroundColor ?? Colors.white;

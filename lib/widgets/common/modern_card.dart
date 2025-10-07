@@ -46,7 +46,6 @@ class _ModernCardState extends State<ModernCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-  late Animation<double> _shadowAnimation;
   bool _isHovered = false;
 
   @override
@@ -59,13 +58,6 @@ class _ModernCardState extends State<ModernCard>
     _scaleAnimation = Tween<double>(
       begin: 1.0,
       end: 1.02,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
-    _shadowAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
@@ -96,14 +88,6 @@ class _ModernCardState extends State<ModernCard>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // Debug logging to validate theme extension initialization
-    final designSystem = theme.designSystem;
-    print('DEBUG: theme.designSystem is null: ${designSystem == null}');
-    if (designSystem != null) {
-      print('DEBUG: designSystemColors is null: ${designSystem.designSystemColors == null}');
-      print('DEBUG: designSystemSpacing is null: ${designSystem.designSystemSpacing == null}');
-      print('DEBUG: designSystemRadius is null: ${designSystem.designSystemRadius == null}');
-    }
 
     return AnimatedBuilder(
       animation: _animationController,

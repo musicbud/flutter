@@ -8,10 +8,12 @@
 // import 'package:musicbud_flutter/presentation/widgets/composition/index.dart';
 //
 // // Use any of the composition patterns
-// final card = CardBuilder().withVariant(CardVariant.primary).build();
-// final section = SectionComposer().withTitle('My Section').build();
-// final playlistCard = CardFactory().createPlaylistCard(/* ... */);
+// // final card = CardBuilder().withVariant(CardVariant.primary).build();
+// // final section = SectionComposer().withTitle('My Section').build();
+// // final playlistCard = CardFactory().createPlaylistCard(/* ... */);
 // ```
+
+// No imports needed for export-only file
 
 // ===========================================================================
 // BUILDERS
@@ -54,15 +56,5 @@ export '../factories/state_factory.dart' show EmptyStateType, ErrorStateType;
 // CONVENIENCE EXTENSIONS
 // ===========================================================================
 
-// Extension for quick access to builders
-extension WidgetCompositionExtensions on Widget {
-  CardBuilder get card => CardBuilder().withContent(child: this);
-  SectionComposer get section => SectionComposer().withContent(child: this);
-}
-
 // Extension for quick access to factory instances
-extension FactoryExtensions on Type {
-  static CardFactory get cards => CardFactory();
-  static StateFactory get states => StateFactory();
-  static WidgetFactory get widgets => WidgetFactory.instance();
-}
+// Note: Static extensions on Type are not supported, use direct instantiation

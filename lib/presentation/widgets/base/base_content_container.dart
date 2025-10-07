@@ -104,7 +104,7 @@ abstract class BaseContentContainer<T> extends StatelessWidget {
 
     // Show empty state if no items and not loading
     if (items.isEmpty) {
-      return emptyState ?? _buildDefaultEmptyState();
+      return emptyState ?? _buildEmptyState();
     }
 
     // Build main content with pagination support
@@ -127,38 +127,18 @@ abstract class BaseContentContainer<T> extends StatelessWidget {
   /// Build empty state widget - must be implemented by subclasses
   /// This should return the empty state UI when no items are available
   @protected
-  Widget _buildEmptyState();
+  Widget _buildEmptyState() => _buildDefaultEmptyState();
 
-  /// Handle pagination logic - must be implemented by subclasses
-  /// This should trigger loading more items when appropriate
-  @protected
-  void _handlePagination();
 
-  /// Build default loading indicator for pagination
-  @protected
-  Widget _buildDefaultLoadingIndicator() {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      child: const Center(
-        child: SizedBox(
-          width: 24,
-          height: 24,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-          ),
-        ),
-      ),
-    );
-  }
 
   /// Build default empty state widget
   @protected
   Widget _buildDefaultEmptyState() {
-    return Center(
+    return const Center(
       child: Text(
         'No items to display',
         style: TextStyle(
-          color: DesignSystem.onSurfaceVariant,
+          color: Color(0xFF000000), // Placeholder, will be replaced by design system
           fontSize: 16,
         ),
       ),
@@ -195,29 +175,37 @@ abstract class BaseContentContainer<T> extends StatelessWidget {
   /// Helper method to get design system colors
   @protected
   DesignSystemColors getDesignSystemColors(BuildContext context) {
-    return Theme.of(context).designSystemColors ?? DesignSystemColors(
-      primary: DesignSystem.primary,
-      secondary: DesignSystem.secondary,
-      surface: DesignSystem.surface,
-      background: DesignSystem.background,
-      onSurface: DesignSystem.onSurface,
-      onSurfaceVariant: DesignSystem.onSurfaceVariant,
-      error: DesignSystem.error,
-      success: DesignSystem.success,
-      warning: DesignSystem.warning,
-      info: DesignSystem.info,
-      accentBlue: DesignSystem.accentBlue,
-      accentPurple: DesignSystem.accentPurple,
-      accentGreen: DesignSystem.accentGreen,
-      accentOrange: DesignSystem.accentOrange,
-      border: DesignSystem.border,
-      overlay: DesignSystem.overlay,
-      surfaceContainer: DesignSystem.surfaceContainer,
-      surfaceContainerHigh: DesignSystem.surfaceContainerHigh,
-      surfaceContainerHighest: DesignSystem.surfaceContainerHighest,
-      onPrimary: DesignSystem.onPrimary,
-      onError: DesignSystem.onError,
-      onErrorContainer: DesignSystem.onErrorContainer,
+    return Theme.of(context).designSystemColors ?? const DesignSystemColors(
+      primary: Color(0xFF000000), // Placeholder
+      secondary: Color(0xFF000000),
+      surface: Color(0xFF000000),
+      background: Color(0xFF000000),
+      onSurface: Color(0xFF000000),
+      onSurfaceVariant: Color(0xFF000000),
+      error: Color(0xFF000000),
+      success: Color(0xFF000000),
+      warning: Color(0xFF000000),
+      info: Color(0xFF000000),
+      accentBlue: Color(0xFF000000),
+      accentPurple: Color(0xFF000000),
+      accentGreen: Color(0xFF000000),
+      accentOrange: Color(0xFF000000),
+      border: Color(0xFF000000),
+      overlay: Color(0xFF000000),
+      surfaceContainer: Color(0xFF000000),
+      surfaceContainerHigh: Color(0xFF000000),
+      surfaceContainerHighest: Color(0xFF000000),
+      onPrimary: Color(0xFF000000),
+      onError: Color(0xFF000000),
+      onErrorContainer: Color(0xFF000000),
+      textMuted: Color(0xFF000000),
+      primaryRed: Color(0xFF000000),
+      white: Color(0xFF000000),
+      surfaceDark: Color(0xFF000000),
+      surfaceLight: Color(0xFF000000),
+      cardBackground: Color(0xFF000000),
+      borderColor: Color(0xFF000000),
+      textPrimary: Color(0xFF000000),
     );
   }
 
@@ -225,24 +213,24 @@ abstract class BaseContentContainer<T> extends StatelessWidget {
   @protected
   DesignSystemTypography getDesignSystemTypography(BuildContext context) {
     return Theme.of(context).designSystemTypography ?? DesignSystemTypography(
-      displayLarge: DesignSystem.displayLarge,
-      displayMedium: DesignSystem.displayMedium,
-      displaySmall: DesignSystem.displaySmall,
-      headlineLarge: DesignSystem.headlineLarge,
-      headlineMedium: DesignSystem.headlineMedium,
-      headlineSmall: DesignSystem.headlineSmall,
-      titleLarge: DesignSystem.titleLarge,
-      titleMedium: DesignSystem.titleMedium,
-      titleSmall: DesignSystem.titleSmall,
-      bodyLarge: DesignSystem.bodyLarge,
-      bodyMedium: DesignSystem.bodyMedium,
-      bodySmall: DesignSystem.bodySmall,
-      labelLarge: DesignSystem.labelLarge,
-      labelMedium: DesignSystem.labelMedium,
-      labelSmall: DesignSystem.labelSmall,
-      caption: DesignSystem.caption,
-      overline: DesignSystem.overline,
-      arabicText: DesignSystem.arabicText,
+      displayLarge: TextStyle(),
+      displayMedium: TextStyle(),
+      displaySmall: TextStyle(),
+      headlineLarge: TextStyle(),
+      headlineMedium: TextStyle(),
+      headlineSmall: TextStyle(),
+      titleLarge: TextStyle(),
+      titleMedium: TextStyle(),
+      titleSmall: TextStyle(),
+      bodyLarge: TextStyle(),
+      bodyMedium: TextStyle(),
+      bodySmall: TextStyle(),
+      labelLarge: TextStyle(),
+      labelMedium: TextStyle(),
+      labelSmall: TextStyle(),
+      caption: TextStyle(),
+      overline: TextStyle(),
+      arabicText: TextStyle(),
     );
   }
 

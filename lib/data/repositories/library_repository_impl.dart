@@ -1,17 +1,8 @@
 import '../../domain/repositories/library_repository.dart';
-import '../../domain/repositories/content_repository.dart';
-import '../../domain/repositories/user_repository.dart';
 import '../../models/library_item.dart';
 
 class LibraryRepositoryImpl implements LibraryRepository {
-  final ContentRepository _contentRepository;
-  final UserRepository _userRepository;
-
-  LibraryRepositoryImpl({
-    required ContentRepository contentRepository,
-    required UserRepository userRepository,
-  }) : _contentRepository = contentRepository,
-       _userRepository = userRepository;
+  LibraryRepositoryImpl();
 
   @override
   Future<List<LibraryItem>> getLibraryItems({

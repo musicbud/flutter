@@ -22,24 +22,19 @@ class Channel extends Equatable {
   const Channel({
     required this.id,
     required this.name,
-    required String? description,
-    String? avatarUrl,
+    this.description,
+    this.avatarUrl,
     required this.settings,
     required this.stats,
     required this.isPublic,
     required this.createdAt,
     required this.updatedAt,
     required this.isJoined,
-    String? lastMessage,
-    DateTime? lastMessageAt,
-    String? type,
-    int? memberCount,
-  }) : description = description,
-       avatarUrl = avatarUrl,
-       lastMessage = lastMessage,
-       lastMessageAt = lastMessageAt,
-       type = type,
-       memberCount = memberCount;
+    this.lastMessage,
+    this.lastMessageAt,
+    this.type,
+    this.memberCount,
+  });
 
   /// Creates a [Channel] from a JSON map
   factory Channel.fromJson(Map<String, dynamic> json) {
