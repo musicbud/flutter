@@ -10,6 +10,7 @@ import "blocs/settings/settings_bloc.dart";
 import "blocs/event/event_bloc.dart";
 import "blocs/spotify/spotify_bloc.dart";
 import "blocs/bud_matching/bud_matching_bloc.dart";
+import "blocs/discover/discover_bloc.dart";
 
 // Repositories
 import "domain/repositories/auth_repository.dart";
@@ -84,6 +85,10 @@ class App extends StatelessWidget {
       // Bud Matching BLoC
       BlocProvider<BudMatchingBloc>(
         create: (context) => sl<BudMatchingBloc>(),
+      ),
+      // Discover BLoC
+      BlocProvider<DiscoverBloc>(
+        create: (context) => sl<DiscoverBloc>(),
       ),
     ];
   }

@@ -35,13 +35,13 @@ void main() async {
   // Initialize dependency injection
   await di.init();
 
-  // Start proxy server for dynamic API communication
-  await startProxyServer();
-
   debugPrint('🚀 MusicBud App: Starting application');
 
   // Run the application with error catching
-  runZonedGuarded(() {
+  runZonedGuarded(() async {
+    // Start proxy server for dynamic API communication within the zone
+    await startProxyServer();
+
     runApp(const MusicBudApp());
   }, (Object error, StackTrace stack) {
     ErrorHandler.handleZoneError(error, stack);
