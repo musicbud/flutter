@@ -6,7 +6,7 @@ import 'package:musicbud_flutter/data/models/common_track.dart';
 import 'package:musicbud_flutter/presentation/screens/spotify/played_tracks_map_screen.dart';
 
 class SpotifyControlScreen extends StatelessWidget {
-  const SpotifyControlScreen({Key? key}) : super(key: key);
+  const SpotifyControlScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class SpotifyControlScreen extends StatelessWidget {
 }
 
 class _SpotifyControlScreenContent extends StatefulWidget {
-  const _SpotifyControlScreenContent({Key? key}) : super(key: key);
+  const _SpotifyControlScreenContent();
 
   @override
   _SpotifyControlScreenContentState createState() => _SpotifyControlScreenContentState();
@@ -67,22 +67,25 @@ class _SpotifyControlScreenContentState extends State<_SpotifyControlScreenConte
               trailing: IconButton(
                 icon: const Icon(Icons.play_arrow),
                 onPressed: () async {
+                  if (!mounted) return;
+                  final bloc = context.read<SpotifyBloc>();
+                  final messenger = ScaffoldMessenger.of(context);
                   try {
                     final position = await Geolocator.getCurrentPosition();
                     if (mounted) {
-                      context.read<SpotifyBloc>().add(PlayTrackWithLocation(
+                      bloc.add(PlayTrackWithLocation(
                         track.id ?? '',
                         track.name,
                         position.latitude,
                         position.longitude,
                       ));
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      messenger.showSnackBar(
                         const SnackBar(content: Text('Track played with location')),
                       );
                     }
                   } catch (e) {
                     if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
+                      messenger.showSnackBar(
                         const SnackBar(content: Text('Failed to play track with location')),
                       );
                     }

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/core/theme/design_system.dart';
+import '../../../core/theme/design_system.dart';
 
 /// A builder class for composing card components with common patterns.
 /// Provides a fluent API for building cards with consistent styling and behavior.

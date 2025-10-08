@@ -13,12 +13,12 @@ class MainNavigationScaffold extends StatefulWidget {
   final VoidCallback? onNotificationsPressed;
 
   const MainNavigationScaffold({
-    Key? key,
+    super.key,
     required this.navigationController,
     this.body,
     this.backgroundColor = Colors.black,
     this.onNotificationsPressed,
-  }) : super(key: key);
+  });
 
   @override
   State<MainNavigationScaffold> createState() => _MainNavigationScaffoldState();

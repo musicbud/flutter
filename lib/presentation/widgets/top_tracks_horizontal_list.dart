@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/track.dart';
 import '../../../core/theme/design_system.dart';
-import 'common/image_with_fallback.dart';
 import 'common/modern_button.dart';
 import 'factories/card_factory.dart';
 import 'mixins/interaction/hover_mixin.dart';
@@ -15,13 +14,13 @@ class TopTracksHorizontalList extends StatefulWidget {
   final bool showLoadMoreButton;
 
   const TopTracksHorizontalList({
-    Key? key,
+    super.key,
     required this.initialTracks,
     required this.loadMoreTracks,
     this.enableHover = true,
     this.enableFocus = true,
     this.showLoadMoreButton = true,
-  }) : super(key: key);
+  });
 
   @override
   TopTracksHorizontalListState createState() => TopTracksHorizontalListState();
@@ -84,9 +83,6 @@ class TopTracksHorizontalListState extends State<TopTracksHorizontalList>
   }
 
   Widget _buildTrackCard(Track track) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return CardFactory().createTrackCard(
       context: context,
       title: track.name,

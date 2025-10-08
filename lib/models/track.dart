@@ -6,23 +6,16 @@ class Track extends CommonTrack with EquatableMixin {
   const Track({
     required String uid,
     required String title,
-    String? artistName,
-    String? albumName,
-    String? imageUrl,
-    double? latitude,
-    double? longitude,
-    DateTime? playedAt,
-    bool isLiked = false,
+    super.artistName,
+    super.albumName,
+    super.imageUrl,
+    super.latitude,
+    super.longitude,
+    super.playedAt,
+    super.isLiked = false,
   }) : super(
           id: uid,
           name: title,
-          artistName: artistName,
-          albumName: albumName,
-          imageUrl: imageUrl,
-          latitude: latitude,
-          longitude: longitude,
-          playedAt: playedAt,
-          isLiked: isLiked,
         );
 
  // Getter to provide artist object for compatibility

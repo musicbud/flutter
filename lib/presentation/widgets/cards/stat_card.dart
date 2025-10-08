@@ -50,7 +50,7 @@ class StatCard extends BaseCard {
   });
 
   @override
-  Widget _buildCard(BuildContext context) {
+  Widget buildCard(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

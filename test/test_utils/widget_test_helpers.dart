@@ -82,7 +82,10 @@ class WidgetTestHelper {
         create: (_) => AuthBloc(authRepository: TestSetup.getMock<AuthRepository>() as MockAuthRepository),
       ),
       BlocProvider<UserBloc>(
-        create: (_) => UserBloc(userRepository: TestSetup.getMock<UserRepository>() as MockUserRepository),
+        create: (_) => UserBloc(
+          userRepository: TestSetup.getMock<UserRepository>() as MockUserRepository,
+          authRepository: TestSetup.getMock<AuthRepository>() as MockAuthRepository,
+        ),
       ),
       BlocProvider<ProfileBloc>(
         create: (_) => ProfileBloc(
@@ -92,7 +95,11 @@ class WidgetTestHelper {
         ),
       ),
       BlocProvider<SettingsBloc>(
-        create: (_) => SettingsBloc(settingsRepository: TestSetup.getMock<SettingsRepository>() as MockSettingsRepository),
+        create: (_) => SettingsBloc(
+          settingsRepository: TestSetup.getMock<SettingsRepository>() as MockSettingsRepository,
+          authRepository: TestSetup.getMock<AuthRepository>() as MockAuthRepository,
+          userProfileRepository: TestSetup.getMock<UserProfileRepository>() as MockUserProfileRepository,
+        ),
       ),
       BlocProvider<MainScreenBloc>(
         create: (_) => MainScreenBloc(profileRepository: TestSetup.getMock<ProfileRepository>() as MockProfileRepository),

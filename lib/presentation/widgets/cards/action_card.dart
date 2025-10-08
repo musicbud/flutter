@@ -67,7 +67,7 @@ class ActionCard extends BaseCard {
   });
 
   @override
-  Widget _buildCard(BuildContext context) {
+  Widget buildCard(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         border: showBorder

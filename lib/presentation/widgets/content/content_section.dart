@@ -13,7 +13,7 @@ class ContentSection extends StatelessWidget {
   final double? dividerThickness;
 
   const ContentSection({
-    Key? key,
+    super.key,
     required this.title,
     required this.content,
     this.icon,
@@ -23,7 +23,7 @@ class ContentSection extends StatelessWidget {
     this.showDivider = true,
     this.dividerColor,
     this.dividerThickness,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

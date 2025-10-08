@@ -19,9 +19,9 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   }
 
   @override
-  Future<UserProfile> getMyProfile() async {
+  Future<UserProfile> getMyProfile({String? service, String? token}) async {
     try {
-      final response = await _remoteDataSource.getMyProfile();
+      final response = await _remoteDataSource.getMyProfile(service: service, token: token);
       return UserProfile.fromJson(response);
     } catch (e) {
       throw Exception('Failed to get my profile: $e');
@@ -31,7 +31,17 @@ class UserProfileRepositoryImpl implements UserProfileRepository {
   @override
   Future<UserProfile> updateProfile(UserProfileUpdateRequest updateRequest) async {
     try {
-      final response = await _remoteDataSource.updateProfile(updateRequest);
+      final response = await _remoteDataSource.updateProfile(
+        bio: updateRequest.bio,
+        displayName: updateRequest.firstName != null && updateRequest.lastName != null
+            ? '${updateRequest.firstName} ${updateRequest.lastName}'
+            : null,
+        firstName: updateRequest.firstName,
+        lastName: updateRequest.lastName,
+        birthday: updateRequest.birthday?.toIso8601String(),
+        gender: updateRequest.gender,
+        interests: updateRequest.interests,
+      );
       return UserProfile.fromJson(response);
     } catch (e) {
       throw Exception('Failed to update profile: $e');

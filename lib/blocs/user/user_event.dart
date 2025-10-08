@@ -55,3 +55,50 @@ class UpdateToken extends UserEvent {
   @override
   List<Object> get props => [token];
 }
+
+// Authentication Events
+class LoginRequest extends UserEvent {
+  final String username;
+  final String password;
+
+  const LoginRequest({required this.username, required this.password});
+
+  @override
+  List<Object> get props => [username, password];
+}
+
+class RegisterRequest extends UserEvent {
+  final String username;
+  final String email;
+  final String password;
+
+  const RegisterRequest({
+    required this.username,
+    required this.email,
+    required this.password,
+  });
+
+  @override
+  List<Object> get props => [username, email, password];
+}
+
+class GetServiceLoginUrl extends UserEvent {
+  final String service;
+
+  const GetServiceLoginUrl({required this.service});
+
+  @override
+  List<Object> get props => [service];
+}
+
+class ConnectService extends UserEvent {
+  final String service;
+  final String code;
+
+  const ConnectService({required this.service, required this.code});
+
+  @override
+  List<Object> get props => [service, code];
+}
+
+class RefreshSpotifyToken extends UserEvent {}

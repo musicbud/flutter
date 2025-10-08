@@ -1,5 +1,3 @@
-/// Navigation system constants and configuration
-/// Centralizes all hardcoded values used across navigation components
 import 'package:flutter/material.dart';
 
 class NavigationConstants {

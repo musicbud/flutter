@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get_it/get_it.dart';
 import 'package:mockito/mockito.dart';
 import 'package:musicbud_flutter/domain/repositories/auth_repository.dart';
 import 'package:musicbud_flutter/domain/repositories/user_repository.dart';
@@ -20,12 +19,6 @@ import 'package:musicbud_flutter/domain/repositories/common_items_repository.dar
 import 'package:musicbud_flutter/domain/repositories/spotify_repository.dart';
 import 'package:musicbud_flutter/data/providers/token_provider.dart';
 import 'package:musicbud_flutter/injection_container.dart';
-import 'package:musicbud_flutter/models/track.dart';
-import 'package:musicbud_flutter/models/artist.dart';
-import 'package:musicbud_flutter/models/genre.dart';
-import 'package:musicbud_flutter/models/search.dart';
-import 'package:dartz/dartz.dart';
-import 'package:musicbud_flutter/core/error/failures.dart';
 
 // Mock classes for repositories
 class MockAuthRepository extends Mock implements AuthRepository {}

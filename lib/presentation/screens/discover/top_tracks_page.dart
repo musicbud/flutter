@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../blocs/content/content_bloc.dart';
-import '../../../blocs/content/content_event.dart';
-import '../../../blocs/content/content_state.dart';
+import '../../../blocs/discover/discover_bloc.dart';
+import '../../../blocs/discover/discover_event.dart';
+import '../../../blocs/discover/discover_state.dart';
 import '../../../core/theme/design_system.dart';
 import '../../../presentation/widgets/common/image_with_fallback.dart';
 import '../../../presentation/widgets/common/modern_button.dart';
-import '../../../presentation/widgets/common/app_typography.dart';
 import '../../../models/common_track.dart';
 
 class TopTracksPage extends StatefulWidget {
@@ -25,7 +24,7 @@ class _TopTracksPageState extends State<TopTracksPage> {
     super.initState();
     _scrollController.addListener(_onScroll);
     // Load top tracks on init
-    context.read<ContentBloc>().add(LoadTopTracks());
+    context.read<DiscoverBloc>().add(const FetchTopTracks());
   }
 
   @override
@@ -46,7 +45,7 @@ class _TopTracksPageState extends State<TopTracksPage> {
     });
 
     // For now, just reload - in future could implement pagination
-    context.read<ContentBloc>().add(LoadTopTracks());
+    context.read<DiscoverBloc>().add(const FetchTopTracks());
 
     setState(() {
       _isLoadingMore = false;
@@ -70,95 +69,100 @@ class _TopTracksPageState extends State<TopTracksPage> {
         decoration: const BoxDecoration(
           gradient: DesignSystem.gradientBackground,
         ),
-        child: BlocBuilder<ContentBloc, ContentState>(
-          builder: (context, state) {
-            if (state is ContentLoading) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+        child: RefreshIndicator(
+          onRefresh: () async {
+            context.read<DiscoverBloc>().add(const FetchTopTracks());
+          },
+          child: BlocBuilder<DiscoverBloc, DiscoverState>(
+            builder: (context, state) {
+              if (state is TopTracksLoading) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-            if (state is ContentError) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.error_outline,
-                      size: 64,
-                      color: DesignSystem.error,
-                    ),
-                    SizedBox(height: DesignSystem.spacingMD),
-                    Text(
-                      'Failed to load top tracks',
-                      style: DesignSystem.bodyMedium.copyWith(
-                        color: DesignSystem.onSurface,
-                      ),
-                    ),
-                    SizedBox(height: DesignSystem.spacingMD),
-                    Text(
-                      state.message,
-                      style: DesignSystem.caption.copyWith(
-                        color: DesignSystem.onSurfaceVariant,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: DesignSystem.spacingLG),
-                    ModernButton(
-                      text: 'Retry',
-                      onPressed: () {
-                        context.read<ContentBloc>().add(LoadTopTracks());
-                      },
-                      variant: ModernButtonVariant.primary,
-                      size: ModernButtonSize.medium,
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            if (state is ContentTopTracksLoaded) {
-              final tracks = state.tracks;
-              if (tracks.isEmpty) {
+              if (state is TopTracksError) {
                 return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons.music_note,
+                        Icons.error_outline,
                         size: 64,
-                        color: DesignSystem.onSurfaceVariant,
+                        color: DesignSystem.error,
                       ),
                       SizedBox(height: DesignSystem.spacingMD),
                       Text(
-                        'No top tracks available',
+                        'Failed to load top tracks',
                         style: DesignSystem.bodyMedium.copyWith(
                           color: DesignSystem.onSurface,
                         ),
+                      ),
+                      SizedBox(height: DesignSystem.spacingMD),
+                      Text(
+                        state.message,
+                        style: DesignSystem.caption.copyWith(
+                          color: DesignSystem.onSurfaceVariant,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: DesignSystem.spacingLG),
+                      ModernButton(
+                        text: 'Retry',
+                        onPressed: () {
+                          context.read<DiscoverBloc>().add(const FetchTopTracks());
+                        },
+                        variant: ModernButtonVariant.primary,
+                        size: ModernButtonSize.medium,
                       ),
                     ],
                   ),
                 );
               }
 
-              return ListView.builder(
-                controller: _scrollController,
-                padding: EdgeInsets.all(DesignSystem.spacingMD),
-                itemCount: tracks.length + (_isLoadingMore ? 1 : 0),
-                itemBuilder: (context, index) {
-                  if (index == tracks.length) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  final track = tracks[index];
-                  return _buildTrackItem(track);
-                },
-              );
-            }
+              if (state is TopTracksLoaded) {
+                final tracks = state.tracks;
+                if (tracks.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.music_note,
+                          size: 64,
+                          color: DesignSystem.onSurfaceVariant,
+                        ),
+                        SizedBox(height: DesignSystem.spacingMD),
+                        Text(
+                          'No top tracks available',
+                          style: DesignSystem.bodyMedium.copyWith(
+                            color: DesignSystem.onSurface,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
 
-            return const Center(
-              child: Text('Loading top tracks...'),
-            );
-          },
+                return ListView.builder(
+                  controller: _scrollController,
+                  padding: EdgeInsets.all(DesignSystem.spacingMD),
+                  itemCount: tracks.length + (_isLoadingMore ? 1 : 0),
+                  itemBuilder: (context, index) {
+                    if (index == tracks.length) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final track = tracks[index];
+                    return _buildTrackItem(track);
+                  },
+                );
+              }
+
+              return const Center(
+                child: Text('Loading top tracks...'),
+              );
+            },
+          ),
         ),
       ),
     );

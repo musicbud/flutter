@@ -7,11 +7,11 @@ class TrackListItem extends StatelessWidget {
   final VoidCallback? onPlayPressed;
 
   const TrackListItem({
-    Key? key,
+    super.key,
     required this.track,
     this.onTap,
     this.onPlayPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

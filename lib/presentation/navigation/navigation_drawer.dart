@@ -11,10 +11,10 @@ class MainNavigationDrawer extends StatelessWidget {
   final VoidCallback? onDrawerItemTap;
 
   const MainNavigationDrawer({
-    Key? key,
+    super.key,
     required this.navigationController,
     this.onDrawerItemTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,10 +23,10 @@ class MainNavigationDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           const DrawerHeader(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: DesignSystem.primary, // Primary red color
             ),
-            child: const Column(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -38,9 +38,9 @@ class MainNavigationDrawer extends StatelessWidget {
                       size: 32,
                     ),
                     SizedBox(width: 12),
-                    const Text(
+                    Text(
                       'MusicBud',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: DesignSystem.onPrimary,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,

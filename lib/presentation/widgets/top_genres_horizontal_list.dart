@@ -12,13 +12,13 @@ class TopGenresHorizontalList extends StatefulWidget {
   final bool showLoadMoreButton;
 
   const TopGenresHorizontalList({
-    Key? key,
+    super.key,
     required this.initialGenres,
     required this.loadMoreGenres,
     this.enableHover = true,
     this.enableFocus = true,
     this.showLoadMoreButton = true,
-  }) : super(key: key);
+  });
 
   @override
   TopGenresHorizontalListState createState() => TopGenresHorizontalListState();

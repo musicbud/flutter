@@ -91,3 +91,74 @@ class UserError extends UserState {
   @override
   List<Object?> get props => [message];
 }
+
+// Authentication States
+class LoginSuccess extends UserState {}
+
+class LoginFailure extends UserState {
+  final String error;
+
+  const LoginFailure(this.error);
+
+  @override
+  List<Object?> get props => [error];
+}
+
+class RegisterSuccess extends UserState {}
+
+class RegisterFailure extends UserState {
+  final String error;
+
+  const RegisterFailure(this.error);
+
+  @override
+  List<Object?> get props => [error];
+}
+
+class ServiceLoginUrlReceived extends UserState {
+  final String url;
+
+  const ServiceLoginUrlReceived(this.url);
+
+  @override
+  List<Object?> get props => [url];
+}
+
+class ServiceLoginUrlError extends UserState {
+  final String error;
+
+  const ServiceLoginUrlError(this.error);
+
+  @override
+  List<Object?> get props => [error];
+}
+
+class ServiceConnected extends UserState {
+  final String service;
+
+  const ServiceConnected(this.service);
+
+  @override
+  List<Object?> get props => [service];
+}
+
+class ServiceConnectionError extends UserState {
+  final String service;
+  final String error;
+
+  const ServiceConnectionError(this.service, this.error);
+
+  @override
+  List<Object?> get props => [service, error];
+}
+
+class SpotifyTokenRefreshed extends UserState {}
+
+class SpotifyTokenRefreshError extends UserState {
+  final String error;
+
+  const SpotifyTokenRefreshError(this.error);
+
+  @override
+  List<Object?> get props => [error];
+}

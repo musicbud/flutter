@@ -33,14 +33,10 @@ class MapTrackSelectedState extends MapTracksLoaded {
 
   const MapTrackSelectedState({
     required this.selectedTrack,
-    required List<Track> tracks,
-    required Set<Marker> markers,
-    required LatLngBounds bounds,
-  }) : super(
-          tracks: tracks,
-          markers: markers,
-          bounds: bounds,
-        );
+    required super.tracks,
+    required super.markers,
+    required super.bounds,
+  });
 
   @override
   List<Object?> get props => [selectedTrack, ...super.props];

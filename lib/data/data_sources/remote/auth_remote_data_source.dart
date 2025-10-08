@@ -11,6 +11,7 @@ abstract class AuthRemoteDataSource {
   Future<Map<String, dynamic>> refreshToken(String refreshToken);
   Future<void> logout();
   Future<String> getServiceAuthUrl();
+  Future<String> getServiceLoginUrl(String service);
   Future<void> connectSpotify(String code);
   Future<void> connectYTMusic(String code);
   Future<void> connectLastFM(String code);
@@ -119,6 +120,17 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to get service auth URL');
+    }
+  }
+
+  @override
+  Future<String> getServiceLoginUrl(String service) async {
+    try {
+      final response = await _dioClient.get('${ApiConfig.serviceLogin}?service=$service');
+      return response.data['data']['authorization_link'];
+    } on DioException catch (e) {
+      throw ServerException(
+          message: e.message ?? 'Failed to get service login URL for $service');
     }
   }
 

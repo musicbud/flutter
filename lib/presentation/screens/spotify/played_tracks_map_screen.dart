@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:musicbud_flutter/blocs/spotify/spotify_bloc.dart';
 
 class PlayedTracksMapScreen extends StatelessWidget {
-  const PlayedTracksMapScreen({Key? key}) : super(key: key);
+  const PlayedTracksMapScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class PlayedTracksMapScreen extends StatelessWidget {
 }
 
 class _PlayedTracksMapScreenContent extends StatefulWidget {
-  const _PlayedTracksMapScreenContent({Key? key}) : super(key: key);
+  const _PlayedTracksMapScreenContent();
 
   @override
   _PlayedTracksMapScreenContentState createState() => _PlayedTracksMapScreenContentState();

@@ -1,8 +1,8 @@
+import 'package:flutter/material.dart';
+
 /// @deprecated Use DesignSystem instead. This file is deprecated and will be removed in a future version.
 /// Migrate to: import 'package:musicbud/core/theme/design_system.dart';
 /// All theme tokens are now available through DesignSystem and theme extensions.
-import 'package:flutter/material.dart';
-
 class AppTheme {
   static AppTheme? _instance;
 

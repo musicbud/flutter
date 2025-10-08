@@ -13,7 +13,7 @@ class DiscoverPageLoaded extends DiscoverEvent {
 
 class DiscoverCategorySelected extends DiscoverEvent {
   final String categoryId;
-  
+
   const DiscoverCategorySelected(this.categoryId);
 
   @override
@@ -37,4 +37,45 @@ class DiscoverItemInteracted extends DiscoverEvent {
 
   @override
   List<Object?> get props => [itemId, type, action];
+}
+
+// New events for fetching specific content types
+class FetchTopTracks extends DiscoverEvent {
+  const FetchTopTracks();
+}
+
+class FetchTopArtists extends DiscoverEvent {
+  const FetchTopArtists();
+}
+
+class FetchTopGenres extends DiscoverEvent {
+  const FetchTopGenres();
+}
+
+class FetchTopAnime extends DiscoverEvent {
+  const FetchTopAnime();
+}
+
+class FetchTopManga extends DiscoverEvent {
+  const FetchTopManga();
+}
+
+class FetchLikedTracks extends DiscoverEvent {
+  const FetchLikedTracks();
+}
+
+class FetchLikedArtists extends DiscoverEvent {
+  const FetchLikedArtists();
+}
+
+class FetchLikedGenres extends DiscoverEvent {
+  const FetchLikedGenres();
+}
+
+class FetchLikedAlbums extends DiscoverEvent {
+  const FetchLikedAlbums();
+}
+
+class FetchPlayedTracks extends DiscoverEvent {
+  const FetchPlayedTracks();
 }

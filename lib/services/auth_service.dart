@@ -1,8 +1,13 @@
 import 'package:dio/dio.dart';
+import 'dart:developer' as developer;
 import 'package:musicbud_flutter/services/api_service.dart'; // Make sure to import your ApiService
 
 class AuthService {
   final ApiService _apiService = ApiService();
+
+  void _log(String message) {
+    developer.log(message);
+  }
 
   Future<bool> login(String username, String password) async {
     try {
@@ -31,16 +36,16 @@ class AuthService {
         if (accessToken != null && refreshToken != null) {
           await _apiService.setAuthToken(accessToken);
           await _apiService.setRefreshToken(refreshToken);
-          print('Access token set: $accessToken');
-          print('Refresh token set: $refreshToken');
+          _log('Access token set: $accessToken');
+          _log('Refresh token set: $refreshToken');
           return true;
         }
       }
 
-      print('Login failed: ${response.statusCode}');
+      _log('Login failed: ${response.statusCode}');
       return false;
     } catch (e) {
-      print('Login error: $e');
+      _log('Login error: $e');
       return false;
     }
   }

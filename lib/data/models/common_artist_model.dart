@@ -2,34 +2,20 @@ import '../../models/common_artist.dart';
 
 class CommonArtistModel extends CommonArtist {
   CommonArtistModel({
-    required String id,
-    String uid = '',
-    required String name,
-    String? source,
-    String? spotifyId,
-    String? ytmusicId,
-    String? lastfmId,
-    int? popularity,
-    bool isLiked = false,
-    String? imageUrl,
-    List<String>? imageUrls,
-    int? followers,
-    List<String>? genres,
-  }) : super(
-          id: id,
-          uid: uid,
-          name: name,
-          source: source,
-          spotifyId: spotifyId,
-          ytmusicId: ytmusicId,
-          lastfmId: lastfmId,
-          popularity: popularity,
-          isLiked: isLiked,
-          imageUrl: imageUrl,
-          imageUrls: imageUrls,
-          followers: followers,
-          genres: genres,
-        );
+    required super.id,
+    super.uid = '',
+    required super.name,
+    super.source,
+    super.spotifyId,
+    super.ytmusicId,
+    super.lastfmId,
+    super.popularity,
+    super.isLiked = false,
+    super.imageUrl,
+    super.imageUrls,
+    super.followers,
+    super.genres,
+  });
 
   factory CommonArtistModel.fromJson(Map<String, dynamic> json) {
     return CommonArtistModel(

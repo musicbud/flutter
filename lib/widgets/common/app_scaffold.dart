@@ -17,7 +17,7 @@ class AppScaffold extends StatelessWidget {
   final bool showDrawer;
 
   const AppScaffold({
-    Key? key,
+    super.key,
     required this.body,
     this.appBar,
     this.floatingActionButton,
@@ -28,7 +28,7 @@ class AppScaffold extends StatelessWidget {
     this.useSafeArea = true,
     this.drawer,
     this.showDrawer = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -320,9 +320,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     double? height,
     Alignment? alignment,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
       width: width,
       height: height,
@@ -742,7 +739,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         value: value,
         groupValue: groupValue,
         onChanged: _focusEnabled ? onChanged : null,
-        activeColor: activeColor ?? design.designSystemColors!.primary,
+        activeColor: activeColor ?? design.designSystemColors.primary,
       ),
     );
   }
@@ -835,13 +832,13 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors!.surfaceContainer,
+        color: backgroundColor ?? design.designSystemColors.surfaceContainer,
         child: ExpansionTile(
           title: title,
           initiallyExpanded: initiallyExpanded,
-          backgroundColor: backgroundColor ?? design.designSystemColors!.surfaceContainer,
-          collapsedBackgroundColor: backgroundColor ?? design.designSystemColors!.surfaceContainer,
-          childrenPadding: EdgeInsets.all(design.designSystemSpacing!.md),
+          backgroundColor: backgroundColor ?? design.designSystemColors.surfaceContainer,
+          collapsedBackgroundColor: backgroundColor ?? design.designSystemColors.surfaceContainer,
+          childrenPadding: EdgeInsets.all(design.designSystemSpacing.md),
           children: children,
         ),
       ),
@@ -1063,8 +1060,8 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
             onPressed: _focusEnabled ? () => onRatingChanged(starValue.toDouble()) : null,
             icon: Icon(isActive ? Icons.star : Icons.star_border),
             color: isActive
-                ? (activeColor ?? design.designSystemColors!.warning)
-                : design.designSystemColors!.onSurfaceVariant,
+                ? (activeColor ?? design.designSystemColors.warning)
+                : design.designSystemColors.onSurfaceVariant,
             iconSize: size ?? 24,
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
@@ -1416,18 +1413,18 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
                         IconTheme(
                           data: IconThemeData(
                             color: isSelected
-                                ? design.designSystemColors!.onPrimary
-                                : design.designSystemColors!.onSurfaceVariant,
+                                ? design.designSystemColors.onPrimary
+                                : design.designSystemColors.onSurfaceVariant,
                           ),
                           child: isSelected ? item.activeIcon : item.icon,
                         ),
-                        SizedBox(height: design.designSystemSpacing!.xs),
+                        SizedBox(height: design.designSystemSpacing.xs),
                         Text(
                           item.label!,
-                          style: design.designSystemTypography!.caption.copyWith(
+                          style: design.designSystemTypography.caption.copyWith(
                             color: isSelected
-                                ? design.designSystemColors!.onPrimary
-                                : design.designSystemColors!.onSurfaceVariant,
+                                ? design.designSystemColors.onPrimary
+                                : design.designSystemColors.onSurfaceVariant,
                           ),
                         ),
                       ],

@@ -1,8 +1,7 @@
-
-/// Represents a single step in an animation sequence
 import 'dart:async';
 import 'package:flutter/material.dart';
 
+/// Represents a single step in an animation sequence
 class AnimationStep {
   /// The name of the animation to play for this step
   final String name;

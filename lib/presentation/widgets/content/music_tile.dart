@@ -16,7 +16,7 @@ class MusicTile extends StatelessWidget {
   final BorderRadius? borderRadius;
 
   const MusicTile({
-    Key? key,
+    super.key,
     required this.title,
     required this.artist,
     this.imageUrl,
@@ -28,7 +28,7 @@ class MusicTile extends StatelessWidget {
     this.padding,
     this.backgroundColor,
     this.borderRadius,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -12,14 +12,14 @@ class CustomAppBar extends StatelessWidget {
   final NavigationConfig? config;
 
   const CustomAppBar({
-    Key? key,
+    super.key,
     this.onMenuPressed,
     this.onNotificationsPressed,
     this.title = NavigationConstants.defaultAppTitle,
     this.backgroundColor,
     this.textColor,
     this.config,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

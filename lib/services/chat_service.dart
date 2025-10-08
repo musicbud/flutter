@@ -521,4 +521,34 @@ class ChatService implements ChatRepository {
       throw Exception('Failed to get messages: $e');
     }
   }
+
+  // Invitation operations
+  @override
+  Future<void> sendInvitation(String channelId, String userId) async {
+    try {
+      await _dio.post('/channels/$channelId/invitations', data: {
+        'user_id': userId,
+      });
+    } catch (e) {
+      throw Exception('Failed to send invitation: $e');
+    }
+  }
+
+  @override
+  Future<void> acceptInvitation(String invitationId) async {
+    try {
+      await _dio.post('/invitations/$invitationId/accept');
+    } catch (e) {
+      throw Exception('Failed to accept invitation: $e');
+    }
+  }
+
+  @override
+  Future<void> declineInvitation(String invitationId) async {
+    try {
+      await _dio.post('/invitations/$invitationId/decline');
+    } catch (e) {
+      throw Exception('Failed to decline invitation: $e');
+    }
+  }
 }

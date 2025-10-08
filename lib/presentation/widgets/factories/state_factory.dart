@@ -51,7 +51,7 @@ class StateFactory {
         .withLoadingMessage(message ?? 'Loading...')
         .withLoadingWidget(
           showProgress
-              ? (customIndicator != null ? customIndicator : SizedBox(
+              ? (customIndicator ?? SizedBox(
                   width: progressSize ?? 48,
                   height: progressSize ?? 48,
                   child: CircularProgressIndicator(
@@ -103,7 +103,7 @@ class StateFactory {
         .withState(StateType.error)
         .withErrorMessage(message ?? _getDefaultErrorMessage(type))
         .withErrorIcon(customIcon ?? _getDefaultErrorIcon(type))
-        .withOnRetry(onRetry != null ? onRetry : () {})
+        .withOnRetry(onRetry ?? () {})
         .withPadding(padding ?? EdgeInsets.all(design.designSystemSpacing.xl))
         .build();
   }

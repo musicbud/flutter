@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:musicbud_flutter/blocs/user_profile/user_profile_bloc.dart';
 import 'package:musicbud_flutter/models/user_profile.dart';
 import 'package:musicbud_flutter/presentation/screens/profile/profile_screen.dart';
-import 'package:musicbud_flutter/presentation/screens/profile/artist_details_screen.dart';
-import 'package:musicbud_flutter/presentation/screens/profile/genre_details_screen.dart';
-import 'package:musicbud_flutter/presentation/screens/profile/track_details_screen.dart';
 import '../../../test_utils/mock_data.dart';
 import '../../../test_utils/test_helpers.dart';
 import '../../../test_utils/widget_test_helpers.dart';

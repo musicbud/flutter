@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import '../../../models/user_profile.dart';
 
 abstract class ProfileEvent extends Equatable {
   const ProfileEvent();
@@ -9,7 +8,15 @@ abstract class ProfileEvent extends Equatable {
 }
 
 // Profile operations
-class MyProfileRequested extends ProfileEvent {}
+class GetProfile extends ProfileEvent {
+  final String? service;
+  final String? token;
+
+  const GetProfile({this.service, this.token});
+
+  @override
+  List<Object?> get props => [service, token];
+}
 
 class BudProfileRequested extends ProfileEvent {
   final String username;
@@ -20,16 +27,17 @@ class BudProfileRequested extends ProfileEvent {
   List<Object> get props => [username];
 }
 
-class ProfileUpdateRequested extends ProfileEvent {
-  final UserProfile profile;
+class UpdateProfile extends ProfileEvent {
+  final String? bio;
+  final String? displayName;
 
-  const ProfileUpdateRequested(this.profile);
+  const UpdateProfile({this.bio, this.displayName});
 
   @override
-  List<Object> get props => [profile];
+  List<Object?> get props => [bio, displayName];
 }
 
-class UpdateLikesRequested extends ProfileEvent {}
+class SyncLikes extends ProfileEvent {}
 
 // Liked items
 class LikedArtistsRequested extends ProfileEvent {}

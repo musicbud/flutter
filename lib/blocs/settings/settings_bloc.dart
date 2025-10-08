@@ -1,14 +1,22 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/settings_repository.dart';
+import '../../domain/repositories/auth_repository.dart';
+import '../../domain/repositories/user_profile_repository.dart';
 import 'settings_event.dart';
 import 'settings_state.dart';
 
 class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   final SettingsRepository _settingsRepository;
+  final AuthRepository _authRepository;
+  final UserProfileRepository _userProfileRepository;
 
   SettingsBloc({
     required SettingsRepository settingsRepository,
+    required AuthRepository authRepository,
+    required UserProfileRepository userProfileRepository,
   })  : _settingsRepository = settingsRepository,
+        _authRepository = authRepository,
+        _userProfileRepository = userProfileRepository,
         super(SettingsInitial()) {
     on<SettingsRequested>(_onSettingsRequested);
     on<NotificationSettingsUpdated>(_onNotificationSettingsUpdated);
@@ -21,6 +29,12 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<UpdatePrivacySettingsEvent>(_onUpdatePrivacySettings);
     on<UpdateThemeEvent>(_onUpdateTheme);
     on<UpdateLanguageEvent>(_onUpdateLanguage);
+    on<ConnectSpotify>(_onConnectSpotify);
+    on<ConnectYTMusic>(_onConnectYTMusic);
+    on<ConnectLastFM>(_onConnectLastFM);
+    on<ConnectMAL>(_onConnectMAL);
+    on<UpdateLikes>(_onUpdateLikes);
+    on<GetServiceLoginUrl>(_onGetServiceLoginUrl);
   }
 
   Future<void> _onSettingsRequested(
@@ -216,5 +230,80 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   ) async {
     // Since individual updates already save to repository, just emit success
     emit(SettingsSaved());
+  }
+
+  Future<void> _onConnectSpotify(
+    ConnectSpotify event,
+    Emitter<SettingsState> emit,
+  ) async {
+    try {
+      await _authRepository.connectSpotify(event.spotifyToken);
+      emit(ServiceConnected('spotify'));
+    } catch (e) {
+      emit(ServiceConnectionError('spotify', e.toString()));
+    }
+  }
+
+  Future<void> _onConnectYTMusic(
+    ConnectYTMusic event,
+    Emitter<SettingsState> emit,
+  ) async {
+    try {
+      await _authRepository.connectYTMusic(event.ytmusicToken);
+      emit(ServiceConnected('ytmusic'));
+    } catch (e) {
+      emit(ServiceConnectionError('ytmusic', e.toString()));
+    }
+  }
+
+  Future<void> _onConnectLastFM(
+    ConnectLastFM event,
+    Emitter<SettingsState> emit,
+  ) async {
+    try {
+      await _authRepository.connectLastFM(event.lastfmToken);
+      emit(ServiceConnected('lastfm'));
+    } catch (e) {
+      emit(ServiceConnectionError('lastfm', e.toString()));
+    }
+  }
+
+  Future<void> _onConnectMAL(
+    ConnectMAL event,
+    Emitter<SettingsState> emit,
+  ) async {
+    try {
+      await _authRepository.connectMAL(event.malToken);
+      emit(ServiceConnected('mal'));
+    } catch (e) {
+      emit(ServiceConnectionError('mal', e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateLikes(
+    UpdateLikes event,
+    Emitter<SettingsState> emit,
+  ) async {
+    try {
+      await _userProfileRepository.updateLikes({
+        'service': event.service,
+        'token': event.token,
+      });
+      emit(LikesUpdated(event.service));
+    } catch (e) {
+      emit(LikesUpdateError(event.service, e.toString()));
+    }
+  }
+
+  Future<void> _onGetServiceLoginUrl(
+    GetServiceLoginUrl event,
+    Emitter<SettingsState> emit,
+  ) async {
+    try {
+      final url = await _authRepository.getServiceLoginUrl(event.service);
+      emit(ServiceLoginUrlReceived(event.service, url));
+    } catch (e) {
+      emit(ServiceLoginUrlError(event.service, e.toString()));
+    }
   }
 }

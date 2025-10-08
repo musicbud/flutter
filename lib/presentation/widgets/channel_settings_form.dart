@@ -6,10 +6,10 @@ class ChannelSettingsForm extends StatefulWidget {
   final Function(ChannelSettings) onSave;
 
   const ChannelSettingsForm({
-    Key? key,
+    super.key,
     required this.initialSettings,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   State<ChannelSettingsForm> createState() => _ChannelSettingsFormState();
@@ -158,11 +158,10 @@ class _ContentTypeChip extends StatelessWidget {
   final Function(bool) onToggle;
 
   const _ContentTypeChip({
-    Key? key,
     required this.label,
     required this.isSelected,
     required this.onToggle,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

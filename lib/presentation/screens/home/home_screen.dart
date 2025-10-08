@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/user_profile/user_profile_bloc.dart';
-import '../../../blocs/profile/simple_profile_bloc.dart';
 import '../../../core/theme/design_system.dart';
 import '../../../presentation/widgets/common/modern_input_field.dart';
-import '../../../presentation/widgets/common/modern_button.dart';
-import '../../../presentation/widgets/common/app_typography.dart';
 import '../../../presentation/widgets/navigation/main_navigation_scaffold.dart';
 import '../../../presentation/navigation/main_navigation.dart';
 import 'home_header_widget.dart';
@@ -98,31 +95,31 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Quick Actions Section
                 SliverToBoxAdapter(
-                  child: const Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
-                    child: const HomeQuickActions(),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
+                    child: HomeQuickActions(),
                   ),
                 ),
 
                 SliverToBoxAdapter(
-                  child: const SizedBox(height: DesignSystem.spacingXL),
+                  child: SizedBox(height: DesignSystem.spacingXL),
                 ),
 
                 // Dynamic Content Sections
                 SliverToBoxAdapter(
-                  child: const Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
-                    child: const Column(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
+                    child: Column(
                       children: [
-                        const HomeRecommendations(),
-                        const HomeRecentActivity(),
+                        HomeRecommendations(),
+                        HomeRecentActivity(),
                       ],
                     ),
                   ),
                 ),
 
                 SliverToBoxAdapter(
-                  child: const SizedBox(height: DesignSystem.spacingXL),
+                  child: SizedBox(height: DesignSystem.spacingXL),
                 ),
               ],
             ),

@@ -6,11 +6,11 @@ class SearchSuggestionList extends StatelessWidget {
   final bool showTrendingIcon;
 
   const SearchSuggestionList({
-    Key? key,
+    super.key,
     required this.suggestions,
     required this.onSuggestionSelected,
     this.showTrendingIcon = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

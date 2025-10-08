@@ -8,10 +8,8 @@ import 'package:musicbud_flutter/presentation/screens/profile/profile_screen.dar
 import 'package:musicbud_flutter/presentation/screens/chat/chat_screen.dart';
 import 'package:musicbud_flutter/blocs/bud_matching/bud_matching_bloc.dart' as bud_matching;
 import 'package:musicbud_flutter/blocs/user/profile/profile_bloc.dart';
-import 'package:musicbud_flutter/blocs/user/profile/profile_event.dart';
 import 'package:musicbud_flutter/blocs/user/profile/profile_state.dart';
 import 'package:musicbud_flutter/blocs/comprehensive_chat/comprehensive_chat_bloc.dart';
-import 'package:musicbud_flutter/blocs/comprehensive_chat/comprehensive_chat_event.dart';
 import 'package:musicbud_flutter/blocs/comprehensive_chat/comprehensive_chat_state.dart';
 import 'package:musicbud_flutter/models/bud_match.dart';
 import 'package:musicbud_flutter/models/user_profile.dart';

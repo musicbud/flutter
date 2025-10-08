@@ -7,7 +7,6 @@ import '../../../blocs/auth/auth_bloc.dart';
 import '../../../core/theme/design_system.dart';
 import '../../../presentation/widgets/common/modern_input_field.dart';
 import '../../../presentation/widgets/common/modern_button.dart';
-import '../../../presentation/widgets/common/app_typography.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

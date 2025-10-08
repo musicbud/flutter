@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/bud_matching/bud_matching_bloc.dart';
 import '../../../core/theme/design_system.dart';
 import '../../../models/bud_match.dart';
-import '../../../presentation/widgets/common/modern_input_field.dart';
-import '../../../presentation/widgets/common/modern_button.dart';
+import '../../../models/bud_search_result.dart';
 import '../../../presentation/widgets/bud_match_list_item.dart';
 import '../../../presentation/widgets/common/loading_indicator.dart';
 import '../../../presentation/widgets/common/empty_state.dart';
@@ -17,25 +16,39 @@ class BudsScreen extends StatefulWidget {
 }
 
 class _BudsScreenState extends State<BudsScreen> {
-  final TextEditingController _searchController = TextEditingController();
-  final List<String> _quickSearches = [
-    'music lovers',
-    'rock fans',
-    'pop enthusiasts',
-    'jazz lovers',
-    'electronic music',
+  final List<Map<String, dynamic>> _contentTypes = [
+    {'label': 'Top Artists', 'event': FindBudsByTopArtists()},
+    {'label': 'Top Tracks', 'event': FindBudsByTopTracks()},
+    {'label': 'Top Genres', 'event': FindBudsByTopGenres()},
+    {'label': 'Top Anime', 'event': FindBudsByTopAnime()},
+    {'label': 'Top Manga', 'event': FindBudsByTopManga()},
+    {'label': 'Liked Artists', 'event': FindBudsByLikedArtists()},
+    {'label': 'Liked Tracks', 'event': FindBudsByLikedTracks()},
+    {'label': 'Liked Genres', 'event': FindBudsByLikedGenres()},
+    {'label': 'Liked Albums', 'event': FindBudsByLikedAlbums()},
+    {'label': 'Liked All-in-One', 'event': FindBudsByLikedAio()},
+    {'label': 'Played Tracks', 'event': FindBudsByPlayedTracks()},
   ];
 
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
+  BudMatchingEvent? _lastEvent;
+
+  void _findBuds(BudMatchingEvent event) {
+    _lastEvent = event;
+    context.read<BudMatchingBloc>().add(event);
   }
 
-  void _performSearch(String query) {
-    if (query.isNotEmpty) {
-      context.read<BudMatchingBloc>().add(SearchBuds(query: query));
-    }
+  BudMatch _convertBudSearchItemToBudMatch(BudSearchItem item) {
+    return BudMatch(
+      id: item.uid,
+      userId: item.uid,
+      username: item.displayName,
+      email: item.email,
+      avatarUrl: null, // BudSearchItem doesn't have avatar URL
+      matchScore: 0.0, // Calculate based on common counts if needed
+      commonArtists: item.commonArtistsCount ?? 0,
+      commonTracks: item.commonTracksCount ?? 0,
+      commonGenres: item.commonGenresCount ?? 0,
+    );
   }
 
   @override
@@ -51,7 +64,7 @@ class _BudsScreenState extends State<BudsScreen> {
       ),
       body: Column(
         children: [
-          // Search Section
+          // Content Type Selection
           Container(
             padding: const EdgeInsets.all(DesignSystem.spacingLG),
             decoration: BoxDecoration(
@@ -64,29 +77,19 @@ class _BudsScreenState extends State<BudsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ModernInputField(
-                  hintText: 'Search for music buddies...',
-                  controller: _searchController,
-                  onSubmitted: _performSearch,
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () => _performSearch(_searchController.text),
-                  ),
-                ),
-                const SizedBox(height: DesignSystem.spacingMD),
                 Text(
-                  'Quick Searches',
+                  'Find buds by shared content',
                   style: DesignSystem.bodyMedium.copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: DesignSystem.spacingSM),
+                const SizedBox(height: DesignSystem.spacingMD),
                 Wrap(
                   spacing: DesignSystem.spacingSM,
                   runSpacing: DesignSystem.spacingSM,
-                  children: _quickSearches.map((search) => ActionChip(
-                    label: Text(search),
-                    onPressed: () => _performSearch(search),
+                  children: _contentTypes.map((type) => ActionChip(
+                    label: Text(type['label'] as String),
+                    onPressed: () => _findBuds(type['event'] as BudMatchingEvent),
                     backgroundColor: DesignSystem.background,
                   )).toList(),
                 ),
@@ -98,50 +101,56 @@ class _BudsScreenState extends State<BudsScreen> {
           Expanded(
             child: BlocBuilder<BudMatchingBloc, BudMatchingState>(
               builder: (context, state) {
+                Widget content;
+
                 if (state is BudMatchingInitial) {
-                  return EmptyState(
+                  content = EmptyState(
                     icon: Icons.people_outline,
                     title: 'Find Your Music Buds',
-                    message: 'Search for people with similar music tastes',
+                    message: 'Select a content type to find people with similar tastes',
                   );
-                }
-
-                if (state is BudMatchingLoading) {
-                  return const LoadingIndicator();
-                }
-
-                if (state is BudsSearchResults) {
-                  if (state.buds.isEmpty) {
-                    return EmptyState(
+                } else if (state is BudMatchingLoading) {
+                  content = const LoadingIndicator();
+                } else if (state is BudsFound) {
+                  if (state.searchResult.data.buds.isEmpty) {
+                    content = EmptyState(
                       icon: Icons.search_off,
                       title: 'No Buds Found',
-                      message: 'Try a different search term',
+                      message: 'Try a different content type',
+                    );
+                  } else {
+                    content = ListView.builder(
+                      padding: const EdgeInsets.all(DesignSystem.spacingMD),
+                      itemCount: state.searchResult.data.buds.length,
+                      itemBuilder: (context, index) {
+                        final budItem = state.searchResult.data.buds[index];
+                        final budMatch = _convertBudSearchItemToBudMatch(budItem);
+
+                        return BudMatchListItem(budMatch: budMatch);
+                      },
                     );
                   }
-
-                  return ListView.builder(
-                    padding: const EdgeInsets.all(DesignSystem.spacingMD),
-                    itemCount: state.buds.length,
-                    itemBuilder: (context, index) {
-                      final budData = state.buds[index];
-                      final budMatch = budData is Map<String, dynamic>
-                          ? BudMatch.fromJson(budData)
-                          : budData as BudMatch;
-
-                      return BudMatchListItem(budMatch: budMatch);
-                    },
-                  );
-                }
-
-                if (state is BudMatchingError) {
-                  return EmptyState(
+                } else if (state is BudMatchingError) {
+                  content = EmptyState(
                     icon: Icons.error_outline,
                     title: 'Search Failed',
                     message: state.message,
                   );
+                } else {
+                  content = const SizedBox.shrink();
                 }
 
-                return const SizedBox.shrink();
+                // Only add refresh indicator if there's a current search result
+                if (state is BudsFound && _lastEvent != null) {
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      context.read<BudMatchingBloc>().add(_lastEvent!);
+                    },
+                    child: content,
+                  );
+                }
+
+                return content;
               },
             ),
           ),

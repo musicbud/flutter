@@ -12,6 +12,7 @@ abstract class AuthRepository {
 
   // Service connection URLs
   Future<String> getServiceAuthUrl();
+  Future<String> getServiceLoginUrl(String service);
 
   // Service connections
   Future<void> connectSpotify(String code);

@@ -17,7 +17,7 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback? onBackPressed;
 
   const AppAppBar({
-    Key? key,
+    super.key,
     required this.title,
     this.actions,
     this.leading,
@@ -30,7 +30,7 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.height = kToolbarHeight,
     this.showBackButton = true,
     this.onBackPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

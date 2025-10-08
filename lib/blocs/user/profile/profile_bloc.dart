@@ -1,19 +1,25 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../domain/repositories/user_repository.dart';
+import '../../../domain/repositories/user_profile_repository.dart';
+import '../../../models/user_profile.dart';
 import 'profile_event.dart';
 import 'profile_state.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final UserRepository _userRepository;
+  final UserProfileRepository _userProfileRepository;
 
-  ProfileBloc({required UserRepository userRepository})
-      : _userRepository = userRepository,
-        super(ProfileInitial()) {
+  ProfileBloc({
+    required UserRepository userRepository,
+    required UserProfileRepository userProfileRepository,
+  }) : _userRepository = userRepository,
+       _userProfileRepository = userProfileRepository,
+       super(ProfileInitial()) {
     // Profile operations
-    on<MyProfileRequested>(_onMyProfileRequested);
+    on<GetProfile>(_onGetProfile);
     on<BudProfileRequested>(_onBudProfileRequested);
-    on<ProfileUpdateRequested>(_onProfileUpdateRequested);
-    on<UpdateLikesRequested>(_onUpdateLikesRequested);
+    on<UpdateProfile>(_onUpdateProfile);
+    on<SyncLikes>(_onSyncLikes);
 
     // Liked items
     on<LikedArtistsRequested>(_onLikedArtistsRequested);
@@ -29,16 +35,19 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<TopMangaRequested>(_onTopMangaRequested);
   }
 
-  Future<void> _onMyProfileRequested(
-    MyProfileRequested event,
+  Future<void> _onGetProfile(
+    GetProfile event,
     Emitter<ProfileState> emit,
   ) async {
     try {
       emit(ProfileLoading());
-      final profile = await _userRepository.getUserProfile();
-      emit(MyProfileLoaded(profile));
+      final profile = await _userProfileRepository.getMyProfile(
+        service: event.service,
+        token: event.token,
+      );
+      emit(ProfileLoaded(profile));
     } catch (error) {
-      emit(ProfileFailure(error.toString()));
+      emit(ProfileError(error.toString()));
     }
   }
 
@@ -55,29 +64,36 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 
-  Future<void> _onProfileUpdateRequested(
-    ProfileUpdateRequested event,
+  Future<void> _onUpdateProfile(
+    UpdateProfile event,
     Emitter<ProfileState> emit,
   ) async {
     try {
       emit(ProfileLoading());
-      await _userRepository.updateMyProfile(event.profile);
-      emit(ProfileUpdateSuccess());
+      final updateRequest = UserProfileUpdateRequest(
+        bio: event.bio,
+        firstName: event.displayName?.split(' ').first,
+        lastName: event.displayName != null && event.displayName!.split(' ').length > 1
+            ? event.displayName!.split(' ').skip(1).join(' ')
+            : null,
+      );
+      final profile = await _userProfileRepository.updateProfile(updateRequest);
+      emit(ProfileUpdated(profile));
     } catch (error) {
-      emit(ProfileFailure(error.toString()));
+      emit(ProfileUpdateError(error.toString()));
     }
   }
 
-  Future<void> _onUpdateLikesRequested(
-    UpdateLikesRequested event,
+  Future<void> _onSyncLikes(
+    SyncLikes event,
     Emitter<ProfileState> emit,
   ) async {
     try {
       emit(ProfileLoading());
-      await _userRepository.updateMyLikes();
-      emit(LikesUpdateSuccess());
+      await _userProfileRepository.updateLikes({});
+      emit(LikesSynced());
     } catch (error) {
-      emit(ProfileFailure(error.toString()));
+      emit(LikesSyncError(error.toString()));
     }
   }
 

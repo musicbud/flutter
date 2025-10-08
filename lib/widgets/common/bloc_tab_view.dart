@@ -15,14 +15,14 @@ class BlocTabView<TBloc extends Bloc<TEvent, TState>, TState, TEvent> extends St
   final bool isScrollable;
 
   const BlocTabView({
-    Key? key,
+    super.key,
     required this.title,
     required this.tabs,
     this.showAppBar = true,
     this.appBarActions,
     this.padding,
     this.isScrollable = false,
-  }) : super(key: key);
+  });
 
   @override
   State<BlocTabView<TBloc, TState, TEvent>> createState() => _BlocTabViewState<TBloc, TState, TEvent>();
@@ -227,7 +227,7 @@ class CategoryTabView<TBloc extends Bloc<TEvent, TState>, TState, TEvent, TItem>
   final List<Widget>? appBarActions;
 
   const CategoryTabView({
-    Key? key,
+    super.key,
     required this.title,
     required this.categories,
     required this.getCategoryEvent,
@@ -240,7 +240,7 @@ class CategoryTabView<TBloc extends Bloc<TEvent, TState>, TState, TEvent, TItem>
     this.initialCategoryIndex = 0,
     this.showAppBar = true,
     this.appBarActions,
-  }) : super(key: key);
+  });
 
   @override
   State<CategoryTabView<TBloc, TState, TEvent, TItem>> createState() =>

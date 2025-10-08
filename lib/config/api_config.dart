@@ -1,6 +1,6 @@
-/// API Configuration
 import 'package:flutter/foundation.dart';
 
+/// API Configuration
 class ApiConfig {
   // Base URLs
   static const String baseUrl = String.fromEnvironment(
@@ -170,7 +170,7 @@ class ApiConfig {
   // User Endpoints (working from commit 6cac314)
   static String get myProfile => '$apiUrl/me/profile';
   static String get budProfile => '$apiUrl/bud/profile';
-  static String get updateProfile => '$apiUrl/me/profile/set';
+  static String get updateProfile => '$apiUrl/me/profile';
   static String get updateLikes => '$apiUrl/me/likes/update';
   static String get myLikedArtists => '$apiUrl/me/liked/artists';
   static String get myLikedTracks => '$apiUrl/me/liked/tracks';

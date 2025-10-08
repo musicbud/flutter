@@ -54,14 +54,14 @@ class _ModernInputFieldState extends State<ModernInputField> {
         // onSubmitted: widget.onSubmitted,
         onTap: widget.onTap,
         maxLines: widget.maxLines,
-        style: widget.customTextStyle ?? theme.designSystem?.designSystemTypography?.bodyMedium ?? const TextStyle(),
+        style: widget.customTextStyle ?? theme.designSystem?.designSystemTypography.bodyMedium ?? const TextStyle(),
         decoration: _getInputDecoration(theme),
       ),
     );
   }
 
   InputDecoration _getInputDecoration(ThemeData theme) {
-    final borderRadius = BorderRadius.circular(theme.designSystem?.designSystemRadius?.md ?? 8.0);
+    final borderRadius = BorderRadius.circular(theme.designSystem?.designSystemRadius.md ?? 8.0);
     final borderSide = BorderSide(
       color: widget.customBorderColor ?? theme.designSystem?.designSystemColors.border ?? Colors.grey,
     );
@@ -74,7 +74,7 @@ class _ModernInputFieldState extends State<ModernInputField> {
       labelText: widget.label,
       hintText: widget.hintText,
       labelStyle: widget.customLabelStyle ?? theme.designSystem?.designSystemTypography.bodyMedium ?? const TextStyle(),
-      hintStyle: widget.customHintStyle ?? theme.designSystem?.designSystemTypography.bodyMedium?.copyWith(
+      hintStyle: widget.customHintStyle ?? theme.designSystem?.designSystemTypography.bodyMedium.copyWith(
         color: theme.designSystem?.designSystemColors.onSurfaceVariant ?? Colors.grey,
       ) ?? const TextStyle(color: Colors.grey),
       filled: widget.variant == ModernInputFieldVariant.filled,

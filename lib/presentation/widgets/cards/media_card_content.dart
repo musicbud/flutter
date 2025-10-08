@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/design_system.dart';
-import '../base/base_card.dart';
 
 /// A reusable content widget for media cards.
 /// Displays title and subtitle text with consistent styling.

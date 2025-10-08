@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:musicbud_flutter/blocs/user_profile/user_profile_bloc.dart';
 import 'package:musicbud_flutter/models/user_profile.dart';
 import 'package:musicbud_flutter/presentation/screens/home/home_header_widget.dart';

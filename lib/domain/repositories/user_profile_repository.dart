@@ -5,7 +5,7 @@ abstract class UserProfileRepository {
   Future<UserProfile> getUserProfile(String userId);
 
   /// Get current user's profile
-  Future<UserProfile> getMyProfile();
+  Future<UserProfile> getMyProfile({String? service, String? token});
 
   /// Update current user's profile
   Future<UserProfile> updateProfile(UserProfileUpdateRequest updateRequest);

@@ -12,6 +12,16 @@ class DiscoverBloc extends Bloc<DiscoverEvent, DiscoverState> {
     on<DiscoverCategorySelected>(_onCategorySelected);
     on<DiscoverRefreshRequested>(_onRefreshRequested);
     on<DiscoverItemInteracted>(_onItemInteracted);
+    on<FetchTopTracks>(_onFetchTopTracks);
+    on<FetchTopArtists>(_onFetchTopArtists);
+    on<FetchTopGenres>(_onFetchTopGenres);
+    on<FetchTopAnime>(_onFetchTopAnime);
+    on<FetchTopManga>(_onFetchTopManga);
+    on<FetchLikedTracks>(_onFetchLikedTracks);
+    on<FetchLikedArtists>(_onFetchLikedArtists);
+    on<FetchLikedGenres>(_onFetchLikedGenres);
+    on<FetchLikedAlbums>(_onFetchLikedAlbums);
+    on<FetchPlayedTracks>(_onFetchPlayedTracks);
   }
 
   Future<void> _onPageLoaded(
@@ -95,6 +105,136 @@ class DiscoverBloc extends Bloc<DiscoverEvent, DiscoverState> {
     } catch (e) {
       // Silently handle interaction tracking errors
       debugPrint('Failed to track interaction: ${e.toString()}');
+    }
+  }
+
+  Future<void> _onFetchTopTracks(
+    FetchTopTracks event,
+    Emitter<DiscoverState> emit,
+  ) async {
+    emit(const TopTracksLoading());
+    try {
+      final tracks = await repository.getTopTracks();
+      emit(TopTracksLoaded(tracks));
+    } catch (e) {
+      emit(TopTracksError(e.toString()));
+    }
+  }
+
+  Future<void> _onFetchTopArtists(
+    FetchTopArtists event,
+    Emitter<DiscoverState> emit,
+  ) async {
+    emit(const TopArtistsLoading());
+    try {
+      final artists = await repository.getTopArtists();
+      emit(TopArtistsLoaded(artists));
+    } catch (e) {
+      emit(TopArtistsError(e.toString()));
+    }
+  }
+
+  Future<void> _onFetchTopGenres(
+    FetchTopGenres event,
+    Emitter<DiscoverState> emit,
+  ) async {
+    emit(const TopGenresLoading());
+    try {
+      final genres = await repository.getTopGenres();
+      emit(TopGenresLoaded(genres));
+    } catch (e) {
+      emit(TopGenresError(e.toString()));
+    }
+  }
+
+  Future<void> _onFetchTopAnime(
+    FetchTopAnime event,
+    Emitter<DiscoverState> emit,
+  ) async {
+    emit(const TopAnimeLoading());
+    try {
+      final anime = await repository.getTopAnime();
+      emit(TopAnimeLoaded(anime));
+    } catch (e) {
+      emit(TopAnimeError(e.toString()));
+    }
+  }
+
+  Future<void> _onFetchTopManga(
+    FetchTopManga event,
+    Emitter<DiscoverState> emit,
+  ) async {
+    emit(const TopMangaLoading());
+    try {
+      final manga = await repository.getTopManga();
+      emit(TopMangaLoaded(manga));
+    } catch (e) {
+      emit(TopMangaError(e.toString()));
+    }
+  }
+
+  Future<void> _onFetchLikedTracks(
+    FetchLikedTracks event,
+    Emitter<DiscoverState> emit,
+  ) async {
+    emit(const LikedTracksLoading());
+    try {
+      final tracks = await repository.getLikedTracks();
+      emit(LikedTracksLoaded(tracks));
+    } catch (e) {
+      emit(LikedTracksError(e.toString()));
+    }
+  }
+
+  Future<void> _onFetchLikedArtists(
+    FetchLikedArtists event,
+    Emitter<DiscoverState> emit,
+  ) async {
+    emit(const LikedArtistsLoading());
+    try {
+      final artists = await repository.getLikedArtists();
+      emit(LikedArtistsLoaded(artists));
+    } catch (e) {
+      emit(LikedArtistsError(e.toString()));
+    }
+  }
+
+  Future<void> _onFetchLikedGenres(
+    FetchLikedGenres event,
+    Emitter<DiscoverState> emit,
+  ) async {
+    emit(const LikedGenresLoading());
+    try {
+      final genres = await repository.getLikedGenres();
+      emit(LikedGenresLoaded(genres));
+    } catch (e) {
+      emit(LikedGenresError(e.toString()));
+    }
+  }
+
+  Future<void> _onFetchLikedAlbums(
+    FetchLikedAlbums event,
+    Emitter<DiscoverState> emit,
+  ) async {
+    emit(const LikedAlbumsLoading());
+    try {
+      final albums = await repository.getLikedAlbums();
+      emit(LikedAlbumsLoaded(albums));
+    } catch (e) {
+      emit(LikedAlbumsError(e.toString()));
+    }
+  }
+
+  Future<void> _onFetchPlayedTracks(
+    FetchPlayedTracks event,
+    Emitter<DiscoverState> emit,
+  ) async {
+    emit(const PlayedTracksLoading());
+    try {
+      final tracks = await repository.getPlayedTracks();
+      emit(PlayedTracksLoaded(tracks));
+    } catch (e) {
+      emit(PlayedTracksError(e.toString()));
     }
   }
 }

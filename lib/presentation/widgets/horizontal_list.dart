@@ -14,7 +14,7 @@ class HorizontalList extends StatefulWidget {
   final bool enableFocus;
 
   const HorizontalList({
-    Key? key,
+    super.key,
     this.title,
     required this.items,
     this.onSeeAll,
@@ -22,7 +22,7 @@ class HorizontalList extends StatefulWidget {
     this.padding,
     this.enableHover = true,
     this.enableFocus = true,
-  }) : super(key: key);
+  });
 
   @override
   State<HorizontalList> createState() => _HorizontalListState();

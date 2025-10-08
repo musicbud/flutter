@@ -56,6 +56,49 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 backgroundColor: DesignSystem.success,
               ),
             );
+          } else if (state is ServiceConnected) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('${state.service} connected successfully'),
+                backgroundColor: DesignSystem.success,
+              ),
+            );
+          } else if (state is ServiceConnectionError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed to connect ${state.service}: ${state.error}'),
+                backgroundColor: DesignSystem.error,
+              ),
+            );
+          } else if (state is LikesUpdated) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Likes synced from ${state.service}'),
+                backgroundColor: DesignSystem.success,
+              ),
+            );
+          } else if (state is LikesUpdateError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed to sync likes from ${state.service}: ${state.error}'),
+                backgroundColor: DesignSystem.error,
+              ),
+            );
+          } else if (state is ServiceLoginUrlReceived) {
+            // TODO: Open URL in browser or webview
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Login URL received for ${state.service}'),
+                backgroundColor: DesignSystem.info,
+              ),
+            );
+          } else if (state is ServiceLoginUrlError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Failed to get login URL for ${state.service}: ${state.error}'),
+                backgroundColor: DesignSystem.error,
+              ),
+            );
           }
         },
         builder: (context, state) {
@@ -81,6 +124,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
                   _buildSectionHeader('Appearance'),
                   _buildThemeSettings(state),
+                  const SizedBox(height: DesignSystem.spacingXL),
+
+                  _buildSectionHeader('Service Connections'),
+                  _buildServiceConnections(),
+                  const SizedBox(height: DesignSystem.spacingXL),
+
+                  _buildSectionHeader('Data Synchronization'),
+                  _buildDataSyncSettings(),
                   const SizedBox(height: DesignSystem.spacingXL),
 
                   _buildSectionHeader('Language'),
@@ -267,6 +318,78 @@ class _SettingsScreenState extends State<SettingsScreen> {
           onChanged: (value) {
             context.read<SettingsBloc>().add(UpdateLanguageEvent(value));
           },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildServiceConnections() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(DesignSystem.spacingLG),
+        child: Column(
+          children: [
+            _buildServiceConnectionTile('Spotify', 'spotify'),
+            const SizedBox(height: DesignSystem.spacingMD),
+            _buildServiceConnectionTile('YouTube Music', 'ytmusic'),
+            const SizedBox(height: DesignSystem.spacingMD),
+            _buildServiceConnectionTile('Last.fm', 'lastfm'),
+            const SizedBox(height: DesignSystem.spacingMD),
+            _buildServiceConnectionTile('MyAnimeList', 'mal'),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildServiceConnectionTile(String serviceName, String serviceKey) {
+    return ListTile(
+      title: Text('Connect $serviceName'),
+      subtitle: Text('Link your $serviceName account'),
+      trailing: ElevatedButton(
+        onPressed: () {
+          context.read<SettingsBloc>().add(GetServiceLoginUrl(serviceKey));
+        },
+        child: const Text('Connect'),
+      ),
+    );
+  }
+
+  Widget _buildDataSyncSettings() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(DesignSystem.spacingLG),
+        child: Column(
+          children: [
+            ListTile(
+              title: const Text('Sync Likes from Spotify'),
+              subtitle: const Text('Update your liked tracks from Spotify'),
+              trailing: ElevatedButton(
+                onPressed: () {
+                  // TODO: Get user token and call UpdateLikes
+                  // For now, placeholder
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Likes sync not implemented yet')),
+                  );
+                },
+                child: const Text('Sync'),
+              ),
+            ),
+            const SizedBox(height: DesignSystem.spacingMD),
+            ListTile(
+              title: const Text('Sync Likes from YouTube Music'),
+              subtitle: const Text('Update your liked tracks from YouTube Music'),
+              trailing: ElevatedButton(
+                onPressed: () {
+                  // TODO: Get user token and call UpdateLikes
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Likes sync not implemented yet')),
+                  );
+                },
+                child: const Text('Sync'),
+              ),
+            ),
+          ],
         ),
       ),
     );

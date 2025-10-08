@@ -2,30 +2,18 @@ import '../../models/common_genre.dart';
 
 class CommonGenreModel extends CommonGenre {
   CommonGenreModel({
-    required String id,
-    String uid = '',
-    required String name,
-    String? source,
-    String? spotifyId,
-    String? ytmusicId,
-    String? lastfmId,
-    int? popularity,
-    bool isLiked = false,
-    String? imageUrl,
-    List<String>? imageUrls,
-  }) : super(
-          id: id,
-          uid: uid,
-          name: name,
-          source: source,
-          spotifyId: spotifyId,
-          ytmusicId: ytmusicId,
-          lastfmId: lastfmId,
-          popularity: popularity,
-          isLiked: isLiked,
-          imageUrl: imageUrl,
-          imageUrls: imageUrls,
-        );
+    required super.id,
+    super.uid = '',
+    required super.name,
+    super.source,
+    super.spotifyId,
+    super.ytmusicId,
+    super.lastfmId,
+    super.popularity,
+    super.isLiked = false,
+    super.imageUrl,
+    super.imageUrls,
+  });
 
   factory CommonGenreModel.fromJson(Map<String, dynamic> json) {
     return CommonGenreModel(

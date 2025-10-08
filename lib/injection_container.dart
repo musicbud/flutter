@@ -56,6 +56,7 @@ import 'data/repositories/services_repository_impl.dart';
 import 'data/repositories/library_repository_impl.dart';
 import 'data/repositories/common_items_repository_impl.dart';
 import 'data/repositories/spotify_repository_impl.dart';
+import 'data/repositories/discover_repository_impl.dart';
 import 'data/data_sources/remote/admin_remote_data_source.dart';
 
 // Domain Interfaces
@@ -77,6 +78,7 @@ import 'domain/repositories/library_repository.dart';
 import 'domain/repositories/common_items_repository.dart';
 import 'domain/repositories/spotify_repository.dart';
 import 'domain/repositories/bud_matching_repository.dart';
+import 'domain/repositories/discover_repository.dart';
 import 'data/repositories/bud_matching_repository_impl.dart';
 
 // BLoCs
@@ -102,6 +104,7 @@ import 'blocs/artist/artist_bloc.dart';
 import 'blocs/content/content_bloc.dart';
 import 'blocs/spotify/spotify_bloc.dart';
 import 'blocs/bud_matching/bud_matching_bloc.dart';
+import 'blocs/discover/discover_bloc.dart';
 
 /// Global GetIt instance for dependency injection
 final sl = GetIt.instance;
@@ -413,6 +416,13 @@ Future<void> _registerRepositories() async {
       remoteDataSource: sl<BudMatchingRemoteDataSource>(),
     ),
   );
+
+  // Discover Repository
+  sl.registerLazySingleton<DiscoverRepository>(
+    () => DiscoverRepositoryImpl(
+      userProfileRepository: sl<UserProfileRepository>(),
+    ),
+  );
 }
 
 /// Registers BLoC dependencies
@@ -420,6 +430,7 @@ Future<void> _registerBlocs() async {
   // User BLoC
   sl.registerFactory<UserBloc>(() => UserBloc(
     userRepository: sl<UserRepository>(),
+    authRepository: sl<AuthRepository>(),
   ));
 
   // Auth BLoC
@@ -452,6 +463,8 @@ Future<void> _registerBlocs() async {
   // Settings BLoC
   sl.registerFactory<SettingsBloc>(() => SettingsBloc(
     settingsRepository: sl<SettingsRepository>(),
+    authRepository: sl<AuthRepository>(),
+    userProfileRepository: sl<UserProfileRepository>(),
   ));
 
   // Event BLoC
@@ -533,6 +546,11 @@ Future<void> _registerBlocs() async {
   sl.registerFactory<BudMatchingBloc>(() => BudMatchingBloc(
     budMatchingRepository: sl<BudMatchingRepository>(),
   ));
+
+  // Discover BLoC
+  sl.registerFactory<DiscoverBloc>(() => DiscoverBloc(
+    repository: sl<DiscoverRepository>(),
+  ));
 }
 
 /// Logs dependency registration for debugging
@@ -540,8 +558,8 @@ void _logDependencyRegistration() {
   debugPrint('🔧 Dependency Injection Registration Complete');
   debugPrint('📡 Network: DioClient, DioClientAdapter');
   debugPrint('💾 Data Sources: Content, User, Bud, UserProfile, BudMatching, ChatManagement, Settings, Event, Admin, Channel, Search');
-  debugPrint('🏗️ Repositories: Auth, Content, Bud, User, Profile, UserProfile, BudMatching, ChatManagement, Settings, Event, Admin, Channel, Search, CommonItems, Spotify');
-  debugPrint('🧠 BLoCs: User, Auth, Profile, SimpleProfile, MainScreen, Chat, Content, Bud, UserProfile, SimpleUserProfile, BudMatching, ChatManagement, Settings, Event, Analytics, Admin, Channel, Search, Bud, Artist, BudCommonItems, Spotify');
+  debugPrint('🏗️ Repositories: Auth, Content, Bud, User, Profile, UserProfile, BudMatching, ChatManagement, Settings, Event, Admin, Channel, Search, CommonItems, Spotify, Discover');
+  debugPrint('🧠 BLoCs: User, Auth, Profile, SimpleProfile, MainScreen, Chat, Content, Bud, UserProfile, SimpleUserProfile, BudMatching, ChatManagement, Settings, Event, Analytics, Admin, Channel, Search, Bud, Artist, BudCommonItems, Spotify, Discover');
 }
 
 /// Dependency injection utilities

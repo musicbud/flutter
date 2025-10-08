@@ -34,7 +34,7 @@ class AppTextField extends StatefulWidget {
   final FocusNode? focusNode;
 
   const AppTextField({
-    Key? key,
+    super.key,
     this.controller,
     this.labelText,
     this.hintText,
@@ -65,7 +65,7 @@ class AppTextField extends StatefulWidget {
     this.inputFormatters,
     this.autovalidateMode,
     this.focusNode,
-  }) : super(key: key);
+  });
 
   @override
   State<AppTextField> createState() => _AppTextFieldState();

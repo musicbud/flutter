@@ -1,48 +1,49 @@
 import 'package:dio/dio.dart';
+import 'dart:developer' as developer;
 
 class LoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    print('REQUEST[${options.method}] => PATH: ${options.path}');
-    print('Request Headers:');
+    developer.log('REQUEST[${options.method}] => PATH: ${options.path}');
+    developer.log('Request Headers:');
     options.headers.forEach((key, value) {
-      print('$key: $value');
+      developer.log('$key: $value');
     });
-    print('Request Data: ${options.data}');
+    developer.log('Request Data: ${options.data}');
     return super.onRequest(options, handler);
   }
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) {
-    print('RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
+    developer.log('RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
 
-    print('Full Response Object:');
-    print(response.toString());
+    developer.log('Full Response Object:');
+    developer.log(response.toString());
 
-    print('Response Headers:');
+    developer.log('Response Headers:');
     _printHeaders(response.headers.map);
 
-    print('Response Data: ${response.data}');
+    developer.log('Response Data: ${response.data}');
     return super.onResponse(response, handler);
   }
 
   @override
-  void onError(DioError err, ErrorInterceptorHandler handler) {
-    print('ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}');
+  void onError(DioException err, ErrorInterceptorHandler handler) {
+    developer.log('ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}');
 
     if (err.response != null) {
-      print('Error Response Headers:');
+      developer.log('Error Response Headers:');
       _printHeaders(err.response!.headers.map);
     }
 
-    print('Error Data: ${err.response?.data}');
+    developer.log('Error Data: ${err.response?.data}');
     return super.onError(err, handler);
   }
 
   void _printHeaders(Map<String, List<String>> headers) {
     headers.forEach((key, values) {
       for (var value in values) {
-        print('$key: $value');
+        developer.log('$key: $value');
       }
     });
   }

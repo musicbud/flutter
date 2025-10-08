@@ -13,7 +13,7 @@ class ProfileInfoSection extends StatelessWidget {
   final TextStyle? statsStyle;
 
   const ProfileInfoSection({
-    Key? key,
+    super.key,
     this.username,
     this.bio,
     this.location,
@@ -23,7 +23,7 @@ class ProfileInfoSection extends StatelessWidget {
     this.bioStyle,
     this.locationStyle,
     this.statsStyle,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

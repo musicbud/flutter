@@ -23,7 +23,7 @@ class ModernCard extends StatefulWidget {
   final Gradient? customGradient;
   final Border? customBorder;
 
-  ModernCard({
+  const ModernCard({
     super.key,
     required this.child,
     this.variant = ModernCardVariant.primary,

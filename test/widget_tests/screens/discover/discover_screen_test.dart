@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:musicbud_flutter/blocs/content/content_bloc.dart';
 import 'package:musicbud_flutter/blocs/content/content_state.dart';
 import 'package:musicbud_flutter/models/artist.dart';
 import 'package:musicbud_flutter/models/track.dart';
 import 'package:musicbud_flutter/models/album.dart';
-import 'package:musicbud_flutter/models/genre.dart';
-import 'package:musicbud_flutter/models/common_anime.dart';
-import 'package:musicbud_flutter/models/common_manga.dart';
 import 'package:musicbud_flutter/presentation/screens/discover/discover_screen.dart';
-import '../../../test_utils/mock_data.dart';
 import '../../../test_utils/test_helpers.dart';
 import '../../../test_utils/widget_test_helpers.dart';
 

@@ -7,11 +7,11 @@ class ArtistListItem extends StatelessWidget {
   final VoidCallback? onFollowPressed;
 
   const ArtistListItem({
-    Key? key,
+    super.key,
     required this.artist,
     this.onTap,
     this.onFollowPressed,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

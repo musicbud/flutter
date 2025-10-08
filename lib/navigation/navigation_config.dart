@@ -7,6 +7,7 @@ import '../presentation/screens/spotify/played_tracks_map_screen.dart';
 import '../presentation/screens/profile/artist_details_screen.dart';
 import '../presentation/screens/profile/genre_details_screen.dart';
 import '../presentation/screens/profile/track_details_screen.dart';
+import '../presentation/screens/discover/top_tracks_page.dart';
 
 /// Configuration class for navigation components
 class NavigationConfig extends Equatable {
@@ -18,6 +19,8 @@ class NavigationConfig extends Equatable {
     '/track-details': (context) => const TrackDetailsScreen(),
     '/played-tracks-map': (context) => const PlayedTracksMapScreen(),
     '/spotify-control': (context) => const SpotifyControlScreen(),
+    '/tracks': (context) => const TopTracksPage(),
+    '/artists': (context) => const TopTracksPage(), // TODO: Create TopArtistsPage
   };
   const NavigationConfig({
     this.margin,

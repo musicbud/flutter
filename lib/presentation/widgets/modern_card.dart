@@ -10,7 +10,7 @@ class ModernCard extends StatefulWidget {
   final bool isClickable;
 
   const ModernCard({
-    Key? key,
+    super.key,
     required this.child,
     this.borderRadius = 16,
     this.backgroundColor,
@@ -18,7 +18,7 @@ class ModernCard extends StatefulWidget {
     this.elevation = 4,
     this.onTap,
     this.isClickable = true,
-  }) : super(key: key);
+  });
 
   @override
   State<ModernCard> createState() => _ModernCardState();

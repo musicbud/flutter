@@ -28,13 +28,22 @@ class ProfileFailure extends ProfileState {
 }
 
 // Profile operations
-class MyProfileLoaded extends ProfileState {
+class ProfileLoaded extends ProfileState {
   final UserProfile profile;
 
-  const MyProfileLoaded(this.profile);
+  const ProfileLoaded(this.profile);
 
   @override
   List<Object> get props => [profile];
+}
+
+class ProfileError extends ProfileState {
+  final String error;
+
+  const ProfileError(this.error);
+
+  @override
+  List<Object> get props => [error];
 }
 
 class BudProfileLoaded extends ProfileState {
@@ -46,9 +55,34 @@ class BudProfileLoaded extends ProfileState {
   List<Object> get props => [profile];
 }
 
-class ProfileUpdateSuccess extends ProfileState {}
+class ProfileUpdated extends ProfileState {
+  final UserProfile profile;
 
-class LikesUpdateSuccess extends ProfileState {}
+  const ProfileUpdated(this.profile);
+
+  @override
+  List<Object> get props => [profile];
+}
+
+class ProfileUpdateError extends ProfileState {
+  final String error;
+
+  const ProfileUpdateError(this.error);
+
+  @override
+  List<Object> get props => [error];
+}
+
+class LikesSynced extends ProfileState {}
+
+class LikesSyncError extends ProfileState {
+  final String error;
+
+  const LikesSyncError(this.error);
+
+  @override
+  List<Object> get props => [error];
+}
 
 // Liked items
 class LikedArtistsLoaded extends ProfileState {

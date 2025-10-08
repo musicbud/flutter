@@ -13,9 +13,9 @@ class MainNavigationScaffold extends StatefulWidget {
   final int initialIndex;
 
   const MainNavigationScaffold({
-    Key? key,
+    super.key,
     this.initialIndex = 0,
-  }) : super(key: key);
+  });
 
   @override
   State<MainNavigationScaffold> createState() => MainNavigationScaffoldState();

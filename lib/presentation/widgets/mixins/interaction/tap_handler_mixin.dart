@@ -167,7 +167,7 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
 
     // Check for debouncing
     if (_tapConfig?.enableDebouncing == true) {
-      if (_debounceTimer?.isActive ?? false) return;
+      if (_debounceTimer != null && _debounceTimer!.isActive) return;
 
       _debounceTimer = Timer(_tapConfig!.debounceDuration, () {});
     }
@@ -842,23 +842,23 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
   }
 
   /// Show dropdown menu
-  void _showDropdownMenu<T>(
+  void _showDropdownMenu<U>(
     BuildContext context,
-    List<DropdownMenuItem<T>> items,
-    ValueChanged<T> onChanged,
+    List<DropdownMenuItem<U>> items,
+    ValueChanged<U> onChanged,
   ) {
     final renderBox = context.findRenderObject() as RenderBox;
     final offset = renderBox.localToGlobal(Offset.zero);
 
     // Convert DropdownMenuItem to PopupMenuItem for showMenu
-    final popupItems = items.map<PopupMenuItem<T>>((item) {
-      return PopupMenuItem<T>(
+    final popupItems = items.map<PopupMenuItem<U>>((item) {
+      return PopupMenuItem<U>(
         value: item.value,
         child: item.child,
       );
     }).toList();
 
-    showMenu<T>(
+    showMenu<U>(
       context: context,
       position: RelativeRect.fromLTRB(
         offset.dx,
@@ -1041,8 +1041,8 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
                   children: [
                     Icon(
                       isSelected
-                          ? ((item.activeIcon ?? item.icon) as IconData? ?? Icons.home)
-                          : (item.icon as IconData? ?? Icons.home),
+                          ? (item.activeIcon ?? item.icon) as IconData
+                          : item.icon as IconData,
                       color: isSelected
                           ? (selectedColor ?? design.designSystemColors.primary)
                           : design.designSystemColors.onSurfaceVariant,

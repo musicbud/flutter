@@ -1,6 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../domain/repositories/bud_matching_repository.dart';
+import '../../models/bud_profile.dart';
+import '../../models/bud_search_result.dart';
+import '../../models/bud_match.dart';
 
 // Events
 abstract class BudMatchingEvent extends Equatable {
@@ -10,108 +13,62 @@ abstract class BudMatchingEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class SearchBuds extends BudMatchingEvent {
-  final String query;
-  final Map<String, dynamic>? filters;
-
-  const SearchBuds({required this.query, this.filters});
-
-  @override
-  List<Object?> get props => [query, filters];
-}
-
-class GetBudProfile extends BudMatchingEvent {
+class FetchBudProfile extends BudMatchingEvent {
   final String budId;
 
-  const GetBudProfile({required this.budId});
+  const FetchBudProfile({required this.budId});
 
   @override
   List<Object?> get props => [budId];
 }
 
-class GetBudLikedContent extends BudMatchingEvent {
-  final String contentType; // artists, tracks, genres, albums
-  final String budId;
+class FindBudsByTopArtists extends BudMatchingEvent {}
 
-  const GetBudLikedContent({
-    required this.contentType,
-    required this.budId,
-  });
+class FindBudsByTopTracks extends BudMatchingEvent {}
+
+class FindBudsByTopGenres extends BudMatchingEvent {}
+
+class FindBudsByTopAnime extends BudMatchingEvent {}
+
+class FindBudsByTopManga extends BudMatchingEvent {}
+
+class FindBudsByLikedArtists extends BudMatchingEvent {}
+
+class FindBudsByLikedTracks extends BudMatchingEvent {}
+
+class FindBudsByLikedGenres extends BudMatchingEvent {}
+
+class FindBudsByLikedAlbums extends BudMatchingEvent {}
+
+class FindBudsByLikedAio extends BudMatchingEvent {}
+
+class FindBudsByPlayedTracks extends BudMatchingEvent {}
+
+class FindBudsByArtist extends BudMatchingEvent {
+  final String artistId;
+
+  const FindBudsByArtist({required this.artistId});
 
   @override
-  List<Object?> get props => [contentType, budId];
+  List<Object?> get props => [artistId];
 }
 
-class GetBudTopContent extends BudMatchingEvent {
-  final String contentType; // artists, tracks, genres, anime, manga
-  final String budId;
+class FindBudsByTrack extends BudMatchingEvent {
+  final String trackId;
 
-  const GetBudTopContent({
-    required this.contentType,
-    required this.budId,
-  });
+  const FindBudsByTrack({required this.trackId});
 
   @override
-  List<Object?> get props => [contentType, budId];
+  List<Object?> get props => [trackId];
 }
 
-class GetBudPlayedTracks extends BudMatchingEvent {
-  final String budId;
+class FindBudsByGenre extends BudMatchingEvent {
+  final String genreId;
 
-  const GetBudPlayedTracks({required this.budId});
-
-  @override
-  List<Object?> get props => [budId];
-}
-
-class GetBudCommonLikedContent extends BudMatchingEvent {
-  final String contentType; // artists, tracks, genres, albums
-  final String budId;
-
-  const GetBudCommonLikedContent({
-    required this.contentType,
-    required this.budId,
-  });
+  const FindBudsByGenre({required this.genreId});
 
   @override
-  List<Object?> get props => [contentType, budId];
-}
-
-class GetBudCommonTopContent extends BudMatchingEvent {
-  final String contentType; // artists, tracks, genres, anime, manga
-  final String budId;
-
-  const GetBudCommonTopContent({
-    required this.contentType,
-    required this.budId,
-  });
-
-  @override
-  List<Object?> get props => [contentType, budId];
-}
-
-class GetBudCommonPlayedTracks extends BudMatchingEvent {
-  final String budId;
-
-  const GetBudCommonPlayedTracks({required this.budId});
-
-  @override
-  List<Object?> get props => [budId];
-}
-
-class GetBudSpecificContent extends BudMatchingEvent {
-  final String contentType; // artist, track, genre, album
-  final String contentId;
-  final String budId;
-
-  const GetBudSpecificContent({
-    required this.contentType,
-    required this.contentId,
-    required this.budId,
-  });
-
-  @override
-  List<Object?> get props => [contentType, contentId, budId];
+  List<Object?> get props => [genreId];
 }
 
 // States
@@ -126,77 +83,32 @@ class BudMatchingInitial extends BudMatchingState {}
 
 class BudMatchingLoading extends BudMatchingState {}
 
+class BudProfileLoaded extends BudMatchingState {
+  final BudProfile budProfile;
+
+  const BudProfileLoaded({required this.budProfile});
+
+  @override
+  List<Object?> get props => [budProfile];
+}
+
+class BudsFound extends BudMatchingState {
+  final BudSearchResult searchResult;
+
+  const BudsFound({required this.searchResult});
+
+  @override
+  List<Object?> get props => [searchResult];
+}
+
 class BudsSearchResults extends BudMatchingState {
-  final List<dynamic> buds;
+  final List<BudMatch> buds;
   final String query;
 
-  const BudsSearchResults({
-    required this.buds,
-    required this.query,
-  });
+  const BudsSearchResults({required this.buds, required this.query});
 
   @override
   List<Object?> get props => [buds, query];
-}
-
-class BudProfileLoaded extends BudMatchingState {
-  final Map<String, dynamic> budProfile;
-  final String budId;
-
-  const BudProfileLoaded({
-    required this.budProfile,
-    required this.budId,
-  });
-
-  @override
-  List<Object?> get props => [budProfile, budId];
-}
-
-class BudContentLoaded extends BudMatchingState {
-  final String contentType;
-  final List<dynamic> content;
-  final String budId;
-
-  const BudContentLoaded({
-    required this.contentType,
-    required this.content,
-    required this.budId,
-  });
-
-  @override
-  List<Object?> get props => [contentType, content, budId];
-}
-
-class BudCommonContentLoaded extends BudMatchingState {
-  final String contentType;
-  final List<dynamic> commonContent;
-  final String budId;
-
-  const BudCommonContentLoaded({
-    required this.contentType,
-    required this.commonContent,
-    required this.budId,
-  });
-
-  @override
-  List<Object?> get props => [contentType, commonContent, budId];
-}
-
-class BudSpecificContentLoaded extends BudMatchingState {
-  final String contentType;
-  final Map<String, dynamic> content;
-  final String contentId;
-  final String budId;
-
-  const BudSpecificContentLoaded({
-    required this.contentType,
-    required this.content,
-    required this.contentId,
-    required this.budId,
-  });
-
-  @override
-  List<Object?> get props => [contentType, content, contentId, budId];
 }
 
 class BudMatchingError extends BudMatchingState {
@@ -215,174 +127,213 @@ class BudMatchingBloc extends Bloc<BudMatchingEvent, BudMatchingState> {
   BudMatchingBloc({required BudMatchingRepository budMatchingRepository})
       : _budMatchingRepository = budMatchingRepository,
         super(BudMatchingInitial()) {
-    on<SearchBuds>(_onSearchBuds);
-    on<GetBudProfile>(_onGetBudProfile);
-    on<GetBudLikedContent>(_onGetBudLikedContent);
-    on<GetBudTopContent>(_onGetBudTopContent);
-    on<GetBudPlayedTracks>(_onGetBudPlayedTracks);
-    on<GetBudCommonLikedContent>(_onGetBudCommonLikedContent);
-    on<GetBudCommonTopContent>(_onGetBudCommonTopContent);
-    on<GetBudCommonPlayedTracks>(_onGetBudCommonPlayedTracks);
-    on<GetBudSpecificContent>(_onGetBudSpecificContent);
+    on<FetchBudProfile>(_onFetchBudProfile);
+    on<FindBudsByTopArtists>(_onFindBudsByTopArtists);
+    on<FindBudsByTopTracks>(_onFindBudsByTopTracks);
+    on<FindBudsByTopGenres>(_onFindBudsByTopGenres);
+    on<FindBudsByTopAnime>(_onFindBudsByTopAnime);
+    on<FindBudsByTopManga>(_onFindBudsByTopManga);
+    on<FindBudsByLikedArtists>(_onFindBudsByLikedArtists);
+    on<FindBudsByLikedTracks>(_onFindBudsByLikedTracks);
+    on<FindBudsByLikedGenres>(_onFindBudsByLikedGenres);
+    on<FindBudsByLikedAlbums>(_onFindBudsByLikedAlbums);
+    on<FindBudsByLikedAio>(_onFindBudsByLikedAio);
+    on<FindBudsByPlayedTracks>(_onFindBudsByPlayedTracks);
+    on<FindBudsByArtist>(_onFindBudsByArtist);
+    on<FindBudsByTrack>(_onFindBudsByTrack);
+    on<FindBudsByGenre>(_onFindBudsByGenre);
   }
 
-  Future<void> _onSearchBuds(
-    SearchBuds event,
+  Future<void> _onFetchBudProfile(
+    FetchBudProfile event,
     Emitter<BudMatchingState> emit,
   ) async {
     try {
       emit(BudMatchingLoading());
-      final buds = await _budMatchingRepository.searchBuds(event.query, event.filters);
-      emit(BudsSearchResults(buds: buds, query: event.query));
+      final profile = await _budMatchingRepository.fetchBudProfile(event.budId);
+      emit(BudProfileLoaded(budProfile: profile));
     } catch (e) {
       emit(BudMatchingError(e.toString()));
     }
   }
 
-  Future<void> _onGetBudProfile(
-    GetBudProfile event,
+  Future<void> _onFindBudsByTopArtists(
+    FindBudsByTopArtists event,
     Emitter<BudMatchingState> emit,
   ) async {
     try {
       emit(BudMatchingLoading());
-      final profile = await _budMatchingRepository.getBudProfile(event.budId);
-      emit(BudProfileLoaded(budProfile: profile, budId: event.budId));
+      final result = await _budMatchingRepository.findBudsByTopArtists();
+      emit(BudsFound(searchResult: result));
     } catch (e) {
       emit(BudMatchingError(e.toString()));
     }
   }
 
-  Future<void> _onGetBudLikedContent(
-    GetBudLikedContent event,
+  Future<void> _onFindBudsByTopTracks(
+    FindBudsByTopTracks event,
     Emitter<BudMatchingState> emit,
   ) async {
     try {
       emit(BudMatchingLoading());
-      final content = await _budMatchingRepository.getBudLikedContent(
-        event.contentType,
-        event.budId,
-      );
-      emit(BudContentLoaded(
-        contentType: event.contentType,
-        content: content,
-        budId: event.budId,
-      ));
+      final result = await _budMatchingRepository.findBudsByTopTracks();
+      emit(BudsFound(searchResult: result));
     } catch (e) {
       emit(BudMatchingError(e.toString()));
     }
   }
 
-  Future<void> _onGetBudTopContent(
-    GetBudTopContent event,
+  Future<void> _onFindBudsByTopGenres(
+    FindBudsByTopGenres event,
     Emitter<BudMatchingState> emit,
   ) async {
     try {
       emit(BudMatchingLoading());
-      final content = await _budMatchingRepository.getBudTopContent(
-        event.contentType,
-        event.budId,
-      );
-      emit(BudContentLoaded(
-        contentType: event.contentType,
-        content: content,
-        budId: event.budId,
-      ));
+      final result = await _budMatchingRepository.findBudsByTopGenres();
+      emit(BudsFound(searchResult: result));
     } catch (e) {
       emit(BudMatchingError(e.toString()));
     }
   }
 
-  Future<void> _onGetBudPlayedTracks(
-    GetBudPlayedTracks event,
+  Future<void> _onFindBudsByTopAnime(
+    FindBudsByTopAnime event,
     Emitter<BudMatchingState> emit,
   ) async {
     try {
       emit(BudMatchingLoading());
-      final tracks = await _budMatchingRepository.getBudPlayedTracks(event.budId);
-      emit(BudContentLoaded(
-        contentType: 'played_tracks',
-        content: tracks,
-        budId: event.budId,
-      ));
+      final result = await _budMatchingRepository.findBudsByTopAnime();
+      emit(BudsFound(searchResult: result));
     } catch (e) {
       emit(BudMatchingError(e.toString()));
     }
   }
 
-  Future<void> _onGetBudCommonLikedContent(
-    GetBudCommonLikedContent event,
+  Future<void> _onFindBudsByTopManga(
+    FindBudsByTopManga event,
     Emitter<BudMatchingState> emit,
   ) async {
     try {
       emit(BudMatchingLoading());
-      final content = await _budMatchingRepository.getBudCommonLikedContent(
-        event.contentType,
-        event.budId,
-      );
-      emit(BudCommonContentLoaded(
-        contentType: event.contentType,
-        commonContent: content,
-        budId: event.budId,
-      ));
+      final result = await _budMatchingRepository.findBudsByTopManga();
+      emit(BudsFound(searchResult: result));
     } catch (e) {
       emit(BudMatchingError(e.toString()));
     }
   }
 
-  Future<void> _onGetBudCommonTopContent(
-    GetBudCommonTopContent event,
+  Future<void> _onFindBudsByLikedArtists(
+    FindBudsByLikedArtists event,
     Emitter<BudMatchingState> emit,
   ) async {
     try {
       emit(BudMatchingLoading());
-      final content = await _budMatchingRepository.getBudCommonTopContent(
-        event.contentType,
-        event.budId,
-      );
-      emit(BudCommonContentLoaded(
-        contentType: event.contentType,
-        commonContent: content,
-        budId: event.budId,
-      ));
+      final result = await _budMatchingRepository.findBudsByLikedArtists();
+      emit(BudsFound(searchResult: result));
     } catch (e) {
       emit(BudMatchingError(e.toString()));
     }
   }
 
-  Future<void> _onGetBudCommonPlayedTracks(
-    GetBudCommonPlayedTracks event,
+  Future<void> _onFindBudsByLikedTracks(
+    FindBudsByLikedTracks event,
     Emitter<BudMatchingState> emit,
   ) async {
     try {
       emit(BudMatchingLoading());
-      final tracks = await _budMatchingRepository.getBudCommonPlayedTracks(event.budId);
-      emit(BudCommonContentLoaded(
-        contentType: 'played_tracks',
-        commonContent: tracks,
-        budId: event.budId,
-      ));
+      final result = await _budMatchingRepository.findBudsByLikedTracks();
+      emit(BudsFound(searchResult: result));
     } catch (e) {
       emit(BudMatchingError(e.toString()));
     }
   }
 
-  Future<void> _onGetBudSpecificContent(
-    GetBudSpecificContent event,
+  Future<void> _onFindBudsByLikedGenres(
+    FindBudsByLikedGenres event,
     Emitter<BudMatchingState> emit,
   ) async {
     try {
       emit(BudMatchingLoading());
-      final content = await _budMatchingRepository.getBudSpecificContent(
-        event.contentType,
-        event.contentId,
-        event.budId,
-      );
-      emit(BudSpecificContentLoaded(
-        contentType: event.contentType,
-        content: content,
-        contentId: event.contentId,
-        budId: event.budId,
-      ));
+      final result = await _budMatchingRepository.findBudsByLikedGenres();
+      emit(BudsFound(searchResult: result));
+    } catch (e) {
+      emit(BudMatchingError(e.toString()));
+    }
+  }
+
+  Future<void> _onFindBudsByLikedAlbums(
+    FindBudsByLikedAlbums event,
+    Emitter<BudMatchingState> emit,
+  ) async {
+    try {
+      emit(BudMatchingLoading());
+      final result = await _budMatchingRepository.findBudsByLikedAlbums();
+      emit(BudsFound(searchResult: result));
+    } catch (e) {
+      emit(BudMatchingError(e.toString()));
+    }
+  }
+
+  Future<void> _onFindBudsByLikedAio(
+    FindBudsByLikedAio event,
+    Emitter<BudMatchingState> emit,
+  ) async {
+    try {
+      emit(BudMatchingLoading());
+      final result = await _budMatchingRepository.findBudsByLikedAio();
+      emit(BudsFound(searchResult: result));
+    } catch (e) {
+      emit(BudMatchingError(e.toString()));
+    }
+  }
+
+  Future<void> _onFindBudsByPlayedTracks(
+    FindBudsByPlayedTracks event,
+    Emitter<BudMatchingState> emit,
+  ) async {
+    try {
+      emit(BudMatchingLoading());
+      final result = await _budMatchingRepository.findBudsByPlayedTracks();
+      emit(BudsFound(searchResult: result));
+    } catch (e) {
+      emit(BudMatchingError(e.toString()));
+    }
+  }
+
+  Future<void> _onFindBudsByArtist(
+    FindBudsByArtist event,
+    Emitter<BudMatchingState> emit,
+  ) async {
+    try {
+      emit(BudMatchingLoading());
+      final result = await _budMatchingRepository.findBudsByArtist(event.artistId);
+      emit(BudsFound(searchResult: result));
+    } catch (e) {
+      emit(BudMatchingError(e.toString()));
+    }
+  }
+
+  Future<void> _onFindBudsByTrack(
+    FindBudsByTrack event,
+    Emitter<BudMatchingState> emit,
+  ) async {
+    try {
+      emit(BudMatchingLoading());
+      final result = await _budMatchingRepository.findBudsByTrack(event.trackId);
+      emit(BudsFound(searchResult: result));
+    } catch (e) {
+      emit(BudMatchingError(e.toString()));
+    }
+  }
+
+  Future<void> _onFindBudsByGenre(
+    FindBudsByGenre event,
+    Emitter<BudMatchingState> emit,
+  ) async {
+    try {
+      emit(BudMatchingLoading());
+      final result = await _budMatchingRepository.findBudsByGenre(event.genreId);
+      emit(BudsFound(searchResult: result));
     } catch (e) {
       emit(BudMatchingError(e.toString()));
     }

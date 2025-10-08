@@ -46,6 +46,11 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<String> getServiceLoginUrl(String service) async {
+    return await _authRemoteDataSource.getServiceLoginUrl(service);
+  }
+
+  @override
   Future<void> connectSpotify(String code) async {
     await _authRemoteDataSource.connectSpotify(code);
   }

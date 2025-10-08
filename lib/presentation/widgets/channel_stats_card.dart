@@ -6,10 +6,10 @@ class ChannelStatsCard extends StatelessWidget {
   final bool showTitle;
 
   const ChannelStatsCard({
-    Key? key,
+    super.key,
     required this.stats,
     this.showTitle = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

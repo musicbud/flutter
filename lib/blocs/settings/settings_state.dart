@@ -62,6 +62,64 @@ class SettingsError extends SettingsState {
 
 class SettingsSaved extends SettingsState {}
 
+class ServiceConnected extends SettingsState {
+  final String service;
+
+  const ServiceConnected(this.service);
+
+  @override
+  List<Object> get props => [service];
+}
+
+class ServiceConnectionError extends SettingsState {
+  final String service;
+  final String error;
+
+  const ServiceConnectionError(this.service, this.error);
+
+  @override
+  List<Object> get props => [service, error];
+}
+
+class LikesUpdated extends SettingsState {
+  final String service;
+
+  const LikesUpdated(this.service);
+
+  @override
+  List<Object> get props => [service];
+}
+
+class LikesUpdateError extends SettingsState {
+  final String service;
+  final String error;
+
+  const LikesUpdateError(this.service, this.error);
+
+  @override
+  List<Object> get props => [service, error];
+}
+
+class ServiceLoginUrlReceived extends SettingsState {
+  final String service;
+  final String url;
+
+  const ServiceLoginUrlReceived(this.service, this.url);
+
+  @override
+  List<Object> get props => [service, url];
+}
+
+class ServiceLoginUrlError extends SettingsState {
+  final String service;
+  final String error;
+
+  const ServiceLoginUrlError(this.service, this.error);
+
+  @override
+  List<Object> get props => [service, error];
+}
+
 class NotificationSettings extends Equatable {
   final bool enabled;
   final bool pushEnabled;

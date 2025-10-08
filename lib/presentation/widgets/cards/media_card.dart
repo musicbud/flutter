@@ -42,7 +42,7 @@ class MediaCard extends BaseCard {
   /// Border radius for the image
   final BorderRadius? imageBorderRadius;
 
-  MediaCard({
+  const MediaCard({
     super.key,
     super.onTap,
     super.shape,
@@ -63,7 +63,7 @@ class MediaCard extends BaseCard {
   });
 
   @override
-  Widget _buildCard(BuildContext context) {
+  Widget buildCard(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

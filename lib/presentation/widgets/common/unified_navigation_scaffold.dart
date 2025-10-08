@@ -15,7 +15,7 @@ class UnifiedNavigationScaffold extends StatefulWidget {
   final FloatingActionButtonLocation? floatingActionButtonLocation;
 
   const UnifiedNavigationScaffold({
-    Key? key,
+    super.key,
     required this.body,
     required this.currentIndex,
     required this.onNavigationTap,
@@ -25,7 +25,7 @@ class UnifiedNavigationScaffold extends StatefulWidget {
     this.appBarActions,
     this.floatingActionButton,
     this.floatingActionButtonLocation,
-  }) : super(key: key);
+  });
 
   @override
   State<UnifiedNavigationScaffold> createState() => _UnifiedNavigationScaffoldState();
@@ -83,13 +83,13 @@ class MainNavigationScaffold extends StatelessWidget {
   final Widget? floatingActionButton;
 
   const MainNavigationScaffold({
-    Key? key,
+    super.key,
     required this.body,
     required this.currentIndex,
     required this.onNavigationTap,
     required this.navigationItems,
     this.floatingActionButton,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -118,13 +118,13 @@ class ContentPageScaffold extends StatelessWidget {
   final bool showTopActions;
 
   const ContentPageScaffold({
-    Key? key,
+    super.key,
     required this.body,
     required this.title,
     this.actions,
     this.floatingActionButton,
     this.showTopActions = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

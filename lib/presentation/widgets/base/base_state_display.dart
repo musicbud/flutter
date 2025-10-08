@@ -14,9 +14,9 @@ import '../../../../core/theme/design_system.dart';
 /// - [padding] - Padding around the entire widget
 ///
 /// **Common Methods:**
-/// - [_buildIcon] - Icon widget (must be implemented)
-/// - [_buildContent] - Main content layout (must be implemented)
-/// - [_buildAction] - Action button/section (must be implemented)
+/// - [buildIcon] - Icon widget (must be implemented)
+/// - [buildContent] - Main content layout (must be implemented)
+/// - [buildAction] - Action button/section (must be implemented)
 /// - [_buildDefaultIcon] - Default icon widget
 /// - [_buildDefaultContent] - Default content layout
 /// - [_buildDefaultAction] - Default action button
@@ -34,12 +34,12 @@ import '../../../../core/theme/design_system.dart';
 ///   });
 ///
 ///   @override
-///   Widget _buildIcon(BuildContext context) {
+///   Widget buildIcon(BuildContext context) {
 ///     return Icon(icon ?? Icons.info_outline, size: iconSize);
 ///   }
 ///
 ///   @override
-///   Widget _buildContent(BuildContext context) {
+///   Widget buildContent(BuildContext context) {
 ///     return Column(
 ///       children: [
 ///         Text(title, style: getDesignSystemTypography(context).titleMedium),
@@ -49,7 +49,7 @@ import '../../../../core/theme/design_system.dart';
 ///   }
 ///
 ///   @override
-///   Widget _buildAction(BuildContext context) {
+///   Widget buildAction(BuildContext context) {
 ///     if (actionText != null && actionCallback != null) {
 ///       return ElevatedButton(
 ///         onPressed: actionCallback,
@@ -115,17 +115,17 @@ abstract class BaseStateDisplay extends StatelessWidget {
       children: [
         // Icon section
         if (icon != null) ...[
-          _buildIcon(context),
+          buildIcon(context),
           const SizedBox(height: 32.0),
         ],
 
         // Content section
-        _buildContent(context),
+        buildContent(context),
 
         // Action section
         if (actionText != null && actionCallback != null) ...[
           const SizedBox(height: 32.0),
-          _buildAction(context),
+          buildAction(context),
         ],
       ],
     );
@@ -146,17 +146,17 @@ abstract class BaseStateDisplay extends StatelessWidget {
   /// Build the icon widget - must be implemented by subclasses
   /// Should return the icon to display or SizedBox.shrink() if no icon
   @protected
-  Widget _buildIcon(BuildContext context);
+  Widget buildIcon(BuildContext context);
 
   /// Build the main content layout - must be implemented by subclasses
   /// Should return the primary content (title, message, etc.)
   @protected
-  Widget _buildContent(BuildContext context);
+  Widget buildContent(BuildContext context);
 
   /// Build the action button/section - must be implemented by subclasses
   /// Should return action button or SizedBox.shrink() if no action
   @protected
-  Widget _buildAction(BuildContext context);
+  Widget buildAction(BuildContext context);
 
 
   /// Helper method to get design system colors

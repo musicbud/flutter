@@ -41,7 +41,7 @@ class ModernInputField extends StatefulWidget {
   final FocusNode? focusNode;
 
   const ModernInputField({
-    Key? key,
+    super.key,
     this.controller,
     this.hintText,
     this.labelText,
@@ -73,7 +73,7 @@ class ModernInputField extends StatefulWidget {
     this.inputFormatters,
     this.autovalidateMode,
     this.focusNode,
-  }) : super(key: key);
+  });
 
   @override
   State<ModernInputField> createState() => _ModernInputFieldState();

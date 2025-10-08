@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Navigation components
 import 'package:musicbud_flutter/navigation/navigation_constants.dart';
-import 'package:musicbud_flutter/navigation/navigation_items.dart';
 
 // Screens for verification
 import 'package:musicbud_flutter/presentation/screens/home/home_screen.dart';
@@ -17,23 +15,7 @@ import 'package:musicbud_flutter/presentation/screens/search/search_screen.dart'
 import 'package:musicbud_flutter/presentation/screens/buds/buds_screen.dart';
 import 'package:musicbud_flutter/presentation/screens/settings/settings_screen.dart';
 
-// BLoCs
-import 'package:musicbud_flutter/blocs/user_profile/user_profile_bloc.dart';
-import 'package:musicbud_flutter/blocs/chat/chat_bloc.dart';
-import 'package:musicbud_flutter/blocs/likes/likes_bloc.dart';
 
-// Mock BLoCs for testing
-class MockUserProfileBloc extends Bloc<dynamic, dynamic> {
-  MockUserProfileBloc() : super(null);
-}
-
-class MockChatBloc extends Bloc<dynamic, dynamic> {
-  MockChatBloc() : super(null);
-}
-
-class MockLikesBloc extends Bloc<dynamic, dynamic> {
-  MockLikesBloc() : super(null);
-}
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -42,31 +24,18 @@ void main() {
     late Widget testApp;
 
     setUp(() {
-      testApp = MultiBlocProvider(
-        providers: [
-          BlocProvider<UserProfileBloc>(
-            create: (context) => MockUserProfileBloc(),
-          ),
-          BlocProvider<ChatBloc>(
-            create: (context) => MockChatBloc(),
-          ),
-          BlocProvider<LikesBloc>(
-            create: (context) => MockLikesBloc(),
-          ),
-        ],
-        child: MaterialApp(
-          initialRoute: NavigationConstants.home,
-          routes: {
-            NavigationConstants.home: (context) => const HomeScreen(),
-            NavigationConstants.discover: (context) => const DiscoverScreen(),
-            NavigationConstants.library: (context) => const LibraryScreen(),
-            NavigationConstants.chat: (context) => const ChatScreen(),
-            NavigationConstants.profile: (context) => const ProfileScreen(),
-            NavigationConstants.search: (context) => const SearchScreen(),
-            NavigationConstants.buds: (context) => const BudsScreen(),
-            NavigationConstants.settings: (context) => const SettingsScreen(),
-          },
-        ),
+      testApp = MaterialApp(
+        initialRoute: NavigationConstants.home,
+        routes: {
+          NavigationConstants.home: (context) => const HomeScreen(),
+          NavigationConstants.discover: (context) => const DiscoverScreen(),
+          NavigationConstants.library: (context) => const LibraryScreen(),
+          NavigationConstants.chat: (context) => const ChatScreen(),
+          NavigationConstants.profile: (context) => const ProfileScreen(),
+          NavigationConstants.search: (context) => const SearchScreen(),
+          NavigationConstants.buds: (context) => const BudsScreen(),
+          NavigationConstants.settings: (context) => const SettingsScreen(),
+        },
       );
     });
 

@@ -6,10 +6,10 @@ class SearchResultItem extends StatelessWidget {
   final VoidCallback? onTap;
 
   const SearchResultItem({
-    Key? key,
+    super.key,
     required this.item,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

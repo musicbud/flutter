@@ -8,7 +8,6 @@ class WatchPartyBloc extends Bloc<WatchPartyEvent, WatchPartyState> {
   final WatchPartyRepository repository;
   StreamSubscription? _partyUpdatesSubscription;
   StreamSubscription? _chatSubscription;
-  String? _currentPartyId;
 
   WatchPartyBloc({required this.repository}) : super(const WatchPartyInitial()) {
     on<WatchPartiesRequested>(_onWatchPartiesRequested);
@@ -80,9 +79,7 @@ class WatchPartyBloc extends Bloc<WatchPartyEvent, WatchPartyState> {
       // Cancel previous subscriptions
       await _partyUpdatesSubscription?.cancel();
       await _chatSubscription?.cancel();
-      
-      _currentPartyId = event.partyId;
-      
+
       // Subscribe to party updates
       _partyUpdatesSubscription = repository
           .partyUpdates(event.partyId)

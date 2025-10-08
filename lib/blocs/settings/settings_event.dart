@@ -112,3 +112,77 @@ class UpdateLanguageEvent extends SettingsEvent {
   @override
   List<Object> get props => [languageCode];
 }
+
+class ConnectSpotify extends SettingsEvent {
+  final String token;
+  final String spotifyToken;
+
+  const ConnectSpotify({
+    required this.token,
+    required this.spotifyToken,
+  });
+
+  @override
+  List<Object> get props => [token, spotifyToken];
+}
+
+class ConnectYTMusic extends SettingsEvent {
+  final String token;
+  final String ytmusicToken;
+
+  const ConnectYTMusic({
+    required this.token,
+    required this.ytmusicToken,
+  });
+
+  @override
+  List<Object> get props => [token, ytmusicToken];
+}
+
+class ConnectLastFM extends SettingsEvent {
+  final String token;
+  final String lastfmToken;
+
+  const ConnectLastFM({
+    required this.token,
+    required this.lastfmToken,
+  });
+
+  @override
+  List<Object> get props => [token, lastfmToken];
+}
+
+class ConnectMAL extends SettingsEvent {
+  final String token;
+  final String malToken;
+
+  const ConnectMAL({
+    required this.token,
+    required this.malToken,
+  });
+
+  @override
+  List<Object> get props => [token, malToken];
+}
+
+class UpdateLikes extends SettingsEvent {
+  final String service;
+  final String token;
+
+  const UpdateLikes({
+    required this.service,
+    required this.token,
+  });
+
+  @override
+  List<Object> get props => [service, token];
+}
+
+class GetServiceLoginUrl extends SettingsEvent {
+  final String service;
+
+  const GetServiceLoginUrl(this.service);
+
+  @override
+  List<Object> get props => [service];
+}

@@ -6,10 +6,10 @@ class GenreListItem extends StatelessWidget {
   final VoidCallback? onTap;
 
   const GenreListItem({
-    Key? key,
+    super.key,
     required this.genre,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

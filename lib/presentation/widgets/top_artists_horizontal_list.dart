@@ -6,7 +6,6 @@ import '../../blocs/top_artists/top_artists_bloc.dart';
 import '../../blocs/top_artists/top_artists_event.dart';
 import '../../blocs/top_artists/top_artists_state.dart';
 import '../../../core/theme/design_system.dart';
-import 'common/image_with_fallback.dart';
 import 'common/modern_button.dart';
 import 'factories/card_factory.dart';
 import 'mixins/interaction/hover_mixin.dart';
@@ -77,9 +76,6 @@ class _TopArtistsHorizontalListState extends State<TopArtistsHorizontalList>
   }
 
   Widget _buildArtistCard(CommonArtist artist) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return CardFactory().createArtistCard(
       context: context,
       name: artist.name,

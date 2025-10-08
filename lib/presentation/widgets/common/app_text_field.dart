@@ -24,7 +24,7 @@ class AppTextField extends StatelessWidget {
   final double borderRadius;
 
   const AppTextField({
-    Key? key,
+    super.key,
     this.hintText,
     this.labelText,
     this.controller,
@@ -44,7 +44,7 @@ class AppTextField extends StatelessWidget {
     this.backgroundColor,
     this.borderColor,
     this.borderRadius = 12,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

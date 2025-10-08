@@ -8,10 +8,8 @@ import 'package:musicbud_flutter/presentation/screens/search/search_screen.dart'
 import 'package:musicbud_flutter/presentation/screens/profile/track_details_screen.dart';
 import 'package:musicbud_flutter/blocs/content/content_bloc.dart';
 import 'package:musicbud_flutter/blocs/content/content_event.dart';
-import 'package:musicbud_flutter/blocs/content/content_state.dart';
 import 'package:musicbud_flutter/presentation/blocs/search/search_bloc.dart';
 import 'package:musicbud_flutter/presentation/blocs/search/search_event.dart';
-import 'package:musicbud_flutter/presentation/blocs/search/search_state.dart';
 import '../test_utils/test_helpers.dart';
 import 'package:musicbud_flutter/models/track.dart';
 import 'package:musicbud_flutter/models/artist.dart';

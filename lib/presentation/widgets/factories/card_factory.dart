@@ -274,7 +274,7 @@ class CardFactory {
         .withVariant(CardVariant.primary)
         .withElevation(elevation ?? 1)
         .withMargin(margin ?? EdgeInsets.symmetric(vertical: spacing.xxs))
-        .withOnTap(onTap != null ? onTap : () {})
+        .withOnTap(onTap ?? () {})
         .withContent(
           child: Row(
             children: [

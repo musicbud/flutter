@@ -24,7 +24,7 @@ class AppBottomNavigationBar extends StatelessWidget with BaseNavigationMixin {
   final NavigationConfig? config;
 
   const AppBottomNavigationBar({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.onTap,
     required this.items,
@@ -39,7 +39,7 @@ class AppBottomNavigationBar extends StatelessWidget with BaseNavigationMixin {
     this.enableBlur = true,
     this.enableGradient = true,
     this.config,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +175,7 @@ class FloatingBottomNavigationBar extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
 
   const FloatingBottomNavigationBar({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.onTap,
     required this.items,
@@ -184,7 +184,7 @@ class FloatingBottomNavigationBar extends StatelessWidget {
     this.unselectedItemColor,
     this.height = 80,
     this.margin,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -268,7 +268,7 @@ class ModernTabBar extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
 
   const ModernTabBar({
-    Key? key,
+    super.key,
     required this.selectedIndex,
     required this.onTap,
     required this.tabs,
@@ -277,7 +277,7 @@ class ModernTabBar extends StatelessWidget {
     this.unselectedColor,
     this.height = 50,
     this.margin,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

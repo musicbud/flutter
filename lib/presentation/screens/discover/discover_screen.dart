@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../blocs/content/content_bloc.dart';
-import '../../../blocs/content/content_event.dart';
-import '../../../blocs/content/content_state.dart';
+import '../../../blocs/discover/discover_bloc.dart';
+import '../../../blocs/discover/discover_event.dart';
+import '../../../blocs/discover/discover_state.dart';
 import '../../../core/theme/design_system.dart';
+import '../../../models/artist.dart';
+import '../../../models/track.dart';
+import '../../../models/album.dart';
 import '../../../presentation/navigation/main_navigation.dart';
 import '../../../presentation/navigation/navigation_drawer.dart';
 import 'discover_search_section.dart';
@@ -29,7 +32,12 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
     super.initState();
     _navigationController = MainNavigationController();
     // Load dynamic content when screen initializes
-    context.read<ContentBloc>().add(LoadTopContent());
+    context.read<DiscoverBloc>().add(const FetchTopTracks());
+    context.read<DiscoverBloc>().add(const FetchTopArtists());
+    context.read<DiscoverBloc>().add(const FetchTopGenres());
+    context.read<DiscoverBloc>().add(const FetchTopAnime());
+    context.read<DiscoverBloc>().add(const FetchTopManga());
+    context.read<DiscoverBloc>().add(const FetchLikedAlbums());
   }
 
   @override
@@ -40,116 +48,153 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ContentBloc, ContentState>(
+    return BlocListener<DiscoverBloc, DiscoverState>(
       listener: (context, state) {
-        if (state is ContentError) {
+        if (state is DiscoverError ||
+            state is TopTracksError ||
+            state is TopArtistsError ||
+            state is TopGenresError ||
+            state is TopAnimeError ||
+            state is TopMangaError ||
+            state is LikedAlbumsError) {
+          String message = 'Error loading content';
+          if (state is DiscoverError) message = state.message;
+          if (state is TopTracksError) message = 'Error loading tracks: ${state.message}';
+          if (state is TopArtistsError) message = 'Error loading artists: ${state.message}';
+          if (state is TopGenresError) message = 'Error loading genres: ${state.message}';
+          if (state is TopAnimeError) message = 'Error loading anime: ${state.message}';
+          if (state is TopMangaError) message = 'Error loading manga: ${state.message}';
+          if (state is LikedAlbumsError) message = 'Error loading albums: ${state.message}';
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error loading content: ${state.message}'),
+              content: Text(message),
               backgroundColor: DesignSystem.error,
             ),
           );
         }
       },
-      child: BlocBuilder<ContentBloc, ContentState>(
-        builder: (context, state) {
-          return Scaffold(
-            key: _scaffoldKey,
-            appBar: AppBar(
-              title: const Text('Discover'),
-              leading: IconButton(
-                icon: const Icon(Icons.menu),
-                onPressed: () {
-                  _scaffoldKey.currentState?.openDrawer();
-                },
-              ),
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          title: const Text('Discover'),
+          leading: IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              _scaffoldKey.currentState?.openDrawer();
+            },
+          ),
+        ),
+        drawer: MainNavigationDrawer(
+          navigationController: _navigationController,
+        ),
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: DesignSystem.gradientBackground,
+          ),
+          child: RefreshIndicator(
+            onRefresh: () async {
+              context.read<DiscoverBloc>().add(const FetchTopTracks());
+              context.read<DiscoverBloc>().add(const FetchTopArtists());
+              context.read<DiscoverBloc>().add(const FetchTopGenres());
+              context.read<DiscoverBloc>().add(const FetchTopAnime());
+              context.read<DiscoverBloc>().add(const FetchTopManga());
+              context.read<DiscoverBloc>().add(const FetchLikedAlbums());
+            },
+            child: CustomScrollView(
+              slivers: [
+                // Search and Filter Section
+                SliverToBoxAdapter(
+                  child: DiscoverSearchSection(
+                    selectedCategory: _selectedCategory,
+                    onCategorySelected: (category) {
+                      setState(() {
+                        _selectedCategory = category;
+                      });
+                    },
+                    onSearch: (query) {
+                      // Handle search functionality with API
+                      if (query.isNotEmpty) {
+                        // TODO: Implement search with DiscoverBloc
+                      }
+                    },
+                  ),
+                ),
+
+                // Featured Artists Section
+                SliverToBoxAdapter(
+                  child: BlocBuilder<DiscoverBloc, DiscoverState>(
+                    builder: (context, state) {
+                      final artists = state is TopArtistsLoaded ? state.artists : <Artist>[];
+                      final isLoading = state is TopArtistsLoading;
+                      return FeaturedArtistsSection(
+                        artists: artists,
+                        isLoading: isLoading,
+                        onViewAllPressed: () {
+                          // Navigate to all artists
+                          Navigator.pushNamed(context, '/artists');
+                        },
+                      );
+                    },
+                  ),
+                ),
+
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: DesignSystem.spacingXL),
+                ),
+
+                // Trending Tracks Section
+                SliverToBoxAdapter(
+                  child: BlocBuilder<DiscoverBloc, DiscoverState>(
+                    builder: (context, state) {
+                      final tracks = state is TopTracksLoaded ? state.tracks : <Track>[];
+                      final isLoading = state is TopTracksLoading;
+                      return TrendingTracksSection(
+                        tracks: tracks,
+                        isLoading: isLoading,
+                        onViewAllPressed: () {
+                          // Navigate to all tracks
+                          Navigator.pushNamed(context, '/tracks');
+                        },
+                      );
+                    },
+                  ),
+                ),
+
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: DesignSystem.spacingXL),
+                ),
+
+                // New Releases Section
+                SliverToBoxAdapter(
+                  child: BlocBuilder<DiscoverBloc, DiscoverState>(
+                    builder: (context, state) {
+                      final albums = state is LikedAlbumsLoaded ? state.albums : <Album>[];
+                      final isLoading = state is LikedAlbumsLoading;
+                      return NewReleasesSection(
+                        albums: albums,
+                        isLoading: isLoading,
+                      );
+                    },
+                  ),
+                ),
+
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: DesignSystem.spacingXL),
+                ),
+
+                // Discover More Section
+                const SliverToBoxAdapter(
+                  child: DiscoverMoreSection(),
+                ),
+
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: DesignSystem.spacingXL),
+                ),
+              ],
             ),
-            drawer: MainNavigationDrawer(
-              navigationController: _navigationController,
-            ),
-            body: Container(
-              decoration: const BoxDecoration(
-                gradient: DesignSystem.gradientBackground,
-              ),
-              child: CustomScrollView(
-                slivers: [
-                  // Search and Filter Section
-                  SliverToBoxAdapter(
-                    child: DiscoverSearchSection(
-                      selectedCategory: _selectedCategory,
-                      onCategorySelected: (category) {
-                        setState(() {
-                          _selectedCategory = category;
-                        });
-                      },
-                      onSearch: (query) {
-                        // Handle search functionality with API
-                        if (query.isNotEmpty) {
-                          context.read<ContentBloc>().add(
-                            SearchContent(query: query, type: _selectedCategory.toLowerCase()),
-                          );
-                        }
-                      },
-                    ),
-                  ),
-
-                  // Featured Artists Section
-                  SliverToBoxAdapter(
-                    child: FeaturedArtistsSection(
-                      artists: state is ContentLoaded ? state.topArtists : [],
-                      isLoading: state is ContentLoading,
-                      onViewAllPressed: () {
-                        // Navigate to all artists
-                        Navigator.pushNamed(context, '/artists');
-                      },
-                    ),
-                  ),
-
-                  const SliverToBoxAdapter(
-                    child: SizedBox(height: DesignSystem.spacingXL),
-                  ),
-
-                  // Trending Tracks Section
-                  SliverToBoxAdapter(
-                    child: TrendingTracksSection(
-                      tracks: state is ContentLoaded ? state.topTracks : [],
-                      isLoading: state is ContentLoading,
-                      onViewAllPressed: () {
-                        // Navigate to all tracks
-                        Navigator.pushNamed(context, '/tracks');
-                      },
-                    ),
-                  ),
-
-                  const SliverToBoxAdapter(
-                    child: SizedBox(height: DesignSystem.spacingXL),
-                  ),
-
-                  // New Releases Section
-                  SliverToBoxAdapter(
-                    child: NewReleasesSection(
-                      albums: state is ContentLoaded ? state.likedAlbums ?? [] : [],
-                      isLoading: state is ContentLoading,
-                    ),
-                  ),
-
-                  const SliverToBoxAdapter(
-                    child: SizedBox(height: DesignSystem.spacingXL),
-                  ),
-
-                  // Discover More Section
-                  const SliverToBoxAdapter(
-                    child: DiscoverMoreSection(),
-                  ),
-
-                  const SliverToBoxAdapter(
-                    child: SizedBox(height: DesignSystem.spacingXL),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }

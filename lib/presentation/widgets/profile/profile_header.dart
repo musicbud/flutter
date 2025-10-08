@@ -12,7 +12,7 @@ class ProfileHeader extends StatelessWidget {
   final Widget? avatarOverlay;
 
   const ProfileHeader({
-    Key? key,
+    super.key,
     this.coverImageUrl,
     this.avatarImageUrl,
     this.fallbackCoverImage = 'assets/cover.jpg',
@@ -21,7 +21,7 @@ class ProfileHeader extends StatelessWidget {
     this.avatarRadius = 90,
     this.avatarPosition,
     this.avatarOverlay,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -228,7 +228,7 @@ class ImageWithFallback extends StatelessWidget {
           SizedBox(height: 8),
           Text(
             'Failed to load',
-            style: const TextStyle(
+            style: TextStyle(
               color: DesignSystem.onSurfaceVariant,
               fontSize: 12,
             ),

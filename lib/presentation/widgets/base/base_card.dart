@@ -11,7 +11,7 @@ import '../../../../core/theme/design_system.dart';
 /// - [backgroundColor] - Background color for the card
 ///
 /// **Common Methods:**
-/// - [_buildCard] - Main card building logic (must be implemented)
+/// - [buildCard] - Main card building logic (must be implemented)
 /// - [_getDefaultShape] - Default shape for cards
 /// - [_getDefaultPadding] - Default padding for cards
 ///
@@ -21,7 +21,7 @@ import '../../../../core/theme/design_system.dart';
 ///   const CustomCard({super.key, super.onTap, super.padding});
 ///
 ///   @override
-///   Widget _buildCard(BuildContext context) {
+///   Widget buildCard(BuildContext context) {
 ///     return Column(
 ///       children: [
 ///         // Custom card content
@@ -78,7 +78,7 @@ abstract class BaseCard extends StatelessWidget {
         borderRadius: _getBorderRadius(context),
         child: Padding(
           padding: padding ?? _getDefaultPadding(context),
-          child: _buildCard(context),
+          child: buildCard(context),
         ),
       ),
     );
@@ -87,7 +87,7 @@ abstract class BaseCard extends StatelessWidget {
   /// Main card building logic - must be implemented by subclasses
   /// This method should return the primary content of the card
   @protected
-  Widget _buildCard(BuildContext context);
+  Widget buildCard(BuildContext context);
 
   /// Get the default shape for the card
   /// Can be overridden by subclasses for custom shapes

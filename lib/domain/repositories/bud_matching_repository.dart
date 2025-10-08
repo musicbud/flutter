@@ -1,28 +1,49 @@
+import '../../models/bud_profile.dart';
+import '../../models/bud_search_result.dart';
+
 abstract class BudMatchingRepository {
-  /// Search for buds based on query and filters
-  Future<List<dynamic>> searchBuds(String query, Map<String, dynamic>? filters);
+  /// Fetch detailed bud profile with common content
+  Future<BudProfile> fetchBudProfile(String budId);
 
-  /// Get bud profile by bud ID
-  Future<Map<String, dynamic>> getBudProfile(String budId);
+  /// Find buds by top artists
+  Future<BudSearchResult> findBudsByTopArtists();
 
-  /// Get bud's liked content by type
-  Future<List<dynamic>> getBudLikedContent(String contentType, String budId);
+  /// Find buds by top tracks
+  Future<BudSearchResult> findBudsByTopTracks();
 
-  /// Get bud's top content by type
-  Future<List<dynamic>> getBudTopContent(String contentType, String budId);
+  /// Find buds by top genres
+  Future<BudSearchResult> findBudsByTopGenres();
 
-  /// Get bud's played tracks
-  Future<List<dynamic>> getBudPlayedTracks(String budId);
+  /// Find buds by top anime
+  Future<BudSearchResult> findBudsByTopAnime();
 
-  /// Get common liked content between current user and bud
-  Future<List<dynamic>> getBudCommonLikedContent(String contentType, String budId);
+  /// Find buds by top manga
+  Future<BudSearchResult> findBudsByTopManga();
 
-  /// Get common top content between current user and bud
-  Future<List<dynamic>> getBudCommonTopContent(String contentType, String budId);
+  /// Find buds by liked artists
+  Future<BudSearchResult> findBudsByLikedArtists();
 
-  /// Get common played tracks between current user and bud
-  Future<List<dynamic>> getBudCommonPlayedTracks(String budId);
+  /// Find buds by liked tracks
+  Future<BudSearchResult> findBudsByLikedTracks();
 
-  /// Get specific content from bud (artist, track, genre, album)
-  Future<Map<String, dynamic>> getBudSpecificContent(String contentType, String contentId, String budId);
+  /// Find buds by liked genres
+  Future<BudSearchResult> findBudsByLikedGenres();
+
+  /// Find buds by liked albums
+  Future<BudSearchResult> findBudsByLikedAlbums();
+
+  /// Find buds by liked all-in-one
+  Future<BudSearchResult> findBudsByLikedAio();
+
+  /// Find buds by played tracks
+  Future<BudSearchResult> findBudsByPlayedTracks();
+
+  /// Find buds by specific artist
+  Future<BudSearchResult> findBudsByArtist(String artistId);
+
+  /// Find buds by specific track
+  Future<BudSearchResult> findBudsByTrack(String trackId);
+
+  /// Find buds by specific genre
+  Future<BudSearchResult> findBudsByGenre(String genreId);
 }

@@ -28,7 +28,7 @@ class BlocForm<TBloc extends Bloc<TEvent, TState>, TState, TEvent> extends State
   final List<Widget>? appBarActions;
 
   const BlocForm({
-    Key? key,
+    super.key,
     required this.title,
     required this.fields,
     required this.submitButtonText,
@@ -45,7 +45,7 @@ class BlocForm<TBloc extends Bloc<TEvent, TState>, TState, TEvent> extends State
     this.padding,
     this.showAppBar = true,
     this.appBarActions,
-  }) : super(key: key);
+  });
 
   @override
   State<BlocForm<TBloc, TState, TEvent>> createState() => _BlocFormState<TBloc, TState, TEvent>();
@@ -124,7 +124,7 @@ class _BlocFormState<TBloc extends Bloc<TEvent, TState>, TState, TEvent> extends
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Form fields
-                ...widget.fields.map((field) => _buildFormField(field)).toList(),
+                ...widget.fields.map((field) => _buildFormField(field)),
 
                 const SizedBox(height: 24),
 

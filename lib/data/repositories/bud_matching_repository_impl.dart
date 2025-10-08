@@ -1,4 +1,6 @@
 import '../../domain/repositories/bud_matching_repository.dart';
+import '../../models/bud_profile.dart';
+import '../../models/bud_search_result.dart';
 import '../data_sources/remote/bud_matching_remote_data_source.dart';
 
 class BudMatchingRepositoryImpl implements BudMatchingRepository {
@@ -8,92 +10,152 @@ class BudMatchingRepositoryImpl implements BudMatchingRepository {
       : _remoteDataSource = remoteDataSource;
 
   @override
-  Future<List<dynamic>> searchBuds(String query, Map<String, dynamic>? filters) async {
+  Future<BudProfile> fetchBudProfile(String budId) async {
     try {
-      final response = await _remoteDataSource.searchBuds(query, filters);
-      return response['buds'] ?? [];
+      final response = await _remoteDataSource.fetchBudProfile(budId);
+      return BudProfile.fromJson(response);
     } catch (e) {
-      throw Exception('Failed to search buds: $e');
+      throw Exception('Failed to fetch bud profile: $e');
     }
   }
 
   @override
-  Future<Map<String, dynamic>> getBudProfile(String budId) async {
+  Future<BudSearchResult> findBudsByTopArtists() async {
     try {
-      final response = await _remoteDataSource.getBudProfile(budId);
-      return response;
+      final response = await _remoteDataSource.findBudsByTopArtists();
+      return BudSearchResult.fromJson(response);
     } catch (e) {
-      throw Exception('Failed to get bud profile: $e');
+      throw Exception('Failed to find buds by top artists: $e');
     }
   }
 
   @override
-  Future<List<dynamic>> getBudLikedContent(String contentType, String budId) async {
+  Future<BudSearchResult> findBudsByTopTracks() async {
     try {
-      final response = await _remoteDataSource.getBudLikedContent(contentType, budId);
-      return response['content'] ?? [];
+      final response = await _remoteDataSource.findBudsByTopTracks();
+      return BudSearchResult.fromJson(response);
     } catch (e) {
-      throw Exception('Failed to get bud liked $contentType: $e');
+      throw Exception('Failed to find buds by top tracks: $e');
     }
   }
 
   @override
-  Future<List<dynamic>> getBudTopContent(String contentType, String budId) async {
+  Future<BudSearchResult> findBudsByTopGenres() async {
     try {
-      final response = await _remoteDataSource.getBudTopContent(contentType, budId);
-      return response['content'] ?? [];
+      final response = await _remoteDataSource.findBudsByTopGenres();
+      return BudSearchResult.fromJson(response);
     } catch (e) {
-      throw Exception('Failed to get bud top $contentType: $e');
+      throw Exception('Failed to find buds by top genres: $e');
     }
   }
 
   @override
-  Future<List<dynamic>> getBudPlayedTracks(String budId) async {
+  Future<BudSearchResult> findBudsByTopAnime() async {
     try {
-      final response = await _remoteDataSource.getBudPlayedTracks(budId);
-      return response['tracks'] ?? [];
+      final response = await _remoteDataSource.findBudsByTopAnime();
+      return BudSearchResult.fromJson(response);
     } catch (e) {
-      throw Exception('Failed to get bud played tracks: $e');
+      throw Exception('Failed to find buds by top anime: $e');
     }
   }
 
   @override
-  Future<List<dynamic>> getBudCommonLikedContent(String contentType, String budId) async {
+  Future<BudSearchResult> findBudsByTopManga() async {
     try {
-      final response = await _remoteDataSource.getBudCommonLikedContent(contentType, budId);
-      return response['common_content'] ?? [];
+      final response = await _remoteDataSource.findBudsByTopManga();
+      return BudSearchResult.fromJson(response);
     } catch (e) {
-      throw Exception('Failed to get bud common liked $contentType: $e');
+      throw Exception('Failed to find buds by top manga: $e');
     }
   }
 
   @override
-  Future<List<dynamic>> getBudCommonTopContent(String contentType, String budId) async {
+  Future<BudSearchResult> findBudsByLikedArtists() async {
     try {
-      final response = await _remoteDataSource.getBudCommonTopContent(contentType, budId);
-      return response['common_content'] ?? [];
+      final response = await _remoteDataSource.findBudsByLikedArtists();
+      return BudSearchResult.fromJson(response);
     } catch (e) {
-      throw Exception('Failed to get bud common top $contentType: $e');
+      throw Exception('Failed to find buds by liked artists: $e');
     }
   }
 
   @override
-  Future<List<dynamic>> getBudCommonPlayedTracks(String budId) async {
+  Future<BudSearchResult> findBudsByLikedTracks() async {
     try {
-      final response = await _remoteDataSource.getBudCommonPlayedTracks(budId);
-      return response['common_tracks'] ?? [];
+      final response = await _remoteDataSource.findBudsByLikedTracks();
+      return BudSearchResult.fromJson(response);
     } catch (e) {
-      throw Exception('Failed to get bud common played tracks: $e');
+      throw Exception('Failed to find buds by liked tracks: $e');
     }
   }
 
   @override
-  Future<Map<String, dynamic>> getBudSpecificContent(String contentType, String contentId, String budId) async {
+  Future<BudSearchResult> findBudsByLikedGenres() async {
     try {
-      final response = await _remoteDataSource.getBudSpecificContent(contentType, contentId, budId);
-      return response;
+      final response = await _remoteDataSource.findBudsByLikedGenres();
+      return BudSearchResult.fromJson(response);
     } catch (e) {
-      throw Exception('Failed to get bud specific $contentType: $e');
+      throw Exception('Failed to find buds by liked genres: $e');
+    }
+  }
+
+  @override
+  Future<BudSearchResult> findBudsByLikedAlbums() async {
+    try {
+      final response = await _remoteDataSource.findBudsByLikedAlbums();
+      return BudSearchResult.fromJson(response);
+    } catch (e) {
+      throw Exception('Failed to find buds by liked albums: $e');
+    }
+  }
+
+  @override
+  Future<BudSearchResult> findBudsByLikedAio() async {
+    try {
+      final response = await _remoteDataSource.findBudsByLikedAio();
+      return BudSearchResult.fromJson(response);
+    } catch (e) {
+      throw Exception('Failed to find buds by liked aio: $e');
+    }
+  }
+
+  @override
+  Future<BudSearchResult> findBudsByPlayedTracks() async {
+    try {
+      final response = await _remoteDataSource.findBudsByPlayedTracks();
+      return BudSearchResult.fromJson(response);
+    } catch (e) {
+      throw Exception('Failed to find buds by played tracks: $e');
+    }
+  }
+
+  @override
+  Future<BudSearchResult> findBudsByArtist(String artistId) async {
+    try {
+      final response = await _remoteDataSource.findBudsByArtist(artistId);
+      return BudSearchResult.fromJson(response);
+    } catch (e) {
+      throw Exception('Failed to find buds by artist: $e');
+    }
+  }
+
+  @override
+  Future<BudSearchResult> findBudsByTrack(String trackId) async {
+    try {
+      final response = await _remoteDataSource.findBudsByTrack(trackId);
+      return BudSearchResult.fromJson(response);
+    } catch (e) {
+      throw Exception('Failed to find buds by track: $e');
+    }
+  }
+
+  @override
+  Future<BudSearchResult> findBudsByGenre(String genreId) async {
+    try {
+      final response = await _remoteDataSource.findBudsByGenre(genreId);
+      return BudSearchResult.fromJson(response);
+    } catch (e) {
+      throw Exception('Failed to find buds by genre: $e');
     }
   }
 }

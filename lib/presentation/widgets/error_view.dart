@@ -20,7 +20,7 @@ class ErrorView extends BaseStateDisplay {
   });
 
   @override
-  Widget _buildIcon(BuildContext context) {
+  Widget buildIcon(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(DesignSystem.spacingLG),
       decoration: BoxDecoration(
@@ -36,7 +36,7 @@ class ErrorView extends BaseStateDisplay {
   }
 
   @override
-  Widget _buildContent(BuildContext context) {
+  Widget buildContent(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -68,7 +68,7 @@ class ErrorView extends BaseStateDisplay {
   }
 
   @override
-  Widget _buildAction(BuildContext context) {
+  Widget buildAction(BuildContext context) {
     if (actionText != null && actionCallback != null) {
       return PrimaryButton(
         text: actionText!,

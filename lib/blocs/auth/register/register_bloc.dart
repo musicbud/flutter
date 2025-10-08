@@ -23,7 +23,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     emit(RegisterLoading());
     try {
       final connectivityResult = await _connectivity.checkConnectivity();
-      final isConnected = connectivityResult != ConnectivityResult.none;
+      final isConnected = !connectivityResult.contains(ConnectivityResult.none);
       emit(RegisterConnectivityStatus(isConnected));
     } catch (e) {
       emit(RegisterFailure(e.toString()));

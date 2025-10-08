@@ -27,7 +27,7 @@ class BlocList<TBloc extends Bloc<TEvent, TState>, TState, TEvent, TItem> extend
   final Widget Function(TState state)? customStateWidget;
 
   const BlocList({
-    Key? key,
+    super.key,
     required this.title,
     required this.loadEvent,
     required this.getItems,
@@ -47,7 +47,7 @@ class BlocList<TBloc extends Bloc<TEvent, TState>, TState, TEvent, TItem> extend
     this.appBarActions,
     this.padding,
     this.customStateWidget,
-  }) : super(key: key);
+  });
 
   @override
   State<BlocList<TBloc, TState, TEvent, TItem>> createState() =>
@@ -269,7 +269,7 @@ class SimpleBlocList<TBloc extends Bloc<dynamic, TState>, TState, TItem> extends
   final EdgeInsetsGeometry? padding;
 
   const SimpleBlocList({
-    Key? key,
+    super.key,
     required this.getItems,
     required this.isLoading,
     required this.isError,
@@ -277,7 +277,7 @@ class SimpleBlocList<TBloc extends Bloc<dynamic, TState>, TState, TItem> extends
     this.emptyBuilder,
     this.getErrorMessage,
     this.padding,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

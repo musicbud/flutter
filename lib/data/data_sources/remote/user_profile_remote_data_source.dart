@@ -1,11 +1,18 @@
 import '../../network/dio_client.dart';
-import '../../../models/user_profile.dart';
 import '../../../config/api_config.dart';
 
 abstract class UserProfileRemoteDataSource {
   Future<Map<String, dynamic>> getUserProfile(String userId);
-  Future<Map<String, dynamic>> getMyProfile();
-  Future<Map<String, dynamic>> updateProfile(UserProfileUpdateRequest updateRequest);
+  Future<Map<String, dynamic>> getMyProfile({String? service, String? token});
+  Future<Map<String, dynamic>> updateProfile({
+    String? bio,
+    String? displayName,
+    String? firstName,
+    String? lastName,
+    String? birthday,
+    String? gender,
+    List<String>? interests,
+  });
   Future<void> updateLikes(Map<String, dynamic> likesData);
   Future<Map<String, dynamic>> getUserLikedContent(String contentType, String userId);
   Future<Map<String, dynamic>> getMyLikedContent(String contentType);
@@ -38,9 +45,16 @@ class UserProfileRemoteDataSourceImpl implements UserProfileRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> getMyProfile() async {
+  Future<Map<String, dynamic>> getMyProfile({String? service, String? token}) async {
     try {
-      final response = await _dioClient.post(ApiConfig.myProfile);
+      final data = <String, dynamic>{};
+      if (service != null) data['service'] = service;
+      if (token != null) data['token'] = token;
+
+      final response = await _dioClient.post(
+        ApiConfig.myProfile,
+        data: data.isNotEmpty ? data : null,
+      );
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to get my profile: $e');
@@ -48,11 +62,28 @@ class UserProfileRemoteDataSourceImpl implements UserProfileRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> updateProfile(UserProfileUpdateRequest updateRequest) async {
+  Future<Map<String, dynamic>> updateProfile({
+    String? bio,
+    String? displayName,
+    String? firstName,
+    String? lastName,
+    String? birthday,
+    String? gender,
+    List<String>? interests,
+  }) async {
     try {
+      final data = <String, dynamic>{};
+      if (bio != null) data['bio'] = bio;
+      if (displayName != null) data['display_name'] = displayName;
+      if (firstName != null) data['first_name'] = firstName;
+      if (lastName != null) data['last_name'] = lastName;
+      if (birthday != null) data['birthday'] = birthday;
+      if (gender != null) data['gender'] = gender;
+      if (interests != null) data['interests'] = interests;
+
       final response = await _dioClient.post(
         ApiConfig.updateProfile,
-        data: updateRequest.toJson(),
+        data: data,
       );
       return response.data as Map<String, dynamic>;
     } catch (e) {
