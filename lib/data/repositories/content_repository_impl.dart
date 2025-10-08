@@ -5,6 +5,7 @@ import '../../models/album.dart';
 import '../../models/genre.dart';
 import '../../models/common_anime.dart';
 import '../../models/common_manga.dart';
+import '../../models/spotify_device.dart';
 import '../data_sources/remote/content_remote_data_source.dart';
 import '../../core/error/exceptions.dart';
 import '../../core/error/failures.dart';
@@ -214,6 +215,18 @@ class ContentRepositoryImpl implements ContentRepository {
 
 
 
+
+  @override
+  Future<List<SpotifyDevice>> getSpotifyDevices() async {
+    try {
+      final devicesData = await _remoteDataSource.getSpotifyDevices();
+      return devicesData.map((json) => SpotifyDevice.fromJson(json)).toList();
+    } on ServerException catch (e) {
+      throw ServerFailure(message: e.message);
+    } catch (e) {
+      throw ServerFailure(message: e.toString());
+    }
+  }
 
   @override
   Future<void> controlSpotifyPlayback(String command, String deviceId) async {

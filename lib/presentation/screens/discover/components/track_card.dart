@@ -5,7 +5,7 @@ import '../../../widgets/common/index.dart';
 class TrackCard extends StatelessWidget {
   final String title;
   final String artist;
-  final String genre;
+  final String? genre;
   final String? imageUrl;
   final IconData icon;
   final Color accentColor;
@@ -15,7 +15,7 @@ class TrackCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.artist,
-    required this.genre,
+    this.genre,
     this.imageUrl,
     required this.icon,
     required this.accentColor,
@@ -73,14 +73,15 @@ class TrackCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                Text(
-                  genre,
-                  style: DesignSystem.caption.copyWith(
-                    color: DesignSystem.onSurfaceVariant,
+                if (genre != null)
+                  Text(
+                    genre!,
+                    style: DesignSystem.caption.copyWith(
+                      color: DesignSystem.onSurfaceVariant,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
               ],
             ),
           ),

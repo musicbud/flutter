@@ -148,41 +148,43 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
             if (_isEditing) ...[
               Form(
                 key: _formKey,
-                child: Column(
-                  children: [
-                    ModernInputField(
-                      controller: _displayNameController,
-                      label: 'Display Name',
-                      hintText: 'Enter your display name',
-                    ),
-                    SizedBox(height: designSystemSpacing.md),
-                    ModernInputField(
-                      controller: _bioController,
-                      label: 'Bio',
-                      hintText: 'Tell us about yourself',
-                      maxLines: 3,
-                    ),
-                    SizedBox(height: designSystemSpacing.md),
-                    ModernInputField(
-                      controller: _locationController,
-                      label: 'Location',
-                      hintText: 'Enter your location',
-                    ),
-                    SizedBox(height: designSystemSpacing.md),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        SecondaryButton(
-                          text: 'Cancel',
-                          onPressed: _cancelEditing,
-                        ),
-                        PrimaryButton(
-                          text: 'Save',
-                          onPressed: _saveChanges,
-                        ),
-                      ],
-                    ),
-                  ],
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      ModernInputField(
+                        controller: _displayNameController,
+                        label: 'Display Name',
+                        hintText: 'Enter your display name',
+                      ),
+                      SizedBox(height: designSystemSpacing.md),
+                      ModernInputField(
+                        controller: _bioController,
+                        label: 'Bio',
+                        hintText: 'Tell us about yourself',
+                        maxLines: 3,
+                      ),
+                      SizedBox(height: designSystemSpacing.md),
+                      ModernInputField(
+                        controller: _locationController,
+                        label: 'Location',
+                        hintText: 'Enter your location',
+                      ),
+                      SizedBox(height: designSystemSpacing.md),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          SecondaryButton(
+                            text: 'Cancel',
+                            onPressed: _cancelEditing,
+                          ),
+                          PrimaryButton(
+                            text: 'Save',
+                            onPressed: _saveChanges,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ] else ...[

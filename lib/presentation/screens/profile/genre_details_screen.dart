@@ -7,13 +7,13 @@ import '../../../presentation/navigation/main_navigation.dart';
 import '../../../presentation/navigation/navigation_drawer.dart';
 
 class GenreDetailsScreen extends StatefulWidget {
-  final String genreId;
-  final String genreName;
+  final String? genreId;
+  final String? genreName;
 
   const GenreDetailsScreen({
     super.key,
-    required this.genreId,
-    required this.genreName,
+    this.genreId,
+    this.genreName,
   });
 
   @override
@@ -40,13 +40,21 @@ class _GenreDetailsScreenState extends State<GenreDetailsScreen> {
   }
 
   Future<void> _getBudsByGenre() async {
+    if (widget.genreId == null) {
+      setState(() {
+        _errorMessage = 'No genre ID provided';
+        _isLoading = false;
+      });
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
 
     try {
-      final buds = await sl<BudRepository>().getBudsByGenre(widget.genreId);
+      final buds = await sl<BudRepository>().getBudsByGenre(widget.genreId!);
       setState(() {
         _buds = buds;
       });
@@ -90,7 +98,7 @@ class _GenreDetailsScreenState extends State<GenreDetailsScreen> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  widget.genreName,
+                  widget.genreName ?? 'Unknown Genre',
                   style: DesignSystem.headlineSmall,
                 ),
               ),

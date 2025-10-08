@@ -8,6 +8,9 @@ class UserProfileModel extends UserProfile {
     super.avatarUrl,
     super.bio,
     super.displayName,
+    super.location,
+    super.followersCount,
+    super.followingCount,
     required super.isActive,
     super.isAuthenticated,
   });
@@ -21,6 +24,9 @@ class UserProfileModel extends UserProfile {
         avatarUrl: json['avatar_url']?.toString() ?? json['avatarUrl']?.toString(),
         bio: json['bio']?.toString(),
         displayName: json['display_name']?.toString() ?? json['displayName']?.toString(),
+        location: json['location']?.toString(),
+        followersCount: json['followers_count'] is int ? json['followers_count'] : int.tryParse(json['followers_count']?.toString() ?? '0') ?? 0,
+        followingCount: json['following_count'] is int ? json['following_count'] : int.tryParse(json['following_count']?.toString() ?? '0') ?? 0,
         isActive: json['is_active'] == true || json['isActive'] == true,
         isAuthenticated: json['is_authenticated'] == true || json['isAuthenticated'] == true,
       );
@@ -39,6 +45,9 @@ class UserProfileModel extends UserProfile {
       'avatar_url': avatarUrl,
       'bio': bio,
       'display_name': displayName,
+      'location': location,
+      'followers_count': followersCount,
+      'following_count': followingCount,
       'is_active': isActive,
       'is_authenticated': isAuthenticated,
     };

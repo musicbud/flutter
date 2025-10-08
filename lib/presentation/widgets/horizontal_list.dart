@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/design_system.dart';
+import 'common/modern_button.dart';
+import 'mixins/interaction/hover_mixin.dart';
+import 'mixins/interaction/focus_mixin.dart';
 
-class HorizontalList extends StatelessWidget {
+class HorizontalList extends StatefulWidget {
   final String? title;
   final List<Widget> items;
   final VoidCallback? onSeeAll;
   final double spacing;
   final EdgeInsetsGeometry? padding;
+  final bool enableHover;
+  final bool enableFocus;
 
   const HorizontalList({
     Key? key,
@@ -14,36 +20,78 @@ class HorizontalList extends StatelessWidget {
     this.onSeeAll,
     this.spacing = 8.0,
     this.padding,
+    this.enableHover = true,
+    this.enableFocus = true,
   }) : super(key: key);
 
   @override
+  State<HorizontalList> createState() => _HorizontalListState();
+}
+
+class _HorizontalListState extends State<HorizontalList>
+    with HoverMixin<HorizontalList>, FocusMixin<HorizontalList> {
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.enableHover) {
+      setupHover(
+        onHover: () {},
+        onExit: () {},
+        enableScaleAnimation: false,
+      );
+    }
+    if (widget.enableFocus) {
+      setupFocus(
+        onFocus: () {},
+        onUnfocus: () {},
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final design = theme.extension<DesignSystemThemeExtension>()!;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (title != null)
+        if (widget.title != null)
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            padding: EdgeInsets.symmetric(
+              horizontal: design.designSystemSpacing.md,
+              vertical: design.designSystemSpacing.sm,
+            ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  title!,
-                  style: Theme.of(context).textTheme.titleMedium,
+                  widget.title!,
+                  style: design.designSystemTypography.titleMedium.copyWith(
+                    color: design.designSystemColors.onSurface,
+                  ),
                 ),
-                if (onSeeAll != null)
-                  TextButton(
-                    onPressed: onSeeAll,
-                    child: const Text('See All'),
+                if (widget.onSeeAll != null)
+                  ModernButton(
+                    text: 'See All',
+                    onPressed: widget.onSeeAll,
+                    variant: ModernButtonVariant.text,
+                    size: ModernButtonSize.small,
                   ),
               ],
             ),
           ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          padding: padding ?? const EdgeInsets.symmetric(horizontal: 16),
+          padding: widget.padding ?? EdgeInsets.symmetric(
+            horizontal: design.designSystemSpacing.md,
+          ),
           child: Row(
-            children: items.expand((child) => [child, SizedBox(width: spacing)]).toList()
+            children: widget.items.expand((child) => [
+              child,
+              SizedBox(width: widget.spacing)
+            ]).toList()
               ..removeLast(), // Remove the last spacing
           ),
         ),

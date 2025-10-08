@@ -39,7 +39,7 @@ class TrendingTracksSection extends StatelessWidget {
                       child: TrackCard(
                           title: track.name,
                           artist: track.artistName ?? 'Unknown Artist',
-                          genre: 'Unknown', // Track doesn't have genre directly
+                          genre: null, // Track doesn't have genre field
                           imageUrl: track.imageUrl,
                           icon: Icons.music_note,
                           accentColor: Colors.blue,

@@ -9,11 +9,11 @@ import '../../../presentation/navigation/main_navigation.dart';
 import '../../../presentation/navigation/navigation_drawer.dart';
 
 class TrackDetailsScreen extends StatefulWidget {
-  final CommonTrack track;
+  final CommonTrack? track;
 
   const TrackDetailsScreen({
     super.key,
-    required this.track,
+    this.track,
   });
 
   @override
@@ -27,9 +27,11 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
   String? _errorMessage;
   List<BudMatch> _buds = [];
 
+  CommonTrack get _track => widget.track ?? const CommonTrack(name: 'Sample Track', artistName: 'Sample Artist');
+
   String get _trackIdentifier {
-    final uid = widget.track.uid;
-    final id = widget.track.id;
+    final uid = _track.uid;
+    final id = _track.id;
     return uid ?? id ?? '';
   }
 
@@ -98,7 +100,7 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
   void initState() {
     super.initState();
     _navigationController = MainNavigationController();
-    debugPrint('Track Details: uid = ${widget.track.uid}, id = ${widget.track.id}');
+    debugPrint('Track Details: uid = ${_track.uid}, id = ${_track.id}');
   }
 
   @override
@@ -141,18 +143,18 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.track.name,
+                      _track.name,
                       style: designSystemTypography.headlineSmall,
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      widget.track.artistName ?? 'Unknown Artist',
+                      _track.artistName ?? 'Unknown Artist',
                       style: designSystemTypography.titleMedium,
                     ),
-                    if (widget.track.albumName != null) ...[
+                    if (_track.albumName != null) ...[
                       const SizedBox(height: 8),
                       Text(
-                        'Album: ${widget.track.albumName}',
+                        'Album: ${_track.albumName}',
                         style: designSystemTypography.bodyMedium,
                       ),
                     ],

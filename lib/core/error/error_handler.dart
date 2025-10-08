@@ -14,8 +14,8 @@ class ErrorHandler {
   static void _handleFlutterError(FlutterErrorDetails details) {
     logger.e(
       'Flutter Error',
-      details.exception,
-      details.stack,
+      error: details.exception,
+      stackTrace: details.stack,
     );
 
     // Log additional context
@@ -33,8 +33,8 @@ class ErrorHandler {
   static void handleZoneError(Object error, StackTrace stack) {
     logger.e(
       'Zone Error',
-      error,
-      stack,
+      error: error,
+      stackTrace: stack,
     );
   }
 
@@ -42,8 +42,8 @@ class ErrorHandler {
   static void logNavigationError(String route, Object error, StackTrace stack) {
     logger.e(
       'Navigation Error for route: $route',
-      error,
-      stack,
+      error: error,
+      stackTrace: stack,
     );
   }
 
@@ -51,8 +51,8 @@ class ErrorHandler {
   static void logContentLoadingError(String screen, String contentType, Object error, StackTrace stack) {
     logger.e(
       'Content Loading Error - Screen: $screen, Type: $contentType',
-      error,
-      stack,
+      error: error,
+      stackTrace: stack,
     );
   }
 

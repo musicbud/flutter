@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'modern_button.dart';
+import '../../../core/theme/design_system.dart';
 import '../base/base_state_display.dart';
 
 /// A reusable empty state widget that supports theming
@@ -18,7 +18,20 @@ class EmptyState extends BaseStateDisplay {
   });
 
   @override
-  Widget _buildAction(BuildContext context) {
-    return const SizedBox.shrink();
+  Widget _buildIcon(BuildContext context) {
+    if (icon == null) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
+      ),
+      child: Icon(
+        icon,
+        size: iconSize,
+        color: DesignSystem.onSurfaceVariant,
+      ),
+    );
   }
 }

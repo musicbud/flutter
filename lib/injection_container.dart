@@ -10,6 +10,10 @@ import 'data/network/dio_client.dart';
 import 'data/network/dio_client_adapter.dart';
 import 'core/network/network_info.dart';
 
+// Services
+import 'services/api_service.dart';
+import 'services/auth_service.dart';
+
 // Providers
 import 'data/providers/token_provider.dart';
 
@@ -38,7 +42,7 @@ import 'data/data_sources/remote/spotify_remote_data_source_impl.dart';
 import 'data/repositories/auth_repository_impl.dart';
 import 'data/repositories/bud_repository_impl.dart';
 import 'data/repositories/content_repository_impl.dart';
-import 'data/repositories/user_repository_impl.dart';
+import 'data/repositories/user_repository_imp.dart';
 import 'data/repositories/profile_repository_impl.dart';
 import 'data/repositories/chat_repository_impl.dart';
 import 'data/repositories/user_profile_repository_impl.dart';
@@ -72,6 +76,8 @@ import 'domain/repositories/services_repository.dart';
 import 'domain/repositories/library_repository.dart';
 import 'domain/repositories/common_items_repository.dart';
 import 'domain/repositories/spotify_repository.dart';
+import 'domain/repositories/bud_matching_repository.dart';
+import 'data/repositories/bud_matching_repository_impl.dart';
 
 // BLoCs
 import 'blocs/user/user_bloc.dart';
@@ -85,6 +91,8 @@ import 'presentation/blocs/admin/admin_bloc.dart';
 import 'presentation/blocs/channel/channel_bloc.dart';
 import 'presentation/blocs/search/search_bloc.dart';
 import 'blocs/user_profile/user_profile_bloc.dart';
+import 'blocs/user_profile/simple_user_profile_bloc.dart';
+import 'blocs/profile/simple_profile_bloc.dart';
 import 'blocs/comprehensive_chat/comprehensive_chat_bloc.dart';
 import 'blocs/chat/chat_bloc.dart';
 import 'blocs/library/library_bloc.dart';
@@ -93,6 +101,7 @@ import 'blocs/bud/common_items/bud_common_items_bloc.dart';
 import 'blocs/artist/artist_bloc.dart';
 import 'blocs/content/content_bloc.dart';
 import 'blocs/spotify/spotify_bloc.dart';
+import 'blocs/bud_matching/bud_matching_bloc.dart';
 
 /// Global GetIt instance for dependency injection
 final sl = GetIt.instance;
@@ -124,7 +133,7 @@ Future<void> _registerExternalDependencies() async {
 
   // Network Info
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(
-    InternetConnectionChecker(),
+    InternetConnectionChecker.createInstance(),
     connectivity: Connectivity(),
   ));
 }
@@ -179,6 +188,12 @@ Future<void> _registerNetworkDependencies() async {
     dioClient: sl<DioClient>(),
     tokenProvider: sl<TokenProvider>(),
   ));
+
+  // ApiService - Main API service
+  sl.registerLazySingleton<ApiService>(() => ApiService());
+
+  // AuthService - Authentication service
+  sl.registerLazySingleton<AuthService>(() => AuthService());
 }
 
 /// Registers data source dependencies
@@ -295,7 +310,7 @@ Future<void> _registerRepositories() async {
 
   // User Repository
   sl.registerLazySingleton<UserRepository>(
-    () => UserRepositoryImpl(
+    () => UserRepositoryImp(
       remoteDataSource: sl<UserRemoteDataSource>(),
     ),
   );
@@ -391,6 +406,13 @@ Future<void> _registerRepositories() async {
       remoteDataSource: sl<SpotifyRemoteDataSource>(),
     ),
   );
+
+  // Bud Matching Repository
+  sl.registerLazySingleton<BudMatchingRepository>(
+    () => BudMatchingRepositoryImpl(
+      remoteDataSource: sl<BudMatchingRemoteDataSource>(),
+    ),
+  );
 }
 
 /// Registers BLoC dependencies
@@ -410,6 +432,11 @@ Future<void> _registerBlocs() async {
     userProfileRepository: sl<UserProfileRepository>(),
     contentRepository: sl<ContentRepository>(),
     userRepository: sl<UserRepository>(),
+  ));
+
+  // Simple Profile BLoC
+  sl.registerFactory<SimpleProfileBloc>(() => SimpleProfileBloc(
+    sl<UserRepository>(),
   ));
 
   // Analytics BLoC
@@ -450,6 +477,11 @@ Future<void> _registerBlocs() async {
   // User Profile BLoC
   sl.registerFactory<UserProfileBloc>(() => UserProfileBloc(
     userProfileRepository: sl<UserProfileRepository>(),
+  ));
+
+  // Simple User Profile BLoC
+  sl.registerFactory<SimpleUserProfileBloc>(() => SimpleUserProfileBloc(
+    sl<UserRepository>(),
   ));
 
   // Comprehensive Chat BLoC
@@ -496,6 +528,11 @@ Future<void> _registerBlocs() async {
   sl.registerFactory<SpotifyBloc>(() => SpotifyBloc(
     sl<SpotifyRepository>(),
   ));
+
+  // Bud Matching BLoC
+  sl.registerFactory<BudMatchingBloc>(() => BudMatchingBloc(
+    budMatchingRepository: sl<BudMatchingRepository>(),
+  ));
 }
 
 /// Logs dependency registration for debugging
@@ -504,7 +541,7 @@ void _logDependencyRegistration() {
   debugPrint('📡 Network: DioClient, DioClientAdapter');
   debugPrint('💾 Data Sources: Content, User, Bud, UserProfile, BudMatching, ChatManagement, Settings, Event, Admin, Channel, Search');
   debugPrint('🏗️ Repositories: Auth, Content, Bud, User, Profile, UserProfile, BudMatching, ChatManagement, Settings, Event, Admin, Channel, Search, CommonItems, Spotify');
-  debugPrint('🧠 BLoCs: User, Auth, Profile, MainScreen, Chat, Content, Bud, UserProfile, BudMatching, ChatManagement, Settings, Event, Analytics, Admin, Channel, Search, Bud, Artist, BudCommonItems, Spotify');
+  debugPrint('🧠 BLoCs: User, Auth, Profile, SimpleProfile, MainScreen, Chat, Content, Bud, UserProfile, SimpleUserProfile, BudMatching, ChatManagement, Settings, Event, Analytics, Admin, Channel, Search, Bud, Artist, BudCommonItems, Spotify');
 }
 
 /// Dependency injection utilities

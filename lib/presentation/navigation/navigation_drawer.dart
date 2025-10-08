@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/design_system.dart';
-import 'navigation_items.dart';
+import '../../../navigation/navigation_items.dart';
 import 'main_navigation.dart';
 import '../../../utils/logger.dart';
 import '../../../core/error/error_handler.dart';
@@ -120,15 +120,15 @@ class MainNavigationDrawer extends StatelessWidget {
             },
           )),
 
-          // Only show additional sections if there are additional navigation items
-          if (additionalNavigationItems.isNotEmpty) ...[
+          // Secondary Navigation Section
+          if (secondaryNavigationItems.isNotEmpty) ...[
             Divider(),
 
-            // Auth Pages Section
+            // All Secondary Pages
             Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
-                'Auth Pages',
+                'All Pages',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -136,75 +136,18 @@ class MainNavigationDrawer extends StatelessWidget {
                 ),
               ),
             ),
-            ...additionalNavigationItems.take(5).map((item) => ListTile(
+            ...secondaryNavigationItems.map((item) => ListTile(
               leading: Icon(item.icon, size: 20),
               title: Text(item.label, style: TextStyle(fontSize: 14)),
               onTap: () {
+                logger.d('Drawer secondary navigation item tapped: ${item.label}');
                 Navigator.pop(context);
-                if (item.pageBuilder != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => item.pageBuilder!(context)),
-                  );
-                }
-                onDrawerItemTap?.call();
-              },
-            )),
-
-            Divider(),
-
-            // Onboarding Pages Section
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Onboarding Pages',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: DesignSystem.onSurfaceVariant,
-                ),
-              ),
-            ),
-            ...additionalNavigationItems.skip(5).take(4).map((item) => ListTile(
-              leading: Icon(item.icon, size: 20),
-              title: Text(item.label, style: TextStyle(fontSize: 14)),
-              onTap: () {
-                Navigator.pop(context);
-                if (item.pageBuilder != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => item.pageBuilder!(context)),
-                  );
-                }
-                onDrawerItemTap?.call();
-              },
-            )),
-
-            Divider(),
-
-            // Other Pages Section
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Other Pages',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: DesignSystem.onSurfaceVariant,
-                ),
-              ),
-            ),
-            ...additionalNavigationItems.skip(9).map((item) => ListTile(
-              leading: Icon(item.icon, size: 20),
-              title: Text(item.label, style: TextStyle(fontSize: 14)),
-              onTap: () {
-                Navigator.pop(context);
-                if (item.pageBuilder != null) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => item.pageBuilder!(context)),
-                  );
-                }
+                ErrorHandler.logNavigationEvent(
+                  ModalRoute.of(context)?.settings.name ?? 'unknown',
+                  item.route,
+                  method: 'drawer'
+                );
+                Navigator.pushNamed(context, item.route);
                 onDrawerItemTap?.call();
               },
             )),

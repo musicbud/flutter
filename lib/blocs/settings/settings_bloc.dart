@@ -15,6 +15,12 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
     on<PrivacySettingsUpdated>(_onPrivacySettingsUpdated);
     on<ThemeSettingUpdated>(_onThemeSettingUpdated);
     on<LanguageSettingUpdated>(_onLanguageSettingUpdated);
+    on<LoadSettingsEvent>(_onLoadSettings);
+    on<SaveSettingsEvent>(_onSaveSettings);
+    on<UpdateNotificationSettingsEvent>(_onUpdateNotificationSettings);
+    on<UpdatePrivacySettingsEvent>(_onUpdatePrivacySettings);
+    on<UpdateThemeEvent>(_onUpdateTheme);
+    on<UpdateLanguageEvent>(_onUpdateLanguage);
   }
 
   Future<void> _onSettingsRequested(
@@ -126,5 +132,89 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
         emit(SettingsFailure(e.toString()));
       }
     }
+  }
+
+  Future<void> _onLoadSettings(
+    LoadSettingsEvent event,
+    Emitter<SettingsState> emit,
+  ) async {
+    emit(SettingsLoading());
+    try {
+      final settings = await _settingsRepository.getSettings();
+      emit(SettingsLoaded(
+        notifications: NotificationSettings(
+          enabled: settings['notifications']['enabled'],
+          pushEnabled: settings['notifications']['push_enabled'],
+          emailEnabled: settings['notifications']['email_enabled'],
+          soundEnabled: settings['notifications']['sound_enabled'],
+        ),
+        privacy: PrivacySettings(
+          profileVisible: settings['privacy']['profile_visible'],
+          locationVisible: settings['privacy']['location_visible'],
+          activityVisible: settings['privacy']['activity_visible'],
+        ),
+        theme: settings['theme'],
+        languageCode: settings['language_code'],
+      ));
+    } catch (e) {
+      emit(SettingsFailure(e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateNotificationSettings(
+    UpdateNotificationSettingsEvent event,
+    Emitter<SettingsState> emit,
+  ) async {
+    await _onNotificationSettingsUpdated(
+      NotificationSettingsUpdated(
+        enabled: event.enabled,
+        pushEnabled: event.pushEnabled,
+        emailEnabled: event.emailEnabled,
+        soundEnabled: event.soundEnabled,
+      ),
+      emit,
+    );
+  }
+
+  Future<void> _onUpdatePrivacySettings(
+    UpdatePrivacySettingsEvent event,
+    Emitter<SettingsState> emit,
+  ) async {
+    await _onPrivacySettingsUpdated(
+      PrivacySettingsUpdated(
+        profileVisible: event.profileVisible,
+        locationVisible: event.locationVisible,
+        activityVisible: event.activityVisible,
+      ),
+      emit,
+    );
+  }
+
+  Future<void> _onUpdateTheme(
+    UpdateThemeEvent event,
+    Emitter<SettingsState> emit,
+  ) async {
+    await _onThemeSettingUpdated(
+      ThemeSettingUpdated(event.theme),
+      emit,
+    );
+  }
+
+  Future<void> _onUpdateLanguage(
+    UpdateLanguageEvent event,
+    Emitter<SettingsState> emit,
+  ) async {
+    await _onLanguageSettingUpdated(
+      LanguageSettingUpdated(event.languageCode),
+      emit,
+    );
+  }
+
+  Future<void> _onSaveSettings(
+    SaveSettingsEvent event,
+    Emitter<SettingsState> emit,
+  ) async {
+    // Since individual updates already save to repository, just emit success
+    emit(SettingsSaved());
   }
 }

@@ -1,8 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
 
+import '../presentation/screens/connect/connect_services_screen.dart';
+import '../presentation/screens/spotify/spotify_control_screen.dart';
+import '../presentation/screens/spotify/played_tracks_map_screen.dart';
+import '../presentation/screens/profile/artist_details_screen.dart';
+import '../presentation/screens/profile/genre_details_screen.dart';
+import '../presentation/screens/profile/track_details_screen.dart';
+
 /// Configuration class for navigation components
 class NavigationConfig extends Equatable {
+  /// Routes map for the application
+  static final Map<String, WidgetBuilder> routes = {
+    '/connect-services': (context) => const ConnectServicesScreen(),
+    '/artist-details': (context) => const ArtistDetailsScreen(),
+    '/genre-details': (context) => const GenreDetailsScreen(),
+    '/track-details': (context) => const TrackDetailsScreen(),
+    '/played-tracks-map': (context) => const PlayedTracksMapScreen(),
+    '/spotify-control': (context) => const SpotifyControlScreen(),
+  };
   const NavigationConfig({
     this.margin,
     this.borderRadius,

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../constants/app_constants.dart';
 
 /// A model class representing a user in a chat channel
 class ChannelUser extends Equatable {
@@ -75,15 +76,49 @@ class ChannelUser extends Equatable {
     );
   }
 
+  /// Check if this user is the owner of the channel
+  bool get isOwner => role == AppConstants.channelRoleOwner;
+
+  /// Check if this user is an admin of the channel
+  bool get isAdmin => role == AppConstants.channelRoleAdmin;
+
+  /// Check if this user is a moderator of the channel
+  bool get isModerator => role == AppConstants.channelRoleModerator;
+
+  /// Check if this user is a regular member of the channel
+  bool get isMember => role == AppConstants.channelRoleMember;
+
+  /// Check if this user has moderator privileges or higher
+  bool get hasModeratorPrivileges => isOwner || isAdmin || isModerator;
+
+  /// Check if this user has admin privileges or higher
+  bool get hasAdminPrivileges => isOwner || isAdmin;
+
+  /// Get the role hierarchy level (higher number = more permissions)
+  int get roleLevel {
+    switch (role) {
+      case 'owner':
+        return 4;
+      case 'admin':
+        return 3;
+      case 'moderator':
+        return 2;
+      case 'member':
+        return 1;
+      default:
+        return 0;
+    }
+  }
+
   @override
   List<Object?> get props => [
-         id,
-         username,
-         avatarUrl,
-         role,
-         isOnline,
-         joinedAt,
-         lastActive,
-         permissions,
-       ];
+          id,
+          username,
+          avatarUrl,
+          role,
+          isOnline,
+          joinedAt,
+          lastActive,
+          permissions,
+        ];
 }

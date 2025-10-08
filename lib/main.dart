@@ -22,6 +22,7 @@ import 'blocs/profile/profile_bloc.dart';
 import 'utils/api_endpoint_validator.dart';
 import 'blocs/main/main_screen_bloc.dart';
 import 'core/error/error_handler.dart';
+import 'proxy_server.dart';
 
 /// Main entry point of the MusicBud Flutter application
 void main() async {
@@ -33,6 +34,9 @@ void main() async {
 
   // Initialize dependency injection
   await di.init();
+
+  // Start proxy server for dynamic API communication
+  await startProxyServer();
 
   debugPrint('🚀 MusicBud App: Starting application');
 

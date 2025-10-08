@@ -9,6 +9,7 @@ import "blocs/likes/likes_bloc.dart";
 import "blocs/settings/settings_bloc.dart";
 import "blocs/event/event_bloc.dart";
 import "blocs/spotify/spotify_bloc.dart";
+import "blocs/bud_matching/bud_matching_bloc.dart";
 
 // Repositories
 import "domain/repositories/auth_repository.dart";
@@ -18,10 +19,19 @@ import "domain/repositories/content_repository.dart";
 import "presentation/screens/home/home_screen.dart";
 import "presentation/screens/auth/login_screen.dart";
 import "presentation/screens/discover/discover_screen.dart";
+import "presentation/screens/discover/top_tracks_page.dart";
 import "presentation/screens/library/library_screen.dart";
 import "presentation/screens/profile/profile_screen.dart";
+import "presentation/screens/profile/artist_details_screen.dart";
+import "presentation/screens/profile/genre_details_screen.dart";
+import "presentation/screens/profile/track_details_screen.dart";
 import "presentation/screens/chat/chat_screen.dart";
 import "presentation/screens/search/search_screen.dart";
+import "presentation/screens/buds/buds_screen.dart";
+import "presentation/screens/settings/settings_screen.dart";
+import "presentation/screens/connect/connect_services_screen.dart";
+import "presentation/screens/spotify/played_tracks_map_screen.dart";
+import "presentation/screens/spotify/spotify_control_screen.dart";
 
 // Providers
 import "data/providers/token_provider.dart";
@@ -71,6 +81,10 @@ class App extends StatelessWidget {
       BlocProvider<SpotifyBloc>(
         create: (context) => sl<SpotifyBloc>(),
       ),
+      // Bud Matching BLoC
+      BlocProvider<BudMatchingBloc>(
+        create: (context) => sl<BudMatchingBloc>(),
+      ),
     ];
   }
 
@@ -96,10 +110,21 @@ class App extends StatelessWidget {
       AppConstants.loginRoute: (context) => const LoginScreen(),
       AppConstants.homePageRoute: (context) => const HomeScreen(),
       "/discover": (context) => const DiscoverScreen(),
+      "/top-tracks": (context) => const TopTracksPage(),
       "/library": (context) => const LibraryScreen(),
       "/profile": (context) => const ProfileScreen(),
       "/chat": (context) => const ChatScreen(),
       "/search": (context) => const SearchScreen(),
+      "/buds": (context) => const BudsScreen(),
+      "/settings": (context) => const SettingsScreen(),
+      "/connect-services": (context) => const ConnectServicesScreen(),
+      "/register": (context) => const Scaffold(body: Center(child: Text('Register Screen - Coming Soon'))),
+      "/onboarding": (context) => const Scaffold(body: Center(child: Text('Onboarding Screen - Coming Soon'))),
+      "/artist-details": (context) => const ArtistDetailsScreen(),
+      "/genre-details": (context) => const GenreDetailsScreen(),
+      "/track-details": (context) => const TrackDetailsScreen(),
+      "/played-tracks-map": (context) => const PlayedTracksMapScreen(),
+      "/spotify-control": (context) => const SpotifyControlScreen(),
     };
   }
 }

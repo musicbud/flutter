@@ -45,10 +45,76 @@ const List<NavigationItem> secondaryNavigationItems = [
     route: NavigationConstants.search,
   ),
   NavigationItem(
+    label: 'Buds',
+    icon: NavigationConstants.budsIcon,
+    activeIcon: Icons.people,
+    route: NavigationConstants.buds,
+  ),
+  NavigationItem(
     label: 'Settings',
     icon: Icons.settings_outlined,
     activeIcon: Icons.settings,
     route: NavigationConstants.settings,
+  ),
+  NavigationItem(
+    label: 'Login',
+    icon: Icons.login_outlined,
+    activeIcon: Icons.login,
+    route: NavigationConstants.login,
+  ),
+  NavigationItem(
+    label: 'Register',
+    icon: Icons.person_add_outlined,
+    activeIcon: Icons.person_add,
+    route: NavigationConstants.register,
+  ),
+  NavigationItem(
+    label: 'Onboarding',
+    icon: Icons.info_outline,
+    activeIcon: Icons.info,
+    route: NavigationConstants.onboarding,
+  ),
+  NavigationItem(
+    label: 'Connect Services',
+    icon: Icons.link_outlined,
+    activeIcon: Icons.link,
+    route: NavigationConstants.connectServices,
+  ),
+  NavigationItem(
+    label: 'Top Tracks',
+    icon: Icons.trending_up_outlined,
+    activeIcon: Icons.trending_up,
+    route: NavigationConstants.topTracks,
+  ),
+  NavigationItem(
+    label: 'Artist Details',
+    icon: Icons.mic_outlined,
+    activeIcon: Icons.mic,
+    route: NavigationConstants.artistDetails,
+  ),
+  NavigationItem(
+    label: 'Genre Details',
+    icon: Icons.category_outlined,
+    activeIcon: Icons.category,
+    route: NavigationConstants.genreDetails,
+  ),
+  NavigationItem(
+    label: 'Track Details',
+    icon: Icons.music_note_outlined,
+    activeIcon: Icons.music_note,
+    route: NavigationConstants.trackDetails,
+  ),
+  NavigationItem(
+    label: 'Played Tracks Map',
+    icon: Icons.map_outlined,
+    activeIcon: Icons.map,
+    route: NavigationConstants.playedTracksMap,
+  ),
+  NavigationItem(
+    label: 'Spotify Control',
+    icon: Icons.play_circle_outlined,
+    activeIcon: Icons.play_circle,
+    route: NavigationConstants.spotifyControl,
   ),
 ];
 

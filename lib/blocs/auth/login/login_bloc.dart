@@ -33,8 +33,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       } else {
         try {
           // Add timeout to prevent hanging on D-Bus issues
-          connectivityResult = await Connectivity().checkConnectivity()
+          final results = await Connectivity().checkConnectivity()
               .timeout(const Duration(seconds: 3));
+          connectivityResult = results.isNotEmpty ? results.first : ConnectivityResult.none;
         } catch (e) {
           // If D-Bus connectivity check fails, assume we have connectivity
           // This handles cases where D-Bus is not available (e.g., in Nix shell)
@@ -84,8 +85,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       } else {
         try {
           // Add timeout to prevent hanging on D-Bus issues
-          connectivityResult = await Connectivity().checkConnectivity()
+          final results = await Connectivity().checkConnectivity()
               .timeout(const Duration(seconds: 3));
+          connectivityResult = results.isNotEmpty ? results.first : ConnectivityResult.none;
         } catch (e) {
           // If D-Bus connectivity check fails, assume we have connectivity
           debugPrint('Connectivity check failed (likely D-Bus unavailable): $e');

@@ -13,6 +13,14 @@ class NavigationConstants {
   static const String login = '/login';
   static const String register = '/register';
   static const String onboarding = '/onboarding';
+  static const String topTracks = '/top-tracks';
+  static const String buds = '/buds';
+  static const String connectServices = '/connect-services';
+  static const String artistDetails = '/artist-details';
+  static const String genreDetails = '/genre-details';
+  static const String trackDetails = '/track-details';
+  static const String playedTracksMap = '/played-tracks-map';
+  static const String spotifyControl = '/spotify-control';
 
   // Navigation keys
   static final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -38,9 +46,11 @@ class NavigationConstants {
 
   // Icons
   static const IconData settingsIcon = Icons.settings_outlined;
+  static const IconData budsIcon = Icons.people_outline;
 
   // Routes
   static const String settingsRoute = '/settings';
+  static const String budsRoute = '/buds';
 
   // Private constructor to prevent instantiation
   NavigationConstants._();

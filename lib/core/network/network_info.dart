@@ -16,15 +16,15 @@ class NetworkInfoImpl implements NetworkInfo {
 
   @override
   Future<bool> get isConnected async {
-    final result = await connectivity.checkConnectivity();
-    return result != ConnectivityResult.none;
+    final results = await connectivity.checkConnectivity();
+    return results.isNotEmpty && results.any((r) => r != ConnectivityResult.none);
   }
 
   @override
   Future<bool> get hasInternetAccess => connectionChecker.hasConnection;
 
   @override
-  Stream<ConnectivityResult> get onConnectivityChanged => connectivity.onConnectivityChanged;
+  Stream<ConnectivityResult> get onConnectivityChanged => connectivity.onConnectivityChanged.map((list) => list.isNotEmpty ? list.first : ConnectivityResult.none);
 
   /// Check if device has both network connectivity and internet access
   Future<bool> get isFullyConnected async {

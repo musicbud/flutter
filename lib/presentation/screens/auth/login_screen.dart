@@ -5,7 +5,9 @@ import '../../../blocs/auth/login/login_event.dart';
 import '../../../blocs/auth/login/login_state.dart';
 import '../../../blocs/auth/auth_bloc.dart';
 import '../../../core/theme/design_system.dart';
-import '../../../widgets/common/index.dart';
+import '../../../presentation/widgets/common/modern_input_field.dart';
+import '../../../presentation/widgets/common/modern_button.dart';
+import '../../../presentation/widgets/common/app_typography.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -100,40 +102,29 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 48),
 
                     // Username field
-                    AppInputField(
-                      hint: 'Username',
+                    ModernInputField(
+                      hintText: 'Username',
                       controller: _usernameController,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your username';
-                        }
-                        return null;
-                      },
                     ),
                     const SizedBox(height: 16),
 
                     // Password field
-                    AppInputField(
-                      hint: 'Password',
+                    ModernInputField(
+                      hintText: 'Password',
                       controller: _passwordController,
                       obscureText: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter your password';
-                        }
-                        return null;
-                      },
                     ),
                     const SizedBox(height: 24),
 
                     // Login button
                     BlocBuilder<LoginBloc, LoginState>(
                       builder: (context, state) {
-                        return AppButton(
+                        return ModernButton(
                           text: state is LoginLoading ? 'Logging in...' : 'Login',
                           onPressed: state is LoginLoading ? null : _handleLogin,
-                          variant: AppButtonVariant.primary,
-                          size: AppButtonSize.large,
+                          variant: ModernButtonVariant.primary,
+                          size: ModernButtonSize.large,
+                          isLoading: state is LoginLoading,
                         );
                       },
                     ),

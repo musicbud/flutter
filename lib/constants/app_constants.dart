@@ -46,7 +46,18 @@ class AppConstants {
   // File Upload
   static const int maxImageSizeMB = 5;
   static const List<String> allowedImageFormats = ['jpg', 'jpeg', 'png', 'webp'];
-  
+
+  // Channel Types
+  static const String channelTypePublic = 'public';
+  static const String channelTypePrivate = 'private';
+  static const String channelTypeDirect = 'direct';
+
+  // Channel Roles (hierarchical: owner > admin > moderator > member)
+  static const String channelRoleOwner = 'owner';
+  static const String channelRoleAdmin = 'admin';
+  static const String channelRoleModerator = 'moderator';
+  static const String channelRoleMember = 'member';
+
   // Private constructor to prevent instantiation
   AppConstants._();
 }

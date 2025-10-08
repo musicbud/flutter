@@ -7,13 +7,13 @@ import '../../../presentation/navigation/main_navigation.dart';
 import '../../../presentation/navigation/navigation_drawer.dart';
 
 class ArtistDetailsScreen extends StatefulWidget {
-  final String artistId;
-  final String artistName;
+  final String? artistId;
+  final String? artistName;
 
   const ArtistDetailsScreen({
     super.key,
-    required this.artistId,
-    required this.artistName,
+    this.artistId,
+    this.artistName,
   });
 
   @override
@@ -40,13 +40,21 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
   }
 
   Future<void> _getBudsByArtist() async {
+    if (widget.artistId == null) {
+      setState(() {
+        _errorMessage = 'No artist ID provided';
+        _isLoading = false;
+      });
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
 
     try {
-      final buds = await sl<BudRepository>().getBudsByArtist(widget.artistId);
+      final buds = await sl<BudRepository>().getBudsByArtist(widget.artistId!);
       setState(() {
         _buds = buds;
       });
@@ -90,7 +98,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Text(
-                  widget.artistName,
+                  widget.artistName ?? 'Unknown Artist',
                   style: DesignSystem.headlineSmall,
                 ),
               ),

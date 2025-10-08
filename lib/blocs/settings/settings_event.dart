@@ -58,3 +58,57 @@ class LanguageSettingUpdated extends SettingsEvent {
   @override
   List<Object> get props => [languageCode];
 }
+
+class LoadSettingsEvent extends SettingsEvent {}
+
+class SaveSettingsEvent extends SettingsEvent {}
+
+class UpdateNotificationSettingsEvent extends SettingsEvent {
+  final bool enabled;
+  final bool pushEnabled;
+  final bool emailEnabled;
+  final bool soundEnabled;
+
+  const UpdateNotificationSettingsEvent({
+    required this.enabled,
+    required this.pushEnabled,
+    required this.emailEnabled,
+    required this.soundEnabled,
+  });
+
+  @override
+  List<Object> get props => [enabled, pushEnabled, emailEnabled, soundEnabled];
+}
+
+class UpdatePrivacySettingsEvent extends SettingsEvent {
+  final bool profileVisible;
+  final bool locationVisible;
+  final bool activityVisible;
+
+  const UpdatePrivacySettingsEvent({
+    required this.profileVisible,
+    required this.locationVisible,
+    required this.activityVisible,
+  });
+
+  @override
+  List<Object> get props => [profileVisible, locationVisible, activityVisible];
+}
+
+class UpdateThemeEvent extends SettingsEvent {
+  final String theme;
+
+  const UpdateThemeEvent(this.theme);
+
+  @override
+  List<Object> get props => [theme];
+}
+
+class UpdateLanguageEvent extends SettingsEvent {
+  final String languageCode;
+
+  const UpdateLanguageEvent(this.languageCode);
+
+  @override
+  List<Object> get props => [languageCode];
+}

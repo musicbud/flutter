@@ -16,6 +16,8 @@ class ModernInputField extends StatefulWidget {
   final ModernInputFieldVariant variant;
   final String? label;
   final int? maxLines;
+  final bool obscureText;
+  final Widget? suffixIcon;
 
   const ModernInputField({
     super.key,
@@ -34,6 +36,8 @@ class ModernInputField extends StatefulWidget {
     this.variant = ModernInputFieldVariant.outlined,
     this.label,
     this.maxLines,
+    this.obscureText = false,
+    this.suffixIcon,
   });
 
   @override
@@ -51,7 +55,8 @@ class _ModernInputFieldState extends State<ModernInputField> {
         onChanged: widget.onChanged,
         // onSubmitted: widget.onSubmitted,
         onTap: widget.onTap,
-        maxLines: widget.maxLines,
+        maxLines: widget.obscureText ? 1 : widget.maxLines,
+        obscureText: widget.obscureText,
         style: widget.customTextStyle ?? Theme.of(context).textTheme.bodyMedium,
         decoration: _getInputDecoration(context),
       ),
@@ -76,9 +81,10 @@ class _ModernInputFieldState extends State<ModernInputField> {
         color: Theme.of(context).hintColor,
       ),
       filled: widget.variant == ModernInputFieldVariant.filled,
-      fillColor: widget.customBackgroundColor ?? (widget.variant == ModernInputFieldVariant.filled 
-        ? Theme.of(context).inputDecorationTheme.fillColor 
+      fillColor: widget.customBackgroundColor ?? (widget.variant == ModernInputFieldVariant.filled
+        ? Theme.of(context).inputDecorationTheme.fillColor
         : Colors.transparent),
+      suffixIcon: widget.suffixIcon,
     );
 
     switch (widget.variant) {

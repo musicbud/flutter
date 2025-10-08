@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/user_profile/user_profile_bloc.dart';
+import '../../../blocs/profile/simple_profile_bloc.dart';
 import '../../../core/theme/design_system.dart';
-import '../../../widgets/common/index.dart';
+import '../../../presentation/widgets/common/modern_input_field.dart';
+import '../../../presentation/widgets/common/modern_button.dart';
+import '../../../presentation/widgets/common/app_typography.dart';
 import '../../../presentation/widgets/navigation/main_navigation_scaffold.dart';
 import '../../../presentation/navigation/main_navigation.dart';
-import '../../../widgets/common/app_input_field.dart';
 import 'home_header_widget.dart';
 import 'home_quick_actions.dart';
 import 'home_recommendations.dart';
@@ -73,8 +75,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
-                    child: AppInputField(
-                      hint: 'Search for music, artists, or playlists...',
+                    child: ModernInputField(
+                      hintText: 'Search for music, artists, or playlists...',
                       controller: _searchController,
                       onChanged: (value) {
                         if (value.isNotEmpty) {
@@ -86,8 +88,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         }
                       },
-                      variant: AppInputVariant.search,
-                      size: AppInputSize.large,
                     ),
                   ),
                 ),

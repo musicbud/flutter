@@ -168,7 +168,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
       final newChannel = Channel.create(
         name: event.name,
         description: event.description,
-        isPublic: true,
+        type: 'public',
       );
       emit(ChannelCreatedSuccess(newChannel));
     } catch (e) {
@@ -381,7 +381,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
           id: event.channelId,
           name: 'Channel',
           description: null,
-          isPublic: true,
+          type: 'public',
           settings: ChannelSettings(
             channelId: event.channelId,
             isPrivate: false,

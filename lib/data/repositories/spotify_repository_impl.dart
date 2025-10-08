@@ -33,6 +33,56 @@ class SpotifyRepositoryImpl implements SpotifyRepository {
   }
 
   @override
+  Future<List<CommonTrack>> getRecentlyPlayedTracks() {
+    return remoteDataSource.getRecentlyPlayedTracks();
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getAvailableDevices() {
+    return remoteDataSource.getAvailableDevices();
+  }
+
+  @override
+  Future<Map<String, dynamic>?> getCurrentDevice() {
+    return remoteDataSource.getCurrentDevice();
+  }
+
+  @override
+  Future<void> transferPlayback(String deviceId) {
+    return remoteDataSource.transferPlayback(deviceId);
+  }
+
+  @override
+  Future<void> play({String? deviceId}) {
+    return remoteDataSource.play(deviceId: deviceId);
+  }
+
+  @override
+  Future<void> pause({String? deviceId}) {
+    return remoteDataSource.pause(deviceId: deviceId);
+  }
+
+  @override
+  Future<void> skipToNext({String? deviceId}) {
+    return remoteDataSource.skipToNext(deviceId: deviceId);
+  }
+
+  @override
+  Future<void> skipToPrevious({String? deviceId}) {
+    return remoteDataSource.skipToPrevious(deviceId: deviceId);
+  }
+
+  @override
+  Future<void> setVolume(int volume, {String? deviceId}) {
+    return remoteDataSource.setVolume(volume, deviceId: deviceId);
+  }
+
+  @override
+  Future<void> saveTrackLocation(String trackId, double latitude, double longitude) {
+    return remoteDataSource.saveTrackLocation(trackId, latitude, longitude);
+  }
+
+  @override
   Future<List<CommonTrack>> getPlayedTracksWithLocation() {
     return remoteDataSource.getPlayedTracksWithLocation();
   }

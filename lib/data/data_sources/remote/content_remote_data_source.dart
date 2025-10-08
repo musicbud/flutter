@@ -25,6 +25,7 @@ abstract class ContentRemoteDataSource {
   Future<List<dynamic>> getMyTopManga();
 
   // Spotify integration
+  Future<List<Map<String, dynamic>>> getSpotifyDevices();
   Future<void> controlSpotifyPlayback(String command, String deviceId);
   Future<void> setSpotifyVolume(String deviceId, int volume);
 
@@ -187,6 +188,16 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       return results.map((json) => json).toList();
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get top manga');
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getSpotifyDevices() async {
+    try {
+      final response = await _dioClient.get('/spotify/devices');
+      return (response.data['devices'] as List).map((json) => json as Map<String, dynamic>).toList();
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to get Spotify devices');
     }
   }
 

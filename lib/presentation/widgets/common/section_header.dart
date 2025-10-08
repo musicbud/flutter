@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/design_system.dart';
-import '../base/base_section_header.dart';
+import '../../../widgets/base/base_section_header.dart';
 
 /// A reusable section header widget with title and optional action button
 class SectionHeader extends BaseSectionHeader {
@@ -19,7 +19,7 @@ class SectionHeader extends BaseSectionHeader {
   });
 
   @override
-  Widget _buildTitle(BuildContext context) {
+  Widget buildTitle(BuildContext context) {
     final theme = Theme.of(context);
     final design = theme.extension<DesignSystemThemeExtension>()!;
 
@@ -36,7 +36,7 @@ class SectionHeader extends BaseSectionHeader {
   }
 
   @override
-  Widget _buildAction(BuildContext context) {
+  Widget buildAction(BuildContext context) {
     if (actionText != null && onActionPressed != null) {
       final theme = Theme.of(context);
       final design = theme.extension<DesignSystemThemeExtension>()!;

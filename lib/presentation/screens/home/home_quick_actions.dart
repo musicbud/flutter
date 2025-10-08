@@ -49,13 +49,18 @@ class HomeQuickActions extends StatelessWidget {
               isPrimary: false,
             ),
             QuickAction(
+              title: 'Find Buds',
+              icon: Icons.people,
+              onPressed: () {
+                Navigator.pushNamed(context, '/buds');
+              },
+              isPrimary: false,
+            ),
+            QuickAction(
               title: 'Connect Services',
               icon: Icons.link,
               onPressed: () {
-                // TODO: Navigate to connect services page
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Connect Services coming soon')),
-                );
+                Navigator.pushNamed(context, '/connect-services');
               },
               isPrimary: false,
             ),

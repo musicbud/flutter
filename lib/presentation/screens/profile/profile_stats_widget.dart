@@ -20,8 +20,9 @@ class ProfileStatsWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         _buildStatItem('Followers', userProfile.followersCount.toString(), designSystemColors, designSystemSpacing, designSystemTypography),
-        _buildStatItem('Following', '856', designSystemColors, designSystemSpacing, designSystemTypography),
-        _buildStatItem('Tracks', '324', designSystemColors, designSystemSpacing, designSystemTypography),
+        _buildStatItem('Following', userProfile.followingCount.toString(), designSystemColors, designSystemSpacing, designSystemTypography),
+        // TODO: Add tracksCount to UserProfile model
+        _buildStatItem('Tracks', '0', designSystemColors, designSystemSpacing, designSystemTypography),
       ],
     );
   }

@@ -51,6 +51,17 @@ class SettingsFailure extends SettingsState {
   List<Object> get props => [error];
 }
 
+class SettingsError extends SettingsState {
+  final String message;
+
+  const SettingsError(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class SettingsSaved extends SettingsState {}
+
 class NotificationSettings extends Equatable {
   final bool enabled;
   final bool pushEnabled;

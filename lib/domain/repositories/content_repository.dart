@@ -4,12 +4,14 @@ import '../../models/album.dart';
 import '../../models/genre.dart';
 import '../../models/common_anime.dart';
 import '../../models/common_manga.dart';
+import '../../models/spotify_device.dart';
 
 /// Interface for content-related operations
 abstract class ContentRepository {
   // Spotify-related methods
   Future<List<Track>> getPlayedTracks();
   Future<List<Track>> getPlayedTracksWithLocation();
+  Future<List<SpotifyDevice>> getSpotifyDevices();
   Future<void> controlSpotifyPlayback(String command, String deviceId);
   Future<void> setSpotifyVolume(String deviceId, int volume);
   Future<void> saveTrackLocation(

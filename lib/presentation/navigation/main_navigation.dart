@@ -35,19 +35,16 @@ class MainNavigationController extends ChangeNotifier {
       case 0: // Home
         _loadHomeData(context);
         break;
-      case 1: // Search
-        // Search data loaded on demand
+      case 1: // Discover
+        // Discover data loaded by the discover page
         break;
-      case 2: // Discover
-        // Discover/Buds data loaded by the discover page
+      case 2: // Library
+        // Library data loaded by the library page
         break;
       case 3: // Chat
         context.read<ChatBloc>().add(ChatUserListRequested());
         break;
-      case 4: // Library/Music
-        // Music data loaded by the library page
-        break;
-      case 5: // Profile
+      case 4: // Profile
         // Profile data loaded by the profile page
         break;
     }
