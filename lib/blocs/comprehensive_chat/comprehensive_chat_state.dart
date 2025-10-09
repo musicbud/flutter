@@ -33,7 +33,7 @@ class ComprehensiveChatError extends ComprehensiveChatState {
 
 // Authentication states
 class LoginSuccess extends ComprehensiveChatState {
-  final Map<String, dynamic> result;
+  final dynamic result;
 
   const LoginSuccess(this.result);
 
@@ -42,7 +42,7 @@ class LoginSuccess extends ComprehensiveChatState {
 }
 
 class RegisterSuccess extends ComprehensiveChatState {
-  final Map<String, dynamic> result;
+  final dynamic result;
 
   const RegisterSuccess(this.result);
 

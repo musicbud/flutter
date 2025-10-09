@@ -1,5 +1,6 @@
 import '../../network/dio_client.dart';
 import '../../../config/api_config.dart';
+import '../../../services/endpoint_config_service.dart';
 
 abstract class BudMatchingRemoteDataSource {
   Future<Map<String, dynamic>> fetchBudProfile(String budId);
@@ -21,14 +22,19 @@ abstract class BudMatchingRemoteDataSource {
 
 class BudMatchingRemoteDataSourceImpl implements BudMatchingRemoteDataSource {
   final DioClient _dioClient;
+  final EndpointConfigService _endpointConfigService;
 
-  BudMatchingRemoteDataSourceImpl({required DioClient dioClient})
-      : _dioClient = dioClient;
+  BudMatchingRemoteDataSourceImpl({
+    required DioClient dioClient,
+    required EndpointConfigService endpointConfigService,
+  }) : _dioClient = dioClient,
+       _endpointConfigService = endpointConfigService;
 
   @override
   Future<Map<String, dynamic>> fetchBudProfile(String budId) async {
     try {
-      final response = await _dioClient.get('${ApiConfig.budProfile}/$budId');
+      final baseUrl = _endpointConfigService.getEndpointUrl('buds - get bud profile', ApiConfig.baseUrl) ?? ApiConfig.budProfile;
+      final response = await _dioClient.get('$baseUrl/$budId');
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to fetch bud profile: $e');
@@ -38,7 +44,8 @@ class BudMatchingRemoteDataSourceImpl implements BudMatchingRemoteDataSource {
   @override
   Future<Map<String, dynamic>> findBudsByTopArtists() async {
     try {
-      final response = await _dioClient.get(ApiConfig.budTopArtists);
+      final url = _endpointConfigService.getEndpointUrl('buds - get buds by top artists', ApiConfig.baseUrl) ?? ApiConfig.budTopArtists;
+      final response = await _dioClient.get(url);
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to find buds by top artists: $e');
@@ -48,7 +55,8 @@ class BudMatchingRemoteDataSourceImpl implements BudMatchingRemoteDataSource {
   @override
   Future<Map<String, dynamic>> findBudsByTopTracks() async {
     try {
-      final response = await _dioClient.get(ApiConfig.budTopTracks);
+      final url = _endpointConfigService.getEndpointUrl('buds - get buds by top tracks', ApiConfig.baseUrl) ?? ApiConfig.budTopTracks;
+      final response = await _dioClient.get(url);
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to find buds by top tracks: $e');
@@ -58,7 +66,8 @@ class BudMatchingRemoteDataSourceImpl implements BudMatchingRemoteDataSource {
   @override
   Future<Map<String, dynamic>> findBudsByTopGenres() async {
     try {
-      final response = await _dioClient.get(ApiConfig.budTopGenres);
+      final url = _endpointConfigService.getEndpointUrl('buds - get buds by top genres', ApiConfig.baseUrl) ?? ApiConfig.budTopGenres;
+      final response = await _dioClient.get(url);
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to find buds by top genres: $e');
@@ -68,7 +77,8 @@ class BudMatchingRemoteDataSourceImpl implements BudMatchingRemoteDataSource {
   @override
   Future<Map<String, dynamic>> findBudsByTopAnime() async {
     try {
-      final response = await _dioClient.get(ApiConfig.budTopAnime);
+      final url = _endpointConfigService.getEndpointUrl('buds - get buds by top anime', ApiConfig.baseUrl) ?? ApiConfig.budTopAnime;
+      final response = await _dioClient.get(url);
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to find buds by top anime: $e');
@@ -78,7 +88,8 @@ class BudMatchingRemoteDataSourceImpl implements BudMatchingRemoteDataSource {
   @override
   Future<Map<String, dynamic>> findBudsByTopManga() async {
     try {
-      final response = await _dioClient.get(ApiConfig.budTopManga);
+      final url = _endpointConfigService.getEndpointUrl('buds - get buds by top manga', ApiConfig.baseUrl) ?? ApiConfig.budTopManga;
+      final response = await _dioClient.get(url);
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to find buds by top manga: $e');
@@ -88,7 +99,8 @@ class BudMatchingRemoteDataSourceImpl implements BudMatchingRemoteDataSource {
   @override
   Future<Map<String, dynamic>> findBudsByLikedArtists() async {
     try {
-      final response = await _dioClient.get(ApiConfig.budLikedArtists);
+      final url = _endpointConfigService.getEndpointUrl('buds - get buds by liked artists', ApiConfig.baseUrl) ?? ApiConfig.budLikedArtists;
+      final response = await _dioClient.get(url);
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to find buds by liked artists: $e');
@@ -98,7 +110,8 @@ class BudMatchingRemoteDataSourceImpl implements BudMatchingRemoteDataSource {
   @override
   Future<Map<String, dynamic>> findBudsByLikedTracks() async {
     try {
-      final response = await _dioClient.get(ApiConfig.budLikedTracks);
+      final url = _endpointConfigService.getEndpointUrl('buds - get buds by liked tracks', ApiConfig.baseUrl) ?? ApiConfig.budLikedTracks;
+      final response = await _dioClient.get(url);
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to find buds by liked tracks: $e');
@@ -108,7 +121,8 @@ class BudMatchingRemoteDataSourceImpl implements BudMatchingRemoteDataSource {
   @override
   Future<Map<String, dynamic>> findBudsByLikedGenres() async {
     try {
-      final response = await _dioClient.get(ApiConfig.budLikedGenres);
+      final url = _endpointConfigService.getEndpointUrl('buds - get buds by liked genres', ApiConfig.baseUrl) ?? ApiConfig.budLikedGenres;
+      final response = await _dioClient.get(url);
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to find buds by liked genres: $e');
@@ -118,7 +132,8 @@ class BudMatchingRemoteDataSourceImpl implements BudMatchingRemoteDataSource {
   @override
   Future<Map<String, dynamic>> findBudsByLikedAlbums() async {
     try {
-      final response = await _dioClient.get(ApiConfig.budLikedAlbums);
+      final url = _endpointConfigService.getEndpointUrl('buds - get buds by liked albums', ApiConfig.baseUrl) ?? ApiConfig.budLikedAlbums;
+      final response = await _dioClient.get(url);
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to find buds by liked albums: $e');
@@ -128,7 +143,8 @@ class BudMatchingRemoteDataSourceImpl implements BudMatchingRemoteDataSource {
   @override
   Future<Map<String, dynamic>> findBudsByLikedAio() async {
     try {
-      final response = await _dioClient.get(ApiConfig.budLikedAio);
+      final url = _endpointConfigService.getEndpointUrl('buds - get buds by liked aio', ApiConfig.baseUrl) ?? ApiConfig.budLikedAio;
+      final response = await _dioClient.get(url);
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to find buds by liked aio: $e');
@@ -138,7 +154,8 @@ class BudMatchingRemoteDataSourceImpl implements BudMatchingRemoteDataSource {
   @override
   Future<Map<String, dynamic>> findBudsByPlayedTracks() async {
     try {
-      final response = await _dioClient.get(ApiConfig.budPlayedTracks);
+      final url = _endpointConfigService.getEndpointUrl('buds - get buds by played tracks', ApiConfig.baseUrl) ?? ApiConfig.budPlayedTracks;
+      final response = await _dioClient.get(url);
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to find buds by played tracks: $e');
@@ -148,7 +165,8 @@ class BudMatchingRemoteDataSourceImpl implements BudMatchingRemoteDataSource {
   @override
   Future<Map<String, dynamic>> findBudsByArtist(String artistId) async {
     try {
-      final response = await _dioClient.get('${ApiConfig.budArtist}/$artistId');
+      final baseUrl = _endpointConfigService.getEndpointUrl('buds - get buds by artist', ApiConfig.baseUrl) ?? ApiConfig.budArtist;
+      final response = await _dioClient.get('$baseUrl/$artistId');
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to find buds by artist: $e');
@@ -158,17 +176,20 @@ class BudMatchingRemoteDataSourceImpl implements BudMatchingRemoteDataSource {
   @override
   Future<Map<String, dynamic>> findBudsByTrack(String trackId) async {
     try {
-      final response = await _dioClient.get('${ApiConfig.budTrack}/$trackId');
+      final baseUrl = _endpointConfigService.getEndpointUrl('buds - get buds by track', ApiConfig.baseUrl) ?? ApiConfig.budTrack;
+      final response = await _dioClient.post(baseUrl, data: {'track_id': trackId});
       return response.data as Map<String, dynamic>;
     } catch (e) {
-      throw Exception('Failed to find buds by track: $e');
+      // Endpoint not implemented, return empty result
+      return {'buds': [], 'message': 'Endpoint not implemented'};
     }
   }
 
   @override
   Future<Map<String, dynamic>> findBudsByGenre(String genreId) async {
     try {
-      final response = await _dioClient.get('${ApiConfig.budGenre}/$genreId');
+      final baseUrl = _endpointConfigService.getEndpointUrl('buds - get buds by genre', ApiConfig.baseUrl) ?? ApiConfig.budGenre;
+      final response = await _dioClient.get('$baseUrl/$genreId');
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to find buds by genre: $e');

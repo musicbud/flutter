@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../data/providers/token_provider.dart';
 
 // Events
 abstract class AuthEvent extends Equatable {
@@ -122,10 +123,14 @@ class ServiceAuthUrlReceived extends AuthState {
 // Bloc
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
+  final TokenProvider _tokenProvider;
 
-  AuthBloc({required AuthRepository authRepository})
-      : _authRepository = authRepository,
-        super(AuthInitial()) {
+  AuthBloc({
+    required AuthRepository authRepository,
+    required TokenProvider tokenProvider,
+  }) : _authRepository = authRepository,
+       _tokenProvider = tokenProvider,
+       super(AuthInitial()) {
     on<LoginRequested>(_onLoginRequested);
     on<RegisterRequested>(_onRegisterRequested);
     on<LogoutRequested>(_onLogoutRequested);
@@ -143,7 +148,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthLoading());
       final result =
           await _authRepository.login(event.username, event.password);
-      emit(Authenticated(token: result['access_token']));
+      // Store tokens securely
+      await _tokenProvider.updateTokens(result.accessToken, result.refreshToken);
+      emit(Authenticated(token: result.accessToken));
     } catch (e) {
       emit(AuthError(e.toString()));
     }
@@ -155,12 +162,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     try {
       emit(AuthLoading());
-      final result = await _authRepository.register(
+      await _authRepository.register(
         event.username,
         event.email,
         event.password,
       );
-      emit(Authenticated(token: result['access_token']));
+      // For register, we don't get a token immediately, so we emit success without token
+      emit(const AuthSuccess());
     } catch (e) {
       emit(AuthError(e.toString()));
     }
@@ -173,9 +181,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       emit(AuthLoading());
       await _authRepository.logout();
+      // Clear stored tokens
+      await _tokenProvider.clearTokens();
       emit(Unauthenticated());
     } catch (e) {
-      // Even if logout fails, we should still clear the local state
+      // Even if logout fails, we should still clear the local state and tokens
+      await _tokenProvider.clearTokens();
       emit(Unauthenticated());
     }
   }
@@ -186,10 +197,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     try {
       emit(AuthLoading());
-      final token = await _authRepository.refreshToken();
-      emit(Authenticated(token: token));
+      final result = await _authRepository.refreshToken();
+      // Update only the access token, keep the same refresh token
+      await _tokenProvider.updateAccessToken(result.accessToken);
+      emit(Authenticated(token: result.accessToken));
     } catch (e) {
-      // If token refresh fails, user needs to login again
+      // If token refresh fails, clear tokens and user needs to login again
+      await _tokenProvider.clearTokens();
       emit(Unauthenticated());
     }
   }

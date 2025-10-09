@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../blocs/user_profile/user_profile_bloc.dart';
+import '../../../blocs/main/main_screen_bloc.dart';
+import '../../../blocs/main/main_screen_event.dart';
+import '../../../blocs/main/main_screen_state.dart';
 import '../../../core/theme/design_system.dart';
 import '../../../presentation/widgets/common/modern_input_field.dart';
 import '../../../presentation/widgets/navigation/main_navigation_scaffold.dart';
@@ -28,10 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Load user profile and dynamic content
     debugPrint('🏠 HomeScreen: Making API calls on startup');
-    context.read<UserProfileBloc>().add(FetchMyProfile());
-    context.read<UserProfileBloc>().add(FetchMyLikedContent(contentType: 'tracks'));
-    context.read<UserProfileBloc>().add(FetchMyTopContent(contentType: 'artists'));
-    context.read<UserProfileBloc>().add(FetchMyPlayedTracks());
+    context.read<MainScreenBloc>().add(MainScreenInitialized());
   }
 
   @override
@@ -45,86 +44,130 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return MainNavigationScaffold(
       navigationController: _navigationController,
-      body: BlocListener<UserProfileBloc, UserProfileState>(
-        listener: (context, state) {
-          if (state is UserProfileError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Error: ${state.message}'),
-                backgroundColor: DesignSystem.error,
+      body: BlocBuilder<MainScreenBloc, MainScreenState>(
+        builder: (context, state) {
+          if (state is MainScreenLoading) {
+            return Container(
+              decoration: const BoxDecoration(
+                gradient: DesignSystem.gradientBackground,
+              ),
+              child: const Center(
+                child: CircularProgressIndicator(),
               ),
             );
           }
-        },
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: DesignSystem.gradientBackground,
-          ),
-          child: SafeArea(
-            child: CustomScrollView(
-              slivers: [
-                // Header Section
-                SliverToBoxAdapter(
-                  child: const HomeHeaderWidget(),
-                ),
 
-                // Search Section
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
-                    child: ModernInputField(
-                      hintText: 'Search for music, artists, or playlists...',
-                      controller: _searchController,
-                      onChanged: (value) {
-                        if (value.isNotEmpty) {
-                          // Navigate to search page with query
-                          Navigator.pushNamed(
-                            context,
-                            '/search',
-                            arguments: {'query': value},
-                          );
-                        }
+          if (state is MainScreenFailure) {
+            return Container(
+              decoration: const BoxDecoration(
+                gradient: DesignSystem.gradientBackground,
+              ),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Failed to load data',
+                      style: DesignSystem.headlineMedium.copyWith(
+                        color: DesignSystem.onSurface,
+                      ),
+                    ),
+                    const SizedBox(height: DesignSystem.spacingMD),
+                    ElevatedButton(
+                      onPressed: () {
+                        context.read<MainScreenBloc>().add(MainScreenInitialized());
                       },
+                      child: const Text('Retry'),
                     ),
+                  ],
+                ),
+              ),
+            );
+          }
+
+          // For authenticated or other states, show the content
+          return BlocListener<MainScreenBloc, MainScreenState>(
+            listener: (context, state) {
+              if (state is MainScreenFailure) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Error: ${state.error}'),
+                    backgroundColor: DesignSystem.error,
                   ),
-                ),
-
-                SliverToBoxAdapter(
-                  child: const SizedBox(height: DesignSystem.spacingLG),
-                ),
-
-                // Quick Actions Section
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
-                    child: HomeQuickActions(),
-                  ),
-                ),
-
-                SliverToBoxAdapter(
-                  child: SizedBox(height: DesignSystem.spacingXL),
-                ),
-
-                // Dynamic Content Sections
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
-                    child: Column(
-                      children: [
-                        HomeRecommendations(),
-                        HomeRecentActivity(),
-                      ],
+                );
+              }
+            },
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: DesignSystem.gradientBackground,
+              ),
+              child: SafeArea(
+                child: CustomScrollView(
+                  slivers: [
+                    // Header Section
+                    SliverToBoxAdapter(
+                      child: const HomeHeaderWidget(),
                     ),
-                  ),
-                ),
 
-                SliverToBoxAdapter(
-                  child: SizedBox(height: DesignSystem.spacingXL),
+                    // Search Section
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
+                        child: ModernInputField(
+                          hintText: 'Search for music, artists, or playlists...',
+                          controller: _searchController,
+                          onChanged: (value) {
+                            if (value.isNotEmpty) {
+                              // Navigate to search page with query
+                              Navigator.pushNamed(
+                                context,
+                                '/search',
+                                arguments: {'query': value},
+                              );
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+
+                    SliverToBoxAdapter(
+                      child: const SizedBox(height: DesignSystem.spacingLG),
+                    ),
+
+                    // Quick Actions Section
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
+                        child: HomeQuickActions(),
+                      ),
+                    ),
+
+                    SliverToBoxAdapter(
+                      child: SizedBox(height: DesignSystem.spacingXL),
+                    ),
+
+                    // Dynamic Content Sections
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
+                        child: Column(
+                          children: [
+                            HomeRecommendations(),
+                            HomeRecentActivity(),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    SliverToBoxAdapter(
+                      child: SizedBox(height: DesignSystem.spacingXL),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

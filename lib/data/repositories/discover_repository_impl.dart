@@ -1,5 +1,6 @@
 import '../../domain/repositories/discover_repository.dart';
 import '../../domain/repositories/user_profile_repository.dart';
+import '../../data/data_sources/remote/content_remote_data_source.dart';
 import '../../models/discover_item.dart';
 import '../../models/track.dart';
 import '../../models/artist.dart';
@@ -7,12 +8,17 @@ import '../../models/album.dart';
 import '../../models/genre.dart';
 import '../../models/common_anime.dart';
 import '../../models/common_manga.dart';
+import '../../models/user_profile.dart';
 
 class DiscoverRepositoryImpl implements DiscoverRepository {
   final UserProfileRepository _userProfileRepository;
+  final ContentRemoteDataSource _contentRemoteDataSource;
 
-  DiscoverRepositoryImpl({required UserProfileRepository userProfileRepository})
-      : _userProfileRepository = userProfileRepository;
+  DiscoverRepositoryImpl({
+    required UserProfileRepository userProfileRepository,
+    required ContentRemoteDataSource contentRemoteDataSource,
+  }) : _userProfileRepository = userProfileRepository,
+       _contentRemoteDataSource = contentRemoteDataSource;
 
   @override
   Future<List<String>> getCategories() async {
@@ -36,6 +42,33 @@ class DiscoverRepositoryImpl implements DiscoverRepository {
   }) async {
     // TODO: Implement interaction tracking
     // For now, do nothing
+  }
+
+  @override
+  Future<UserProfile> getProfile() async {
+    try {
+      return await _userProfileRepository.getMyProfile();
+    } catch (e) {
+      throw Exception('Failed to get profile: $e');
+    }
+  }
+
+  @override
+  Future<void> setProfile(UserProfileUpdateRequest profile) async {
+    try {
+      await _userProfileRepository.updateProfile(profile);
+    } catch (e) {
+      throw Exception('Failed to set profile: $e');
+    }
+  }
+
+  @override
+  Future<void> updateLikes(Map<String, dynamic> likes) async {
+    try {
+      await _userProfileRepository.updateLikes(likes);
+    } catch (e) {
+      throw Exception('Failed to update likes: $e');
+    }
   }
 
   @override
@@ -135,6 +168,51 @@ class DiscoverRepositoryImpl implements DiscoverRepository {
       return data.map((item) => Track.fromJson(item)).toList();
     } catch (e) {
       throw Exception('Failed to get played tracks: $e');
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getFeaturedArtists() async {
+    try {
+      return await _contentRemoteDataSource.getFeaturedArtists();
+    } catch (e) {
+      throw Exception('Failed to get featured artists: $e');
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getTrendingTracks() async {
+    try {
+      return await _contentRemoteDataSource.getTrendingTracks();
+    } catch (e) {
+      throw Exception('Failed to get trending tracks: $e');
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getNewReleases() async {
+    try {
+      return await _contentRemoteDataSource.getNewReleases();
+    } catch (e) {
+      throw Exception('Failed to get new releases: $e');
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getDiscoverActions() async {
+    try {
+      return await _contentRemoteDataSource.getDiscoverActions();
+    } catch (e) {
+      throw Exception('Failed to get discover actions: $e');
+    }
+  }
+
+  @override
+  Future<List<String>> getDiscoverCategories() async {
+    try {
+      return await _contentRemoteDataSource.getDiscoverCategories();
+    } catch (e) {
+      throw Exception('Failed to get discover categories: $e');
     }
   }
 }

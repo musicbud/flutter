@@ -13,6 +13,7 @@ import 'core/network/network_info.dart';
 // Services
 import 'services/api_service.dart';
 import 'services/auth_service.dart';
+import 'services/endpoint_config_service.dart';
 
 // Providers
 import 'data/providers/token_provider.dart';
@@ -37,6 +38,7 @@ import 'data/data_sources/remote/search_remote_data_source.dart';
 import 'data/data_sources/remote/common_items_remote_data_source.dart';
 import 'data/data_sources/remote/spotify_remote_data_source.dart';
 import 'data/data_sources/remote/spotify_remote_data_source_impl.dart';
+import 'presentation/screens/discover/discover_content_manager.dart';
 
 // Repositories
 import 'data/repositories/auth_repository_impl.dart';
@@ -116,6 +118,9 @@ Future<void> init() async {
   await _registerDataSources();
   await _registerRepositories();
   await _registerBlocs();
+
+  // Initialize services that require async setup
+  await sl<EndpointConfigService>().initialize();
 
   if (kDebugMode) {
     _logDependencyRegistration();
@@ -197,13 +202,19 @@ Future<void> _registerNetworkDependencies() async {
 
   // AuthService - Authentication service
   sl.registerLazySingleton<AuthService>(() => AuthService());
+
+  // EndpointConfigService - Dynamic endpoint configuration
+  sl.registerLazySingleton<EndpointConfigService>(() => EndpointConfigService());
 }
 
 /// Registers data source dependencies
 Future<void> _registerDataSources() async {
   // Content Data Source
   sl.registerLazySingleton<ContentRemoteDataSource>(
-    () => ContentRemoteDataSourceImpl(dioClient: sl<DioClient>()),
+    () => ContentRemoteDataSourceImpl(
+      dioClient: sl<DioClient>(),
+      endpointConfigService: sl<EndpointConfigService>(),
+    ),
   );
 
   // User Data Source
@@ -211,17 +222,24 @@ Future<void> _registerDataSources() async {
     () => UserRemoteDataSourceImpl(
       dioClient: sl<DioClient>(),
       tokenProvider: sl<TokenProvider>(),
+      endpointConfigService: sl<EndpointConfigService>(),
     ),
   );
 
   // Bud Data Source
   sl.registerLazySingleton<BudRemoteDataSource>(
-    () => BudRemoteDataSourceImpl(dioClient: sl<DioClient>()),
+    () => BudRemoteDataSourceImpl(
+      dioClient: sl<DioClient>(),
+      endpointConfigService: sl<EndpointConfigService>(),
+    ),
   );
 
   // Auth Data Source
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(dioClient: sl<DioClient>()),
+    () => AuthRemoteDataSourceImpl(
+      dioClient: sl<DioClient>(),
+      endpointConfigService: sl<EndpointConfigService>(),
+    ),
   );
 
   // Chat Data Source
@@ -241,7 +259,10 @@ Future<void> _registerDataSources() async {
 
   // Bud Matching Data Source
   sl.registerLazySingleton<BudMatchingRemoteDataSource>(
-    () => BudMatchingRemoteDataSourceImpl(dioClient: sl<DioClient>()),
+    () => BudMatchingRemoteDataSourceImpl(
+      dioClient: sl<DioClient>(),
+      endpointConfigService: sl<EndpointConfigService>(),
+    ),
   );
 
   // Chat Management Data Source
@@ -294,6 +315,7 @@ Future<void> _registerRepositories() async {
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
       authRemoteDataSource: sl<AuthRemoteDataSource>(),
+      tokenProvider: sl<TokenProvider>(),
     ),
   );
 
@@ -421,7 +443,13 @@ Future<void> _registerRepositories() async {
   sl.registerLazySingleton<DiscoverRepository>(
     () => DiscoverRepositoryImpl(
       userProfileRepository: sl<UserProfileRepository>(),
+      contentRemoteDataSource: sl<ContentRemoteDataSource>(),
     ),
+  );
+
+  // Discover Content Manager
+  sl.registerLazySingleton<DiscoverContentManager>(
+    () => DiscoverContentManager(repository: sl<DiscoverRepository>()),
   );
 }
 
@@ -436,6 +464,7 @@ Future<void> _registerBlocs() async {
   // Auth BLoC
   sl.registerFactory<AuthBloc>(() => AuthBloc(
     authRepository: sl<AuthRepository>(),
+    tokenProvider: sl<TokenProvider>(),
   ));
 
   // Profile BLoC
@@ -458,6 +487,8 @@ Future<void> _registerBlocs() async {
   // Main Screen BLoC
   sl.registerFactory<MainScreenBloc>(() => MainScreenBloc(
     profileRepository: sl<ProfileRepository>(),
+    contentRepository: sl<ContentRepository>(),
+    discoverRepository: sl<DiscoverRepository>(),
   ));
 
   // Settings BLoC

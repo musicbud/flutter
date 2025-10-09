@@ -2,6 +2,8 @@ import '../../models/bud_match.dart';
 import '../../models/common_track.dart';
 import '../../models/common_artist.dart';
 import '../../models/common_genre.dart';
+import '../../models/common_anime.dart';
+import '../../models/common_manga.dart';
 // import '../../models/common_album.dart';
 // import '../../../models/bud.dart';
 
@@ -78,4 +80,16 @@ abstract class BudRepository {
 
   /// Search for buds.
   Future<List<BudMatch>> searchBuds(String query);
+
+  /// Get bud profile.
+  Future<Map<String, dynamic>> getBudProfile(String username);
+
+  /// Get bud's top anime.
+  Future<List<CommonAnime>> getBudTopAnime(String username);
+
+  /// Get bud's top manga.
+  Future<List<CommonManga>> getBudTopManga(String username);
+
+  /// Get bud's liked aio.
+  Future<Map<String, dynamic>> getBudLikedAio(String username);
 }

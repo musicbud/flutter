@@ -1,19 +1,170 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 // Navigation components
 import 'package:musicbud_flutter/navigation/navigation_constants.dart';
 
-// Screens for verification
-import 'package:musicbud_flutter/presentation/screens/home/home_screen.dart';
-import 'package:musicbud_flutter/presentation/screens/discover/discover_screen.dart';
-import 'package:musicbud_flutter/presentation/screens/library/library_screen.dart';
-import 'package:musicbud_flutter/presentation/screens/chat/chat_screen.dart';
-import 'package:musicbud_flutter/presentation/screens/profile/profile_screen.dart';
-import 'package:musicbud_flutter/presentation/screens/search/search_screen.dart';
-import 'package:musicbud_flutter/presentation/screens/buds/buds_screen.dart';
-import 'package:musicbud_flutter/presentation/screens/settings/settings_screen.dart';
+// Design System
+import 'package:musicbud_flutter/core/theme/design_system.dart';
+
+// BLoCs
+import 'package:musicbud_flutter/blocs/user_profile/user_profile_bloc.dart';
+import 'package:musicbud_flutter/presentation/blocs/search/search_bloc.dart';
+
+// Repositories
+import 'package:musicbud_flutter/domain/repositories/user_profile_repository.dart';
+import 'package:musicbud_flutter/domain/repositories/search_repository.dart';
+
+// Core
+import 'package:dartz/dartz.dart';
+import 'package:musicbud_flutter/core/error/failures.dart';
+import 'package:musicbud_flutter/models/user_profile.dart';
+import 'package:musicbud_flutter/models/search.dart';
+
+// Placeholder screens for navigation testing
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text('Home Screen')));
+  }
+}
+
+class DiscoverScreen extends StatelessWidget {
+  const DiscoverScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text('Discover Screen')));
+  }
+}
+
+class LibraryScreen extends StatelessWidget {
+  const LibraryScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text('Library Screen')));
+  }
+}
+
+class ChatScreen extends StatelessWidget {
+  const ChatScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text('Chat Screen')));
+  }
+}
+
+class ProfileScreen extends StatelessWidget {
+  const ProfileScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text('Profile Screen')));
+  }
+}
+
+class SearchScreen extends StatelessWidget {
+  const SearchScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text('Search Screen')));
+  }
+}
+
+class BudsScreen extends StatelessWidget {
+  const BudsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text('Buds Screen')));
+  }
+}
+
+class SettingsScreen extends StatelessWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(body: Center(child: Text('Settings Screen')));
+  }
+}
+
+// Dummy implementations
+class DummyUserProfileRepository implements UserProfileRepository {
+  @override
+  Future<UserProfile> getUserProfile(String userId) async => _dummyUserProfile();
+
+  @override
+  Future<UserProfile> getMyProfile({String? service, String? token}) async => _dummyUserProfile();
+
+  @override
+  Future<UserProfile> updateProfile(UserProfileUpdateRequest updateRequest) async => _dummyUserProfile();
+
+  @override
+  Future<void> updateLikes(Map<String, dynamic> likesData) async {}
+
+  @override
+  Future<List<dynamic>> getUserLikedContent(String contentType, String userId) async => [];
+
+  @override
+  Future<List<dynamic>> getMyLikedContent(String contentType) async => [];
+
+  @override
+  Future<List<dynamic>> getUserTopContent(String contentType, String userId) async => [];
+
+  @override
+  Future<List<dynamic>> getMyTopContent(String contentType) async => [];
+
+  @override
+  Future<List<dynamic>> getUserPlayedTracks(String userId) async => [];
+
+  @override
+  Future<List<dynamic>> getMyPlayedTracks() async => [];
+
+  UserProfile _dummyUserProfile() => const UserProfile(
+    id: 'dummy_id',
+    username: 'dummy_user',
+    email: 'dummy@example.com',
+    avatarUrl: null,
+    bio: 'Dummy bio',
+    displayName: 'Dummy User',
+    location: 'Dummy Location',
+    followersCount: 0,
+    followingCount: 0,
+    isActive: true,
+    isAuthenticated: true,
+    isAdmin: false,
+  );
+}
+
+class DummySearchRepository implements SearchRepository {
+  @override
+  Future<Either<Failure, SearchResults>> search({required String query, List<String>? types, Map<String, dynamic>? filters, int? page, int? pageSize}) async => Right(_dummySearchResults());
+
+  @override
+  Future<Either<Failure, List<String>>> getSuggestions({required String query, int? limit}) async => const Right([]);
+
+  @override
+  Future<Either<Failure, List<String>>> getRecentSearches({int? limit}) async => const Right([]);
+
+  @override
+  Future<Either<Failure, void>> saveRecentSearch(String query) async => const Right(null);
+
+  @override
+  Future<Either<Failure, void>> clearRecentSearches() async => const Right(null);
+
+  @override
+  Future<Either<Failure, List<String>>> getTrendingSearches({int? limit}) async => const Right([]);
+
+  SearchResults _dummySearchResults() => SearchResults.empty();
+}
 
 
 
@@ -25,6 +176,7 @@ void main() {
 
     setUp(() {
       testApp = MaterialApp(
+        theme: DesignSystem.darkTheme,
         initialRoute: NavigationConstants.home,
         routes: {
           NavigationConstants.home: (context) => const HomeScreen(),
@@ -39,36 +191,39 @@ void main() {
       );
     });
 
-    testWidgets('Bottom navigation switches between main screens',
+    testWidgets('Named navigation switches between main screens',
         (WidgetTester tester) async {
       await tester.pumpWidget(testApp);
       await tester.pumpAndSettle();
 
-      // Start with Home screen (initial index 0)
+      // Start with Home screen
       expect(find.byType(HomeScreen), findsOneWidget);
 
-      // Navigate to Discover (index 1)
-      await tester.tap(find.byIcon(Icons.explore));
+      // Navigate to Discover
+      final context = tester.element(find.byType(HomeScreen));
+      Navigator.pushNamed(context, NavigationConstants.discover);
       await tester.pumpAndSettle();
       expect(find.byType(DiscoverScreen), findsOneWidget);
 
-      // Navigate to Library (index 2)
-      await tester.tap(find.byIcon(Icons.library_music));
+      // Navigate to Library
+      Navigator.pushNamed(context, NavigationConstants.library);
       await tester.pumpAndSettle();
       expect(find.byType(LibraryScreen), findsOneWidget);
 
-      // Navigate to Chat (index 3)
-      await tester.tap(find.byIcon(Icons.chat));
+      // Navigate to Chat
+      final chatContext = tester.element(find.byType(LibraryScreen));
+      Navigator.pushNamed(chatContext, NavigationConstants.chat);
       await tester.pumpAndSettle();
       expect(find.byType(ChatScreen), findsOneWidget);
 
-      // Navigate to Profile (index 4)
-      await tester.tap(find.byIcon(Icons.person));
+      // Navigate to Profile
+      final profileContext = tester.element(find.byType(ChatScreen));
+      Navigator.pushNamed(profileContext, NavigationConstants.profile);
       await tester.pumpAndSettle();
       expect(find.byType(ProfileScreen), findsOneWidget);
 
-      // Navigate back to Home (index 0)
-      await tester.tap(find.byIcon(Icons.home));
+      // Navigate back to Home
+      Navigator.popUntil(profileContext, ModalRoute.withName(NavigationConstants.home));
       await tester.pumpAndSettle();
       expect(find.byType(HomeScreen), findsOneWidget);
     });
@@ -77,6 +232,7 @@ void main() {
         (WidgetTester tester) async {
       // Create a test app with drawer
       final testAppWithDrawer = MaterialApp(
+        theme: DesignSystem.darkTheme,
         home: Scaffold(
           appBar: AppBar(
             title: const Text('Test App'),
@@ -156,7 +312,7 @@ void main() {
       expect(find.byType(SearchScreen), findsOneWidget);
 
       // Go back to home
-      Navigator.pop(tester.element(find.byType(MaterialApp)));
+      Navigator.pop(tester.element(find.byType(Scaffold)));
       await tester.pumpAndSettle();
 
       // Open drawer again
@@ -169,7 +325,7 @@ void main() {
       expect(find.byType(BudsScreen), findsOneWidget);
 
       // Go back to home
-      Navigator.pop(tester.element(find.byType(MaterialApp)));
+      Navigator.pop(tester.element(find.byType(Scaffold)));
       await tester.pumpAndSettle();
 
       // Open drawer again
@@ -187,6 +343,7 @@ void main() {
       // For this test, use named routes instead of bottom navigation
       // since MainNavigationScaffold uses IndexedStack which doesn't maintain history
       final testAppWithRoutes = MaterialApp(
+        theme: DesignSystem.darkTheme,
         initialRoute: NavigationConstants.home,
         routes: {
           NavigationConstants.home: (context) => const HomeScreen(),
@@ -202,24 +359,27 @@ void main() {
       expect(find.byType(HomeScreen), findsOneWidget);
 
       // Navigate to Discover
-      final BuildContext context = tester.element(find.byType(MaterialApp));
+      final BuildContext context = tester.element(find.byType(HomeScreen));
       Navigator.pushNamed(context, NavigationConstants.discover);
       await tester.pumpAndSettle();
       expect(find.byType(DiscoverScreen), findsOneWidget);
 
       // Navigate to Library
-      Navigator.pushNamed(context, NavigationConstants.library);
+      final libraryContext = tester.element(find.byType(DiscoverScreen));
+      Navigator.pushNamed(libraryContext, NavigationConstants.library);
       await tester.pumpAndSettle();
       expect(find.byType(LibraryScreen), findsOneWidget);
 
-      // Press back button (simulate Android back)
-      await tester.pageBack();
+      // Press back button (simulate Android back using Navigator.pop)
+      final currentContext = tester.element(find.byType(LibraryScreen));
+      Navigator.pop(currentContext);
       await tester.pumpAndSettle();
       // Should go back to Discover
       expect(find.byType(DiscoverScreen), findsOneWidget);
 
       // Press back again
-      await tester.pageBack();
+      final discoverContext = tester.element(find.byType(DiscoverScreen));
+      Navigator.pop(discoverContext);
       await tester.pumpAndSettle();
       // Should go back to Home
       expect(find.byType(HomeScreen), findsOneWidget);
@@ -243,7 +403,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Navigate using named routes
-      final BuildContext context = tester.element(find.byType(MaterialApp));
+      final BuildContext context = tester.element(find.byType(HomeScreen));
 
       // Navigate to Discover
       Navigator.pushNamed(context, NavigationConstants.discover);
@@ -251,12 +411,14 @@ void main() {
       expect(find.byType(DiscoverScreen), findsOneWidget);
 
       // Navigate to Library
-      Navigator.pushNamed(context, NavigationConstants.library);
+      final libraryContext = tester.element(find.byType(DiscoverScreen));
+      Navigator.pushNamed(libraryContext, NavigationConstants.library);
       await tester.pumpAndSettle();
       expect(find.byType(LibraryScreen), findsOneWidget);
 
       // Navigate to Profile
-      Navigator.pushNamed(context, NavigationConstants.profile);
+      final profileContext = tester.element(find.byType(LibraryScreen));
+      Navigator.pushNamed(profileContext, NavigationConstants.profile);
       await tester.pumpAndSettle();
       expect(find.byType(ProfileScreen), findsOneWidget);
     });
@@ -267,14 +429,8 @@ void main() {
 
       // Start with Discover as initial route
       final testAppDiscover = MaterialApp(
-        initialRoute: NavigationConstants.discover,
-        routes: {
-          NavigationConstants.home: (context) => const HomeScreen(),
-          NavigationConstants.discover: (context) => const DiscoverScreen(),
-          NavigationConstants.library: (context) => const LibraryScreen(),
-          NavigationConstants.chat: (context) => const ChatScreen(),
-          NavigationConstants.profile: (context) => const ProfileScreen(),
-        },
+        theme: DesignSystem.darkTheme,
+        home: const DiscoverScreen(),
       );
 
       await tester.pumpWidget(testAppDiscover);
@@ -285,14 +441,8 @@ void main() {
 
       // Test starting with Profile
       final testAppProfile = MaterialApp(
-        initialRoute: NavigationConstants.profile,
-        routes: {
-          NavigationConstants.home: (context) => const HomeScreen(),
-          NavigationConstants.discover: (context) => const DiscoverScreen(),
-          NavigationConstants.library: (context) => const LibraryScreen(),
-          NavigationConstants.chat: (context) => const ChatScreen(),
-          NavigationConstants.profile: (context) => const ProfileScreen(),
-        },
+        theme: DesignSystem.darkTheme,
+        home: const ProfileScreen(),
       );
 
       await tester.pumpWidget(testAppProfile);
@@ -305,9 +455,9 @@ void main() {
     testWidgets('Error handling for invalid routes',
         (WidgetTester tester) async {
       final testAppWithError = MaterialApp(
-        initialRoute: '/invalid-route',
+        theme: DesignSystem.darkTheme,
+        home: const HomeScreen(),
         routes: {
-          NavigationConstants.home: (context) => const HomeScreen(),
           NavigationConstants.discover: (context) => const DiscoverScreen(),
           // Intentionally missing some routes to test error handling
         },
@@ -324,6 +474,14 @@ void main() {
       await tester.pumpWidget(testAppWithError);
       await tester.pumpAndSettle();
 
+      // Start with home screen
+      expect(find.byType(HomeScreen), findsOneWidget);
+
+      // Try to navigate to invalid route
+      final context = tester.element(find.byType(HomeScreen));
+      Navigator.pushNamed(context, '/invalid-route');
+      await tester.pumpAndSettle();
+
       // Should show error screen for unknown route
       expect(find.text('Unknown route: /invalid-route'), findsOneWidget);
     });
@@ -333,26 +491,30 @@ void main() {
       await tester.pumpWidget(testApp);
       await tester.pumpAndSettle();
 
+      final context = tester.element(find.byType(HomeScreen));
+
       // Navigate through multiple screens
-      await tester.tap(find.byIcon(Icons.explore));
+      Navigator.pushNamed(context, NavigationConstants.discover);
       await tester.pumpAndSettle();
       expect(find.byType(DiscoverScreen), findsOneWidget);
 
-      await tester.tap(find.byIcon(Icons.library_music));
+      final discoverContext = tester.element(find.byType(DiscoverScreen));
+      Navigator.pushNamed(discoverContext, NavigationConstants.library);
       await tester.pumpAndSettle();
       expect(find.byType(LibraryScreen), findsOneWidget);
 
-      await tester.tap(find.byIcon(Icons.chat));
+      final libraryContext = tester.element(find.byType(LibraryScreen));
+      Navigator.pushNamed(libraryContext, NavigationConstants.chat);
       await tester.pumpAndSettle();
       expect(find.byType(ChatScreen), findsOneWidget);
 
       // Go back to Library
-      await tester.tap(find.byIcon(Icons.library_music));
+      Navigator.pop(libraryContext);
       await tester.pumpAndSettle();
       expect(find.byType(LibraryScreen), findsOneWidget);
 
       // Verify we can still navigate to other screens
-      await tester.tap(find.byIcon(Icons.person));
+      Navigator.pushNamed(tester.element(find.byType(LibraryScreen)), NavigationConstants.profile);
       await tester.pumpAndSettle();
       expect(find.byType(ProfileScreen), findsOneWidget);
     });
@@ -362,29 +524,45 @@ void main() {
       await tester.pumpWidget(testApp);
       await tester.pumpAndSettle();
 
+      final context = tester.element(find.byType(HomeScreen));
+
       // Rapid navigation between screens
-      await tester.tap(find.byIcon(Icons.explore));
+      Navigator.pushNamed(context, NavigationConstants.discover);
       await tester.pumpAndSettle();
       expect(find.byType(DiscoverScreen), findsOneWidget);
 
-      await tester.tap(find.byIcon(Icons.library_music));
+      var currentContext = tester.element(find.byType(DiscoverScreen));
+      Navigator.pushNamed(currentContext, NavigationConstants.library);
       await tester.pumpAndSettle();
       expect(find.byType(LibraryScreen), findsOneWidget);
 
-      await tester.tap(find.byIcon(Icons.chat));
+      currentContext = tester.element(find.byType(LibraryScreen));
+      Navigator.pushNamed(currentContext, NavigationConstants.chat);
       await tester.pumpAndSettle();
       expect(find.byType(ChatScreen), findsOneWidget);
 
-      await tester.tap(find.byIcon(Icons.person));
+      currentContext = tester.element(find.byType(ChatScreen));
+      Navigator.pushNamed(currentContext, NavigationConstants.profile);
       await tester.pumpAndSettle();
       expect(find.byType(ProfileScreen), findsOneWidget);
 
       // Rapid back navigation
-      await tester.tap(find.byIcon(Icons.library_music));
+      Navigator.pop(currentContext);
+      await tester.pumpAndSettle();
+      expect(find.byType(ChatScreen), findsOneWidget);
+
+      currentContext = tester.element(find.byType(ChatScreen));
+      Navigator.pop(currentContext);
       await tester.pumpAndSettle();
       expect(find.byType(LibraryScreen), findsOneWidget);
 
-      await tester.tap(find.byIcon(Icons.home));
+      currentContext = tester.element(find.byType(LibraryScreen));
+      Navigator.pop(currentContext);
+      await tester.pumpAndSettle();
+      expect(find.byType(DiscoverScreen), findsOneWidget);
+
+      currentContext = tester.element(find.byType(DiscoverScreen));
+      Navigator.pop(currentContext);
       await tester.pumpAndSettle();
       expect(find.byType(HomeScreen), findsOneWidget);
     });

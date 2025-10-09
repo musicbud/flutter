@@ -36,12 +36,12 @@ class RegisterServerStatus extends RegisterState {
 }
 
 class RegisterSuccess extends RegisterState {
-  final Map<String, dynamic> data;
+  final dynamic data;
 
   const RegisterSuccess(this.data);
 
   @override
-  List<Object> get props => [data];
+  List<Object?> get props => [data];
 }
 
 class RegisterFailure extends RegisterState {

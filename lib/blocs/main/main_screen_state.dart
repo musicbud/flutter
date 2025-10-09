@@ -18,14 +18,18 @@ class MainScreenLoading extends MainScreenState {
 class MainScreenAuthenticated extends MainScreenState {
   final String username;
   final Map<String, dynamic> userProfile;
+  final List<dynamic> recentActivity;
+  final List<Map<String, dynamic>> featuredContent;
 
   const MainScreenAuthenticated({
     required this.username,
     required this.userProfile,
+    this.recentActivity = const [],
+    this.featuredContent = const [],
   });
 
   @override
-  List<Object> get props => [username, userProfile];
+  List<Object> get props => [username, userProfile, recentActivity, featuredContent];
 }
 
 class MainScreenUnauthenticated extends MainScreenState {

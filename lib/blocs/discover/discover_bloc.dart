@@ -22,6 +22,9 @@ class DiscoverBloc extends Bloc<DiscoverEvent, DiscoverState> {
     on<FetchLikedGenres>(_onFetchLikedGenres);
     on<FetchLikedAlbums>(_onFetchLikedAlbums);
     on<FetchPlayedTracks>(_onFetchPlayedTracks);
+    on<FetchTrendingTracks>(_onFetchTrendingTracks);
+    on<FetchFeaturedArtists>(_onFetchFeaturedArtists);
+    on<FetchNewReleases>(_onFetchNewReleases);
   }
 
   Future<void> _onPageLoaded(
@@ -235,6 +238,45 @@ class DiscoverBloc extends Bloc<DiscoverEvent, DiscoverState> {
       emit(PlayedTracksLoaded(tracks));
     } catch (e) {
       emit(PlayedTracksError(e.toString()));
+    }
+  }
+
+  Future<void> _onFetchTrendingTracks(
+    FetchTrendingTracks event,
+    Emitter<DiscoverState> emit,
+  ) async {
+    emit(const TrendingTracksLoading());
+    try {
+      final tracks = await repository.getTrendingTracks();
+      emit(TrendingTracksLoaded(tracks));
+    } catch (e) {
+      emit(TrendingTracksError(e.toString()));
+    }
+  }
+
+  Future<void> _onFetchFeaturedArtists(
+    FetchFeaturedArtists event,
+    Emitter<DiscoverState> emit,
+  ) async {
+    emit(const FeaturedArtistsLoading());
+    try {
+      final artists = await repository.getFeaturedArtists();
+      emit(FeaturedArtistsLoaded(artists));
+    } catch (e) {
+      emit(FeaturedArtistsError(e.toString()));
+    }
+  }
+
+  Future<void> _onFetchNewReleases(
+    FetchNewReleases event,
+    Emitter<DiscoverState> emit,
+  ) async {
+    emit(const NewReleasesLoading());
+    try {
+      final releases = await repository.getNewReleases();
+      emit(NewReleasesLoaded(releases));
+    } catch (e) {
+      emit(NewReleasesError(e.toString()));
     }
   }
 }

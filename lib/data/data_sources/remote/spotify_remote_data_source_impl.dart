@@ -1,5 +1,6 @@
 import 'package:musicbud_flutter/data/network/dio_client.dart';
 import 'package:musicbud_flutter/data/models/common_track.dart';
+import 'package:musicbud_flutter/config/api_config.dart';
 import 'spotify_remote_data_source.dart';
 
 class SpotifyRemoteDataSourceImpl implements SpotifyRemoteDataSource {
@@ -178,6 +179,16 @@ class SpotifyRemoteDataSourceImpl implements SpotifyRemoteDataSource {
       return data.map((json) => CommonTrack.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load tracks with location');
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> createSeedUser() async {
+    final response = await dioClient.post(ApiConfig.spotifySeedUserCreate);
+    if (response.statusCode == 200) {
+      return response.data as Map<String, dynamic>;
+    } else {
+      throw Exception('Failed to create seed user');
     }
   }
 }

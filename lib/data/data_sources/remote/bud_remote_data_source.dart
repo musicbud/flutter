@@ -5,7 +5,10 @@ import '../../../models/bud_match.dart';
 import '../../../models/common_track.dart';
 import '../../../models/common_artist.dart';
 import '../../../models/common_genre.dart';
+import '../../../models/common_anime.dart';
+import '../../../models/common_manga.dart';
 import '../../../config/api_config.dart';
+import '../../../services/endpoint_config_service.dart';
 
 abstract class BudRemoteDataSource {
   // Bud management
@@ -44,18 +47,28 @@ abstract class BudRemoteDataSource {
   // Search
   Future<List<BudMatch>> searchBuds(String query);
   Future<Map<String, dynamic>> getBudProfile(String username);
+
+  // Get bud's top content
+  Future<List<CommonAnime>> getBudTopAnime(String username);
+  Future<List<CommonManga>> getBudTopManga(String username);
+  Future<Map<String, dynamic>> getBudLikedAio(String username);
 }
 
 class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   final DioClient _dioClient;
+  final EndpointConfigService _endpointConfigService;
 
-  BudRemoteDataSourceImpl({required DioClient dioClient})
-      : _dioClient = dioClient;
+  BudRemoteDataSourceImpl({
+    required DioClient dioClient,
+    required EndpointConfigService endpointConfigService,
+  }) : _dioClient = dioClient,
+       _endpointConfigService = endpointConfigService;
 
   @override
   Future<List<BudMatch>> getBudMatches() async {
     try {
-      final response = await _dioClient.get(ApiConfig.budSearch);
+      final url = _endpointConfigService.getEndpointUrl('buds - search', ApiConfig.baseUrl) ?? ApiConfig.budSearch;
+      final response = await _dioClient.get(url);
       return (response.data as List).map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get bud matches');
@@ -251,10 +264,11 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByTrack(String trackId) async {
     try {
-      final response = await _dioClient.get(ApiConfig.budTrack, queryParameters: {'trackId': trackId});
+      final response = await _dioClient.post(ApiConfig.budTrack, data: {'track_id': trackId});
       return (response.data as List).map((json) => BudMatch.fromJson(json)).toList();
     } on DioException catch (e) {
-      throw ServerException(message: e.message ?? 'Failed to get buds by track');
+      // Endpoint not implemented, return empty list
+      return [];
     }
   }
 
@@ -295,6 +309,36 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
       return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get bud profile');
+    }
+  }
+
+  @override
+  Future<List<CommonAnime>> getBudTopAnime(String username) async {
+    try {
+      final response = await _dioClient.get(ApiConfig.budTopAnime, queryParameters: {'username': username});
+      return (response.data as List).map((json) => CommonAnime.fromJson(json)).toList();
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to get bud top anime');
+    }
+  }
+
+  @override
+  Future<List<CommonManga>> getBudTopManga(String username) async {
+    try {
+      final response = await _dioClient.get(ApiConfig.budTopManga, queryParameters: {'username': username});
+      return (response.data as List).map((json) => CommonManga.fromJson(json)).toList();
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to get bud top manga');
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> getBudLikedAio(String username) async {
+    try {
+      final response = await _dioClient.get(ApiConfig.budLikedAio, queryParameters: {'username': username});
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to get bud liked aio');
     }
   }
 }

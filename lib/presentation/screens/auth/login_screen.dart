@@ -7,6 +7,7 @@ import '../../../blocs/auth/auth_bloc.dart';
 import '../../../core/theme/design_system.dart';
 import '../../../presentation/widgets/common/modern_input_field.dart';
 import '../../../presentation/widgets/common/modern_button.dart';
+import 'register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -133,7 +134,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Register link
                     TextButton(
                       onPressed: () {
-                        // TODO: Navigate to register screen
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const RegisterScreen(),
+                          ),
+                        );
                       },
                       child: const Text(
                         'Don\'t have an account? Sign up',

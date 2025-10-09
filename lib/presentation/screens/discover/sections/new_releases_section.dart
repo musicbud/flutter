@@ -6,11 +6,17 @@ import '../components/release_card.dart';
 class NewReleasesSection extends StatelessWidget {
   final List<Album> albums;
   final bool isLoading;
+  final bool hasError;
+  final String? errorMessage;
+  final VoidCallback? onRetry;
 
   const NewReleasesSection({
     super.key,
     required this.albums,
     this.isLoading = false,
+    this.hasError = false,
+    this.errorMessage,
+    this.onRetry,
   });
 
   @override
@@ -32,30 +38,49 @@ class NewReleasesSection extends StatelessWidget {
             height: 280,
             child: isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : albums.isEmpty
-                    ? const Center(child: Text('No new releases available'))
-                    : ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: albums.map((album) => Padding(
-                          padding: EdgeInsets.only(right: DesignSystem.spacingMD),
-                          child: ReleaseCard(
-                            title: album.name,
-                            artist: album.artistName,
-                            type: 'Album',
-                            imageUrl: album.imageUrls?.first,
-                            icon: Icons.album,
-                            accentColor: Colors.blue,
-                            onTap: () {
-                              // Navigate to album detail
-                              Navigator.pushNamed(
-                                context,
-                                '/album/${album.id}',
-                                arguments: album,
-                              );
-                            },
+                : hasError
+                    ? Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              errorMessage ?? 'Failed to load new releases',
+                              style: DesignSystem.bodyMedium.copyWith(
+                                color: DesignSystem.error,
+                              ),
+                            ),
+                            const SizedBox(height: DesignSystem.spacingMD),
+                            ElevatedButton(
+                              onPressed: onRetry,
+                              child: const Text('Retry'),
+                            ),
+                          ],
+                        ),
+                      )
+                    : albums.isEmpty
+                        ? const Center(child: Text('No new releases available'))
+                        : ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: albums.map((album) => Padding(
+                              padding: EdgeInsets.only(right: DesignSystem.spacingMD),
+                              child: ReleaseCard(
+                                title: album.name,
+                                artist: album.artistName,
+                                type: 'Album',
+                                imageUrl: album.imageUrls?.first,
+                                icon: Icons.album,
+                                accentColor: Colors.blue,
+                                onTap: () {
+                                  // Navigate to album detail
+                                  Navigator.pushNamed(
+                                    context,
+                                    '/album/${album.id}',
+                                    arguments: album,
+                                  );
+                                },
+                              ),
+                            )).toList(),
                           ),
-                        )).toList(),
-                      ),
           ),
         ],
       ),

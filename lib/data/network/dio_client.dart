@@ -1,18 +1,23 @@
 import 'package:dio/dio.dart';
 import '../../utils/http_utils.dart';
 import '../providers/token_provider.dart';
+import '../../domain/repositories/auth_repository.dart';
 
 /// A wrapper around [Dio] that provides consistent error handling and configuration
 class DioClient {
   final Dio _dio;
   final TokenProvider _tokenProvider;
+  final AuthRepository? _authRepository;
+  bool _isRefreshing = false;
 
   DioClient({
     required String baseUrl,
     required Dio dio,
     required TokenProvider tokenProvider,
+    AuthRepository? authRepository,
   }) : _dio = dio,
-        _tokenProvider = tokenProvider {
+        _tokenProvider = tokenProvider,
+        _authRepository = authRepository {
     _dio.options.baseUrl = baseUrl;
     _dio.options.connectTimeout = const Duration(seconds: 30);
     _dio.options.receiveTimeout = const Duration(seconds: 30);
@@ -53,7 +58,7 @@ class DioClient {
 
           return handler.next(response);
         },
-        onError: (error, handler) {
+        onError: (error, handler) async {
           // Log the error
           HttpUtils.logError(
             error.response?.statusCode,
@@ -61,6 +66,63 @@ class DioClient {
             message: error.message,
             data: error.response?.data,
           );
+
+          // Handle 401 Unauthorized - attempt token refresh
+          if (error.response?.statusCode == 401 && _authRepository != null) {
+            if (!_isRefreshing) {
+              _isRefreshing = true;
+              try {
+                // Attempt to refresh token
+                final refreshResult = await _authRepository!.refreshToken();
+                // Update the token
+                await _tokenProvider.updateAccessToken(refreshResult.accessToken);
+
+                // Retry the original request with new token
+                final retryOptions = error.requestOptions;
+                retryOptions.headers['Authorization'] = 'Bearer ${refreshResult.accessToken}';
+
+                final retryResponse = await _dio.request(
+                  retryOptions.path,
+                  options: Options(
+                    method: retryOptions.method,
+                    headers: retryOptions.headers,
+                  ),
+                  data: retryOptions.data,
+                  queryParameters: retryOptions.queryParameters,
+                );
+
+                _isRefreshing = false;
+                return handler.resolve(retryResponse);
+              } catch (refreshError) {
+                _isRefreshing = false;
+                // If refresh fails, clear tokens and let the error propagate
+                await _tokenProvider.clearTokens();
+                return handler.next(error);
+              }
+            } else {
+              // If already refreshing, wait a bit and retry
+              await Future.delayed(const Duration(milliseconds: 100));
+              if (_tokenProvider.token != null) {
+                final retryOptions = error.requestOptions;
+                retryOptions.headers['Authorization'] = 'Bearer ${_tokenProvider.token}';
+
+                try {
+                  final retryResponse = await _dio.request(
+                    retryOptions.path,
+                    options: Options(
+                      method: retryOptions.method,
+                      headers: retryOptions.headers,
+                    ),
+                    data: retryOptions.data,
+                    queryParameters: retryOptions.queryParameters,
+                  );
+                  return handler.resolve(retryResponse);
+                } catch (retryError) {
+                  return handler.next(error);
+                }
+              }
+            }
+          }
 
           // Create a new error with enhanced message for 404 errors
           if (HttpUtils.isNotFoundError(error)) {

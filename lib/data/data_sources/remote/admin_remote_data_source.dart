@@ -1,4 +1,5 @@
 import '../../../models/admin.dart';
+import '../../../models/health_response.dart';
 import '../../network/dio_client.dart';
 
 abstract class AdminRemoteDataSource {
@@ -7,10 +8,12 @@ abstract class AdminRemoteDataSource {
   Future<void> unbanUser(String userId);
   Future<void> deleteContent(String contentId, String contentType);
   Future<Map<String, dynamic>> getSystemHealth();
+  Future<HealthResponse> checkHealth();
   Future<List<AdminAction>> getRecentActions({int limit = 10});
   Future<void> performAdminAction(AdminAction action);
   Future<void> updateSystemSettings(Map<String, dynamic> settings);
   Future<Map<String, dynamic>> getSystemSettings();
+  Future<Map<String, dynamic>> mergeSimilars();
 }
 
 class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
@@ -68,6 +71,16 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
   }
 
   @override
+  Future<HealthResponse> checkHealth() async {
+    try {
+      final response = await dioClient.post('/health');
+      return HealthResponse.fromJson(response.data);
+    } catch (e) {
+      throw Exception('Failed to check health: $e');
+    }
+  }
+
+  @override
   Future<List<AdminAction>> getRecentActions({int limit = 10}) async {
     try {
       final response = await dioClient.get('/admin/actions', queryParameters: {'limit': limit});
@@ -103,6 +116,16 @@ class AdminRemoteDataSourceImpl implements AdminRemoteDataSource {
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to fetch system settings: $e');
+    }
+  }
+
+  @override
+  Future<Map<String, dynamic>> mergeSimilars() async {
+    try {
+      final response = await dioClient.post('/merge-similars');
+      return response.data as Map<String, dynamic>;
+    } catch (e) {
+      throw Exception('Failed to merge similars: $e');
     }
   }
 }

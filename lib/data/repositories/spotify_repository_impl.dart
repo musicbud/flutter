@@ -86,4 +86,9 @@ class SpotifyRepositoryImpl implements SpotifyRepository {
   Future<List<CommonTrack>> getPlayedTracksWithLocation() {
     return remoteDataSource.getPlayedTracksWithLocation();
   }
+
+  @override
+  Future<Map<String, dynamic>> createSeedUser() {
+    return remoteDataSource.createSeedUser();
+  }
 }

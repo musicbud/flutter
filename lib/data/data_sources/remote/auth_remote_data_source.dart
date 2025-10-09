@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import '../../../core/error/exceptions.dart';
 import '../../../config/api_config.dart';
 import '../../../utils/http_utils.dart';
+import '../../../services/endpoint_config_service.dart';
 import '../../network/dio_client.dart';
 
 abstract class AuthRemoteDataSource {
@@ -22,9 +23,13 @@ abstract class AuthRemoteDataSource {
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final DioClient _dioClient;
+  final EndpointConfigService _endpointConfigService;
 
-  AuthRemoteDataSourceImpl({required DioClient dioClient})
-      : _dioClient = dioClient;
+  AuthRemoteDataSourceImpl({
+    required DioClient dioClient,
+    required EndpointConfigService endpointConfigService,
+  }) : _dioClient = dioClient,
+       _endpointConfigService = endpointConfigService;
 
   @override
   Future<Map<String, dynamic>> login(String username, String password) async {
@@ -105,7 +110,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> logout() async {
     try {
-      await _dioClient.get(ApiConfig.logout);
+      await _dioClient.post(ApiConfig.logout);
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to logout');
     }
@@ -115,7 +120,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<String> getServiceAuthUrl() async {
     try {
-      final response = await _dioClient.get(ApiConfig.serviceLogin);
+      final url = _endpointConfigService.getEndpointUrl('auth - service login', ApiConfig.baseUrl) ?? ApiConfig.serviceLogin;
+      final response = await _dioClient.get(url);
       return response.data['url'];
     } on DioException catch (e) {
       throw ServerException(
@@ -126,7 +132,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<String> getServiceLoginUrl(String service) async {
     try {
-      final response = await _dioClient.get('${ApiConfig.serviceLogin}?service=$service');
+      final baseUrl = _endpointConfigService.getEndpointUrl('auth - service login', ApiConfig.baseUrl) ?? ApiConfig.serviceLogin;
+      final response = await _dioClient.get('$baseUrl?service=$service');
       return response.data['data']['authorization_link'];
     } on DioException catch (e) {
       throw ServerException(
@@ -137,7 +144,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> connectSpotify(String code) async {
     try {
-      await _dioClient.post(ApiConfig.spotifyConnect, data: {
+      final url = _endpointConfigService.getEndpointUrl('auth - connect service - spotify connect', ApiConfig.baseUrl) ?? ApiConfig.spotifyConnect;
+      await _dioClient.post(url, data: {
         'code': code,
       });
     } on DioException catch (e) {
@@ -149,7 +157,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> connectYTMusic(String code) async {
     try {
-      await _dioClient.post(ApiConfig.ytmusicConnect, data: {
+      final url = _endpointConfigService.getEndpointUrl('auth - connect service - ytmusic connect', ApiConfig.baseUrl) ?? ApiConfig.ytmusicConnect;
+      await _dioClient.post(url, data: {
         'code': code,
       });
     } on DioException catch (e) {
@@ -161,7 +170,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> connectLastFM(String code) async {
     try {
-      await _dioClient.post(ApiConfig.lastfmConnect, data: {
+      final url = _endpointConfigService.getEndpointUrl('auth - connect service - lastfm connect', ApiConfig.baseUrl) ?? ApiConfig.lastfmConnect;
+      await _dioClient.post(url, data: {
         'code': code,
       });
     } on DioException catch (e) {
@@ -173,7 +183,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> connectMAL(String code) async {
     try {
-      await _dioClient.post(ApiConfig.malConnect, data: {
+      final url = _endpointConfigService.getEndpointUrl('auth - connect service - mal connect', ApiConfig.baseUrl) ?? ApiConfig.malConnect;
+      await _dioClient.post(url, data: {
         'code': code,
       });
     } on DioException catch (e) {
@@ -185,7 +196,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> refreshSpotifyToken() async {
     try {
-      await _dioClient.post(ApiConfig.spotifyRefreshToken);
+      final url = _endpointConfigService.getEndpointUrl('auth - spotify refresh-token', ApiConfig.baseUrl) ?? ApiConfig.spotifyRefreshToken;
+      await _dioClient.post(url);
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to refresh Spotify token');
@@ -195,7 +207,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> refreshYTMusicToken() async {
     try {
-      await _dioClient.post(ApiConfig.ytmusicRefreshToken);
+      final url = _endpointConfigService.getEndpointUrl('auth - ytmusic refresh-token', ApiConfig.baseUrl) ?? ApiConfig.ytmusicRefreshToken;
+      await _dioClient.post(url);
     } on DioException catch (e) {
       throw ServerException(
           message: e.message ?? 'Failed to refresh YouTube Music token');

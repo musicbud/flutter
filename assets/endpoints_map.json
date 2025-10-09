@@ -1,0 +1,296 @@
+[
+    {
+        "name": "buds - get bud profile",
+        "method": "POST",
+        "url": "http://{{host}}/bud/profile",
+        "status": "done"
+    },
+    {
+        "name": "buds - get buds by top artists",
+        "method": "POST",
+        "url": "http://{{host}}/bud/top/artists",
+        "status": "done"
+    },
+    {
+        "name": "buds - get buds by top tracks",
+        "method": "POST",
+        "url": "http://{{host}}/bud/top/tracks",
+        "status": "done"
+    },
+    {
+        "name": "buds - get buds by top genres",
+        "method": "POST",
+        "url": "http://{{host}}/bud/top/genres",
+        "status": "done"
+    },
+    {
+        "name": "buds - get buds by top anime",
+        "method": "POST",
+        "url": "http://{{host}}/bud/top/anime",
+        "status": "done"
+    },
+    {
+        "name": "buds - get buds by top manga",
+        "method": "POST",
+        "url": "http://{{host}}/bud/top/manga",
+        "status": "done"
+    },
+    {
+        "name": "buds - get buds by liked artists",
+        "method": "POST",
+        "url": "http://{{host}}/bud/liked/artists",
+        "status": "done"
+    },
+    {
+        "name": "buds - get buds by liked tracks",
+        "method": "POST",
+        "url": "http://{{host}}/bud/liked/tracks",
+        "status": "done"
+    },
+    {
+        "name": "buds - get buds by liked genres",
+        "method": "POST",
+        "url": "http://{{host}}/bud/liked/genres",
+        "status": "done"
+    },
+    {
+        "name": "buds - get buds by liked albums",
+        "method": "POST",
+        "url": "http://{{host}}/bud/liked/albums",
+        "status": "done"
+    },
+    {
+        "name": "buds - get buds by liked aio",
+        "method": "POST",
+        "url": "http://{{host}}/bud/liked/aio",
+        "status": "done"
+    },
+    {
+        "name": "buds - get buds by played tracks",
+        "method": "POST",
+        "url": "http://{{host}}/bud/played/tracks",
+        "status": "done"
+    },
+    {
+        "name": "buds - get buds by track",
+        "method": "POST",
+        "url": "http://{{host}}/bud/track",
+        "status": "done"
+    },
+    {
+        "name": "buds - get buds by artist",
+        "method": "POST",
+        "url": "http://{{host}}/bud/artist",
+        "status": "done"
+    },
+    {
+        "name": "buds - get buds by genre",
+        "method": "POST",
+        "url": "http://{{host}}/bud/genre",
+        "status": "done"
+    },
+    {
+        "name": "auth - connect service - spotify connect",
+        "method": "POST",
+        "url": "http://{{host}}/spotify/connect",
+        "status": "done"
+    },
+    {
+        "name": "auth - connect service - ytmusic connect",
+        "method": "POST",
+        "url": "http://{{host}}/ytmusic/connect",
+        "status": "done"
+    },
+    {
+        "name": "auth - connect service - lastfm connect",
+        "method": "POST",
+        "url": "http://{{host}}/lastfm/connect",
+        "status": "done"
+    },
+    {
+        "name": "auth - connect service - mal connect",
+        "method": "POST",
+        "url": "http://{{host}}/mal/connect",
+        "status": "done"
+    },
+    {
+        "name": "auth - login",
+        "method": "POST",
+        "url": "http://{{host}}/login",
+        "status": "done"
+    },
+    {
+        "name": "auth - register",
+        "method": "POST",
+        "url": "http://{{host}}/register",
+        "status": "done"
+    },
+    {
+        "name": "auth - service login",
+        "method": "GET",
+        "url": "http://{{host}}/service/login?service=spotify",
+        "status": "done"
+    },
+    {
+        "name": "auth - spotify refresh-token",
+        "method": "POST",
+        "url": "http://{{host}}/spotify/token/refresh",
+        "status": "done"
+    },
+    {
+        "name": "common - top artists",
+        "method": "POST",
+        "url": "http://{{host}}/bud/common/top/artists",
+        "status": "done"
+    },
+    {
+        "name": "common - top tracks",
+        "method": "POST",
+        "url": "http://{{host}}/bud/common/top/tracks",
+        "status": "done"
+    },
+    {
+        "name": "common - top genres",
+        "method": "POST",
+        "url": "http://{{host}}/bud/common/top/genres",
+        "status": "done"
+    },
+    {
+        "name": "common - top anime",
+        "method": "POST",
+        "url": "http://{{host}}/bud/common/top/anime",
+        "status": "done"
+    },
+    {
+        "name": "common - top manga",
+        "method": "POST",
+        "url": "http://{{host}}/bud/common/top/manga",
+        "status": "done"
+    },
+    {
+        "name": "common - liked artists",
+        "method": "POST",
+        "url": "http://{{host}}/bud/common/liked/artists",
+        "status": "done"
+    },
+    {
+        "name": "common - liked tracks",
+        "method": "POST",
+        "url": "http://{{host}}/bud/common/liked/tracks",
+        "status": "done"
+    },
+    {
+        "name": "common - liked genres",
+        "method": "POST",
+        "url": "http://{{host}}/bud/common/liked/genres",
+        "status": "done"
+    },
+    {
+        "name": "common - liked albums",
+        "method": "POST",
+        "url": "http://{{host}}/bud/common/liked/albums",
+        "status": "done"
+    },
+    {
+        "name": "common - played tracks",
+        "method": "POST",
+        "url": "http://{{host}}/bud/common/played/tracks",
+        "status": "done"
+    },
+    {
+        "name": "me - get profile",
+        "method": "POST",
+        "url": "http://{{host}}/me/profile",
+        "status": "done"
+    },
+    {
+        "name": "me - set profile",
+        "method": "POST",
+        "url": "http://{{host}}/me/profile/set",
+        "status": "done"
+    },
+    {
+        "name": "me - update my likes",
+        "method": "POST",
+        "url": "http://{{host}}/me/likes/update",
+        "status": "done"
+    },
+    {
+        "name": "me - top artists",
+        "method": "POST",
+        "url": "http://{{host}}/me/top/artists",
+        "status": "done"
+    },
+    {
+        "name": "me - top tracks",
+        "method": "POST",
+        "url": "http://{{host}}/me/top/tracks",
+        "status": "done"
+    },
+    {
+        "name": "me - top genres",
+        "method": "POST",
+        "url": "http://{{host}}/me/top/genres",
+        "status": "done"
+    },
+    {
+        "name": "me - top anime",
+        "method": "POST",
+        "url": "http://{{host}}/me/top/anime",
+        "status": "done"
+    },
+    {
+        "name": "me - top manga",
+        "method": "POST",
+        "url": "http://{{host}}/me/top/manga",
+        "status": "done"
+    },
+    {
+        "name": "me - liked artists",
+        "method": "POST",
+        "url": "http://{{host}}/me/liked/artists",
+        "status": "done"
+    },
+    {
+        "name": "me - liked tracks",
+        "method": "POST",
+        "url": "http://{{host}}/me/liked/tracks",
+        "status": "done"
+    },
+    {
+        "name": "me - liked genres",
+        "method": "POST",
+        "url": "http://{{host}}/me/liked/genres",
+        "status": "done"
+    },
+    {
+        "name": "me - liked albums",
+        "method": "POST",
+        "url": "http://{{host}}/me/liked/albums",
+        "status": "done"
+    },
+    {
+        "name": "me - played tracks",
+        "method": "POST",
+        "url": "http://{{host}}/me/played/tracks",
+        "status": "done"
+    },
+    {
+        "name": "spotify create user seed",
+        "method": "GET",
+        "url": "http://{{host}}/spotify/seed/user/create",
+        "status": "done"
+    },
+    {
+        "name": "merge similars",
+        "method": "GET",
+        "url": "http://{{host}}/merge-similars",
+        "status": "done"
+    },
+    {
+        "name": "health",
+        "method": "POST",
+        "url": "http://{{host}}/health",
+        "status": "done"
+    }
+]

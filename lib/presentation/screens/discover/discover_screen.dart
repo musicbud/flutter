@@ -127,12 +127,19 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                     builder: (context, state) {
                       final artists = state is TopArtistsLoaded ? state.artists : <Artist>[];
                       final isLoading = state is TopArtistsLoading;
+                      final hasError = state is TopArtistsError;
+                      final errorMessage = hasError ? (state as TopArtistsError).message : null;
                       return FeaturedArtistsSection(
                         artists: artists,
                         isLoading: isLoading,
+                        hasError: hasError,
+                        errorMessage: errorMessage,
                         onViewAllPressed: () {
                           // Navigate to all artists
                           Navigator.pushNamed(context, '/artists');
+                        },
+                        onRetry: () {
+                          context.read<DiscoverBloc>().add(const FetchTopArtists());
                         },
                       );
                     },
@@ -149,12 +156,19 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                     builder: (context, state) {
                       final tracks = state is TopTracksLoaded ? state.tracks : <Track>[];
                       final isLoading = state is TopTracksLoading;
+                      final hasError = state is TopTracksError;
+                      final errorMessage = hasError ? (state as TopTracksError).message : null;
                       return TrendingTracksSection(
                         tracks: tracks,
                         isLoading: isLoading,
+                        hasError: hasError,
+                        errorMessage: errorMessage,
                         onViewAllPressed: () {
                           // Navigate to all tracks
                           Navigator.pushNamed(context, '/tracks');
+                        },
+                        onRetry: () {
+                          context.read<DiscoverBloc>().add(const FetchTopTracks());
                         },
                       );
                     },
@@ -171,9 +185,16 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                     builder: (context, state) {
                       final albums = state is LikedAlbumsLoaded ? state.albums : <Album>[];
                       final isLoading = state is LikedAlbumsLoading;
+                      final hasError = state is LikedAlbumsError;
+                      final errorMessage = hasError ? (state as LikedAlbumsError).message : null;
                       return NewReleasesSection(
                         albums: albums,
                         isLoading: isLoading,
+                        hasError: hasError,
+                        errorMessage: errorMessage,
+                        onRetry: () {
+                          context.read<DiscoverBloc>().add(const FetchLikedAlbums());
+                        },
                       );
                     },
                   ),

@@ -1,21 +1,29 @@
 import '../../domain/repositories/auth_repository.dart';
+import '../../models/auth_response.dart';
 import '../data_sources/remote/auth_remote_data_source.dart';
+import '../providers/token_provider.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _authRemoteDataSource;
+  final TokenProvider _tokenProvider;
 
-  AuthRepositoryImpl({required AuthRemoteDataSource authRemoteDataSource})
-      : _authRemoteDataSource = authRemoteDataSource;
+  AuthRepositoryImpl({
+    required AuthRemoteDataSource authRemoteDataSource,
+    required TokenProvider tokenProvider,
+  }) : _authRemoteDataSource = authRemoteDataSource,
+       _tokenProvider = tokenProvider;
 
   @override
-  Future<Map<String, dynamic>> login(String username, String password) async {
-    return await _authRemoteDataSource.login(username, password);
+  Future<LoginResponse> login(String username, String password) async {
+    final result = await _authRemoteDataSource.login(username, password);
+    return LoginResponse.fromJson(result);
   }
 
   @override
-  Future<Map<String, dynamic>> register(
+  Future<RegisterResponse> register(
       String username, String email, String password) async {
-    return await _authRemoteDataSource.register(username, email, password);
+    final result = await _authRemoteDataSource.register(username, email, password);
+    return RegisterResponse.fromJson(result);
   }
 
   @override
@@ -30,9 +38,13 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<String> refreshToken() async {
-    final result = await _authRemoteDataSource.refreshToken('');
-    return result['access_token'] ?? '';
+  Future<TokenRefreshResponse> refreshToken() async {
+    final refreshToken = _tokenProvider.refreshToken;
+    if (refreshToken == null) {
+      throw Exception('No refresh token available');
+    }
+    final result = await _authRemoteDataSource.refreshToken(refreshToken);
+    return TokenRefreshResponse.fromJson(result);
   }
 
   @override

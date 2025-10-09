@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../blocs/user_profile/user_profile_bloc.dart';
+import '../../../blocs/user/user_bloc.dart';
+import '../../../blocs/user/user_state.dart';
 import '../../widgets/home/quick_actions_grid.dart';
 
 class HomeQuickActions extends StatelessWidget {
@@ -8,7 +9,7 @@ class HomeQuickActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserProfileBloc, UserProfileState>(
+    return BlocBuilder<UserBloc, UserState>(
       builder: (context, state) {
         return QuickActionsGrid(
           crossAxisCount: 2,

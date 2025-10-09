@@ -5,6 +5,7 @@ import '../../../models/album.dart';
 import '../../../models/genre.dart';
 import '../../../models/common_anime.dart';
 import '../../../models/common_manga.dart';
+import '../../../models/user_profile.dart';
 
 abstract class DiscoverRepository {
   /// Get available discovery categories
@@ -19,6 +20,15 @@ abstract class DiscoverRepository {
     required String type,
     required String action,
   });
+
+  /// Get user's profile
+  Future<UserProfile> getProfile();
+
+  /// Set user's profile
+  Future<void> setProfile(UserProfileUpdateRequest profile);
+
+  /// Update user's likes
+  Future<void> updateLikes(Map<String, dynamic> likes);
 
   /// Get user's top tracks
   Future<List<Track>> getTopTracks();
@@ -49,4 +59,19 @@ abstract class DiscoverRepository {
 
   /// Get user's played tracks
   Future<List<Track>> getPlayedTracks();
+
+  /// Get featured artists for discover page
+  Future<List<Map<String, dynamic>>> getFeaturedArtists();
+
+  /// Get trending tracks for discover page
+  Future<List<Map<String, dynamic>>> getTrendingTracks();
+
+  /// Get new releases for discover page
+  Future<List<Map<String, dynamic>>> getNewReleases();
+
+  /// Get discover actions for discover page
+  Future<List<Map<String, dynamic>>> getDiscoverActions();
+
+  /// Get discover categories
+  Future<List<String>> getDiscoverCategories();
 }

@@ -79,3 +79,15 @@ class FetchLikedAlbums extends DiscoverEvent {
 class FetchPlayedTracks extends DiscoverEvent {
   const FetchPlayedTracks();
 }
+
+class FetchTrendingTracks extends DiscoverEvent {
+  const FetchTrendingTracks();
+}
+
+class FetchFeaturedArtists extends DiscoverEvent {
+  const FetchFeaturedArtists();
+}
+
+class FetchNewReleases extends DiscoverEvent {
+  const FetchNewReleases();
+}

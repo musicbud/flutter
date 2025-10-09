@@ -17,4 +17,5 @@ abstract class SpotifyRemoteDataSource {
   Future<void> saveLocation(double latitude, double longitude);
   Future<void> saveTrackLocation(String trackId, double latitude, double longitude);
   Future<List<CommonTrack>> getPlayedTracksWithLocation();
+  Future<Map<String, dynamic>> createSeedUser();
 }

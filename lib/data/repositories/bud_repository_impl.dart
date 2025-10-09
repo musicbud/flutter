@@ -2,6 +2,8 @@ import '../../models/bud_match.dart';
 import '../../models/common_track.dart';
 import '../../models/common_artist.dart';
 import '../../models/common_genre.dart';
+import '../../models/common_anime.dart';
+import '../../models/common_manga.dart';
 import '../../domain/repositories/bud_repository.dart';
 import '../data_sources/remote/bud_remote_data_source.dart';
 
@@ -130,5 +132,25 @@ class BudRepositoryImpl implements BudRepository {
   @override
   Future<List<BudMatch>> searchBuds(String query) async {
     return await _budRemoteDataSource.searchBuds(query);
+  }
+
+  @override
+  Future<Map<String, dynamic>> getBudProfile(String username) async {
+    return await _budRemoteDataSource.getBudProfile(username);
+  }
+
+  @override
+  Future<List<CommonAnime>> getBudTopAnime(String username) async {
+    return await _budRemoteDataSource.getBudTopAnime(username);
+  }
+
+  @override
+  Future<List<CommonManga>> getBudTopManga(String username) async {
+    return await _budRemoteDataSource.getBudTopManga(username);
+  }
+
+  @override
+  Future<Map<String, dynamic>> getBudLikedAio(String username) async {
+    return await _budRemoteDataSource.getBudLikedAio(username);
   }
 }

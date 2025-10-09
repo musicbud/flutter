@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../blocs/library/library_bloc.dart';
+import '../../../../blocs/library/library_event.dart';
 import '../../../../blocs/library/library_state.dart';
 import '../../../../core/theme/design_system.dart';
 import '../components/song_card.dart';
@@ -16,6 +17,37 @@ class LikedSongsTab extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
 
+        if (state is LibraryError) {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Failed to load liked songs',
+                  style: DesignSystem.headlineSmall.copyWith(
+                    color: DesignSystem.error,
+                  ),
+                ),
+                const SizedBox(height: DesignSystem.spacingMD),
+                Text(
+                  state.message,
+                  style: DesignSystem.bodyMedium.copyWith(
+                    color: DesignSystem.onSurfaceVariant,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: DesignSystem.spacingMD),
+                ElevatedButton(
+                  onPressed: () {
+                    context.read<LibraryBloc>().add(const LibraryItemsRequested(type: 'liked_songs'));
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          );
+        }
+
         if (state is LibraryLoaded && state.items.isNotEmpty) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,7 +60,7 @@ class LikedSongsTab extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: DesignSystem.spacingMD),
- 
+
               // Liked Songs List
               Column(
                 children: state.items.map((item) {

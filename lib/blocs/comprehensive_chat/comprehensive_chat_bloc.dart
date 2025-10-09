@@ -97,7 +97,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
     emit(ComprehensiveChatLoading());
     try {
       final result = await _authRepository.login(event.username, event.password);
-      emit(LoginSuccess(result));
+      emit(LoginSuccess(result.toJson()));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }
@@ -110,7 +110,7 @@ class ComprehensiveChatBloc extends Bloc<ComprehensiveChatEvent, ComprehensiveCh
     emit(ComprehensiveChatLoading());
     try {
       final result = await _authRepository.register(event.username, event.email, event.password);
-      emit(RegisterSuccess(result));
+      emit(RegisterSuccess(result.toJson()));
     } catch (e) {
       emit(ComprehensiveChatError(e.toString()));
     }

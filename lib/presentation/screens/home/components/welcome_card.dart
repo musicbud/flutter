@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../../blocs/user_profile/user_profile_bloc.dart';
+import '../../../../blocs/main/main_screen_bloc.dart';
+import '../../../../blocs/main/main_screen_state.dart';
 import '../../../../core/theme/design_system.dart';
 
 /// A reusable welcome card component that displays user greeting and avatar
@@ -9,7 +10,7 @@ class WelcomeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserProfileBloc, UserProfileState>(
+    return BlocBuilder<MainScreenBloc, MainScreenState>(
       builder: (context, state) {
         return Container(
           padding: const EdgeInsets.all(DesignSystem.spacingLG),
@@ -33,12 +34,18 @@ class WelcomeCard extends StatelessWidget {
 }
 
 class _ProfileAvatar extends StatelessWidget {
-  final UserProfileState state;
+  final MainScreenState state;
 
   const _ProfileAvatar({required this.state});
 
   @override
   Widget build(BuildContext context) {
+    String? avatarUrl;
+    if (state is MainScreenAuthenticated) {
+      final userProfile = (state as MainScreenAuthenticated).userProfile;
+      avatarUrl = userProfile['avatarUrl'] as String?;
+    }
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
@@ -51,10 +58,8 @@ class _ProfileAvatar extends StatelessWidget {
       child: CircleAvatar(
         radius: 28,
         backgroundColor: DesignSystem.primary,
-        backgroundImage: state is UserProfileLoaded && (state as UserProfileLoaded).userProfile.avatarUrl != null
-            ? NetworkImage((state as UserProfileLoaded).userProfile.avatarUrl!)
-            : null,
-        child: state is UserProfileLoaded && (state as UserProfileLoaded).userProfile.avatarUrl == null
+        backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl) : null,
+        child: avatarUrl == null
             ? const Icon(
                 Icons.person,
                 color: DesignSystem.onPrimary,
@@ -67,7 +72,7 @@ class _ProfileAvatar extends StatelessWidget {
 }
 
 class _WelcomeText extends StatelessWidget {
-  final UserProfileState state;
+  final MainScreenState state;
 
   const _WelcomeText({required this.state});
 
@@ -85,8 +90,8 @@ class _WelcomeText extends StatelessWidget {
         ),
         const SizedBox(height: DesignSystem.spacingXS),
         Text(
-          state is UserProfileLoaded
-              ? ((state as UserProfileLoaded).userProfile.displayName ?? (state as UserProfileLoaded).userProfile.username)
+          state is MainScreenAuthenticated
+              ? ((state as MainScreenAuthenticated).userProfile['displayName'] ?? (state as MainScreenAuthenticated).userProfile['username'] ?? 'User')
               : 'Loading...',
           style: DesignSystem.headlineSmall.copyWith(
             color: DesignSystem.onSurface,

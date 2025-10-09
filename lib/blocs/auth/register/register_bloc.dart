@@ -58,7 +58,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         event.email,
         event.password,
       );
-      emit(RegisterSuccess(data));
+      emit(RegisterSuccess(data.toJson()));
     } catch (e) {
       emit(RegisterFailure(e.toString()));
     }

@@ -86,7 +86,11 @@ class _LibraryScreenState extends State<LibraryScreen> {
             }
           },
           builder: (context, state) {
-            return CustomScrollView(
+            return RefreshIndicator(
+              onRefresh: () async {
+                context.read<LibraryBloc>().add(LibraryItemsRequested(type: _selectedTab.toLowerCase().replaceAll(' ', '_')));
+              },
+              child: CustomScrollView(
               slivers: [
                 // Header Section
                 SliverToBoxAdapter(
@@ -189,9 +193,10 @@ class _LibraryScreenState extends State<LibraryScreen> {
                   child: const SizedBox(height: 32),
                 ),
               ],
-            );
-          },
-        ),
+            ),
+           );
+         },
+       ),
       ),
     );
   }

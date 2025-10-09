@@ -15,30 +15,12 @@ import 'package:musicbud_flutter/models/track.dart';
 import 'package:musicbud_flutter/models/artist.dart';
 import 'package:musicbud_flutter/models/search.dart';
 import 'package:dartz/dartz.dart';
+import 'package:musicbud_flutter/core/error/failures.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Music Discovery Flow Integration Tests', () {
-    late ContentBloc contentBloc;
-    late SearchBloc searchBloc;
-
-    setUp(() async {
-      await TestSetup.initMockDependencies();
-
-      // Get mock instances
-      final mockContentRepo = TestSetup.getMock<MockContentRepository>();
-      final mockSearchRepo = TestSetup.getMock<MockSearchRepository>();
-
-      // Create real blocs with mocked repositories
-      contentBloc = ContentBloc(contentRepository: mockContentRepo);
-      searchBloc = SearchBloc(repository: mockSearchRepo);
-    });
-
-    tearDown(() {
-      contentBloc.close();
-      searchBloc.close();
-    });
 
     testWidgets('Complete discovery flow: discover → search → track details',
         (WidgetTester tester) async {
@@ -65,13 +47,51 @@ void main() {
         ),
       ];
 
-      // Setup mock repository responses
-      final mockContentRepo = TestSetup.getMock<MockContentRepository>();
+      // Setup mock repository responses BEFORE creating blocs
+      final mockContentRepo = MockContentRepository();
+      final mockSearchRepo = MockSearchRepository();
+
+      // Stub all ContentRepository methods
       when(mockContentRepo.getTopTracks()).thenReturn(Future.value(mockTracks));
       when(mockContentRepo.getTopArtists()).thenReturn(Future.value(mockArtists));
       when(mockContentRepo.getTopGenres()).thenReturn(Future.value([]));
       when(mockContentRepo.getTopAnime()).thenReturn(Future.value([]));
       when(mockContentRepo.getTopManga()).thenReturn(Future.value([]));
+      when(mockContentRepo.getLikedTracks()).thenReturn(Future.value([]));
+      when(mockContentRepo.getLikedArtists()).thenReturn(Future.value([]));
+      when(mockContentRepo.getLikedGenres()).thenReturn(Future.value([]));
+      when(mockContentRepo.getLikedAlbums()).thenReturn(Future.value([]));
+      when(mockContentRepo.getPlayedTracks()).thenReturn(Future.value([]));
+      when(mockContentRepo.toggleLike('test_id', 'track')).thenReturn(Future.value());
+
+      // Stub all SearchRepository methods
+      when(mockSearchRepo.search(query: 'test song')).thenAnswer((_) async => Right(SearchResults(
+        items: mockTracks.map((track) => SearchItem(
+          id: track.id!,
+          type: 'track',
+          title: track.title,
+          subtitle: track.artistName,
+          data: {},
+          relevanceScore: 1.0,
+        )).toList(),
+        suggestions: [],
+        metadata: SearchMetadata(
+          totalResults: 2,
+          pageSize: 20,
+          currentPage: 1,
+          hasMore: false,
+          typeCounts: {},
+          searchTime: Duration.zero,
+        ),
+      )));
+      when(mockSearchRepo.getRecentSearches()).thenAnswer((_) async => Right(<String>[]));
+      when(mockSearchRepo.getTrendingSearches()).thenAnswer((_) async => Right(<String>[]));
+      when(mockSearchRepo.saveRecentSearch('test')).thenAnswer((_) async => Right(null));
+      when(mockSearchRepo.clearRecentSearches()).thenAnswer((_) async => Right(null));
+
+      // Create blocs with mocked repositories
+      final contentBloc = ContentBloc(contentRepository: mockContentRepo);
+      final searchBloc = SearchBloc(repository: mockSearchRepo);
 
       // Trigger content loading
       contentBloc.add(LoadTopContent());
@@ -116,7 +136,7 @@ void main() {
       expect(find.byType(SearchScreen), findsOneWidget);
 
       // Setup mock search repository
-      final mockSearchRepo = TestSetup.getMock<MockSearchRepository>();
+      final mockSearchRepo = MockSearchRepository();
       when(mockSearchRepo.search(query: 'test song')).thenAnswer((_) async => Right(SearchResults(
         items: mockTracks.map((track) => SearchItem(
           id: track.id!,
@@ -157,7 +177,7 @@ void main() {
 
     testWidgets('Search with no results shows empty state',
         (WidgetTester tester) async {
-      // Setup empty search results
+      // Setup empty search results BEFORE creating the app
       final mockSearchRepo = TestSetup.getMock<MockSearchRepository>();
       when(mockSearchRepo.search(query: 'nonexistent song')).thenAnswer((_) async => Right(SearchResults.empty()));
 
@@ -186,7 +206,7 @@ void main() {
 
     testWidgets('Content loading states during discovery',
         (WidgetTester tester) async {
-      // Setup mock repository to delay response (simulate loading)
+      // Setup mock repository to delay response (simulate loading) BEFORE creating bloc
       final mockContentRepo = TestSetup.getMock<MockContentRepository>();
       when(mockContentRepo.getTopTracks()).thenReturn(Future.delayed(const Duration(milliseconds: 100), () => [Track(uid: '1', title: 'Loaded Track', artistName: 'Loaded Artist')]));
       when(mockContentRepo.getTopArtists()).thenReturn(Future.value([]));
@@ -223,7 +243,7 @@ void main() {
 
     testWidgets('Error handling during content loading',
         (WidgetTester tester) async {
-      // Setup mock repository to throw error
+      // Setup mock repository to throw error BEFORE creating bloc
       final mockContentRepo = TestSetup.getMock<MockContentRepository>();
       when(mockContentRepo.getTopTracks()).thenThrow(Exception('Network error'));
       when(mockContentRepo.getTopArtists()).thenReturn(Future.value([]));
@@ -327,7 +347,7 @@ void main() {
         (WidgetTester tester) async {
       final mockTracks = [Track(uid: '1', title: 'Test Track', artistName: 'Test Artist')];
 
-      // Setup mock repository
+      // Setup mock repository BEFORE creating bloc
       final mockContentRepo = TestSetup.getMock<MockContentRepository>();
       when(mockContentRepo.getTopTracks()).thenReturn(Future.value(mockTracks));
       when(mockContentRepo.getTopArtists()).thenReturn(Future.value([]));

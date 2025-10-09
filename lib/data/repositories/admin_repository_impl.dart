@@ -3,6 +3,7 @@ import '../../core/error/failures.dart';
 import '../../core/error/exceptions.dart';
 import '../../core/network/network_info.dart';
 import '../../models/admin.dart';
+import '../../models/health_response.dart';
 import '../../domain/repositories/admin_repository.dart';
 import '../data_sources/remote/admin_remote_data_source.dart';
 
@@ -77,6 +78,34 @@ class AdminRepositoryImpl implements AdminRepository {
       try {
         final settings = await remoteDataSource.getSystemSettings();
         return Right(settings);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
+      }
+    } else {
+      return const Left(NetworkFailure(message: 'No internet connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Map<String, dynamic>>> mergeSimilars() async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.mergeSimilars();
+        return Right(result);
+      } on ServerException catch (e) {
+        return Left(ServerFailure(message: e.message));
+      }
+    } else {
+      return const Left(NetworkFailure(message: 'No internet connection'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, HealthResponse>> checkHealth() async {
+    if (await networkInfo.isConnected) {
+      try {
+        final result = await remoteDataSource.checkHealth();
+        return Right(result);
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));
       }

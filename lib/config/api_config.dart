@@ -1,17 +1,12 @@
 import 'package:flutter/foundation.dart';
+import '../services/endpoint_config_service.dart';
 
 /// API Configuration
 class ApiConfig {
   // Base URLs
-  static const String baseUrl = String.fromEnvironment(
-    'API_BASE_URL',
-    defaultValue: 'http://84.235.170.234',
-  );
+  static const String baseUrl = 'http://84.235.170.234';
 
-  static const String wsBaseUrl = String.fromEnvironment(
-    'WS_BASE_URL',
-    defaultValue: 'ws://84.235.170.234',
-  );
+  static const String wsBaseUrl = 'ws://84.235.170.234';
 
   // API Version
   static const String apiVersion = 'v1';
@@ -167,6 +162,13 @@ class ApiConfig {
   static String get playlists => '$apiUrl/content/playlists';
   static String get genres => '$apiUrl/content/genres';
 
+  // Discover Content Endpoints
+  static String get featuredArtists => '$apiUrl/discover/featured-artists';
+  static String get trendingTracks => '$apiUrl/discover/trending-tracks';
+  static String get newReleases => '$apiUrl/discover/new-releases';
+  static String get discoverActions => '$apiUrl/discover/actions';
+  static String get discoverCategories => '$apiUrl/discover/categories';
+
   // User Endpoints (working from commit 6cac314)
   static String get myProfile => '$apiUrl/me/profile';
   static String get budProfile => '$apiUrl/bud/profile';
@@ -212,6 +214,9 @@ class ApiConfig {
   static String get usersWeb => '$apiUrl/users/';
   static String get channelsWeb => '$apiUrl/channels/';
 
+  // Health endpoint
+  static String get health => '$apiUrl/health';
+
   // Private constructor to prevent instantiation
   ApiConfig._();
 
@@ -221,5 +226,21 @@ class ApiConfig {
     debugPrint('Base URL: $baseUrl');
     debugPrint('WS URL: $wsUrl');
     debugPrint('Configuration loaded successfully');
+  }
+
+  /// Gets a dynamic endpoint URL by name using the provided service
+  static String? getDynamicEndpointUrl(
+    EndpointConfigService service,
+    String endpointName,
+  ) {
+    return service.getEndpointUrl(endpointName, baseUrl);
+  }
+
+  /// Gets dynamic endpoint information (method and URL) by name
+  static Map<String, String>? getDynamicEndpointInfo(
+    EndpointConfigService service,
+    String endpointName,
+  ) {
+    return service.getEndpointInfo(endpointName, baseUrl);
   }
 }

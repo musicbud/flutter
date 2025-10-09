@@ -13,16 +13,20 @@ import 'user_remote_data_source.dart';
 import '../../providers/token_provider.dart';
 import '../../network/dio_client.dart';
 import '../../../config/api_config.dart';
+import '../../../services/endpoint_config_service.dart';
 
 class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   final DioClient _dioClient;
   final TokenProvider _tokenProvider;
+  final EndpointConfigService _endpointConfigService;
 
   UserRemoteDataSourceImpl({
     required DioClient dioClient,
     required TokenProvider tokenProvider,
+    required EndpointConfigService endpointConfigService,
   })  : _dioClient = dioClient,
-        _tokenProvider = tokenProvider;
+        _tokenProvider = tokenProvider,
+        _endpointConfigService = endpointConfigService;
 
   Map<String, String> get _headers => {
     'Content-Type': 'application/json',
@@ -33,7 +37,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<UserProfile> getUserProfile() async {
     debugPrint('Getting profile with token: ${_tokenProvider.token}');
-    final response = await _dioClient.post(ApiConfig.myProfile);
+    final url = _endpointConfigService.getEndpointUrl('me - get profile', ApiConfig.baseUrl) ?? ApiConfig.myProfile;
+    final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
       // The backend returns a direct JSON object, not wrapped in pagination
@@ -49,7 +54,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
   @override
   Future<ParentUser> getParentUser() async {
     debugPrint('Getting parent user with token: ${_tokenProvider.token}');
-    final response = await _dioClient.post(ApiConfig.myProfile);
+    final url = _endpointConfigService.getEndpointUrl('me - get profile', ApiConfig.baseUrl) ?? ApiConfig.myProfile;
+    final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
       // Assuming the response contains parent user data
@@ -64,7 +70,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getLikedTracks() async {
-    final response = await _dioClient.post(ApiConfig.myLikedTracks);
+    final url = _endpointConfigService.getEndpointUrl('me - liked tracks', ApiConfig.baseUrl) ?? ApiConfig.myLikedTracks;
+    final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
       // Backend returns paginated response with 'results' field
@@ -85,7 +92,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<void> likeSong(String songId) async {
-    final response = await _dioClient.post(ApiConfig.updateLikes, data: {
+    final url = _endpointConfigService.getEndpointUrl('me - update my likes', ApiConfig.baseUrl) ?? ApiConfig.updateLikes;
+    final response = await _dioClient.post(url, data: {
       'contentId': songId,
       'contentType': 'track',
     });
@@ -97,7 +105,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<void> unlikeSong(String songId) async {
-    final response = await _dioClient.post(ApiConfig.updateLikes, data: {
+    final url = _endpointConfigService.getEndpointUrl('me - update my likes', ApiConfig.baseUrl) ?? ApiConfig.updateLikes;
+    final response = await _dioClient.post(url, data: {
       'contentId': songId,
       'contentType': 'track',
       'action': 'unlike',
@@ -120,7 +129,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<UserProfile> getBudProfile(String username) async {
-    final response = await _dioClient.post(ApiConfig.budProfile, data: {
+    final url = _endpointConfigService.getEndpointUrl('buds - get bud profile', ApiConfig.baseUrl) ?? ApiConfig.budProfile;
+    final response = await _dioClient.post(url, data: {
       'username': username,
     });
 
@@ -133,8 +143,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<void> updateMyProfile(UserProfile profile) async {
+    final url = _endpointConfigService.getEndpointUrl('me - set profile', ApiConfig.baseUrl) ?? ApiConfig.updateProfile;
     final response = await _dioClient.post(
-      ApiConfig.updateProfile,
+      url,
       data: profile.toJson(),
     );
 
@@ -145,7 +156,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<void> updateMyLikes() async {
-    final response = await _dioClient.post(ApiConfig.updateLikes);
+    final url = _endpointConfigService.getEndpointUrl('me - update my likes', ApiConfig.baseUrl) ?? ApiConfig.updateLikes;
+    final response = await _dioClient.post(url);
 
     if (response.statusCode != 200) {
       throw ServerException(message: 'Failed to update likes');
@@ -154,7 +166,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Artist>> getLikedArtists() async {
-    final response = await _dioClient.post(ApiConfig.myLikedArtists);
+    final url = _endpointConfigService.getEndpointUrl('me - liked artists', ApiConfig.baseUrl) ?? ApiConfig.myLikedArtists;
+    final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
       final List<dynamic> artistsJson = json.decode(response.data);
@@ -166,7 +179,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Album>> getLikedAlbums() async {
-    final response = await _dioClient.post(ApiConfig.myLikedAlbums);
+    final url = _endpointConfigService.getEndpointUrl('me - liked albums', ApiConfig.baseUrl) ?? ApiConfig.myLikedAlbums;
+    final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
       final List<dynamic> albumsJson = json.decode(response.data);
@@ -178,7 +192,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Genre>> getLikedGenres() async {
-    final response = await _dioClient.post(ApiConfig.myLikedGenres);
+    final url = _endpointConfigService.getEndpointUrl('me - liked genres', ApiConfig.baseUrl) ?? ApiConfig.myLikedGenres;
+    final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
       final List<dynamic> genresJson = json.decode(response.data);
@@ -190,7 +205,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Artist>> getTopArtists() async {
-    final response = await _dioClient.post(ApiConfig.myTopArtists);
+    final url = _endpointConfigService.getEndpointUrl('me - top artists', ApiConfig.baseUrl) ?? ApiConfig.myTopArtists;
+    final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
       final List<dynamic> artistsJson = json.decode(response.data);
@@ -202,7 +218,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getTopTracks() async {
-    final response = await _dioClient.post(ApiConfig.myTopTracks);
+    final url = _endpointConfigService.getEndpointUrl('me - top tracks', ApiConfig.baseUrl) ?? ApiConfig.myTopTracks;
+    final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
       // Backend returns paginated response with 'results' field
@@ -223,7 +240,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Genre>> getTopGenres() async {
-    final response = await _dioClient.post(ApiConfig.myTopGenres);
+    final url = _endpointConfigService.getEndpointUrl('me - top genres', ApiConfig.baseUrl) ?? ApiConfig.myTopGenres;
+    final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
       final List<dynamic> genresJson = json.decode(response.data);
@@ -235,7 +253,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<CommonAnime>> getTopAnime() async {
-    final response = await _dioClient.post(ApiConfig.myTopAnime);
+    final url = _endpointConfigService.getEndpointUrl('me - top anime', ApiConfig.baseUrl) ?? ApiConfig.myTopAnime;
+    final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
       final List<dynamic> animeJson = json.decode(response.data);
@@ -247,7 +266,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<CommonManga>> getTopManga() async {
-    final response = await _dioClient.post(ApiConfig.myTopManga);
+    final url = _endpointConfigService.getEndpointUrl('me - top manga', ApiConfig.baseUrl) ?? ApiConfig.myTopManga;
+    final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
       final List<dynamic> mangaJson = json.decode(response.data);
@@ -259,7 +279,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<String> getSpotifyAuthUrl() async {
-    final response = await _dioClient.get(ApiConfig.serviceLogin);
+    final url = _endpointConfigService.getEndpointUrl('auth - service login', ApiConfig.baseUrl) ?? ApiConfig.serviceLogin;
+    final response = await _dioClient.get(url);
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.data);
@@ -271,8 +292,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<void> connectSpotify(String code) async {
+    final url = _endpointConfigService.getEndpointUrl('auth - connect service - spotify connect', ApiConfig.baseUrl) ?? ApiConfig.spotifyConnect;
     final response = await _dioClient.post(
-      ApiConfig.spotifyConnect,
+      url,
       data: json.encode({'code': code}),
     );
 
@@ -289,7 +311,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<String> getYTMusicAuthUrl() async {
-    final response = await _dioClient.get(ApiConfig.serviceLogin);
+    final url = _endpointConfigService.getEndpointUrl('auth - service login', ApiConfig.baseUrl) ?? ApiConfig.serviceLogin;
+    final response = await _dioClient.get(url);
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.data);
@@ -301,8 +324,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<void> connectYTMusic(String code) async {
+    final url = _endpointConfigService.getEndpointUrl('auth - connect service - ytmusic connect', ApiConfig.baseUrl) ?? ApiConfig.ytmusicConnect;
     final response = await _dioClient.post(
-      ApiConfig.ytmusicConnect,
+      url,
       data: json.encode({'code': code}),
     );
 
@@ -319,7 +343,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<String> getMALAuthUrl() async {
-    final response = await _dioClient.get(ApiConfig.serviceLogin);
+    final url = _endpointConfigService.getEndpointUrl('auth - service login', ApiConfig.baseUrl) ?? ApiConfig.serviceLogin;
+    final response = await _dioClient.get(url);
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.data);
@@ -331,8 +356,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<void> connectMAL(String code) async {
+    final url = _endpointConfigService.getEndpointUrl('auth - connect service - mal connect', ApiConfig.baseUrl) ?? ApiConfig.malConnect;
     final response = await _dioClient.post(
-      ApiConfig.malConnect,
+      url,
       data: json.encode({'code': code}),
     );
 
@@ -349,7 +375,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<String> getLastFMAuthUrl() async {
-    final response = await _dioClient.get(ApiConfig.serviceLogin);
+    final url = _endpointConfigService.getEndpointUrl('auth - service login', ApiConfig.baseUrl) ?? ApiConfig.serviceLogin;
+    final response = await _dioClient.get(url);
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.data);
@@ -361,8 +388,9 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<void> connectLastFM(String code) async {
+    final url = _endpointConfigService.getEndpointUrl('auth - connect service - lastfm connect', ApiConfig.baseUrl) ?? ApiConfig.lastfmConnect;
     final response = await _dioClient.post(
-      ApiConfig.lastfmConnect,
+      url,
       data: json.encode({'code': code}),
     );
 
@@ -385,7 +413,8 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<List<Track>> getPlayedTracks() async {
-    final response = await _dioClient.post(ApiConfig.myPlayedTracks);
+    final url = _endpointConfigService.getEndpointUrl('me - played tracks', ApiConfig.baseUrl) ?? ApiConfig.myPlayedTracks;
+    final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
       // Backend returns paginated response with 'results' field

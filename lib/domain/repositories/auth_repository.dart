@@ -1,13 +1,13 @@
-// import '../../models/server_status.dart';
+import '../../models/auth_response.dart';
 
 /// Interface for authentication-related operations
 abstract class AuthRepository {
-  Future<Map<String, dynamic>> login(String username, String password);
-  Future<Map<String, dynamic>> register(
+  Future<LoginResponse> login(String username, String password);
+  Future<RegisterResponse> register(
       String username, String email, String password);
   Future<bool> isAuthenticated();
   // Future<ServerStatus> checkServerStatus();
-  Future<String> refreshToken();
+  Future<TokenRefreshResponse> refreshToken();
   Future<void> logout();
 
   // Service connection URLs

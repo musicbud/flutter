@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import '../../models/admin.dart';
+import '../../models/health_response.dart';
 import '../../core/error/failures.dart';
 
 abstract class AdminRepository {
@@ -8,4 +9,6 @@ abstract class AdminRepository {
   Future<Either<Failure, void>> performAdminAction(AdminAction action);
   Future<Either<Failure, void>> updateSystemSettings(Map<String, dynamic> settings);
   Future<Either<Failure, Map<String, dynamic>>> getSystemSettings();
+  Future<Either<Failure, Map<String, dynamic>>> mergeSimilars();
+  Future<Either<Failure, HealthResponse>> checkHealth();
 }

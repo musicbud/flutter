@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../../models/auth_response.dart';
 
 abstract class LoginState extends Equatable {
   const LoginState();
@@ -12,7 +13,7 @@ class LoginInitial extends LoginState {}
 class LoginLoading extends LoginState {}
 
 class LoginSuccess extends LoginState {
-  final Map<String, dynamic> data;
+  final LoginResponse data;
 
   const LoginSuccess(this.data);
 

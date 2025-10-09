@@ -26,19 +26,19 @@ import 'proxy_server.dart';
 
 /// Main entry point of the MusicBud Flutter application
 void main() async {
-  // Ensure Flutter bindings are initialized
-  WidgetsFlutterBinding.ensureInitialized();
-
-  // Initialize error handler
-  ErrorHandler.initialize();
-
-  // Initialize dependency injection
-  await di.init();
-
-  debugPrint('🚀 MusicBud App: Starting application');
-
   // Run the application with error catching
   runZonedGuarded(() async {
+    // Ensure Flutter bindings are initialized
+    WidgetsFlutterBinding.ensureInitialized();
+
+    // Initialize error handler
+    ErrorHandler.initialize();
+
+    // Initialize dependency injection
+    await di.init();
+
+    debugPrint('🚀 MusicBud App: Starting application');
+
     // Start proxy server for dynamic API communication within the zone
     await startProxyServer();
 
@@ -130,7 +130,10 @@ class MusicBudApp extends StatelessWidget {
 
   /// Creates and configures the AuthBloc with token management
   AuthBloc _createAuthBloc(BuildContext context) {
-    final authBloc = AuthBloc(authRepository: di.sl<AuthRepository>());
+    final authBloc = AuthBloc(
+      authRepository: di.sl<AuthRepository>(),
+      tokenProvider: di.sl<TokenProvider>(),
+    );
 
     // Listen to authentication state changes for token management
     authBloc.stream.listen((state) {

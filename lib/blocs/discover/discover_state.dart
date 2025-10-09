@@ -284,3 +284,70 @@ class PlayedTracksError extends DiscoverState {
   @override
   List<Object?> get props => [message];
 }
+
+// Trending content states
+class TrendingTracksLoading extends DiscoverState {
+  const TrendingTracksLoading();
+}
+
+class TrendingTracksLoaded extends DiscoverState {
+  final List<Map<String, dynamic>> tracks;
+
+  const TrendingTracksLoaded(this.tracks);
+
+  @override
+  List<Object?> get props => [tracks];
+}
+
+class TrendingTracksError extends DiscoverState {
+  final String message;
+
+  const TrendingTracksError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class FeaturedArtistsLoading extends DiscoverState {
+  const FeaturedArtistsLoading();
+}
+
+class FeaturedArtistsLoaded extends DiscoverState {
+  final List<Map<String, dynamic>> artists;
+
+  const FeaturedArtistsLoaded(this.artists);
+
+  @override
+  List<Object?> get props => [artists];
+}
+
+class FeaturedArtistsError extends DiscoverState {
+  final String message;
+
+  const FeaturedArtistsError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class NewReleasesLoading extends DiscoverState {
+  const NewReleasesLoading();
+}
+
+class NewReleasesLoaded extends DiscoverState {
+  final List<Map<String, dynamic>> releases;
+
+  const NewReleasesLoaded(this.releases);
+
+  @override
+  List<Object?> get props => [releases];
+}
+
+class NewReleasesError extends DiscoverState {
+  final String message;
+
+  const NewReleasesError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}

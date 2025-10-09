@@ -9,8 +9,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:musicbud_flutter/main.dart';
+import 'package:musicbud_flutter/injection_container.dart';
 
 void main() {
+  setUpAll(() async {
+    await init();
+  });
+
+  tearDownAll(() {
+    DependencyInjection.reset();
+  });
+
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MusicBudApp());

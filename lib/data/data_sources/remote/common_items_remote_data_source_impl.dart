@@ -10,37 +10,50 @@ import '../../../models/common_manga.dart';
 import '../../../models/categorized_common_items.dart';
 import 'common_items_remote_data_source.dart';
 import '../../../config/api_config.dart';
+import '../../../services/endpoint_config_service.dart';
 
 class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
-  final http.Client client;
-  final String baseUrl;
+  final http.Client _client;
+  final String _token;
+  final EndpointConfigService _endpointConfigService;
 
   CommonItemsRemoteDataSourceImpl({
-    required this.client,
-    required this.baseUrl,
-  });
+    required http.Client client,
+    required String token,
+    required EndpointConfigService endpointConfigService,
+  })  : _client = client,
+        _token = token,
+        _endpointConfigService = endpointConfigService;
+
+  Map<String, String> get _headers => {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'Authorization': 'Bearer $_token',
+  };
 
   @override
   Future<List<CommonTrack>> getCommonLikedTracks(String username) async {
-    final response = await client.post(
-      Uri.parse('$baseUrl${ApiConfig.budCommonLikedTracks}'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({'username': username}),
+    final response = await _client.post(
+      Uri.parse('${ApiConfig.baseUrl}/bud/common/liked/tracks'),
+      headers: _headers,
+      body: jsonEncode({'bud_id': username}),
     );
 
-    if (response.statusCode == 200) {
-      final List<dynamic> jsonList = json.decode(response.body);
-      return jsonList.map((json) => CommonTrack.fromJson(json)).toList();
-    } else {
+    if (response.statusCode != 200) {
       throw ServerException(message: 'Failed to get common liked tracks');
     }
+
+    final responseData = jsonDecode(response.body) as Map<String, dynamic>;
+    final data = responseData['results'] as List? ?? [];
+    return data.map((json) => CommonTrack.fromJson(json)).toList();
   }
 
   @override
   Future<List<CommonArtist>> getCommonLikedArtists(String username) async {
-    final response = await client.post(
-      Uri.parse('$baseUrl${ApiConfig.budCommonLikedArtists}'),
-      headers: {'Content-Type': 'application/json'},
+    final url = _endpointConfigService.getEndpointUrl('common - liked artists', ApiConfig.baseUrl) ?? '${ApiConfig.baseUrl}${ApiConfig.budCommonLikedArtists}';
+    final response = await _client.post(
+      Uri.parse(url),
+      headers: _headers,
       body: json.encode({'username': username}),
     );
 
@@ -54,9 +67,10 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonAlbum>> getCommonLikedAlbums(String username) async {
-    final response = await client.post(
-      Uri.parse('$baseUrl${ApiConfig.budCommonLikedAlbums}'),
-      headers: {'Content-Type': 'application/json'},
+    final url = _endpointConfigService.getEndpointUrl('common - liked albums', ApiConfig.baseUrl) ?? '${ApiConfig.baseUrl}${ApiConfig.budCommonLikedAlbums}';
+    final response = await _client.post(
+      Uri.parse(url),
+      headers: _headers,
       body: json.encode({'username': username}),
     );
 
@@ -71,9 +85,10 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
   @override
   Future<List<CommonTrack>> getCommonPlayedTracks(String identifier,
       {int page = 1}) async {
-    final response = await client.post(
-      Uri.parse('$baseUrl${ApiConfig.budCommonPlayedTracks}'),
-      headers: {'Content-Type': 'application/json'},
+    final url = _endpointConfigService.getEndpointUrl('common - played tracks', ApiConfig.baseUrl) ?? '${ApiConfig.baseUrl}${ApiConfig.budCommonPlayedTracks}';
+    final response = await _client.post(
+      Uri.parse(url),
+      headers: _headers,
       body: json.encode({'identifier': identifier, 'page': page}),
     );
 
@@ -87,9 +102,10 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonArtist>> getCommonTopArtists(String username) async {
-    final response = await client.post(
-      Uri.parse('$baseUrl${ApiConfig.budCommonTopArtists}'),
-      headers: {'Content-Type': 'application/json'},
+    final url = _endpointConfigService.getEndpointUrl('common - top artists', ApiConfig.baseUrl) ?? '${ApiConfig.baseUrl}${ApiConfig.budCommonTopArtists}';
+    final response = await _client.post(
+      Uri.parse(url),
+      headers: _headers,
       body: json.encode({'username': username}),
     );
 
@@ -103,9 +119,10 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonGenre>> getCommonTopGenres(String username) async {
-    final response = await client.post(
-      Uri.parse('$baseUrl${ApiConfig.budCommonTopGenres}'),
-      headers: {'Content-Type': 'application/json'},
+    final url = _endpointConfigService.getEndpointUrl('common - top genres', ApiConfig.baseUrl) ?? '${ApiConfig.baseUrl}${ApiConfig.budCommonTopGenres}';
+    final response = await _client.post(
+      Uri.parse(url),
+      headers: _headers,
       body: json.encode({'username': username}),
     );
 
@@ -119,9 +136,10 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonAnime>> getCommonTopAnime(String username) async {
-    final response = await client.post(
-      Uri.parse('$baseUrl${ApiConfig.budCommonTopAnime}'),
-      headers: {'Content-Type': 'application/json'},
+    final url = _endpointConfigService.getEndpointUrl('common - top anime', ApiConfig.baseUrl) ?? '${ApiConfig.baseUrl}${ApiConfig.budCommonTopAnime}';
+    final response = await _client.post(
+      Uri.parse(url),
+      headers: _headers,
       body: json.encode({'username': username}),
     );
 
@@ -135,9 +153,10 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonManga>> getCommonTopManga(String username) async {
-    final response = await client.post(
-      Uri.parse('$baseUrl${ApiConfig.budCommonTopManga}'),
-      headers: {'Content-Type': 'application/json'},
+    final url = _endpointConfigService.getEndpointUrl('common - top manga', ApiConfig.baseUrl) ?? '${ApiConfig.baseUrl}${ApiConfig.budCommonTopManga}';
+    final response = await _client.post(
+      Uri.parse(url),
+      headers: _headers,
       body: json.encode({'username': username}),
     );
 
@@ -151,9 +170,10 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonTrack>> getCommonTracks(String budUid) async {
-    final response = await client.post(
-      Uri.parse('$baseUrl${ApiConfig.budCommonLikedTracks}'),
-      headers: {'Content-Type': 'application/json'},
+    final url = _endpointConfigService.getEndpointUrl('common - liked tracks', ApiConfig.baseUrl) ?? '${ApiConfig.baseUrl}${ApiConfig.budCommonLikedTracks}';
+    final response = await _client.post(
+      Uri.parse(url),
+      headers: _headers,
       body: json.encode({'budUid': budUid}),
     );
 
@@ -167,9 +187,10 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonArtist>> getCommonArtists(String budUid) async {
-    final response = await client.post(
-      Uri.parse('$baseUrl${ApiConfig.budCommonLikedArtists}'),
-      headers: {'Content-Type': 'application/json'},
+    final url = _endpointConfigService.getEndpointUrl('common - liked artists', ApiConfig.baseUrl) ?? '${ApiConfig.baseUrl}${ApiConfig.budCommonLikedArtists}';
+    final response = await _client.post(
+      Uri.parse(url),
+      headers: _headers,
       body: json.encode({'budUid': budUid}),
     );
 
@@ -183,9 +204,10 @@ class CommonItemsRemoteDataSourceImpl implements CommonItemsRemoteDataSource {
 
   @override
   Future<List<CommonGenre>> getCommonGenres(String budUid) async {
-    final response = await client.post(
-      Uri.parse('$baseUrl${ApiConfig.budCommonLikedGenres}'),
-      headers: {'Content-Type': 'application/json'},
+    final url = _endpointConfigService.getEndpointUrl('common - liked genres', ApiConfig.baseUrl) ?? '${ApiConfig.baseUrl}${ApiConfig.budCommonLikedGenres}';
+    final response = await _client.post(
+      Uri.parse(url),
+      headers: _headers,
       body: json.encode({'budUid': budUid}),
     );
 

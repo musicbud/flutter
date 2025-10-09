@@ -6,6 +6,7 @@ import '../../../models/artist.dart';
 import '../../../models/album.dart';
 import '../../../models/genre.dart';
 import '../../../config/api_config.dart';
+import '../../../services/endpoint_config_service.dart';
 
 abstract class ContentRemoteDataSource {
   // User's content
@@ -41,18 +42,30 @@ abstract class ContentRemoteDataSource {
   Future<void> playTrack(String trackId, String? deviceId);
   Future<void> playTrackOnService(String trackIdentifier, {String? service});
   Future<void> playTrackWithLocation(String trackUid, String trackName, double latitude, double longitude, [String? deviceId]);
+
+  // Discover content
+  Future<List<Map<String, dynamic>>> getFeaturedArtists();
+  Future<List<Map<String, dynamic>>> getTrendingTracks();
+  Future<List<Map<String, dynamic>>> getNewReleases();
+  Future<List<Map<String, dynamic>>> getDiscoverActions();
+  Future<List<String>> getDiscoverCategories();
 }
 
 class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   final DioClient _dioClient;
+  final EndpointConfigService _endpointConfigService;
 
-  ContentRemoteDataSourceImpl({required DioClient dioClient})
-      : _dioClient = dioClient;
+  ContentRemoteDataSourceImpl({
+    required DioClient dioClient,
+    required EndpointConfigService endpointConfigService,
+  }) : _dioClient = dioClient,
+       _endpointConfigService = endpointConfigService;
 
   @override
   Future<List<Track>> getMyLikedTracks() async {
     try {
-      final response = await _dioClient.post(ApiConfig.myLikedTracks, data: {});
+      final url = _endpointConfigService.getEndpointUrl('me - liked tracks', ApiConfig.baseUrl) ?? ApiConfig.myLikedTracks;
+      final response = await _dioClient.post(url, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
       return results.map((json) => Track.fromJson(json)).toList();
@@ -64,7 +77,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<Artist>> getMyLikedArtists() async {
     try {
-      final response = await _dioClient.post(ApiConfig.myLikedArtists, data: {});
+      final url = _endpointConfigService.getEndpointUrl('me - liked artists', ApiConfig.baseUrl) ?? ApiConfig.myLikedArtists;
+      final response = await _dioClient.post(url, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
       return results.map((json) => Artist.fromJson(json)).toList();
@@ -76,7 +90,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<Genre>> getMyLikedGenres() async {
     try {
-      final response = await _dioClient.post(ApiConfig.myLikedGenres, data: {});
+      final url = _endpointConfigService.getEndpointUrl('me - liked genres', ApiConfig.baseUrl) ?? ApiConfig.myLikedGenres;
+      final response = await _dioClient.post(url, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
       return results.map((json) => Genre.fromJson(json)).toList();
@@ -88,7 +103,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<Album>> getMyLikedAlbums() async {
     try {
-      final response = await _dioClient.post(ApiConfig.myLikedAlbums, data: {});
+      final url = _endpointConfigService.getEndpointUrl('me - liked albums', ApiConfig.baseUrl) ?? ApiConfig.myLikedAlbums;
+      final response = await _dioClient.post(url, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
       return results.map((json) => Album.fromJson(json)).toList();
@@ -100,7 +116,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<Track>> getMyTopTracks() async {
     try {
-      final response = await _dioClient.post(ApiConfig.myTopTracks, data: {});
+      final url = _endpointConfigService.getEndpointUrl('me - top tracks', ApiConfig.baseUrl) ?? ApiConfig.myTopTracks;
+      final response = await _dioClient.post(url, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
       return results.map((json) => Track.fromJson(json)).toList();
@@ -112,7 +129,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<Artist>> getMyTopArtists() async {
     try {
-      final response = await _dioClient.post(ApiConfig.myTopArtists, data: {});
+      final url = _endpointConfigService.getEndpointUrl('me - top artists', ApiConfig.baseUrl) ?? ApiConfig.myTopArtists;
+      final response = await _dioClient.post(url, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
       return results.map((json) => Artist.fromJson(json)).toList();
@@ -124,7 +142,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<Genre>> getMyTopGenres() async {
     try {
-      final response = await _dioClient.post(ApiConfig.myTopGenres, data: {});
+      final url = _endpointConfigService.getEndpointUrl('me - top genres', ApiConfig.baseUrl) ?? ApiConfig.myTopGenres;
+      final response = await _dioClient.post(url, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
       return results.map((json) => Genre.fromJson(json)).toList();
@@ -136,7 +155,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<Track>> getMyPlayedTracks() async {
     try {
-      final response = await _dioClient.post(ApiConfig.myPlayedTracks, data: {});
+      final url = _endpointConfigService.getEndpointUrl('me - played tracks', ApiConfig.baseUrl) ?? ApiConfig.myPlayedTracks;
+      final response = await _dioClient.post(url, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
       return results.map((json) => Track.fromJson(json)).toList();
@@ -148,7 +168,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<void> toggleLike(String contentId, String contentType) async {
     try {
-      await _dioClient.post(ApiConfig.updateLikes, data: {
+      final url = _endpointConfigService.getEndpointUrl('me - update my likes', ApiConfig.baseUrl) ?? ApiConfig.updateLikes;
+      await _dioClient.post(url, data: {
         'contentId': contentId,
         'contentType': contentType,
       });
@@ -170,7 +191,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<dynamic>> getMyTopAnime() async {
     try {
-      final response = await _dioClient.post(ApiConfig.myTopAnime, data: {});
+      final url = _endpointConfigService.getEndpointUrl('me - top anime', ApiConfig.baseUrl) ?? ApiConfig.myTopAnime;
+      final response = await _dioClient.post(url, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
       return results.map((json) => json).toList();
@@ -182,7 +204,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<dynamic>> getMyTopManga() async {
     try {
-      final response = await _dioClient.post(ApiConfig.myTopManga, data: {});
+      final url = _endpointConfigService.getEndpointUrl('me - top manga', ApiConfig.baseUrl) ?? ApiConfig.myTopManga;
+      final response = await _dioClient.post(url, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
       return results.map((json) => json).toList();
@@ -238,7 +261,8 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   @override
   Future<List<Track>> getPlayedTracks() async {
     try {
-      final response = await _dioClient.post(ApiConfig.myPlayedTracks, data: {});
+      final url = _endpointConfigService.getEndpointUrl('me - played tracks', ApiConfig.baseUrl) ?? ApiConfig.myPlayedTracks;
+      final response = await _dioClient.post(url, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
       return results.map((json) => Track.fromJson(json)).toList();
@@ -254,6 +278,7 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       if (service != null) {
         data['service'] = service;
       }
+      // Note: No "play" endpoint defined in endpoints_map.json, using fallback
       await _dioClient.post(ApiConfig.play, data: data);
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to play track on service');
@@ -285,6 +310,61 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
       await _dioClient.post('/me/play-track-with-location', data: data);
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to play track with location');
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getFeaturedArtists() async {
+    try {
+      final url = _endpointConfigService.getEndpointUrl('discover - featured artists', ApiConfig.baseUrl) ?? ApiConfig.featuredArtists;
+      final response = await _dioClient.get(url);
+      return (response.data as List).map((json) => json as Map<String, dynamic>).toList();
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to get featured artists');
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getTrendingTracks() async {
+    try {
+      final url = _endpointConfigService.getEndpointUrl('discover - trending tracks', ApiConfig.baseUrl) ?? ApiConfig.trendingTracks;
+      final response = await _dioClient.get(url);
+      return (response.data as List).map((json) => json as Map<String, dynamic>).toList();
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to get trending tracks');
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getNewReleases() async {
+    try {
+      final url = _endpointConfigService.getEndpointUrl('discover - new releases', ApiConfig.baseUrl) ?? ApiConfig.newReleases;
+      final response = await _dioClient.get(url);
+      return (response.data as List).map((json) => json as Map<String, dynamic>).toList();
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to get new releases');
+    }
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> getDiscoverActions() async {
+    try {
+      final url = _endpointConfigService.getEndpointUrl('discover - actions', ApiConfig.baseUrl) ?? ApiConfig.discoverActions;
+      final response = await _dioClient.get(url);
+      return (response.data as List).map((json) => json as Map<String, dynamic>).toList();
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to get discover actions');
+    }
+  }
+
+  @override
+  Future<List<String>> getDiscoverCategories() async {
+    try {
+      final url = _endpointConfigService.getEndpointUrl('discover - categories', ApiConfig.baseUrl) ?? ApiConfig.discoverCategories;
+      final response = await _dioClient.get(url);
+      return (response.data as List).map((item) => item as String).toList();
+    } on DioException catch (e) {
+      throw ServerException(message: e.message ?? 'Failed to get discover categories');
     }
   }
 }

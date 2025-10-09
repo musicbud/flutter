@@ -1,14 +1,22 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/profile_repository.dart';
+import '../../domain/repositories/content_repository.dart';
+import '../../domain/repositories/discover_repository.dart';
 import 'main_screen_event.dart';
 import 'main_screen_state.dart';
 
 class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
   final ProfileRepository _profileRepository;
+  final ContentRepository _contentRepository;
+  final DiscoverRepository _discoverRepository;
 
   MainScreenBloc({
     required ProfileRepository profileRepository,
+    required ContentRepository contentRepository,
+    required DiscoverRepository discoverRepository,
   })  : _profileRepository = profileRepository,
+        _contentRepository = contentRepository,
+        _discoverRepository = discoverRepository,
         super(const MainScreenInitial()) {
     on<MainScreenInitialized>(_onMainScreenInitialized);
     on<MainScreenAuthStatusChecked>(_onMainScreenAuthStatusChecked);
@@ -22,11 +30,20 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     try {
       emit(const MainScreenLoading());
 
-      // Check if we have a token first
+      // Fetch user profile
       final profile = await _profileRepository.getMyProfile();
+
+      // Fetch recent activity (played tracks)
+      final recentActivity = await _contentRepository.getPlayedTracks();
+
+      // Fetch featured content (trending tracks)
+      final featuredContent = await _discoverRepository.getTrendingTracks();
+
       emit(MainScreenAuthenticated(
         username: profile.username,
         userProfile: profile.toJson(),
+        recentActivity: recentActivity,
+        featuredContent: featuredContent,
       ));
     } catch (error) {
       if (error.toString().contains('401') ||
@@ -39,6 +56,8 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
         emit(const MainScreenAuthenticated(
           username: 'User',
           userProfile: {'username': 'User', 'id': 'user'},
+          recentActivity: [],
+          featuredContent: [],
         ));
       }
     }
@@ -58,9 +77,14 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
     emit(const MainScreenLoading());
     try {
       final profile = await _profileRepository.getMyProfile();
+      final recentActivity = await _contentRepository.getPlayedTracks();
+      final featuredContent = await _discoverRepository.getTrendingTracks();
+
       emit(MainScreenAuthenticated(
         username: profile.username,
         userProfile: profile.toJson(),
+        recentActivity: recentActivity,
+        featuredContent: featuredContent,
       ));
     } catch (error) {
       if (error.toString().contains('401') ||
@@ -75,9 +99,14 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
   Future<void> _checkAuthStatus(Emitter<MainScreenState> emit) async {
     try {
       final profile = await _profileRepository.getMyProfile();
+      final recentActivity = await _contentRepository.getPlayedTracks();
+      final featuredContent = await _discoverRepository.getTrendingTracks();
+
       emit(MainScreenAuthenticated(
         username: profile.username,
         userProfile: profile.toJson(),
+        recentActivity: recentActivity,
+        featuredContent: featuredContent,
       ));
     } catch (error) {
       if (error.toString().contains('401') ||

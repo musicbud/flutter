@@ -34,6 +34,11 @@ class ApiService {
   static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
 
+  // For testing purposes
+  void setDioClientForTesting(DioClient dioClient) {
+    _dioClient = dioClient;
+  }
+
   ApiService._internal() : _networkInfo = NetworkInfoImpl(InternetConnectionChecker.createInstance(), connectivity: Connectivity()) {
     _dioClient = DioClient(
       baseUrl: 'http://84.235.170.234', // Use ApiConfig.baseUrl

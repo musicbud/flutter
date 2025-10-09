@@ -3,37 +3,58 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/theme/app_constants.dart';
 
 class TokenProvider {
-  String? _token;
+  String? _accessToken;
+  String? _refreshToken;
   SharedPreferences? _prefs;
 
   Future<void> initialize() async {
     _prefs = await SharedPreferences.getInstance();
-    _token = _prefs?.getString(AppConstants.authTokenKey);
+    _accessToken = _prefs?.getString(AppConstants.authTokenKey);
+    _refreshToken = _prefs?.getString(AppConstants.refreshTokenKey);
     if (kDebugMode) {
-      debugPrint('🔑 TokenProvider: Initialized - ${_token != null ? "Token loaded from storage" : "No token in storage"}');
+      debugPrint('🔑 TokenProvider: Initialized - Access: ${_accessToken != null ? "loaded" : "none"}, Refresh: ${_refreshToken != null ? "loaded" : "none"}');
     }
   }
 
-  String? get token {
+  String? get token => _accessToken;
+
+  String? get accessToken => _accessToken;
+
+  String? get refreshToken => _refreshToken;
+
+  Future<void> updateTokens(String accessToken, String refreshToken) async {
+    _accessToken = accessToken;
+    _refreshToken = refreshToken;
+    await _prefs?.setString(AppConstants.authTokenKey, accessToken);
+    await _prefs?.setString(AppConstants.refreshTokenKey, refreshToken);
     if (kDebugMode) {
-      debugPrint('🔑 TokenProvider: Getting token - ${_token != null ? "Token exists" : "No token"}');
+      debugPrint('🔑 TokenProvider: Tokens updated and saved to storage');
     }
-    return _token;
+  }
+
+  Future<void> updateAccessToken(String newToken) async {
+    _accessToken = newToken;
+    await _prefs?.setString(AppConstants.authTokenKey, newToken);
+    if (kDebugMode) {
+      debugPrint('🔑 TokenProvider: Access token updated');
+    }
   }
 
   Future<void> updateToken(String newToken) async {
-    _token = newToken;
-    await _prefs?.setString(AppConstants.authTokenKey, newToken);
+    await updateAccessToken(newToken);
+  }
+
+  Future<void> clearTokens() async {
+    _accessToken = null;
+    _refreshToken = null;
+    await _prefs?.remove(AppConstants.authTokenKey);
+    await _prefs?.remove(AppConstants.refreshTokenKey);
     if (kDebugMode) {
-      debugPrint('🔑 TokenProvider: Token updated and saved to storage');
+      debugPrint('🔑 TokenProvider: Tokens cleared from storage');
     }
   }
 
   Future<void> clearToken() async {
-    _token = null;
-    await _prefs?.remove(AppConstants.authTokenKey);
-    if (kDebugMode) {
-      debugPrint('🔑 TokenProvider: Token cleared from storage');
-    }
+    await clearTokens();
   }
 }
