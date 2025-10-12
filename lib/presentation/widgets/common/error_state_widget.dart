@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/design_system.dart';
+import '../../../../core/theme/design_system.dart';
 
 class ErrorStateWidget extends StatelessWidget {
   final String title;
@@ -18,7 +18,7 @@ class ErrorStateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(DesignSystem.spacingLG),
+      padding: const EdgeInsets.all(DesignSystem.spacingLG),
       decoration: BoxDecoration(
         color: DesignSystem.error.withOpacity(0.1),
         borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
@@ -89,7 +89,7 @@ class LoadingStateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(DesignSystem.spacingLG),
+      padding: const EdgeInsets.all(DesignSystem.spacingLG),
       decoration: BoxDecoration(
         color: DesignSystem.surface.withOpacity(0.3),
         borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
@@ -100,7 +100,7 @@ class LoadingStateWidget extends StatelessWidget {
           SizedBox(
             width: size,
             height: size,
-            child: CircularProgressIndicator(
+            child: const CircularProgressIndicator(
               strokeWidth: 2,
               valueColor: AlwaysStoppedAnimation<Color>(DesignSystem.primary),
             ),
@@ -137,7 +137,7 @@ class EmptyStateWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(DesignSystem.spacingLG),
+      padding: const EdgeInsets.all(DesignSystem.spacingLG),
       decoration: BoxDecoration(
         color: DesignSystem.surface.withOpacity(0.5),
         borderRadius: BorderRadius.circular(DesignSystem.radiusMD),

@@ -106,25 +106,25 @@ class AppButton extends StatelessWidget {
     // Set padding based on size
     switch (size) {
       case AppButtonSize.small:
-        padding = EdgeInsets.symmetric(
+        padding = const EdgeInsets.symmetric(
           horizontal: DesignSystem.spacingMD,
           vertical: DesignSystem.spacingSM,
         );
         break;
       case AppButtonSize.medium:
-        padding = EdgeInsets.symmetric(
+        padding = const EdgeInsets.symmetric(
           horizontal: DesignSystem.spacingLG,
           vertical: DesignSystem.spacingMD,
         );
         break;
       case AppButtonSize.large:
-        padding = EdgeInsets.symmetric(
+        padding = const EdgeInsets.symmetric(
           horizontal: DesignSystem.spacingXL,
           vertical: DesignSystem.spacingLG,
         );
         break;
       case AppButtonSize.xlarge:
-        padding = EdgeInsets.symmetric(
+        padding = const EdgeInsets.symmetric(
           horizontal: DesignSystem.spacingXXL,
           vertical: DesignSystem.spacingXL,
         );
@@ -142,7 +142,7 @@ class AppButton extends StatelessWidget {
       ),
       padding: padding,
       elevation: isOutlined ? 0 : (variant == AppButtonVariant.primary ? 4 : 0),
-      shadowColor: isOutlined ? null : DesignSystem.primary.withValues(alpha: 0.3),
+      shadowColor: isOutlined ? null : DesignSystem.primary.withOpacity(0.3),
     );
   }
 
@@ -166,7 +166,7 @@ class AppButton extends StatelessWidget {
 
     if (icon != null) {
       children.add(Icon(icon, size: _getIconSize()));
-      children.add(SizedBox(width: DesignSystem.spacingSM));
+      children.add(const SizedBox(width: DesignSystem.spacingSM));
     }
 
     children.add(Text(

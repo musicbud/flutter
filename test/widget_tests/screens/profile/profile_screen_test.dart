@@ -14,7 +14,7 @@ void main() {
   setUp(() async {
     await TestSetup.initMockDependencies();
     userProfileBloc = UserProfileBloc(
-      userProfileRepository: TestSetup.getMock() as MockUserProfileRepository,
+      userProfileRepository: TestSetup.getMock<UserProfileRepository>(),
     );
   });
 
@@ -56,7 +56,7 @@ void main() {
     });
 
     testWidgets('displays user profile information when loaded', (WidgetTester tester) async {
-      final mockUserProfile = UserProfile(
+      const mockUserProfile = UserProfile(
         id: 'user1',
         username: 'john_doe',
         email: 'john@example.com',
@@ -70,7 +70,7 @@ void main() {
         isAuthenticated: true,
       );
 
-      userProfileBloc.emit(UserProfileLoaded(userProfile: mockUserProfile));
+      userProfileBloc.emit(const UserProfileLoaded(userProfile: mockUserProfile));
 
       await tester.pumpWidget(createTestWidget(const ProfileScreen()));
 
@@ -97,14 +97,14 @@ void main() {
     });
 
     testWidgets('handles profile update success', (WidgetTester tester) async {
-      final mockUserProfile = UserProfile(
+      const mockUserProfile = UserProfile(
         id: 'user1',
         username: 'john_doe',
         displayName: 'John Doe',
         isActive: true,
       );
 
-      userProfileBloc.emit(UserProfileUpdated(userProfile: mockUserProfile));
+      userProfileBloc.emit(const UserProfileUpdated(userProfile: mockUserProfile));
 
       await tester.pumpWidget(createTestWidget(const ProfileScreen()));
       await tester.pump(); // Allow snackbar to show
@@ -113,7 +113,7 @@ void main() {
     });
 
     testWidgets('displays profile header with avatar and edit button', (WidgetTester tester) async {
-      final mockUserProfile = UserProfile(
+      const mockUserProfile = UserProfile(
         id: 'user1',
         username: 'john_doe',
         displayName: 'John Doe',
@@ -121,7 +121,7 @@ void main() {
         isActive: true,
       );
 
-      userProfileBloc.emit(UserProfileLoaded(userProfile: mockUserProfile));
+      userProfileBloc.emit(const UserProfileLoaded(userProfile: mockUserProfile));
 
       await tester.pumpWidget(createTestWidget(const ProfileScreen()));
 
@@ -133,7 +133,7 @@ void main() {
     });
 
     testWidgets('displays profile stats correctly', (WidgetTester tester) async {
-      final mockUserProfile = UserProfile(
+      const mockUserProfile = UserProfile(
         id: 'user1',
         username: 'john_doe',
         displayName: 'John Doe',
@@ -142,7 +142,7 @@ void main() {
         isActive: true,
       );
 
-      userProfileBloc.emit(UserProfileLoaded(userProfile: mockUserProfile));
+      userProfileBloc.emit(const UserProfileLoaded(userProfile: mockUserProfile));
 
       await tester.pumpWidget(createTestWidget(const ProfileScreen()));
 
@@ -153,14 +153,14 @@ void main() {
     });
 
     testWidgets('displays music preferences with categories', (WidgetTester tester) async {
-      final mockUserProfile = UserProfile(
+      const mockUserProfile = UserProfile(
         id: 'user1',
         username: 'john_doe',
         displayName: 'John Doe',
         isActive: true,
       );
 
-      userProfileBloc.emit(UserProfileLoaded(userProfile: mockUserProfile));
+      userProfileBloc.emit(const UserProfileLoaded(userProfile: mockUserProfile));
 
       await tester.pumpWidget(createTestWidget(const ProfileScreen()));
 
@@ -174,7 +174,7 @@ void main() {
     });
 
     testWidgets('allows editing profile information', (WidgetTester tester) async {
-      final mockUserProfile = UserProfile(
+      const mockUserProfile = UserProfile(
         id: 'user1',
         username: 'john_doe',
         displayName: 'John Doe',
@@ -183,7 +183,7 @@ void main() {
         isActive: true,
       );
 
-      userProfileBloc.emit(UserProfileLoaded(userProfile: mockUserProfile));
+      userProfileBloc.emit(const UserProfileLoaded(userProfile: mockUserProfile));
 
       await tester.pumpWidget(createTestWidget(const ProfileScreen()));
 
@@ -207,14 +207,14 @@ void main() {
     });
 
     testWidgets('handles tab navigation correctly', (WidgetTester tester) async {
-      final mockUserProfile = UserProfile(
+      const mockUserProfile = UserProfile(
         id: 'user1',
         username: 'john_doe',
         displayName: 'John Doe',
         isActive: true,
       );
 
-      userProfileBloc.emit(UserProfileLoaded(userProfile: mockUserProfile));
+      userProfileBloc.emit(const UserProfileLoaded(userProfile: mockUserProfile));
 
       await tester.pumpWidget(createTestWidget(const ProfileScreen()));
 
@@ -248,14 +248,14 @@ void main() {
     });
 
     testWidgets('displays top content when loaded', (WidgetTester tester) async {
-      final mockUserProfile = UserProfile(
+      const mockUserProfile = UserProfile(
         id: 'user1',
         username: 'john_doe',
         displayName: 'John Doe',
         isActive: true,
       );
 
-      userProfileBloc.emit(UserProfileLoaded(userProfile: mockUserProfile));
+      userProfileBloc.emit(const UserProfileLoaded(userProfile: mockUserProfile));
       // Simulate top tracks loaded
       userProfileBloc.emit(MyContentLoaded(
         contentType: 'tracks',
@@ -276,14 +276,14 @@ void main() {
     });
 
     testWidgets('displays liked content when loaded', (WidgetTester tester) async {
-      final mockUserProfile = UserProfile(
+      const mockUserProfile = UserProfile(
         id: 'user1',
         username: 'john_doe',
         displayName: 'John Doe',
         isActive: true,
       );
 
-      userProfileBloc.emit(UserProfileLoaded(userProfile: mockUserProfile));
+      userProfileBloc.emit(const UserProfileLoaded(userProfile: mockUserProfile));
       // Simulate liked tracks loaded
       userProfileBloc.emit(MyContentLoaded(
         contentType: 'tracks',
@@ -302,14 +302,14 @@ void main() {
     });
 
     testWidgets('navigates to track details on tap', (WidgetTester tester) async {
-      final mockUserProfile = UserProfile(
+      const mockUserProfile = UserProfile(
         id: 'user1',
         username: 'john_doe',
         displayName: 'John Doe',
         isActive: true,
       );
 
-      userProfileBloc.emit(UserProfileLoaded(userProfile: mockUserProfile));
+      userProfileBloc.emit(const UserProfileLoaded(userProfile: mockUserProfile));
       userProfileBloc.emit(MyContentLoaded(
         contentType: 'tracks',
         content: [MockTracks.track1],
@@ -349,14 +349,14 @@ void main() {
     });
 
     testWidgets('navigates to artist details on tap', (WidgetTester tester) async {
-      final mockUserProfile = UserProfile(
+      const mockUserProfile = UserProfile(
         id: 'user1',
         username: 'john_doe',
         displayName: 'John Doe',
         isActive: true,
       );
 
-      userProfileBloc.emit(UserProfileLoaded(userProfile: mockUserProfile));
+      userProfileBloc.emit(const UserProfileLoaded(userProfile: mockUserProfile));
       userProfileBloc.emit(MyContentLoaded(
         contentType: 'artists',
         content: [MockArtists.artist1],
@@ -396,14 +396,14 @@ void main() {
     });
 
     testWidgets('handles drawer opening', (WidgetTester tester) async {
-      final mockUserProfile = UserProfile(
+      const mockUserProfile = UserProfile(
         id: 'user1',
         username: 'john_doe',
         displayName: 'John Doe',
         isActive: true,
       );
 
-      userProfileBloc.emit(UserProfileLoaded(userProfile: mockUserProfile));
+      userProfileBloc.emit(const UserProfileLoaded(userProfile: mockUserProfile));
 
       await tester.pumpWidget(createTestWidget(const ProfileScreen()));
 
@@ -416,14 +416,14 @@ void main() {
     });
 
     testWidgets('handles empty content gracefully', (WidgetTester tester) async {
-      final mockUserProfile = UserProfile(
+      const mockUserProfile = UserProfile(
         id: 'user1',
         username: 'john_doe',
         displayName: 'John Doe',
         isActive: true,
       );
 
-      userProfileBloc.emit(UserProfileLoaded(userProfile: mockUserProfile));
+      userProfileBloc.emit(const UserProfileLoaded(userProfile: mockUserProfile));
       // Empty content
       userProfileBloc.emit(const MyContentLoaded(
         contentType: 'tracks',

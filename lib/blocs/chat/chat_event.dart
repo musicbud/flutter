@@ -272,3 +272,16 @@ class SendDirectMessage extends ChatEvent {
   @override
   List<Object> get props => [userId, message];
 }
+
+class LoadConversations extends ChatEvent {
+  const LoadConversations();
+}
+
+class DeleteConversation extends ChatEvent {
+  final String conversationId;
+
+  const DeleteConversation(this.conversationId);
+
+  @override
+  List<Object> get props => [conversationId];
+}

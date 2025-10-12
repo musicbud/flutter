@@ -67,7 +67,28 @@ class _LoginScreenState extends State<LoginScreen> {
                 listener: (context, state) {
                   if (state is Authenticated) {
                     // Navigate to home on successful authentication
-                    Navigator.pushReplacementNamed(context, '/');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Login successful! Welcome back!'),
+                        backgroundColor: DesignSystem.success,
+                      ),
+                    );
+                    Navigator.pushReplacementNamed(context, '/home');
+                  } else if (state is AuthError) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Authentication failed: ${state.message}'),
+                        backgroundColor: DesignSystem.error,
+                        duration: const Duration(seconds: 4),
+                        action: SnackBarAction(
+                          label: 'DISMISS',
+                          textColor: DesignSystem.onError,
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          },
+                        ),
+                      ),
+                    );
                   }
                 },
               ),
@@ -105,6 +126,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     ModernInputField(
                       hintText: 'Username',
                       controller: _usernameController,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter your username';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 16),
 
@@ -113,6 +140,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       hintText: 'Password',
                       controller: _passwordController,
                       obscureText: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your password';
+                        }
+                        if (value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
+                        return null;
+                      },
                     ),
                     const SizedBox(height: 24),
 
@@ -125,8 +161,34 @@ class _LoginScreenState extends State<LoginScreen> {
                           variant: ModernButtonVariant.primary,
                           size: ModernButtonSize.large,
                           isLoading: state is LoginLoading,
+                          isFullWidth: true,
                         );
                       },
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    // Forgot password link
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: TextButton(
+                        onPressed: () {
+                          // TODO: Implement forgot password functionality
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Forgot password functionality coming soon!'),
+                              backgroundColor: DesignSystem.info,
+                            ),
+                          );
+                        },
+                        child: const Text(
+                          'Forgot password?',
+                          style: TextStyle(
+                            color: DesignSystem.primary,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
                     ),
 
                     const SizedBox(height: 16),
@@ -143,7 +205,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                       child: const Text(
                         'Don\'t have an account? Sign up',
-                        style: TextStyle(color: DesignSystem.primary),
+                        style: TextStyle(
+                          color: DesignSystem.primary,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ],

@@ -146,22 +146,22 @@ class CardBuilder {
           onTap: _onTap,
           borderRadius: _borderRadius ?? BorderRadius.circular(DesignSystem.radiusLG),
           child: Container(
-            padding: EdgeInsets.all(DesignSystem.spacingMD),
+            padding: const EdgeInsets.all(DesignSystem.spacingMD),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (_header != null) ...[
                   _header!,
-                  SizedBox(height: DesignSystem.spacingMD),
+                  const SizedBox(height: DesignSystem.spacingMD),
                 ],
                 if (_content != null) _content!,
                 if (_footer != null) ...[
-                  SizedBox(height: DesignSystem.spacingMD),
+                  const SizedBox(height: DesignSystem.spacingMD),
                   _footer!,
                 ],
                 if (_actions != null && _actions!.isNotEmpty) ...[
-                  SizedBox(height: DesignSystem.spacingMD),
+                  const SizedBox(height: DesignSystem.spacingMD),
                   _buildActionsRow(),
                 ],
               ],
@@ -186,7 +186,7 @@ class CardBuilder {
       children: [
         if (leading != null) ...[
           leading,
-          SizedBox(width: DesignSystem.spacingSM),
+          const SizedBox(width: DesignSystem.spacingSM),
         ],
         Expanded(
           child: Column(
@@ -201,7 +201,7 @@ class CardBuilder {
                   ),
                 ),
               if (subtitle != null) ...[
-                SizedBox(height: DesignSystem.spacingXXS),
+                const SizedBox(height: DesignSystem.spacingXXS),
                 Text(
                   subtitle,
                   style: subtitleStyle ?? DesignSystem.bodySmall.copyWith(
@@ -213,7 +213,7 @@ class CardBuilder {
           ),
         ),
         if (trailing != null) ...[
-          SizedBox(width: DesignSystem.spacingSM),
+          const SizedBox(width: DesignSystem.spacingSM),
           trailing,
         ],
       ],
@@ -226,7 +226,7 @@ class CardBuilder {
       children: _actions!.map((action) {
         if (_actions!.indexOf(action) > 0) {
           return Padding(
-            padding: EdgeInsets.only(left: DesignSystem.spacingSM),
+            padding: const EdgeInsets.only(left: DesignSystem.spacingSM),
             child: action,
           );
         }
@@ -249,7 +249,7 @@ class CardBuilder {
         );
       case CardVariant.accent:
         return _CardThemeData(
-          color: DesignSystem.primary.withValues(alpha: 0.1),
+          color: DesignSystem.primary.withOpacity(0.1),
           shadows: DesignSystem.shadowMedium,
         );
       case CardVariant.outlined:

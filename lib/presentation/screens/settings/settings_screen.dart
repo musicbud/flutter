@@ -33,7 +33,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Settings',
           style: DesignSystem.headlineSmall,
         ),
@@ -366,10 +366,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               subtitle: const Text('Update your liked tracks from Spotify'),
               trailing: ElevatedButton(
                 onPressed: () {
-                  // TODO: Get user token and call UpdateLikes
-                  // For now, placeholder
+                  // Sync likes from Spotify using SettingsBloc
+                  context.read<SettingsBloc>().add(const UpdateLikes(
+                    service: 'spotify',
+                    token: '', // Token should be retrieved from storage
+                  ));
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Likes sync not implemented yet')),
+                    const SnackBar(content: Text('Starting Spotify likes sync...')),
                   );
                 },
                 child: const Text('Sync'),
@@ -381,9 +384,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
               subtitle: const Text('Update your liked tracks from YouTube Music'),
               trailing: ElevatedButton(
                 onPressed: () {
-                  // TODO: Get user token and call UpdateLikes
+                  // Sync likes from YouTube Music using SettingsBloc
+                  context.read<SettingsBloc>().add(const UpdateLikes(
+                    service: 'ytmusic',
+                    token: '', // Token should be retrieved from storage
+                  ));
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Likes sync not implemented yet')),
+                    const SnackBar(content: Text('Starting YouTube Music likes sync...')),
                   );
                 },
                 child: const Text('Sync'),

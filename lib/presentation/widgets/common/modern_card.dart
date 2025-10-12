@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/design_system.dart';
+import '../../../../core/theme/design_system.dart';
 
 enum ModernCardVariant {
   primary,

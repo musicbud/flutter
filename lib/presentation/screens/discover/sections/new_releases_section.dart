@@ -22,7 +22,7 @@ class NewReleasesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
+      padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -62,7 +62,7 @@ class NewReleasesSection extends StatelessWidget {
                         : ListView(
                             scrollDirection: Axis.horizontal,
                             children: albums.map((album) => Padding(
-                              padding: EdgeInsets.only(right: DesignSystem.spacingMD),
+                              padding: const EdgeInsets.only(right: DesignSystem.spacingMD),
                               child: ReleaseCard(
                                 title: album.name,
                                 artist: album.artistName,

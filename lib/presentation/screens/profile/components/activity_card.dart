@@ -29,9 +29,9 @@ class ActivityCard extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(DesignSystem.spacingSM),
+            padding: const EdgeInsets.all(DesignSystem.spacingSM),
             decoration: BoxDecoration(
-              color: iconColor.withValues(alpha: 0.1),
+              color: iconColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             ),
             child: Icon(
@@ -40,7 +40,7 @@ class ActivityCard extends StatelessWidget {
               size: 24,
             ),
           ),
-          SizedBox(width: DesignSystem.spacingMD),
+          const SizedBox(width: DesignSystem.spacingMD),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,14 +52,14 @@ class ActivityCard extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: DesignSystem.spacingXS),
+                const SizedBox(height: DesignSystem.spacingXS),
                 Text(
                   description,
                   style: DesignSystem.bodySmall.copyWith(
                     color: DesignSystem.onSurfaceVariant,
                   ),
                 ),
-                SizedBox(height: DesignSystem.spacingXS),
+                const SizedBox(height: DesignSystem.spacingXS),
                 Text(
                   timeAgo,
                   style: DesignSystem.caption.copyWith(
@@ -69,7 +69,7 @@ class ActivityCard extends StatelessWidget {
               ],
             ),
           ),
-          Icon(
+          const Icon(
             Icons.chevron_right,
             color: DesignSystem.onSurfaceVariant,
             size: 20,

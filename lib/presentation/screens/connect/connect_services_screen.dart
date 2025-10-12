@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/theme/design_system.dart';
 import '../../../presentation/widgets/common/modern_button.dart';
+import '../../../blocs/settings/settings_bloc.dart';
+import '../../../blocs/settings/settings_event.dart';
+import '../../../blocs/settings/settings_state.dart';
 
 class ConnectServicesScreen extends StatelessWidget {
   const ConnectServicesScreen({super.key});
@@ -9,7 +13,7 @@ class ConnectServicesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Connect Services',
           style: DesignSystem.headlineSmall,
         ),
@@ -21,7 +25,7 @@ class ConnectServicesScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            const Text(
               'Connect your favorite music and entertainment services to enhance your experience.',
               style: DesignSystem.bodyLarge,
             ),
@@ -34,10 +38,7 @@ class ConnectServicesScreen extends StatelessWidget {
               Icons.music_note,
               Colors.green,
               () {
-                // TODO: Navigate to Spotify connect page
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Spotify connection coming soon')),
-                );
+                context.read<SettingsBloc>().add(const GetServiceLoginUrl('spotify'));
               },
             ),
 
@@ -50,10 +51,7 @@ class ConnectServicesScreen extends StatelessWidget {
               Icons.play_circle_filled,
               Colors.red,
               () {
-                // TODO: Navigate to YouTube Music connect page
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('YouTube Music connection coming soon')),
-                );
+                context.read<SettingsBloc>().add(const GetServiceLoginUrl('youtube'));
               },
             ),
 
@@ -66,10 +64,7 @@ class ConnectServicesScreen extends StatelessWidget {
               Icons.radio,
               Colors.orange,
               () {
-                // TODO: Navigate to Last.fm connect page
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Last.fm connection coming soon')),
-                );
+                context.read<SettingsBloc>().add(const GetServiceLoginUrl('lastfm'));
               },
             ),
 
@@ -82,59 +77,47 @@ class ConnectServicesScreen extends StatelessWidget {
               Icons.tv,
               Colors.blue,
               () {
-                // TODO: Navigate to MyAnimeList connect page
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('MyAnimeList connection coming soon')),
-                );
+                context.read<SettingsBloc>().add(const GetServiceLoginUrl('mal'));
               },
             ),
 
             const SizedBox(height: DesignSystem.spacingXL),
 
-            Text(
+            const Text(
               'Connected Services',
               style: DesignSystem.headlineSmall,
             ),
             const SizedBox(height: DesignSystem.spacingMD),
 
-            // TODO: Show list of connected services
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(DesignSystem.spacingLG),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.music_note,
-                      color: Colors.green,
-                      size: 32,
+            BlocListener<SettingsBloc, SettingsState>(
+              listener: (context, state) {
+                if (state is ServiceConnected) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('${state.service} connected successfully!'),
+                      backgroundColor: Colors.green,
                     ),
-                    const SizedBox(width: DesignSystem.spacingMD),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Spotify',
-                            style: DesignSystem.bodyLarge.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                          Text(
-                            'Connected',
-                            style: DesignSystem.bodySmall.copyWith(
-                              color: DesignSystem.success,
-                            ),
-                          ),
-                        ],
-                      ),
+                  );
+                } else if (state is ServiceConnectionError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Failed to connect ${state.service}: ${state.error}'),
+                      backgroundColor: Colors.red,
                     ),
-                    ModernButton(
-                      text: 'Manage',
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/spotify-control');
-                      },
+                  );
+                } else if (state is ServiceLoginUrlReceived) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Login URL received for ${state.service}'),
+                      backgroundColor: Colors.blue,
                     ),
-                  ],
+                  );
+                }
+              },
+              child: Text(
+                'Connect services above to see them listed here',
+                style: DesignSystem.bodyMedium.copyWith(
+                  color: Colors.grey,
                 ),
               ),
             ),
@@ -161,7 +144,7 @@ class ConnectServicesScreen extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
+                color: color.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
               ),
               child: Icon(

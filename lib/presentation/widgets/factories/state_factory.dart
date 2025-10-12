@@ -263,7 +263,7 @@ class StateFactory {
               end: Alignment.bottomRight,
               colors: [
                 design.designSystemColors.surfaceContainer,
-                design.designSystemColors.surfaceContainerHigh.withValues(alpha: 0.5),
+                design.designSystemColors.surfaceContainerHigh.withOpacity(0.5),
                 design.designSystemColors.surfaceContainer,
               ],
             ),

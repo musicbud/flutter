@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../../core/theme/design_system.dart';
+import '../../../../core/theme/design_system.dart';
 
 /// A reusable image widget with consistent fallback handling.
 /// Provides loading states, error handling, and placeholder images.
@@ -201,7 +201,7 @@ class ImageWithFallback extends StatelessWidget {
   Widget _buildLoadingPlaceholder() {
     return Container(
       color: DesignSystem.surfaceContainer,
-      child: Center(
+      child: const Center(
         child: SizedBox(
           width: 24,
           height: 24,
@@ -216,7 +216,7 @@ class ImageWithFallback extends StatelessWidget {
   Widget _buildErrorPlaceholder() {
     return Container(
       color: DesignSystem.surfaceContainer,
-      child: Column(
+      child: const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(

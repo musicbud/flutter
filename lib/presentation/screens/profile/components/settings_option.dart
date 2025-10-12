@@ -25,7 +25,7 @@ class SettingsOption extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            padding: EdgeInsets.all(DesignSystem.spacingSM),
+            padding: const EdgeInsets.all(DesignSystem.spacingSM),
             decoration: BoxDecoration(
               color: DesignSystem.surfaceContainerHigh,
               borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
@@ -36,7 +36,7 @@ class SettingsOption extends StatelessWidget {
               size: 24,
             ),
           ),
-          SizedBox(width: DesignSystem.spacingMD),
+          const SizedBox(width: DesignSystem.spacingMD),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,7 +48,7 @@ class SettingsOption extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: DesignSystem.spacingXS),
+                const SizedBox(height: DesignSystem.spacingXS),
                 Text(
                   subtitle,
                   style: DesignSystem.bodySmall.copyWith(
@@ -58,7 +58,7 @@ class SettingsOption extends StatelessWidget {
               ],
             ),
           ),
-          Icon(
+          const Icon(
             Icons.chevron_right,
             color: DesignSystem.onSurfaceVariant,
             size: 20,

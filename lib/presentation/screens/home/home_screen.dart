@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/main/main_screen_bloc.dart';
 import '../../../blocs/main/main_screen_event.dart';
 import '../../../blocs/main/main_screen_state.dart';
+import '../../../blocs/user/user_bloc.dart';
+import '../../../blocs/user/user_event.dart';
 import '../../../core/theme/design_system.dart';
 import '../../../presentation/widgets/common/modern_input_field.dart';
 import '../../../presentation/widgets/navigation/main_navigation_scaffold.dart';
@@ -31,6 +33,13 @@ class _HomeScreenState extends State<HomeScreen> {
     // Load user profile and dynamic content
     debugPrint('🏠 HomeScreen: Making API calls on startup');
     context.read<MainScreenBloc>().add(MainScreenInitialized());
+
+    // Load user profile data from API
+    context.read<UserBloc>().add(LoadMyProfile());
+
+    // Also fetch user's liked and top items for recommendations
+    context.read<UserBloc>().add(LoadLikedItems());
+    context.read<UserBloc>().add(LoadTopItems());
   }
 
   @override
@@ -105,8 +114,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: CustomScrollView(
                   slivers: [
                     // Header Section
-                    SliverToBoxAdapter(
-                      child: const HomeHeaderWidget(),
+                    const SliverToBoxAdapter(
+                      child: HomeHeaderWidget(),
                     ),
 
                     // Search Section
@@ -130,24 +139,24 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
-                    SliverToBoxAdapter(
-                      child: const SizedBox(height: DesignSystem.spacingLG),
+                    const SliverToBoxAdapter(
+                      child: SizedBox(height: DesignSystem.spacingLG),
                     ),
 
                     // Quick Actions Section
-                    SliverToBoxAdapter(
+                    const SliverToBoxAdapter(
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
                         child: HomeQuickActions(),
                       ),
                     ),
 
-                    SliverToBoxAdapter(
+                    const SliverToBoxAdapter(
                       child: SizedBox(height: DesignSystem.spacingXL),
                     ),
 
                     // Dynamic Content Sections
-                    SliverToBoxAdapter(
+                    const SliverToBoxAdapter(
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
                         child: Column(
@@ -159,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
-                    SliverToBoxAdapter(
+                    const SliverToBoxAdapter(
                       child: SizedBox(height: DesignSystem.spacingXL),
                     ),
                   ],

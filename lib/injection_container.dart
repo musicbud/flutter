@@ -8,6 +8,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 // Network
 import 'data/network/dio_client.dart';
 import 'data/network/dio_client_adapter.dart';
+import 'data/network/enhanced_logging_interceptor.dart';
 import 'core/network/network_info.dart';
 
 // Services
@@ -150,32 +151,14 @@ Future<void> _registerExternalDependencies() async {
 Dio _createDioInstance() {
   final dio = Dio();
 
-  // Add logging interceptors in debug mode
+  // Add enhanced logging interceptor in debug mode
   if (kDebugMode) {
-    dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) {
-        debugPrint('🌐 [${options.method}] Request: ${options.uri}');
-        if (options.data != null) {
-          debugPrint('Body: ${options.data}');
-        }
-        if (options.headers.isNotEmpty) {
-          debugPrint('Headers: ${options.headers}');
-        }
-        return handler.next(options);
-      },
-      onResponse: (response, handler) {
-        debugPrint('✅ [${response.statusCode}] Response: ${response.requestOptions.uri}');
-        debugPrint('Body: ${response.data}');
-        return handler.next(response);
-      },
-      onError: (error, handler) {
-        debugPrint('❌ [${error.response?.statusCode}] Error: ${error.requestOptions.uri}');
-        debugPrint('Message: ${error.message}');
-        if (error.response?.data != null) {
-          debugPrint('Body: ${error.response?.data}');
-        }
-        return handler.next(error);
-      },
+    dio.interceptors.add(EnhancedLoggingInterceptor(
+      logRequests: true,
+      logResponses: true,
+      logErrors: true,
+      logPerformance: true,
+      maxBodyLength: 2000,
     ));
   }
 
@@ -292,7 +275,7 @@ Future<void> _registerDataSources() async {
 
   // Search Data Source
   sl.registerLazySingleton<SearchRemoteDataSource>(
-    () => SearchRemoteDataSourceImpl(client: sl<Dio>()),
+    () => SearchRemoteDataSourceImpl(dioClient: sl<DioClient>()),
   );
 
   // Common Items Data Source
@@ -456,10 +439,7 @@ Future<void> _registerRepositories() async {
 /// Registers BLoC dependencies
 Future<void> _registerBlocs() async {
   // User BLoC
-  sl.registerFactory<UserBloc>(() => UserBloc(
-    userRepository: sl<UserRepository>(),
-    authRepository: sl<AuthRepository>(),
-  ));
+  sl.registerFactory<UserBloc>(() => UserBloc(userRepository: sl<UserRepository>()));
 
   // Auth BLoC
   sl.registerFactory<AuthBloc>(() => AuthBloc(

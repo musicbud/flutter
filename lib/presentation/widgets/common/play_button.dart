@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/design_system.dart';
+import '../../../../core/theme/design_system.dart';
 
 /// A standardized circular play button widget.
 /// Provides consistent styling and behavior for play buttons across the app.
@@ -175,7 +175,7 @@ class _PlayButtonState extends State<PlayButton> with TickerProviderStateMixin {
                   boxShadow: widget.showShadow
                       ? [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
+                          color: Colors.black.withOpacity(0.2),
                           blurRadius: widget.elevation,
                           offset: const Offset(0, 2),
                         ),
@@ -212,7 +212,7 @@ class _PlayButtonState extends State<PlayButton> with TickerProviderStateMixin {
       case PlayState.paused:
         return widget.pausedBackgroundColor ?? design.designSystemColors.primary;
       case PlayState.loading:
-        return widget.loadingBackgroundColor ?? design.designSystemColors.primary.withValues(alpha: 0.8);
+        return widget.loadingBackgroundColor ?? design.designSystemColors.primary.withOpacity(0.8);
     }
   }
 

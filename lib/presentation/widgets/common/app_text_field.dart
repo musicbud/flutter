@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/design_system.dart';
+import '../../../../core/theme/design_system.dart';
 
 /// A reusable text field widget with consistent styling
 class AppTextField extends StatelessWidget {
@@ -102,7 +102,7 @@ class AppTextField extends StatelessWidget {
           ),
         ),
         hintStyle: TextStyle(
-          color: DesignSystem.borderLight.withValues(alpha: 0.7),
+          color: DesignSystem.borderLight.withOpacity(0.7),
           fontSize: 16,
         ),
         labelStyle: const TextStyle(

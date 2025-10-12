@@ -1,6 +1,6 @@
-import 'package:equatable/equatable.dart';
-import '../../../models/analytics.dart';
+part of 'analytics_bloc.dart';
 
+/// Base class for analytics states
 abstract class AnalyticsState extends Equatable {
   const AnalyticsState();
 
@@ -8,54 +8,31 @@ abstract class AnalyticsState extends Equatable {
   List<Object?> get props => [];
 }
 
+/// Initial state
 class AnalyticsInitial extends AnalyticsState {
   const AnalyticsInitial();
 }
 
+/// Loading state
 class AnalyticsLoading extends AnalyticsState {
   const AnalyticsLoading();
 }
 
+/// Loaded state with analytics data
 class AnalyticsLoaded extends AnalyticsState {
   final Analytics analytics;
 
-  const AnalyticsLoaded(this.analytics);
+  const AnalyticsLoaded({required this.analytics});
 
   @override
   List<Object?> get props => [analytics];
 }
 
-class UserAnalyticsLoaded extends AnalyticsState {
-  final Map<String, dynamic> data;
-
-  const UserAnalyticsLoaded(this.data);
-
-  @override
-  List<Object?> get props => [data];
-}
-
-class ContentAnalyticsLoaded extends AnalyticsState {
-  final Map<String, dynamic> contentAnalytics;
-
-  const ContentAnalyticsLoaded(this.contentAnalytics);
-
-  @override
-  List<Object?> get props => [contentAnalytics];
-}
-
-class SocialAnalyticsLoaded extends AnalyticsState {
-  final Map<String, dynamic> socialAnalytics;
-
-  const SocialAnalyticsLoaded(this.socialAnalytics);
-
-  @override
-  List<Object?> get props => [socialAnalytics];
-}
-
+/// Error state
 class AnalyticsError extends AnalyticsState {
   final String message;
 
-  const AnalyticsError(this.message);
+  const AnalyticsError({required this.message});
 
   @override
   List<Object?> get props => [message];

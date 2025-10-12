@@ -16,7 +16,7 @@ void main() {
   setUp(() async {
     await TestSetup.initMockDependencies();
     contentBloc = ContentBloc(
-      contentRepository: TestSetup.getMock() as MockContentRepository,
+      contentRepository: TestSetup.getMock<ContentRepository>(),
     );
   });
 
@@ -56,8 +56,8 @@ void main() {
 
     testWidgets('displays content when loaded', (WidgetTester tester) async {
       final mockTracks = [
-        Track(uid: '1', title: 'Test Track 1', artistName: 'Test Artist', albumName: 'Test Album'),
-        Track(uid: '2', title: 'Test Track 2', artistName: 'Test Artist 2', albumName: 'Test Album 2'),
+        const Track(uid: '1', title: 'Test Track 1', artistName: 'Test Artist', albumName: 'Test Album'),
+        const Track(uid: '2', title: 'Test Track 2', artistName: 'Test Artist 2', albumName: 'Test Album 2'),
       ];
 
       final mockArtists = [
@@ -187,7 +187,7 @@ void main() {
 
     testWidgets('navigates to tracks screen on view all tap', (WidgetTester tester) async {
       final mockTracks = [
-        Track(uid: '1', title: 'Test Track 1', artistName: 'Test Artist', albumName: 'Test Album'),
+        const Track(uid: '1', title: 'Test Track 1', artistName: 'Test Artist', albumName: 'Test Album'),
       ];
 
       contentBloc.emit(ContentLoaded(
@@ -222,9 +222,9 @@ void main() {
 
     testWidgets('displays trending tracks section correctly', (WidgetTester tester) async {
       final mockTracks = [
-        Track(uid: '1', title: 'Bohemian Rhapsody', artistName: 'Queen', albumName: 'A Night at the Opera'),
-        Track(uid: '2', title: 'Stairway to Heaven', artistName: 'Led Zeppelin', albumName: 'Led Zeppelin IV'),
-        Track(uid: '3', title: 'Hotel California', artistName: 'Eagles', albumName: 'Hotel California'),
+        const Track(uid: '1', title: 'Bohemian Rhapsody', artistName: 'Queen', albumName: 'A Night at the Opera'),
+        const Track(uid: '2', title: 'Stairway to Heaven', artistName: 'Led Zeppelin', albumName: 'Led Zeppelin IV'),
+        const Track(uid: '3', title: 'Hotel California', artistName: 'Eagles', albumName: 'Hotel California'),
       ];
 
       contentBloc.emit(ContentLoaded(

@@ -62,3 +62,18 @@ class ProfileBudsRequested extends ProfileEvent {
 }
 
 class ProfileConnectedServicesRequested extends ProfileEvent {}
+
+// Specific events for different types of content
+class TopTracksRequested extends ProfileEvent {}
+
+class TopArtistsRequested extends ProfileEvent {}
+
+class TopGenresRequested extends ProfileEvent {}
+
+class LikedTracksRequested extends ProfileEvent {}
+
+class LikedArtistsRequested extends ProfileEvent {}
+
+class LikedGenresRequested extends ProfileEvent {}
+
+class GetProfile extends ProfileEvent {}

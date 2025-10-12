@@ -38,8 +38,12 @@ class Endpoint {
     if (url.contains('http://{{host}}')) {
       return url.replaceAll('http://{{host}}', baseUrl);
     }
-    // Otherwise, just replace {{host}}
-    return url.replaceAll('{{host}}', baseUrl);
+    // If URL contains {{host}}, replace it
+    if (url.contains('{{host}}')) {
+      return url.replaceAll('{{host}}', baseUrl);
+    }
+    // If URL is a path-only URL, return it as is (DioClient will handle base URL)
+    return url;
   }
 
   @override

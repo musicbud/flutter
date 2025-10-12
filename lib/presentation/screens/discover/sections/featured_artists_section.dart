@@ -25,7 +25,7 @@ class FeaturedArtistsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
+      padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -34,11 +34,11 @@ class FeaturedArtistsSection extends StatelessWidget {
             actionText: 'View All',
             onActionPressed: onViewAllPressed,
           ),
-          SizedBox(height: DesignSystem.spacingMD),
+          const SizedBox(height: DesignSystem.spacingMD),
           SizedBox(
             height: 120,
             child: isLoading
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : hasError
                     ? Center(
                         child: Column(
@@ -61,9 +61,9 @@ class FeaturedArtistsSection extends StatelessWidget {
                     : ListView(
                         scrollDirection: Axis.horizontal,
                         children: artists.isEmpty
-                            ? [Center(child: Text('No artists available'))]
+                            ? [const Center(child: Text('No artists available'))]
                             : artists.map((artist) => Padding(
-                                padding: EdgeInsets.only(right: DesignSystem.spacingMD),
+                                padding: const EdgeInsets.only(right: DesignSystem.spacingMD),
                                 child: ArtistCard(
                                   name: artist.name,
                                   genre: artist.genres?.first ?? 'Unknown',

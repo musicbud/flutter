@@ -3,11 +3,11 @@ import 'main_navigation.dart';
 import '../utils/logger.dart';
 import '../navigation/navigation_items.dart';
 import '../navigation/navigation_constants.dart';
-import '../presentation/screens/home/home_screen.dart';
-import '../presentation/screens/discover/discover_screen.dart';
-import '../presentation/screens/library/library_screen.dart';
-import '../presentation/screens/chat/chat_screen.dart';
-import '../presentation/screens/profile/profile_screen.dart';
+import '../presentation/screens/home/dynamic_home_screen.dart';
+import '../presentation/screens/discover/dynamic_discover_screen.dart';
+import '../presentation/screens/library/dynamic_library_screen.dart';
+import '../presentation/screens/chat/dynamic_chat_screen.dart';
+import '../presentation/screens/profile/dynamic_profile_screen.dart';
 
 class MainNavigationScaffold extends StatefulWidget {
   final int initialIndex;
@@ -37,15 +37,15 @@ class MainNavigationScaffoldState extends State<MainNavigationScaffold> {
     logger.d('Getting page for route: $route');
     switch (route) {
       case NavigationConstants.home:
-        return const HomeScreen();
+        return const DynamicHomeScreen();
       case NavigationConstants.discover:
-        return const DiscoverScreen();
+        return const DynamicDiscoverScreen();
       case NavigationConstants.library:
-        return const LibraryScreen();
+        return const DynamicLibraryScreen();
       case NavigationConstants.chat:
-        return const ChatScreen();
+        return const DynamicChatScreen();
       case NavigationConstants.profile:
-        return const ProfileScreen();
+        return const DynamicProfileScreen();
       default:
         logger.w('Unknown route: $route, returning empty widget');
         return const SizedBox();

@@ -9,11 +9,11 @@ class SpotifyRemoteDataSourceImpl implements SpotifyRemoteDataSource {
   SpotifyRemoteDataSourceImpl({required this.dioClient});
 
   @override
-  Future<List<CommonTrack>> getPlayedTracks() async {
+  Future<List<SpotifyCommonTrack>> getPlayedTracks() async {
     final response = await dioClient.post('/me/played/tracks', data: {'page': 1});
     if (response.statusCode == 200) {
       final List<dynamic> data = response.data['data'] ?? [];
-      return data.map((json) => CommonTrack.fromJson(json)).toList();
+      return data.map((json) => SpotifyCommonTrack.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load played tracks');
     }
@@ -63,11 +63,11 @@ class SpotifyRemoteDataSourceImpl implements SpotifyRemoteDataSource {
   }
 
   @override
-  Future<List<CommonTrack>> getRecentlyPlayedTracks() async {
+  Future<List<SpotifyCommonTrack>> getRecentlyPlayedTracks() async {
     final response = await dioClient.get('/spotify/recently-played');
     if (response.statusCode == 200) {
       final List<dynamic> data = response.data['data'] ?? [];
-      return data.map((json) => CommonTrack.fromJson(json)).toList();
+      return data.map((json) => SpotifyCommonTrack.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load recently played tracks');
     }
@@ -172,11 +172,11 @@ class SpotifyRemoteDataSourceImpl implements SpotifyRemoteDataSource {
   }
 
   @override
-  Future<List<CommonTrack>> getPlayedTracksWithLocation() async {
+  Future<List<SpotifyCommonTrack>> getPlayedTracksWithLocation() async {
     final response = await dioClient.get('/spotify/played-tracks-with-location');
     if (response.statusCode == 200) {
       final List<dynamic> data = response.data['data'] ?? [];
-      return data.map((json) => CommonTrack.fromJson(json)).toList();
+      return data.map((json) => SpotifyCommonTrack.fromJson(json)).toList();
     } else {
       throw Exception('Failed to load tracks with location');
     }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../models/user_profile.dart';
-import '../../../core/theme/design_system.dart';
+import '../../../../core/theme/design_system.dart';
 import '../../../navigation/navigation_config.dart';
 import '../../../navigation/navigation_constants.dart';
 import '../../../navigation/navigation_mixins.dart';

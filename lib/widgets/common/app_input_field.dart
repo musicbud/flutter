@@ -120,7 +120,7 @@ class _AppInputFieldState extends State<AppInputField> {
                 color: DesignSystem.onPrimary,
               ),
           ),
-          SizedBox(height: DesignSystem.spacingSM),
+          const SizedBox(height: DesignSystem.spacingSM),
         ],
         TextFormField(
           controller: widget.controller,
@@ -141,7 +141,7 @@ class _AppInputFieldState extends State<AppInputField> {
           decoration: _getInputDecoration(),
         ),
         if (widget.errorText != null) ...[
-          SizedBox(height: DesignSystem.spacingSM),
+          const SizedBox(height: DesignSystem.spacingSM),
           Text(
             widget.errorText!,
             style: widget.errorStyle ??
@@ -196,22 +196,22 @@ class _AppInputFieldState extends State<AppInputField> {
   EdgeInsetsGeometry _getContentPadding() {
     switch (widget.size) {
       case AppInputSize.small:
-        return EdgeInsets.symmetric(
+        return const EdgeInsets.symmetric(
           horizontal: DesignSystem.spacingMD,
           vertical: DesignSystem.spacingSM,
         );
       case AppInputSize.medium:
-        return EdgeInsets.symmetric(
+        return const EdgeInsets.symmetric(
           horizontal: DesignSystem.spacingMD,
           vertical: DesignSystem.spacingMD,
         );
       case AppInputSize.large:
-        return EdgeInsets.symmetric(
+        return const EdgeInsets.symmetric(
           horizontal: DesignSystem.spacingLG,
           vertical: DesignSystem.spacingMD,
         );
       case AppInputSize.xlarge:
-        return EdgeInsets.symmetric(
+        return const EdgeInsets.symmetric(
           horizontal: DesignSystem.spacingXL,
           vertical: DesignSystem.spacingLG,
         );
@@ -222,7 +222,7 @@ class _AppInputFieldState extends State<AppInputField> {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       borderSide: BorderSide(
-        color: DesignSystem.primary.withValues(alpha: 0.3),
+        color: DesignSystem.primary.withOpacity(0.3),
       ),
     );
   }
@@ -230,7 +230,7 @@ class _AppInputFieldState extends State<AppInputField> {
   InputBorder _getFocusedBorder() {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
-      borderSide: BorderSide(
+      borderSide: const BorderSide(
         color: DesignSystem.primary,
         width: 2,
       ),
@@ -240,7 +240,7 @@ class _AppInputFieldState extends State<AppInputField> {
   InputBorder _getErrorBorder() {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
-      borderSide: BorderSide(
+      borderSide: const BorderSide(
         color: DesignSystem.error,
         width: 2,
       ),
@@ -251,7 +251,7 @@ class _AppInputFieldState extends State<AppInputField> {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       borderSide: BorderSide(
-        color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.3),
+        color: DesignSystem.onSurfaceVariant.withOpacity(0.3),
       ),
     );
   }
@@ -260,7 +260,7 @@ class _AppInputFieldState extends State<AppInputField> {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       borderSide: BorderSide(
-        color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
+        color: DesignSystem.onSurfaceVariant.withOpacity(0.2),
       ),
     );
   }
@@ -270,11 +270,11 @@ class _AppInputFieldState extends State<AppInputField> {
       case AppInputVariant.primary:
         return DesignSystem.onPrimary;
       case AppInputVariant.secondary:
-        return DesignSystem.onSurfaceVariant.withValues(alpha: 0.1);
+        return DesignSystem.onSurfaceVariant.withOpacity(0.1);
       case AppInputVariant.outline:
         return DesignSystem.onPrimary;
       case AppInputVariant.filled:
-        return DesignSystem.onSurfaceVariant.withValues(alpha: 0.1);
+        return DesignSystem.onSurfaceVariant.withOpacity(0.1);
       case AppInputVariant.transparent:
         return DesignSystem.transparent;
       case AppInputVariant.search:

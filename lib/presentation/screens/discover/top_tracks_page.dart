@@ -86,19 +86,19 @@ class _TopTracksPageState extends State<TopTracksPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.error_outline,
                         size: 64,
                         color: DesignSystem.error,
                       ),
-                      SizedBox(height: DesignSystem.spacingMD),
+                      const SizedBox(height: DesignSystem.spacingMD),
                       Text(
                         'Failed to load top tracks',
                         style: DesignSystem.bodyMedium.copyWith(
                           color: DesignSystem.onSurface,
                         ),
                       ),
-                      SizedBox(height: DesignSystem.spacingMD),
+                      const SizedBox(height: DesignSystem.spacingMD),
                       Text(
                         state.message,
                         style: DesignSystem.caption.copyWith(
@@ -106,7 +106,7 @@ class _TopTracksPageState extends State<TopTracksPage> {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      SizedBox(height: DesignSystem.spacingLG),
+                      const SizedBox(height: DesignSystem.spacingLG),
                       ModernButton(
                         text: 'Retry',
                         onPressed: () {
@@ -127,12 +127,12 @@ class _TopTracksPageState extends State<TopTracksPage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.music_note,
                           size: 64,
                           color: DesignSystem.onSurfaceVariant,
                         ),
-                        SizedBox(height: DesignSystem.spacingMD),
+                        const SizedBox(height: DesignSystem.spacingMD),
                         Text(
                           'No top tracks available',
                           style: DesignSystem.bodyMedium.copyWith(
@@ -146,7 +146,7 @@ class _TopTracksPageState extends State<TopTracksPage> {
 
                 return ListView.builder(
                   controller: _scrollController,
-                  padding: EdgeInsets.all(DesignSystem.spacingMD),
+                  padding: const EdgeInsets.all(DesignSystem.spacingMD),
                   itemCount: tracks.length + (_isLoadingMore ? 1 : 0),
                   itemBuilder: (context, index) {
                     if (index == tracks.length) {
@@ -170,8 +170,8 @@ class _TopTracksPageState extends State<TopTracksPage> {
 
   Widget _buildTrackItem(CommonTrack track) {
     return Container(
-      margin: EdgeInsets.only(bottom: DesignSystem.spacingMD),
-      padding: EdgeInsets.all(DesignSystem.spacingMD),
+      margin: const EdgeInsets.only(bottom: DesignSystem.spacingMD),
+      padding: const EdgeInsets.all(DesignSystem.spacingMD),
       decoration: BoxDecoration(
         color: DesignSystem.surfaceContainer,
         borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
@@ -187,7 +187,7 @@ class _TopTracksPageState extends State<TopTracksPage> {
             borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
             placeholderIcon: Icons.music_note,
           ),
-          SizedBox(width: DesignSystem.spacingMD),
+          const SizedBox(width: DesignSystem.spacingMD),
 
           // Track info
           Expanded(
@@ -202,7 +202,7 @@ class _TopTracksPageState extends State<TopTracksPage> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                SizedBox(height: DesignSystem.spacingXS),
+                const SizedBox(height: DesignSystem.spacingXS),
                 Text(
                   track.artistName ?? 'Unknown Artist',
                   style: DesignSystem.bodySmall.copyWith(
@@ -212,7 +212,7 @@ class _TopTracksPageState extends State<TopTracksPage> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 if (track.durationMs != null) ...[
-                  SizedBox(height: DesignSystem.spacingXS),
+                  const SizedBox(height: DesignSystem.spacingXS),
                   Text(
                     _formatDuration(track.durationMs!),
                     style: DesignSystem.caption.copyWith(
@@ -228,7 +228,7 @@ class _TopTracksPageState extends State<TopTracksPage> {
           Column(
             children: [
               IconButton(
-                icon: Icon(
+                icon: const Icon(
                   Icons.play_arrow,
                   color: DesignSystem.primary,
                 ),

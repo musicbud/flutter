@@ -44,7 +44,7 @@ class ActivityItem extends StatelessWidget {
             color: DesignSystem.surfaceContainer,
             borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             border: Border.all(
-              color: DesignSystem.border.withValues(alpha: 0.2),
+              color: DesignSystem.border.withOpacity(0.2),
               width: 1,
             ),
           ),

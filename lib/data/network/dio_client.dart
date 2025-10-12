@@ -19,14 +19,31 @@ class DioClient {
         _tokenProvider = tokenProvider,
         _authRepository = authRepository {
     _dio.options.baseUrl = baseUrl;
-    _dio.options.connectTimeout = const Duration(seconds: 30);
-    _dio.options.receiveTimeout = const Duration(seconds: 30);
-    _dio.options.sendTimeout = const Duration(seconds: 30);
+    _dio.options.connectTimeout = const Duration(seconds: 5); // Reduced from 30 to 5 seconds
+    _dio.options.receiveTimeout = const Duration(seconds: 10); // Reduced from 30 to 10 seconds
+    _dio.options.sendTimeout = const Duration(seconds: 10); // Reduced from 30 to 10 seconds
     _dio.options.headers = {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'User-Agent': 'MusicBud-Flutter/1.0',
     };
+
+    // Add custom retry logic via interceptor
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onError: (error, handler) async {
+          // Retry logic for connection errors
+          if (_shouldRetry(error) && error.requestOptions.extra['retryCount'] == null) {
+            error.requestOptions.extra['retryCount'] = 1;
+            return _retryRequest(error, handler);
+          } else if (_shouldRetry(error) && error.requestOptions.extra['retryCount'] < 3) {
+            error.requestOptions.extra['retryCount'] = error.requestOptions.extra['retryCount'] + 1;
+            return _retryRequest(error, handler);
+          }
+          return handler.next(error);
+        },
+      ),
+    );
 
     _dio.interceptors.add(
       InterceptorsWrapper(
@@ -265,5 +282,57 @@ class DioClient {
   /// Updates the headers of the Dio instance
   void updateHeaders(Map<String, dynamic> headers) {
     _dio.options.headers.addAll(headers);
+  }
+
+  /// Determines if a request should be retried based on the error type
+  bool _shouldRetry(DioException error) {
+    // Don't retry if it's a connection issue with no backend running
+    if (error.type == DioExceptionType.connectionTimeout ||
+        error.type == DioExceptionType.unknown) {
+      // Only retry once for connection issues
+      final retryCount = error.requestOptions.extra['retryCount'] ?? 0;
+      return retryCount == 0;
+    }
+    
+    // Don't retry timeout errors excessively
+    if (error.type == DioExceptionType.receiveTimeout) {
+      return false;
+    }
+    
+    // Retry server errors (5xx)
+    return error.response?.statusCode != null && 
+           error.response!.statusCode! >= 500;
+  }
+
+  /// Retries a failed request after a delay
+  Future<void> _retryRequest(DioException error, ErrorInterceptorHandler handler) async {
+    final retryCount = error.requestOptions.extra['retryCount'] ?? 1;
+    
+    // Limit delay for connection issues (fast fail when backend is down)
+    final delaySeconds = error.type == DioExceptionType.connectionTimeout ||
+                        error.type == DioExceptionType.unknown
+                        ? 1 // Quick retry for connection issues
+                        : retryCount * 2; // Exponential backoff for other issues
+    
+    await Future.delayed(Duration(seconds: delaySeconds));
+    
+    try {
+      final response = await _dio.request(
+        error.requestOptions.path,
+        data: error.requestOptions.data,
+        queryParameters: error.requestOptions.queryParameters,
+        options: Options(
+          method: error.requestOptions.method,
+          headers: error.requestOptions.headers,
+        ),
+      );
+      return handler.resolve(response);
+    } catch (retryError) {
+      if (retryError is DioException) {
+        retryError.requestOptions.extra['retryCount'] = retryCount;
+        return handler.next(retryError);
+      }
+      return handler.next(error);
+    }
   }
 }

@@ -238,7 +238,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   ) async {
     try {
       await _authRepository.connectSpotify(event.spotifyToken);
-      emit(ServiceConnected('spotify'));
+      emit(const ServiceConnected('spotify'));
     } catch (e) {
       emit(ServiceConnectionError('spotify', e.toString()));
     }
@@ -250,7 +250,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   ) async {
     try {
       await _authRepository.connectYTMusic(event.ytmusicToken);
-      emit(ServiceConnected('ytmusic'));
+      emit(const ServiceConnected('ytmusic'));
     } catch (e) {
       emit(ServiceConnectionError('ytmusic', e.toString()));
     }
@@ -262,7 +262,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   ) async {
     try {
       await _authRepository.connectLastFM(event.lastfmToken);
-      emit(ServiceConnected('lastfm'));
+      emit(const ServiceConnected('lastfm'));
     } catch (e) {
       emit(ServiceConnectionError('lastfm', e.toString()));
     }
@@ -274,7 +274,7 @@ class SettingsBloc extends Bloc<SettingsEvent, SettingsState> {
   ) async {
     try {
       await _authRepository.connectMAL(event.malToken);
-      emit(ServiceConnected('mal'));
+      emit(const ServiceConnected('mal'));
     } catch (e) {
       emit(ServiceConnectionError('mal', e.toString()));
     }

@@ -15,11 +15,11 @@ class LoginResponse {
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
     return LoginResponse(
-      accessToken: json['access_token'] as String,
-      refreshToken: json['refresh_token'] as String,
+      accessToken: json['access_token'] as String? ?? json['access'] as String,
+      refreshToken: json['refresh_token'] as String? ?? json['refresh'] as String,
       tokenType: json['token_type'] as String? ?? 'Bearer',
       expiresIn: json['expires_in'] as int?,
-      userId: json['user_id'] as String?,
+      userId: json['user_id'] as String? ?? (json['user']?['id']?.toString()),
     );
   }
 
@@ -75,7 +75,7 @@ class TokenRefreshResponse {
 
   factory TokenRefreshResponse.fromJson(Map<String, dynamic> json) {
     return TokenRefreshResponse(
-      accessToken: json['access_token'] as String,
+      accessToken: json['access_token'] as String? ?? json['access'] as String,
       tokenType: json['token_type'] as String? ?? 'Bearer',
       expiresIn: json['expires_in'] as int?,
     );

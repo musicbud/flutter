@@ -1,14 +1,14 @@
 [
     {
         "name": "buds - get bud profile",
-        "method": "POST",
-        "url": "http://{{host}}/bud/profile",
+        "method": "GET",
+        "url": "/bud/profile/",
         "status": "done"
     },
     {
         "name": "buds - get buds by top artists",
-        "method": "POST",
-        "url": "http://{{host}}/bud/top/artists",
+        "method": "GET",
+        "url": "/bud/top/artists/",
         "status": "done"
     },
     {
@@ -116,13 +116,13 @@
     {
         "name": "auth - login",
         "method": "POST",
-        "url": "http://{{host}}/login",
+        "url": "/login/",
         "status": "done"
     },
     {
         "name": "auth - register",
         "method": "POST",
-        "url": "http://{{host}}/register",
+        "url": "/register/",
         "status": "done"
     },
     {
@@ -199,14 +199,14 @@
     },
     {
         "name": "me - get profile",
-        "method": "POST",
-        "url": "http://{{host}}/me/profile",
+        "method": "GET",
+        "url": "/me/profile/",
         "status": "done"
     },
     {
         "name": "me - set profile",
         "method": "POST",
-        "url": "http://{{host}}/me/profile/set",
+        "url": "/me/profile/set/",
         "status": "done"
     },
     {
@@ -217,20 +217,20 @@
     },
     {
         "name": "me - top artists",
-        "method": "POST",
-        "url": "http://{{host}}/me/top/artists",
+        "method": "GET",
+        "url": "/me/top/artists/",
         "status": "done"
     },
     {
         "name": "me - top tracks",
-        "method": "POST",
-        "url": "http://{{host}}/me/top/tracks",
+        "method": "GET",
+        "url": "/me/top/tracks/",
         "status": "done"
     },
     {
         "name": "me - top genres",
-        "method": "POST",
-        "url": "http://{{host}}/me/top/genres",
+        "method": "GET",
+        "url": "/me/top/genres/",
         "status": "done"
     },
     {

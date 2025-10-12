@@ -174,10 +174,10 @@ class ImageHandler {
   /// Build default placeholder widget for loading states
   static Widget _buildDefaultPlaceholder(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: DesignSystem.gradientCard,
       ),
-      child: Center(
+      child: const Center(
         child: SizedBox(
           width: 24,
           height: 24,

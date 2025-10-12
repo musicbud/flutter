@@ -71,17 +71,17 @@ class MainNavigationDrawer extends StatelessWidget {
 
           // Main Navigation Section
           Container(
-            margin: EdgeInsets.all(16.0),
-            padding: EdgeInsets.all(12.0),
+            margin: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(12.0),
             decoration: BoxDecoration(
-              color: DesignSystem.primary.withValues(alpha: 0.1),
+              color: DesignSystem.primary.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: DesignSystem.primary,
                 width: 2,
               ),
             ),
-            child: Column(
+            child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -122,10 +122,10 @@ class MainNavigationDrawer extends StatelessWidget {
 
           // Secondary Navigation Section
           if (secondaryNavigationItems.isNotEmpty) ...[
-            Divider(),
+            const Divider(),
 
             // All Secondary Pages
-            Padding(
+            const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
                 'All Pages',
@@ -138,7 +138,7 @@ class MainNavigationDrawer extends StatelessWidget {
             ),
             ...secondaryNavigationItems.map((item) => ListTile(
               leading: Icon(item.icon, size: 20),
-              title: Text(item.label, style: TextStyle(fontSize: 14)),
+              title: Text(item.label, style: const TextStyle(fontSize: 14)),
               onTap: () {
                 logger.d('Drawer secondary navigation item tapped: ${item.label}');
                 Navigator.pop(context);

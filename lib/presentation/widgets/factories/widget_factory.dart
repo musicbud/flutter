@@ -298,7 +298,7 @@ class WidgetFactory {
     return Container(
       padding: EdgeInsets.all(design.designSystemSpacing.md),
       decoration: BoxDecoration(
-        color: design.designSystemColors.error.withValues(alpha: 0.1),
+        color: design.designSystemColors.error.withOpacity(0.1),
         borderRadius: BorderRadius.circular(design.designSystemRadius.md),
         border: Border.all(color: design.designSystemColors.error),
       ),

@@ -17,7 +17,7 @@ void main() {
   setUp(() async {
     await TestSetup.initMockDependencies();
     userProfileBloc = UserProfileBloc(
-      userProfileRepository: TestSetup.getMock() as MockUserProfileRepository,
+      userProfileRepository: TestSetup.getMock<UserProfileRepository>(),
     );
   });
 
@@ -36,14 +36,14 @@ void main() {
 
   group('HomeHeaderWidget', () {
     testWidgets('displays loading state', (WidgetTester tester) async {
-      await tester.pumpWidget(createTestWidget(HomeHeaderWidget()));
+      await tester.pumpWidget(createTestWidget(const HomeHeaderWidget()));
 
       // Check that loading text is shown
       expect(find.text('Loading...'), findsOneWidget);
     });
 
     testWidgets('displays user profile when loaded', (WidgetTester tester) async {
-      final userProfile = UserProfile(
+      const userProfile = UserProfile(
         id: '1',
         username: 'testuser',
         displayName: 'Test User',
@@ -52,9 +52,9 @@ void main() {
         isActive: true,
       );
 
-      userProfileBloc.emit(UserProfileLoaded(userProfile: userProfile));
+      userProfileBloc.emit(const UserProfileLoaded(userProfile: userProfile));
 
-      await tester.pumpWidget(createTestWidget(HomeHeaderWidget()));
+      await tester.pumpWidget(createTestWidget(const HomeHeaderWidget()));
 
       // Check that user name is displayed
       expect(find.text('Test User'), findsOneWidget);
@@ -64,7 +64,7 @@ void main() {
 
   group('HomeQuickActions', () {
     testWidgets('renders all quick action buttons', (WidgetTester tester) async {
-      await tester.pumpWidget(createTestWidget(HomeQuickActions()));
+      await tester.pumpWidget(createTestWidget(const HomeQuickActions()));
 
       // Check for all quick action buttons
       expect(find.text('Discover'), findsOneWidget);
@@ -79,7 +79,7 @@ void main() {
 
       await tester.pumpWidget(
         WidgetTestHelper.createTestableWidget(
-          child: HomeQuickActions(),
+          child: const HomeQuickActions(),
           blocProviders: [BlocProvider<UserProfileBloc>.value(value: userProfileBloc)],
           navigatorObserver: mockObserver,
           onGenerateRoute: (settings) {
@@ -104,7 +104,7 @@ void main() {
         content: MockTracks.allTracks,
       ));
 
-      await tester.pumpWidget(createTestWidget(HomeRecommendations()));
+      await tester.pumpWidget(createTestWidget(const HomeRecommendations()));
 
       // Check that recommendations section is shown
       expect(find.text('Your Liked Songs'), findsOneWidget);
@@ -117,7 +117,7 @@ void main() {
         content: MockArtists.allArtists,
       ));
 
-      await tester.pumpWidget(createTestWidget(HomeRecommendations()));
+      await tester.pumpWidget(createTestWidget(const HomeRecommendations()));
 
       // Check that top artists section is shown
       expect(find.text('Your Top Artists'), findsOneWidget);
@@ -125,12 +125,12 @@ void main() {
     });
 
     testWidgets('handles empty content', (WidgetTester tester) async {
-      userProfileBloc.emit(MyContentLoaded(
+      userProfileBloc.emit(const MyContentLoaded(
         contentType: 'tracks',
         content: [],
       ));
 
-      await tester.pumpWidget(createTestWidget(HomeRecommendations()));
+      await tester.pumpWidget(createTestWidget(const HomeRecommendations()));
 
       // Check that no recommendations are shown
       expect(find.text('Your Liked Songs'), findsNothing);
@@ -144,7 +144,7 @@ void main() {
         content: MockTracks.allTracks,
       ));
 
-      await tester.pumpWidget(createTestWidget(HomeRecentActivity()));
+      await tester.pumpWidget(createTestWidget(const HomeRecentActivity()));
 
       // Check that recent activity section is shown
       expect(find.text('Recently Played'), findsOneWidget);
@@ -165,7 +165,7 @@ void main() {
             }
           },
           child: Container(
-            child: SafeArea(
+            child: const SafeArea(
               child: CustomScrollView(
                 slivers: [
                   SliverToBoxAdapter(child: HomeHeaderWidget()),
@@ -223,7 +223,7 @@ void main() {
         child: Container(),
       );
 
-      userProfileBloc.emit(UserProfileError('Test error'));
+      userProfileBloc.emit(const UserProfileError('Test error'));
 
       await tester.pumpWidget(createTestWidget(Scaffold(body: homeContent)));
       await tester.pump(); // Allow snackbar to show

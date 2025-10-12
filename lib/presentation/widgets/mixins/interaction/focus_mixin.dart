@@ -1105,7 +1105,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
               onPressed: _focusEnabled && currentPage > 1
                   ? () => onPageChanged(currentPage - 1)
                   : null,
-              icon: Icon(Icons.chevron_left),
+              icon: const Icon(Icons.chevron_left),
               padding: EdgeInsets.all(design.designSystemSpacing.sm),
             ),
             Container(
@@ -1120,7 +1120,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
               onPressed: _focusEnabled && currentPage < totalPages
                   ? () => onPageChanged(currentPage + 1)
                   : null,
-              icon: Icon(Icons.chevron_right),
+              icon: const Icon(Icons.chevron_right),
               padding: EdgeInsets.all(design.designSystemSpacing.sm),
             ),
           ],

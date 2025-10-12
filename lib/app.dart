@@ -3,6 +3,7 @@ import "package:flutter_bloc/flutter_bloc.dart";
 import "package:get_it/get_it.dart";
 
 // BLoCs
+import "blocs/auth/auth_bloc.dart";
 import "blocs/auth/login/login_bloc.dart";
 import "blocs/auth/register/register_bloc.dart";
 import "blocs/likes/likes_bloc.dart";
@@ -17,28 +18,41 @@ import "domain/repositories/auth_repository.dart";
 import "domain/repositories/content_repository.dart";
 
 // Screens
-import "presentation/screens/home/home_screen.dart";
+// Used screens
+import "presentation/screens/home/dynamic_home_screen.dart";
 import "presentation/screens/auth/login_screen.dart";
-import "presentation/screens/discover/discover_screen.dart";
+import "presentation/screens/auth/register_screen.dart";
+import "presentation/screens/discover/dynamic_discover_screen.dart";
 import "presentation/screens/discover/top_tracks_page.dart";
-import "presentation/screens/library/library_screen.dart";
-import "presentation/screens/profile/profile_screen.dart";
+import "presentation/screens/library/dynamic_library_screen.dart";
+import "presentation/screens/profile/dynamic_profile_screen.dart";
+import "presentation/screens/profile/edit_profile_screen.dart";
 import "presentation/screens/profile/artist_details_screen.dart";
 import "presentation/screens/profile/genre_details_screen.dart";
 import "presentation/screens/profile/track_details_screen.dart";
-import "presentation/screens/chat/chat_screen.dart";
-import "presentation/screens/search/search_screen.dart";
-import "presentation/screens/buds/buds_screen.dart";
-import "presentation/screens/settings/settings_screen.dart";
+import "presentation/screens/chat/dynamic_chat_screen.dart";
+import "presentation/screens/search/dynamic_search_screen.dart";
+import "presentation/screens/buds/dynamic_buds_screen.dart";
+import "presentation/screens/settings/dynamic_settings_screen.dart";
+import "presentation/screens/settings/enhanced_settings_screen.dart";
 import "presentation/screens/connect/connect_services_screen.dart";
 import "presentation/screens/spotify/played_tracks_map_screen.dart";
 import "presentation/screens/spotify/spotify_control_screen.dart";
 
+// New onboarding page
+import "presentation/pages/onboarding_page.dart";
+
 // Providers
 import "data/providers/token_provider.dart";
 
+// Auth Gate
+import "widgets/auth/auth_gate.dart";
+
 // Design System
-import "core/theme/design_system.dart";
+import "core/theme/musicbud_theme.dart";
+
+// Dynamic Services
+import "services/dynamic_navigation_service.dart";
 
 // Legacy constants (for backward compatibility during migration)
 import "core/theme/app_constants.dart";
@@ -61,6 +75,12 @@ class App extends StatelessWidget {
 
     return [
       // Authentication BLoCs
+      BlocProvider<AuthBloc>(
+        create: (context) => AuthBloc(
+          authRepository: sl<AuthRepository>(),
+          tokenProvider: sl<TokenProvider>(),
+        ),
+      ),
       BlocProvider<LoginBloc>(
         create: (context) => LoginBloc(authRepository: sl<AuthRepository>()),
       ),
@@ -95,15 +115,18 @@ class App extends StatelessWidget {
 
   /// Builds the MaterialApp with theme and routing
   Widget _buildMaterialApp() {
-    final tokenProvider = GetIt.instance<TokenProvider>();
-    final hasToken = tokenProvider.token != null && tokenProvider.token!.isNotEmpty;
+    final navigationService = DynamicNavigationService.instance;
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: AppConstants.appTitle,
-      theme: DesignSystem.darkTheme, // Using the new unified design system
-      initialRoute: hasToken ? AppConstants.homeRoute : AppConstants.loginRoute,
+      theme: MusicBudTheme.lightTheme,
+      darkTheme: MusicBudTheme.darkTheme,
+      themeMode: ThemeMode.dark, // Default to dark theme to match UI designs
+      navigatorKey: navigationService.navigatorKey,
+      home: const AuthGate(),
       routes: _buildAppRoutes(),
+      onGenerateRoute: navigationService.onGenerateRoute,
     );
   }
 
@@ -111,20 +134,22 @@ class App extends StatelessWidget {
   /// Builds the application routes
   Map<String, WidgetBuilder> _buildAppRoutes() {
     return {
-      AppConstants.homeRoute: (context) => const HomeScreen(),
+      // Note: homeRoute ('/') is removed since we use AuthGate as home
       AppConstants.loginRoute: (context) => const LoginScreen(),
-      AppConstants.homePageRoute: (context) => const HomeScreen(),
-      "/discover": (context) => const DiscoverScreen(),
+      AppConstants.homePageRoute: (context) => const DynamicHomeScreen(),
+      "/discover": (context) => const DynamicDiscoverScreen(),
       "/top-tracks": (context) => const TopTracksPage(),
-      "/library": (context) => const LibraryScreen(),
-      "/profile": (context) => const ProfileScreen(),
-      "/chat": (context) => const ChatScreen(),
-      "/search": (context) => const SearchScreen(),
-      "/buds": (context) => const BudsScreen(),
-      "/settings": (context) => const SettingsScreen(),
+      "/library": (context) => const DynamicLibraryScreen(),
+      "/profile": (context) => const DynamicProfileScreen(),
+      "/edit-profile": (context) => const EditProfileScreen(),
+      "/chat": (context) => const DynamicChatScreen(),
+      "/search": (context) => const DynamicSearchScreen(),
+      "/buds": (context) => const DynamicBudsScreen(),
+      "/settings": (context) => const EnhancedSettingsScreen(),
+      "/settings-old": (context) => const DynamicSettingsScreen(),
       "/connect-services": (context) => const ConnectServicesScreen(),
-      "/register": (context) => const Scaffold(body: Center(child: Text('Register Screen - Coming Soon'))),
-      "/onboarding": (context) => const Scaffold(body: Center(child: Text('Onboarding Screen - Coming Soon'))),
+      "/register": (context) => const RegisterScreen(),
+      "/onboarding": (context) => const OnboardingPage(),
       "/artist-details": (context) => const ArtistDetailsScreen(),
       "/genre-details": (context) => const GenreDetailsScreen(),
       "/track-details": (context) => const TrackDetailsScreen(),

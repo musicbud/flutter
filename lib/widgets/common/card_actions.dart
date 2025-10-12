@@ -100,7 +100,7 @@ class CardActions extends StatelessWidget {
     return Container(
       decoration: showBackground
           ? BoxDecoration(
-              color: backgroundColor ?? design.designSystemColors.surfaceContainer.withValues(alpha: 0.8),
+              color: backgroundColor ?? design.designSystemColors.surfaceContainer.withOpacity(0.8),
               borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.md),
             )
           : null,

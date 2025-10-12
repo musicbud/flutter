@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:musicbud_flutter/blocs/spotify/spotify_bloc.dart';
-import 'package:musicbud_flutter/data/models/common_track.dart';
+import 'package:musicbud_flutter/blocs/spotify/spotify_event.dart';
+import 'package:musicbud_flutter/blocs/spotify/spotify_state.dart';
+import 'package:musicbud_flutter/domain/entities/common_track.dart';
+// For SpotifyCommonTrack
 import 'package:musicbud_flutter/presentation/screens/spotify/played_tracks_map_screen.dart';
 
 class SpotifyControlScreen extends StatelessWidget {
@@ -52,15 +55,22 @@ class _SpotifyControlScreenContentState extends State<_SpotifyControlScreenConte
     return BlocBuilder<SpotifyBloc, SpotifyState>(
       builder: (context, state) {
         if (state is PlayedTracksLoaded) {
-          _playedTracks = state.tracks;
+          // Convert SpotifyCommonTrack to CommonTrack
+          _playedTracks = state.tracks.map((spotifyTrack) => CommonTrack(
+            id: spotifyTrack.id,
+            title: spotifyTrack.name,
+            artistName: spotifyTrack.artistName ?? 'Unknown Artist',
+            genres: const [],
+            imageUrl: spotifyTrack.images.isNotEmpty ? spotifyTrack.images.first.url : null,
+          )).toList();
         }
         return ListView.builder(
           itemCount: _playedTracks.length,
           itemBuilder: (context, index) {
             final track = _playedTracks[index];
             return ListTile(
-              title: Text(track.name),
-              subtitle: Text(track.artistName ?? 'Unknown Artist'),
+              title: Text(track.title),
+              subtitle: Text(track.artistName),
               onTap: () {
                 // Navigate to track details if needed
               },
@@ -75,7 +85,7 @@ class _SpotifyControlScreenContentState extends State<_SpotifyControlScreenConte
                     if (mounted) {
                       bloc.add(PlayTrackWithLocation(
                         track.id ?? '',
-                        track.name,
+                        track.title,
                         position.latitude,
                         position.longitude,
                       ));

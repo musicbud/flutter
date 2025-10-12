@@ -199,7 +199,7 @@ class CardComposer {
             end: Alignment.bottomCenter,
             colors: [
               Colors.transparent,
-              _overlayColor ?? Colors.black.withValues(alpha: 0.3),
+              _overlayColor ?? Colors.black.withOpacity(0.3),
             ],
           ),
         ),
@@ -207,7 +207,7 @@ class CardComposer {
             ? Align(
                 alignment: Alignment.topRight,
                 child: Padding(
-                  padding: EdgeInsets.all(DesignSystem.spacingSM),
+                  padding: const EdgeInsets.all(DesignSystem.spacingSM),
                   child: _buildBadge(),
                 ),
               )
@@ -252,7 +252,7 @@ class CardComposer {
 
   Widget _buildBadge() {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: DesignSystem.spacingSM,
         vertical: DesignSystem.spacingXXS,
       ),
@@ -313,7 +313,7 @@ class CardComposer {
       children: _footerActions.map((action) {
         if (_footerActions.indexOf(action) > 0) {
           return Padding(
-            padding: EdgeInsets.only(left: DesignSystem.spacingSM),
+            padding: const EdgeInsets.only(left: DesignSystem.spacingSM),
             child: action,
           );
         }

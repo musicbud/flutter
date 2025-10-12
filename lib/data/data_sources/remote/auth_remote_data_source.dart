@@ -40,7 +40,24 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       });
       return response.data;
     } on DioException catch (e) {
-      if (HttpUtils.isAuthenticationError(e)) {
+      // Handle connection-specific errors first
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw NetworkException(
+          message: 'Connection timeout. Please check if the backend server is running on localhost:8000.'
+        );
+      } else if (e.type == DioExceptionType.unknown) {
+        throw NetworkException(
+          message: 'Cannot connect to server. Please ensure the backend is running and accessible.'
+        );
+      } else if (e.type == DioExceptionType.receiveTimeout) {
+        throw NetworkException(
+          message: 'Request timeout. The server took too long to respond.'
+        );
+      } else if (e.type == DioExceptionType.sendTimeout) {
+        throw NetworkException(
+          message: 'Send timeout. Failed to send request to server.'
+        );
+      } else if (HttpUtils.isAuthenticationError(e)) {
         throw AuthenticationException(
           message: 'Invalid username or password. Please check your credentials and try again.'
         );
@@ -69,7 +86,24 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       });
       return response.data;
     } on DioException catch (e) {
-      if (HttpUtils.isNetworkError(e)) {
+      // Handle connection-specific errors first
+      if (e.type == DioExceptionType.connectionTimeout) {
+        throw NetworkException(
+          message: 'Connection timeout. Please check if the backend server is running on localhost:8000.'
+        );
+      } else if (e.type == DioExceptionType.unknown) {
+        throw NetworkException(
+          message: 'Cannot connect to server. Please ensure the backend is running and accessible.'
+        );
+      } else if (e.type == DioExceptionType.receiveTimeout) {
+        throw NetworkException(
+          message: 'Request timeout. The server took too long to respond.'
+        );
+      } else if (e.type == DioExceptionType.sendTimeout) {
+        throw NetworkException(
+          message: 'Send timeout. Failed to send request to server.'
+        );
+      } else if (HttpUtils.isNetworkError(e)) {
         throw NetworkException(
           message: 'Network error during registration. Please check your internet connection.'
         );

@@ -9,12 +9,12 @@ class ProfileMusicWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Padding(
+    return const Padding(
       padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionHeader(
+          SectionHeader(
             title: 'My Music',
           ),
           SizedBox(height: DesignSystem.spacingMD),

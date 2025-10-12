@@ -19,7 +19,7 @@ class AppTypography extends StatelessWidget {
         foregroundColor: DesignSystem.onSurface,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(DesignSystem.spacingLG),
+        padding: const EdgeInsets.all(DesignSystem.spacingLG),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -50,7 +50,7 @@ class AppTypography extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: DesignSystem.spacingXL),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
               'Headline Typography',
@@ -78,7 +78,7 @@ class AppTypography extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: DesignSystem.spacingXL),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
               'Body Typography',
@@ -106,7 +106,7 @@ class AppTypography extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: DesignSystem.spacingXL),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
               'Title Typography',
@@ -148,7 +148,7 @@ class AppTypography extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: DesignSystem.spacingXL),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
               'Arabic Typography',
@@ -162,7 +162,7 @@ class AppTypography extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: DesignSystem.spacingXL),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
               'Font Families',
@@ -187,7 +187,7 @@ class AppTypography extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: DesignSystem.spacingXL),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
               'Color Palette',
@@ -209,7 +209,7 @@ class AppTypography extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: DesignSystem.spacingXL),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
               'Neutral Colors',
@@ -236,7 +236,7 @@ class AppTypography extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: DesignSystem.spacingXL),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
               'Semantic Colors',
@@ -263,7 +263,7 @@ class AppTypography extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: DesignSystem.spacingXL),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
               'Neutral Palette',
@@ -320,7 +320,7 @@ class AppTypography extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: DesignSystem.spacingXL),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
               'Spacing System',
@@ -367,7 +367,7 @@ class AppTypography extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: DesignSystem.spacingXL),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
               'Border Radius',
@@ -409,7 +409,7 @@ class AppTypography extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(height: DesignSystem.spacingXL),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
               'Shadows',
@@ -451,14 +451,14 @@ class AppTypography extends StatelessWidget {
             color: DesignSystem.primary,
           ),
         ),
-        SizedBox(height: DesignSystem.spacingMD),
+        const SizedBox(height: DesignSystem.spacingMD),
         Container(
-          padding: EdgeInsets.all(DesignSystem.spacingMD),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           decoration: BoxDecoration(
             color: DesignSystem.surfaceContainer,
             borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             border: Border.all(
-              color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
+              color: DesignSystem.onSurfaceVariant.withOpacity(0.2),
             ),
           ),
           child: Column(
@@ -476,7 +476,7 @@ class AppTypography extends StatelessWidget {
     TextStyle style,
   ) {
     return Padding(
-      padding: EdgeInsets.only(bottom: DesignSystem.spacingMD),
+      padding: const EdgeInsets.only(bottom: DesignSystem.spacingMD),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -486,7 +486,7 @@ class AppTypography extends StatelessWidget {
               color: DesignSystem.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: DesignSystem.spacingSM),
+          const SizedBox(height: DesignSystem.spacingSM),
           Text(
             'The quick brown fox jumps over the lazy dog',
             style: style,
@@ -503,7 +503,7 @@ class AppTypography extends StatelessWidget {
     Color color,
   ) {
     return Padding(
-      padding: EdgeInsets.only(bottom: DesignSystem.spacingMD),
+      padding: const EdgeInsets.only(bottom: DesignSystem.spacingMD),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -513,7 +513,7 @@ class AppTypography extends StatelessWidget {
               color: DesignSystem.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: DesignSystem.spacingSM),
+          const SizedBox(height: DesignSystem.spacingSM),
           Text(
             'Sample text with $fontFamily',
             style: TextStyle(
@@ -533,7 +533,7 @@ class AppTypography extends StatelessWidget {
     Color color,
   ) {
     return Padding(
-      padding: EdgeInsets.only(bottom: DesignSystem.spacingMD),
+      padding: const EdgeInsets.only(bottom: DesignSystem.spacingMD),
       child: Row(
         children: [
           Container(
@@ -543,11 +543,11 @@ class AppTypography extends StatelessWidget {
               color: color,
               borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
               border: Border.all(
-                color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.3),
+                color: DesignSystem.onSurfaceVariant.withOpacity(0.3),
               ),
             ),
           ),
-          SizedBox(width: DesignSystem.spacingMD),
+          const SizedBox(width: DesignSystem.spacingMD),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -559,7 +559,7 @@ class AppTypography extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '#${color.toARGB32().toRadixString(16).toUpperCase()}',
+                  '#${color.value.toRadixString(16).padLeft(8, '0').toUpperCase()}',
                   style: DesignSystem.caption.copyWith(
                     color: DesignSystem.onSurfaceVariant,
                   ),
@@ -578,7 +578,7 @@ class AppTypography extends StatelessWidget {
     double spacing,
   ) {
     return Padding(
-      padding: EdgeInsets.only(bottom: DesignSystem.spacingMD),
+      padding: const EdgeInsets.only(bottom: DesignSystem.spacingMD),
       child: Row(
         children: [
           Container(
@@ -589,7 +589,7 @@ class AppTypography extends StatelessWidget {
               borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
             ),
           ),
-          SizedBox(width: DesignSystem.spacingMD),
+          const SizedBox(width: DesignSystem.spacingMD),
           Text(
             '$label: ${spacing.toStringAsFixed(0)}px',
             style: DesignSystem.caption.copyWith(
@@ -607,7 +607,7 @@ class AppTypography extends StatelessWidget {
     double radius,
   ) {
     return Padding(
-      padding: EdgeInsets.only(bottom: DesignSystem.spacingMD),
+      padding: const EdgeInsets.only(bottom: DesignSystem.spacingMD),
       child: Row(
         children: [
           Container(
@@ -618,7 +618,7 @@ class AppTypography extends StatelessWidget {
               borderRadius: BorderRadius.circular(radius),
             ),
           ),
-          SizedBox(width: DesignSystem.spacingMD),
+          const SizedBox(width: DesignSystem.spacingMD),
           Text(
             '$label: ${radius.toStringAsFixed(0)}px',
             style: DesignSystem.caption.copyWith(
@@ -636,7 +636,7 @@ class AppTypography extends StatelessWidget {
     List<BoxShadow> shadows,
   ) {
     return Padding(
-      padding: EdgeInsets.only(bottom: DesignSystem.spacingMD),
+      padding: const EdgeInsets.only(bottom: DesignSystem.spacingMD),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -646,7 +646,7 @@ class AppTypography extends StatelessWidget {
               color: DesignSystem.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: DesignSystem.spacingSM),
+          const SizedBox(height: DesignSystem.spacingSM),
           Container(
             width: 80,
             height: 40,

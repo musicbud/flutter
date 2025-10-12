@@ -9,18 +9,18 @@ class ProfileActivityWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return Padding(
+    return const Padding(
       padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SectionHeader(
+          SectionHeader(
             title: 'Recent Activity',
           ),
           SizedBox(height: DesignSystem.spacingMD),
 
           // Activity Cards
-          const ActivityCard(
+          ActivityCard(
             title: 'New Track Added',
             description: 'Added "Midnight Dreams" to your library',
             timeAgo: '2 hours ago',
@@ -28,7 +28,7 @@ class ProfileActivityWidget extends StatelessWidget {
             iconColor: Colors.red,
           ),
           SizedBox(height: DesignSystem.spacingMD),
-          const ActivityCard(
+          ActivityCard(
             title: 'Playlist Created',
             description: 'Created "Chill Vibes" playlist',
             timeAgo: '1 day ago',
@@ -36,7 +36,7 @@ class ProfileActivityWidget extends StatelessWidget {
             iconColor: Colors.blue,
           ),
           SizedBox(height: DesignSystem.spacingMD),
-          const ActivityCard(
+          ActivityCard(
             title: 'Bud Connected',
             description: 'Sarah Johnson started following you',
             timeAgo: '3 days ago',

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/design_system.dart';
+import '../../../../core/theme/design_system.dart';
 
 enum ModernButtonVariant {
   primary,
@@ -104,7 +104,13 @@ class _ModernButtonState extends State<ModernButton>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
+    final design = theme.extension<DesignSystemThemeExtension>();
+    
+    // Fallback if design system extension is not available
+    if (design == null) {
+      debugPrint('⚠️ ModernButton: DesignSystemThemeExtension not found, using fallback');
+      return _buildFallbackButton(context);
+    }
 
     return AnimatedBuilder(
       animation: _animationController,
@@ -187,6 +193,59 @@ class _ModernButtonState extends State<ModernButton>
     );
 
     return content;
+  }
+  
+  /// Fallback button when DesignSystemThemeExtension is not available
+  Widget _buildFallbackButton(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return ElevatedButton(
+      onPressed: widget.isLoading ? null : widget.onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: widget.customColor ?? theme.primaryColor,
+        foregroundColor: Colors.white,
+        padding: widget.padding ?? const EdgeInsets.symmetric(
+          horizontal: 24,
+          vertical: 12,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(widget.borderRadius ?? 8),
+        ),
+        minimumSize: widget.isFullWidth 
+            ? const Size(double.infinity, 48) 
+            : null,
+      ),
+      child: widget.isLoading
+          ? const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            )
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (widget.icon != null) ...[
+                  Icon(widget.icon, size: 18),
+                  if (widget.text.isNotEmpty) const SizedBox(width: 8),
+                ],
+                if (widget.text.isNotEmpty)
+                  Text(
+                    widget.text,
+                    style: widget.textStyle ?? const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                if (widget.trailingIcon != null) ...[
+                  if (widget.text.isNotEmpty) const SizedBox(width: 8),
+                  Icon(widget.trailingIcon, size: 18),
+                ],
+              ],
+            ),
+    );
   }
 
   EdgeInsetsGeometry _getPadding(DesignSystemThemeExtension design) {

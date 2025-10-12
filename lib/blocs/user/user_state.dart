@@ -27,6 +27,11 @@ class ProfileLoaded extends UserState {
   List<Object?> get props => [profile];
 }
 
+// Alias for backwards compatibility
+class UserProfileLoaded extends ProfileLoaded {
+  const UserProfileLoaded(UserProfile profile) : super(profile);
+}
+
 class LikedItemsLoaded extends UserState {
   final List<Artist> likedArtists;
   final List<Track> likedTracks;

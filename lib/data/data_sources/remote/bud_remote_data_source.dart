@@ -154,8 +154,15 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByLikedArtists() async {
     try {
-      final response = await _dioClient.get(ApiConfig.budCommonLikedArtists);
-      return (response.data as List).map((json) => BudMatch.fromJson(json)).toList();
+      // Use POST method as per Postman collection
+      final response = await _dioClient.post(ApiConfig.budLikedArtists, data: {});
+      
+      // Handle backend response structure from Postman collection
+      if (response.data != null && response.data['data'] != null) {
+        final budsData = response.data['data']['buds'] as List? ?? [];
+        return budsData.map((json) => BudMatch.fromJson(json)).toList();
+      }
+      return [];
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get buds by liked artists');
     }
@@ -164,8 +171,15 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByLikedTracks() async {
     try {
-      final response = await _dioClient.get(ApiConfig.budCommonLikedTracks);
-      return (response.data as List).map((json) => BudMatch.fromJson(json)).toList();
+      // Use POST method as per Postman collection
+      final response = await _dioClient.post(ApiConfig.budLikedTracks, data: {});
+      
+      // Handle backend response structure from Postman collection
+      if (response.data != null && response.data['data'] != null) {
+        final budsData = response.data['data']['buds'] as List? ?? [];
+        return budsData.map((json) => BudMatch.fromJson(json)).toList();
+      }
+      return [];
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get buds by liked tracks');
     }
@@ -204,8 +218,20 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByTopArtists() async {
     try {
-      final response = await _dioClient.get(ApiConfig.budCommonTopArtists);
-      return (response.data as List).map((json) => BudMatch.fromJson(json)).toList();
+      // Use EndpointConfigService for URL and method
+      final url = _endpointConfigService.getEndpointUrl('buds - get buds by top artists', ApiConfig.baseUrl) ?? ApiConfig.budTopArtists;
+      final method = _endpointConfigService.getEndpointMethod('buds - get buds by top artists') ?? 'POST';
+      
+      final response = method.toUpperCase() == 'GET'
+          ? await _dioClient.get(url)
+          : await _dioClient.post(url, data: {});
+      
+      // Handle backend response structure from Postman collection
+      if (response.data != null && response.data['data'] != null) {
+        final budsData = response.data['data']['buds'] as List? ?? [];
+        return budsData.map((json) => BudMatch.fromJson(json)).toList();
+      }
+      return [];
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get buds by top artists');
     }
@@ -214,8 +240,15 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<List<BudMatch>> getBudsByTopTracks() async {
     try {
-      final response = await _dioClient.get(ApiConfig.budCommonTopTracks);
-      return (response.data as List).map((json) => BudMatch.fromJson(json)).toList();
+      // Use POST method as per Postman collection
+      final response = await _dioClient.post(ApiConfig.budTopTracks, data: {});
+      
+      // Handle backend response structure from Postman collection
+      if (response.data != null && response.data['data'] != null) {
+        final budsData = response.data['data']['buds'] as List? ?? [];
+        return budsData.map((json) => BudMatch.fromJson(json)).toList();
+      }
+      return [];
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get buds by top tracks');
     }
@@ -266,7 +299,7 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
     try {
       final response = await _dioClient.post(ApiConfig.budTrack, data: {'track_id': trackId});
       return (response.data as List).map((json) => BudMatch.fromJson(json)).toList();
-    } on DioException catch (e) {
+    } on DioException {
       // Endpoint not implemented, return empty list
       return [];
     }
@@ -305,7 +338,13 @@ class BudRemoteDataSourceImpl implements BudRemoteDataSource {
   @override
   Future<Map<String, dynamic>> getBudProfile(String username) async {
     try {
-      final response = await _dioClient.get(ApiConfig.budProfile, queryParameters: {'username': username});
+      // Use EndpointConfigService for URL and method
+      final url = _endpointConfigService.getEndpointUrl('buds - get bud profile', ApiConfig.baseUrl) ?? ApiConfig.budProfile;
+      final method = _endpointConfigService.getEndpointMethod('buds - get bud profile') ?? 'POST';
+      
+      final response = method.toUpperCase() == 'GET'
+          ? await _dioClient.get(url, queryParameters: {'bud_id': username})
+          : await _dioClient.post(url, data: {'bud_id': username});
       return response.data as Map<String, dynamic>;
     } on DioException catch (e) {
       throw ServerException(message: e.message ?? 'Failed to get bud profile');

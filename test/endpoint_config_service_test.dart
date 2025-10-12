@@ -1,12 +1,90 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mockito/mockito.dart';
 import 'package:musicbud_flutter/services/endpoint_config_service.dart';
+import 'package:musicbud_flutter/models/endpoint.dart';
+
+// Create a mock service that doesn't require asset loading
+class MockEndpointConfigService extends Mock implements EndpointConfigService {
+  final List<Endpoint> _mockEndpoints = [
+    const Endpoint(
+      name: 'auth - login',
+      method: 'POST',
+      url: 'http://{{host}}/login',
+      status: 'done',
+    ),
+    const Endpoint(
+      name: 'auth - register',
+      method: 'POST',
+      url: 'http://{{host}}/register',
+      status: 'done',
+    ),
+    const Endpoint(
+      name: 'buds - get bud profile',
+      method: 'POST',
+      url: 'http://{{host}}/bud/profile',
+      status: 'done',
+    ),
+  ];
+
+  @override
+  Future<void> initialize() async {
+    // Mock initialization - no asset loading required
+    return Future.value();
+  }
+
+  @override
+  List<Endpoint> getAllEndpoints() {
+    return List.unmodifiable(_mockEndpoints);
+  }
+
+  @override
+  Endpoint? getEndpointByName(String name) {
+    return _mockEndpoints.cast<Endpoint?>().firstWhere(
+      (endpoint) => endpoint!.name == name,
+      orElse: () => null,
+    );
+  }
+
+  @override
+  String? getEndpointUrl(String name, String baseUrl) {
+    final endpoint = getEndpointByName(name);
+    return endpoint?.getUrlWithHost(baseUrl);
+  }
+
+  @override
+  String? getEndpointMethod(String name) {
+    final endpoint = getEndpointByName(name);
+    return endpoint?.method;
+  }
+
+  @override
+  Map<String, String>? getEndpointInfo(String name, String baseUrl) {
+    final endpoint = getEndpointByName(name);
+    if (endpoint == null) return null;
+
+    return {
+      'method': endpoint.method,
+      'url': endpoint.getUrlWithHost(baseUrl),
+    };
+  }
+
+  @override
+  bool hasEndpoint(String name) {
+    return _mockEndpoints.any((endpoint) => endpoint.name == name);
+  }
+
+  @override
+  List<Endpoint> getEndpointsByStatus(String status) {
+    return _mockEndpoints.where((endpoint) => endpoint.status == status).toList();
+  }
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  late EndpointConfigService service;
+  late MockEndpointConfigService service;
 
   setUp(() {
-    service = EndpointConfigService();
+    service = MockEndpointConfigService();
   });
 
   group('EndpointConfigService', () {

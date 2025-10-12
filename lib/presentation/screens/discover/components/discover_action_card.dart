@@ -28,7 +28,7 @@ class DiscoverActionCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(DesignSystem.spacingLG),
             decoration: BoxDecoration(
-              color: accentColor.withValues(alpha: 0.1),
+              color: accentColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             ),
             child: Icon(

@@ -128,7 +128,7 @@ class _ModernInputFieldState extends State<ModernInputField> {
             boxShadow: _isFocused
                 ? [
                     BoxShadow(
-                      color: (widget.focusedBorderColor ?? theme.colorScheme.primary).withValues(alpha: 0.1),
+                      color: (widget.focusedBorderColor ?? theme.colorScheme.primary).withOpacity(0.1),
                       blurRadius: 8,
                       spreadRadius: 2,
                     ),
@@ -166,7 +166,7 @@ class _ModernInputFieldState extends State<ModernInputField> {
                 vertical: 16,
               ),
               hintStyle: widget.hintStyle ?? theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                color: theme.colorScheme.onSurface.withOpacity(0.6),
               ),
               filled: widget.variant == ModernInputVariant.filled,
               fillColor: widget.fillColor ?? (widget.variant == ModernInputVariant.filled

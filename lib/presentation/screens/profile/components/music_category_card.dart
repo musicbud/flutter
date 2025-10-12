@@ -27,9 +27,9 @@ class MusicCategoryCard extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            padding: EdgeInsets.all(DesignSystem.spacingMD),
+            padding: const EdgeInsets.all(DesignSystem.spacingMD),
             decoration: BoxDecoration(
-              color: iconColor.withValues(alpha: 0.1),
+              color: iconColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             ),
             child: Icon(
@@ -38,7 +38,7 @@ class MusicCategoryCard extends StatelessWidget {
               size: 32,
             ),
           ),
-          SizedBox(height: DesignSystem.spacingSM),
+          const SizedBox(height: DesignSystem.spacingSM),
           Text(
             title,
             style: DesignSystem.titleSmall.copyWith(
@@ -47,7 +47,7 @@ class MusicCategoryCard extends StatelessWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: DesignSystem.spacingXS),
+          const SizedBox(height: DesignSystem.spacingXS),
           Text(
             count,
             style: DesignSystem.caption.copyWith(

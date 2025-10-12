@@ -226,7 +226,7 @@ class BaseStateDisplay extends StatelessWidget {
         // Icon section
         if (icon != null) ...[
           Container(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             decoration: BoxDecoration(
               color: DesignSystem.surfaceContainer,
               borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
@@ -237,7 +237,7 @@ class BaseStateDisplay extends StatelessWidget {
               color: DesignSystem.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
         ],
 
         // Content section

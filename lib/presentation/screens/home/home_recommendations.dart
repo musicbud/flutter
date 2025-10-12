@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/user/user_bloc.dart';
-import '../../../blocs/user/user_event.dart';
 import '../../../blocs/user/user_state.dart';
+import '../../../blocs/user/user_event.dart';
 import '../../../core/theme/design_system.dart';
 import '../../widgets/home/recommendations_list.dart';
 import '../../widgets/common/error_state_widget.dart';
+import '../../../widgets/common/empty_state.dart';
 
 class HomeRecommendations extends StatelessWidget {
   const HomeRecommendations({super.key});
@@ -96,7 +97,7 @@ class HomeRecommendations extends StatelessWidget {
             itemBuilder: (context, index) {
               return Container(
                 width: 120,
-                margin: EdgeInsets.only(right: DesignSystem.spacingMD),
+                margin: const EdgeInsets.only(right: DesignSystem.spacingMD),
                 decoration: BoxDecoration(
                   color: DesignSystem.surface.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
@@ -121,7 +122,7 @@ class HomeRecommendations extends StatelessWidget {
   }
 
   Widget _buildEmptyState(String title, String message) {
-    return EmptyStateWidget(
+    return EmptyState(
       title: title,
       message: message,
       icon: Icons.music_note_outlined,

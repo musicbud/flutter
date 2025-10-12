@@ -32,16 +32,12 @@ class QuickActionsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     // Debug logs for null check error
     print('QuickActionsGrid build: actions is null? ${actions == null}');
-    if (actions != null) {
-      print('QuickActionsGrid build: actions length: ${actions.length}');
-      for (int i = 0; i < actions.length; i++) {
-        print('QuickActionsGrid build: action[$i] is null? ${actions[i] == null}');
-        if (actions[i] != null) {
-          print('QuickActionsGrid build: action[$i] onPressed is null? ${actions[i].onPressed == null}');
+    print('QuickActionsGrid build: actions length: ${actions.length}');
+    for (int i = 0; i < actions.length; i++) {
+      print('QuickActionsGrid build: action[$i] is null? ${actions[i] == null}');
+      print('QuickActionsGrid build: action[$i] onPressed is null? ${actions[i].onPressed == null}');
         }
-      }
-    }
-
+  
     final theme = Theme.of(context);
     final design = theme.extension<DesignSystemThemeExtension>();
     if (design == null) {
@@ -49,7 +45,7 @@ class QuickActionsGrid extends StatelessWidget {
     }
 
     // Filter out null actions
-    final validActions = actions?.where((a) => a != null).toList() ?? [];
+    final validActions = actions.where((a) => a != null).toList() ?? [];
     if (validActions.isEmpty) {
       return const SizedBox.shrink();
     }

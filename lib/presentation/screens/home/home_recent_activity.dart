@@ -75,7 +75,7 @@ class HomeRecentActivity extends StatelessWidget {
             itemBuilder: (context, index) {
               return Container(
                 width: 200,
-                margin: EdgeInsets.only(right: DesignSystem.spacingMD),
+                margin: const EdgeInsets.only(right: DesignSystem.spacingMD),
                 decoration: BoxDecoration(
                   color: DesignSystem.surface.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(DesignSystem.radiusMD),

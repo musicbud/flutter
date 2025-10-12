@@ -16,6 +16,9 @@ class DiscoverItem {
     this.metadata = const {},
     required this.category,
   });
+  
+  /// Getter for subtitle (maps to description for compatibility)
+  String? get subtitle => description;
 
   factory DiscoverItem.fromJson(Map<String, dynamic> json) {
     return DiscoverItem(

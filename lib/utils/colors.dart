@@ -15,7 +15,7 @@ class AppColors {
   static const Color darkBlue = Color(0xFF232C4E);
   static const Color brightRed = Color(0xFFFF265A);
 
-  static final ColorScheme colorScheme = ColorScheme(
+  static const ColorScheme colorScheme = ColorScheme(
     primary: Color(0xFF6200EE),
     primaryContainer: Color(0xFFB0B0FD),
     secondary: Color(0xFF03DAC5),

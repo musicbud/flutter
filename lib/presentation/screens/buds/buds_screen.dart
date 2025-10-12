@@ -55,7 +55,7 @@ class _BudsScreenState extends State<BudsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Find Buds',
           style: DesignSystem.headlineSmall,
         ),
@@ -67,9 +67,9 @@ class _BudsScreenState extends State<BudsScreen> {
           // Content Type Selection
           Container(
             padding: const EdgeInsets.all(DesignSystem.spacingLG),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: DesignSystem.surface,
-              borderRadius: const BorderRadius.only(
+              borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(DesignSystem.radiusLG),
                 bottomRight: Radius.circular(DesignSystem.radiusLG),
               ),
@@ -104,7 +104,7 @@ class _BudsScreenState extends State<BudsScreen> {
                 Widget content;
 
                 if (state is BudMatchingInitial) {
-                  content = EmptyState(
+                  content = const EmptyState(
                     icon: Icons.people_outline,
                     title: 'Find Your Music Buds',
                     message: 'Select a content type to find people with similar tastes',
@@ -113,7 +113,7 @@ class _BudsScreenState extends State<BudsScreen> {
                   content = const LoadingIndicator();
                 } else if (state is BudsFound) {
                   if (state.searchResult.data.buds.isEmpty) {
-                    content = EmptyState(
+                    content = const EmptyState(
                       icon: Icons.search_off,
                       title: 'No Buds Found',
                       message: 'Try a different content type',

@@ -31,8 +31,9 @@ import 'package:musicbud_flutter/blocs/bud_matching/bud_matching_bloc.dart';
 import 'package:musicbud_flutter/blocs/settings/settings_bloc.dart';
 import 'package:musicbud_flutter/blocs/event/event_bloc.dart';
 import 'package:musicbud_flutter/blocs/spotify/spotify_bloc.dart';
-import 'package:musicbud_flutter/blocs/auth/auth_bloc.dart';
-import 'package:musicbud_flutter/blocs/auth/auth_event.dart';
+import 'package:musicbud_flutter/blocs/auth/auth_bloc.dart' as auth_bloc;
+import 'package:musicbud_flutter/blocs/auth/auth_event.dart' as auth_events;
+import 'package:musicbud_flutter/blocs/auth/auth_state.dart' as auth_states;
 import 'package:musicbud_flutter/blocs/auth/login/login_bloc.dart';
 import 'package:musicbud_flutter/blocs/auth/login/login_event.dart';
 import 'package:musicbud_flutter/blocs/auth/login/login_state.dart';
@@ -69,17 +70,17 @@ class MockUserBloc extends Mock implements UserBloc {
   }
 }
 
-class MockAuthBloc extends Mock implements AuthBloc {
-  final _controller = StreamController<AuthState>.broadcast();
-  AuthState _currentState = AuthInitial();
+class MockAuthBloc extends Mock implements auth_bloc.AuthBloc {
+  final _controller = StreamController<auth_bloc.AuthState>.broadcast();
+  auth_bloc.AuthState _currentState = auth_bloc.AuthInitial();
 
   @override
-  Stream<AuthState> get stream => _controller.stream;
+  Stream<auth_bloc.AuthState> get stream => _controller.stream;
 
   @override
-  AuthState get state => _currentState;
+  auth_bloc.AuthState get state => _currentState;
 
-  void emit(AuthState state) {
+  void emit(auth_bloc.AuthState state) {
     _currentState = state;
     _controller.add(state);
   }

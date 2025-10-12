@@ -16,42 +16,52 @@ class DesignSystem {
   // SEMANTIC COLOR TOKENS
   // ===========================================================================
 
-  /// Primary brand colors
-  static const Color primary = Color(0xFFFE2C54);
+  /// Primary brand colors (Pink/Red accent from Figma)
+  static const Color primary = Color(0xFFFE2C54);  // Bright pink for primary actions
   static const Color primaryContainer = Color(0xFFFF6B8F);
   static const Color onPrimary = Color(0xFFFFFFFF);
   static const Color primaryVariant = Color(0xFFFF2D55);
+  
+  /// Pink shades for UI elements
+  static const Color pinkAccent = Color(0xFFFE2C54);
+  static const Color pinkLight = Color(0xFFFF6B8F);
+  static const Color pinkDark = Color(0xFFE02548);
 
   /// Secondary colors
   static const Color secondary = Color(0xFF1DB954);
   static const Color secondaryContainer = Color(0xFF1ED760);
   static const Color onSecondary = Color(0xFFFFFFFF);
 
-  /// Surface colors
-  static const Color surface = Color(0xFF0F0E12);
-  static const Color surfaceContainer = Color(0xFF1A1A1A);
-  static const Color surfaceContainerHigh = Color(0xFF282828);
-  static const Color surfaceContainerHighest = Color(0xFF3E3E3E);
-  static const Color onSurface = Color(0xFFFFFFFF);
-  static const Color onSurfaceVariant = Color(0xFFB3B3B3);
+  /// Surface colors (Dark theme from Figma)
+  static const Color surface = Color(0xFF0A0A0A);  // Very dark background
+  static const Color surfaceContainer = Color(0xFF1A1A1A);  // Card/container background
+  static const Color surfaceContainerHigh = Color(0xFF252525);  // Elevated containers
+  static const Color surfaceContainerHighest = Color(0xFF303030);  // Highest elevation
+  static const Color onSurface = Color(0xFFFFFFFF);  // White text
+  static const Color onSurfaceVariant = Color(0xFFB3B3B3);  // Gray text
+  static const Color onSurfaceDim = Color(0xFF808080);  // Dimmer text
 
   /// Background colors
-  static const Color background = Color(0xFF0F0E12);
+  static const Color background = Color(0xFF0A0A0A);  // Main dark background
+  static const Color backgroundDark = Color(0xFF000000);  // Pure black
   static const Color onBackground = Color(0xFFFFFFFF);
 
   /// Error colors
   static const Color error = Color(0xFFCF6679);
+  static const Color errorRed = Color(0xFFE53935);  // Bright red for errors
   static const Color errorContainer = Color(0xFFFF0000);
   static const Color onError = Color(0xFFFFFFFF);
   static const Color onErrorContainer = Color(0xFFFFFFFF);
 
   /// Success colors
   static const Color success = Color(0xFF4CAF50);
+  static const Color successGreen = Color(0xFF4CAF50);  // Alias for success
   static const Color successContainer = Color(0xFF66BB6A);
   static const Color onSuccess = Color(0xFFFFFFFF);
 
   /// Warning colors
   static const Color warning = Color(0xFFFFA500);
+  static const Color warningOrange = Color(0xFFFFA500);  // Alias for warning
   static const Color warningContainer = Color(0xFFFFB74D);
   static const Color onWarning = Color(0xFFFFFFFF);
 
@@ -258,6 +268,11 @@ class DesignSystem {
   static const double spacingXXXL = 64.0;
   static const double spacingHuge = 96.0;
 
+  // Backward compatibility aliases
+  static const double spacingS = spacingSM;  // 12.0
+  static const double spacingM = spacingMD;  // 16.0
+  static const double spacingL = spacingLG;  // 24.0
+
   // ===========================================================================
   // BORDER RADIUS TOKENS
   // ===========================================================================
@@ -271,6 +286,11 @@ class DesignSystem {
   static const double radiusXL = 31.0;
   static const double radiusXXL = 40.0;
   static const double radiusCircular = 50.0;
+  static const double radiusFull = 999.0;  // Fully rounded (pill shape)
+
+  // Backward compatibility aliases  
+  static const double radiusS = radiusSM;  // 12.0
+  static const double radiusM = radiusMD;  // 16.0
 
   // ===========================================================================
   // SHADOW TOKENS
@@ -423,7 +443,7 @@ class DesignSystem {
     ),
 
     // Component themes
-    cardTheme: CardThemeData(
+    cardTheme: CardTheme(
       color: neutral50,
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -454,7 +474,7 @@ class DesignSystem {
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(radiusMD),
-        borderSide: BorderSide(color: neutral400),
+        borderSide: const BorderSide(color: neutral400),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(radiusMD),
@@ -642,8 +662,8 @@ class DesignSystem {
     ),
 
     // Component themes
-    cardTheme: CardThemeData(
-      color: surfaceContainer,
+    cardTheme: CardTheme(
+      color: surface,
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(radiusXL),

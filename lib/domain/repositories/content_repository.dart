@@ -91,4 +91,16 @@ abstract class ContentRepository {
 
   // Play track on specific service
   Future<void> playTrackOnService(String trackIdentifier, {String? service});
+
+  // Playlist management methods
+  Future<void> createPlaylist({
+    required String name,
+    String? description,
+    bool isPrivate = false,
+  });
+  
+  Future<void> deletePlaylist(String playlistId);
+  Future<void> updatePlaylist(String playlistId, {String? name, String? description, bool? isPublic});
+  Future<void> addTrackToPlaylist(String playlistId, String trackId);
+  Future<void> removeTrackFromPlaylist(String playlistId, String trackId);
 }

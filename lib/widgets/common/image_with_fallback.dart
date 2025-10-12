@@ -201,7 +201,7 @@ class ImageWithFallback extends StatelessWidget {
   Widget _buildLoadingPlaceholder() {
     return Container(
       color: DesignSystem.surfaceContainer,
-      child: Center(
+      child: const Center(
         child: SizedBox(
           width: 24,
           height: 24,

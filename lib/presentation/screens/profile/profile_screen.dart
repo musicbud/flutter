@@ -64,8 +64,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         context.read<ProfileBloc>().add(LikedGenresRequested());
         break;
       case 3:
-        // Buds - fetch buds list (assuming there's a way)
-        // For now, placeholder
+        // Buds - load connected users/friends
+        context.read<ProfileBloc>().add(const BudProfileRequested('current_user'));
         break;
     }
   }
@@ -184,22 +184,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 const SliverToBoxAdapter(child: SizedBox(height: 32)),
 
                   // My Music Section
-                  SliverToBoxAdapter(
-                    child: const ProfileMusicWidget(),
+                  const SliverToBoxAdapter(
+                    child: ProfileMusicWidget(),
                   ),
 
                   const SliverToBoxAdapter(child: SizedBox(height: 32)),
 
                   // Recent Activity Section
-                  SliverToBoxAdapter(
-                    child: const ProfileActivityWidget(),
+                  const SliverToBoxAdapter(
+                    child: ProfileActivityWidget(),
                   ),
 
                   const SliverToBoxAdapter(child: SizedBox(height: 32)),
 
                   // Settings Section
-                  SliverToBoxAdapter(
-                    child: const ProfileSettingsWidget(),
+                  const SliverToBoxAdapter(
+                    child: ProfileSettingsWidget(),
                   ),
 
                   const SliverToBoxAdapter(child: SizedBox(height: 32)),

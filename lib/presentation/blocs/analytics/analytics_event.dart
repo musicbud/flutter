@@ -1,5 +1,6 @@
-import 'package:equatable/equatable.dart';
+part of 'analytics_bloc.dart';
 
+/// Base class for analytics events
 abstract class AnalyticsEvent extends Equatable {
   const AnalyticsEvent();
 
@@ -7,34 +8,46 @@ abstract class AnalyticsEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class AnalyticsRequested extends AnalyticsEvent {
-  const AnalyticsRequested();
+/// Event to load analytics data
+class LoadAnalytics extends AnalyticsEvent {
+  final DateTime? startDate;
+  final DateTime? endDate;
+
+  const LoadAnalytics({
+    this.startDate,
+    this.endDate,
+  });
+
+  @override
+  List<Object?> get props => [startDate, endDate];
 }
 
-class ContentAnalyticsRequested extends AnalyticsEvent {
-  const ContentAnalyticsRequested();
-}
-
-class SocialAnalyticsRequested extends AnalyticsEvent {
-  const SocialAnalyticsRequested();
-}
-
-class EventTracked extends AnalyticsEvent {
+/// Event to track a user action
+class TrackEvent extends AnalyticsEvent {
   final String eventName;
-  final Map<String, dynamic> properties;
+  final Map<String, dynamic>? parameters;
 
-  const EventTracked(this.eventName, this.properties);
+  const TrackEvent({
+    required this.eventName,
+    this.parameters,
+  });
 
   @override
-  List<Object?> get props => [eventName, properties];
+  List<Object?> get props => [eventName, parameters];
 }
 
-class MetricTracked extends AnalyticsEvent {
-  final String metricName;
-  final double value;
+/// Event to update analytics settings
+class UpdateAnalyticsSettings extends AnalyticsEvent {
+  final Map<String, dynamic> settings;
+  final DateTime? startDate;
+  final DateTime? endDate;
 
-  const MetricTracked(this.metricName, this.value);
+  const UpdateAnalyticsSettings({
+    required this.settings,
+    this.startDate,
+    this.endDate,
+  });
 
   @override
-  List<Object?> get props => [metricName, value];
+  List<Object?> get props => [settings, startDate, endDate];
 }

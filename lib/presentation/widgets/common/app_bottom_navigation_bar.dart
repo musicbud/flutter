@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:ui'; // Added for ImageFilter
-import '../../../core/theme/design_system.dart';
+import '../../../../core/theme/design_system.dart';
 import '../../../navigation/navigation_config.dart';
 import '../../../navigation/navigation_constants.dart';
 import '../../../navigation/navigation_mixins.dart';
@@ -54,7 +54,7 @@ class AppBottomNavigationBar extends StatelessWidget with BaseNavigationMixin {
         borderRadius: effectiveBorderRadius,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: Colors.black.withOpacity(0.3),
             blurRadius: 20,
             offset: const Offset(0, 10),
             spreadRadius: 0,
@@ -75,7 +75,7 @@ class AppBottomNavigationBar extends StatelessWidget with BaseNavigationMixin {
                       end: Alignment.bottomRight,
                       colors: [
                         backgroundColor ?? const Color.fromARGB(200, 20, 20, 20),
-                        backgroundColor?.withValues(alpha: 0.8) ?? const Color.fromARGB(180, 15, 15, 15),
+                        backgroundColor?.withOpacity(0.8) ?? const Color.fromARGB(180, 15, 15, 15),
                       ],
                     )
                   : null,
@@ -83,11 +83,11 @@ class AppBottomNavigationBar extends StatelessWidget with BaseNavigationMixin {
               border: borderColor != null
                   ? Border.all(
                       width: 1.5,
-                      color: borderColor!.withValues(alpha: 0.3),
+                      color: borderColor!.withOpacity(0.3),
                     )
                   : Border.all(
                       width: 1.5,
-                      color: Colors.white.withValues(alpha: 0.1),
+                      color: Colors.white.withOpacity(0.1),
                     ),
             ),
             child: _buildNavigationBar(),
@@ -219,7 +219,7 @@ class FloatingBottomNavigationBar extends StatelessWidget {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: (selectedItemColor ?? DesignSystem.primaryContainer).withValues(alpha: 0.4),
+                    color: (selectedItemColor ?? DesignSystem.primaryContainer).withOpacity(0.4),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                     spreadRadius: 0,
@@ -235,7 +235,7 @@ class FloatingBottomNavigationBar extends StatelessWidget {
               size: isSelected ? 28 : 24,
               color: isSelected
                   ? Colors.white
-                  : (unselectedItemColor ?? Colors.white.withValues(alpha: 0.6)),
+                  : (unselectedItemColor ?? Colors.white.withOpacity(0.6)),
             ),
             const SizedBox(height: 4),
             Text(
@@ -243,7 +243,7 @@ class FloatingBottomNavigationBar extends StatelessWidget {
               style: TextStyle(
                 color: isSelected
                     ? Colors.white
-                    : (unselectedItemColor ?? Colors.white.withValues(alpha: 0.6)),
+                    : (unselectedItemColor ?? Colors.white.withOpacity(0.6)),
                 fontSize: isSelected ? 12 : 11,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),
@@ -312,13 +312,13 @@ class ModernTabBar extends StatelessWidget {
           border: Border.all(
             color: isSelected
                 ? (selectedColor ?? DesignSystem.primaryContainer)
-                : Colors.white.withValues(alpha: 0.2),
+                : Colors.white.withOpacity(0.2),
             width: isSelected ? 2 : 1,
           ),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: (selectedColor ?? DesignSystem.primaryContainer).withValues(alpha: 0.3),
+                    color: (selectedColor ?? DesignSystem.primaryContainer).withOpacity(0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                     spreadRadius: 0,
@@ -331,7 +331,7 @@ class ModernTabBar extends StatelessWidget {
           style: TextStyle(
             color: isSelected
                 ? Colors.white
-                : (unselectedColor ?? Colors.white.withValues(alpha: 0.7)),
+                : (unselectedColor ?? Colors.white.withOpacity(0.7)),
             fontSize: 14,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
             letterSpacing: isSelected ? 0.5 : 0.3,

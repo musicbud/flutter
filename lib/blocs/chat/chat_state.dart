@@ -7,6 +7,7 @@ import '../../models/channel_details.dart';
 import '../../models/channel_dashboard.dart';
 import '../../models/channel_invitation.dart';
 import '../../models/channel_statistics.dart';
+import '../../models/conversation.dart';
 
 abstract class ChatState extends Equatable {
   const ChatState();
@@ -32,6 +33,9 @@ class MessagesLoaded extends ChatState {
 
 class ChatError extends ChatState {
   final String error;
+  
+  // Alias for backwards compatibility
+  String get message => error;
 
   const ChatError(this.error);
 
@@ -193,4 +197,22 @@ class ChatChannelStatisticsLoaded extends ChatState {
 
   @override
   List<Object> get props => [statistics];
+}
+
+class ConversationsLoaded extends ChatState {
+  final List<Conversation> conversations;
+
+  const ConversationsLoaded(this.conversations);
+
+  @override
+  List<Object> get props => [conversations];
+}
+
+class ConversationDeleted extends ChatState {
+  final String conversationId;
+
+  const ConversationDeleted(this.conversationId);
+
+  @override
+  List<Object> get props => [conversationId];
 }

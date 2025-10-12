@@ -25,7 +25,7 @@ class TrendingTracksSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
+      padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -60,7 +60,7 @@ class TrendingTracksSection extends StatelessWidget {
                       ? const Center(child: Text('No tracks available'))
                       : Column(
                         children: tracks.map((track) => Padding(
-                          padding: EdgeInsets.only(bottom: DesignSystem.spacingMD),
+                          padding: const EdgeInsets.only(bottom: DesignSystem.spacingMD),
                           child: TrackCard(
                               title: track.name,
                               artist: track.artistName ?? 'Unknown Artist',

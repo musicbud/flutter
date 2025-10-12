@@ -26,7 +26,7 @@ class ChatService implements ChatRepository {
     _channel = null;
   }
 
-  Stream<dynamic> get messageStream => _channel?.stream ?? Stream.empty();
+  Stream<dynamic> get messageStream => _channel?.stream ?? const Stream.empty();
 
   void sendRealTimeMessage(String channelId, String message, String userId) {
     if (_channel != null) {

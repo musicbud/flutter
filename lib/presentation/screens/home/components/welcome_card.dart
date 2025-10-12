@@ -51,7 +51,7 @@ class _ProfileAvatar extends StatelessWidget {
         borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
         boxShadow: DesignSystem.shadowCard,
         border: Border.all(
-          color: DesignSystem.primary.withValues(alpha: 0.3),
+          color: DesignSystem.primary.withOpacity(0.3),
           width: 2,
         ),
       ),

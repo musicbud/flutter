@@ -200,7 +200,7 @@ class SectionComposer {
       children: [
         if (_leading != null) ...[
           _leading!,
-          SizedBox(width: DesignSystem.spacingSM),
+          const SizedBox(width: DesignSystem.spacingSM),
         ],
         Expanded(
           child: Column(
@@ -216,7 +216,7 @@ class SectionComposer {
                 ),
               ],
               if (_subtitle != null) ...[
-                SizedBox(height: DesignSystem.spacingXXS),
+                const SizedBox(height: DesignSystem.spacingXXS),
                 Text(
                   _subtitle!,
                   style: _subtitleStyle ?? DesignSystem.bodySmall.copyWith(
@@ -228,11 +228,11 @@ class SectionComposer {
           ),
         ),
         if (_trailing != null) ...[
-          SizedBox(width: DesignSystem.spacingSM),
+          const SizedBox(width: DesignSystem.spacingSM),
           _trailing!,
         ],
         if (_actionText != null && _onActionPressed != null) ...[
-          SizedBox(width: DesignSystem.spacingSM),
+          const SizedBox(width: DesignSystem.spacingSM),
           TextButton(
             onPressed: _onActionPressed,
             style: TextButton.styleFrom(
@@ -268,7 +268,7 @@ class SectionComposer {
           ),
         ],
         if (_subtitle != null) ...[
-          SizedBox(height: DesignSystem.spacingXXS),
+          const SizedBox(height: DesignSystem.spacingXXS),
           Text(
             _subtitle!,
             style: _subtitleStyle ?? DesignSystem.bodySmall.copyWith(

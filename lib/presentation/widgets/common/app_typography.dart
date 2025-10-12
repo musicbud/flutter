@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/design_system.dart';
+import '../../../../core/theme/design_system.dart';
 
 class AppTypography extends StatelessWidget {
   const AppTypography({super.key});
@@ -539,7 +539,7 @@ class AppTypography extends StatelessWidget {
             color: design.designSystemColors.surface,
             borderRadius: BorderRadius.circular(design.designSystemRadius.md),
             border: Border.all(
-              color: design.designSystemColors.onSurfaceVariant.withValues(alpha: 0.2),
+              color: design.designSystemColors.onSurfaceVariant.withOpacity(0.2),
             ),
           ),
           child: Column(
@@ -627,7 +627,7 @@ class AppTypography extends StatelessWidget {
               color: color,
               borderRadius: BorderRadius.circular(design.designSystemRadius.sm),
               border: Border.all(
-                color: design.designSystemColors.onSurfaceVariant.withValues(alpha: 0.3),
+                color: design.designSystemColors.onSurfaceVariant.withOpacity(0.3),
               ),
             ),
           ),
@@ -643,7 +643,7 @@ class AppTypography extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '#${color.toARGB32().toRadixString(16).toUpperCase()}',
+                  '#${color.value.toRadixString(16).padLeft(8, '0').toUpperCase()}',
                   style: design.designSystemTypography.caption.copyWith(
                     color: design.designSystemColors.onSurfaceVariant,
                   ),

@@ -38,7 +38,7 @@ class MediaCardOverlay extends StatelessWidget {
   }
 
   Widget _buildDefaultPlayButton() {
-    return SizedBox(
+    return const SizedBox(
       width: 56,
       height: 56,
       child: DecoratedBox(

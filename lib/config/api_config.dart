@@ -3,16 +3,16 @@ import '../services/endpoint_config_service.dart';
 
 /// API Configuration
 class ApiConfig {
-  // Base URLs
-  static const String baseUrl = 'http://84.235.170.234';
+  // Base URLs - Updated to match backend
+  static const String baseUrl = 'http://localhost:8000';
 
-  static const String wsBaseUrl = 'ws://84.235.170.234';
+  static const String wsBaseUrl = 'ws://localhost:8000';
 
   // API Version
   static const String apiVersion = 'v1';
 
   // Full API URL
-  static String get apiUrl => baseUrl;
+  static String get apiUrl => '$baseUrl/v1';
 
   // WebSocket URL
   static String get wsUrl => '$wsBaseUrl/ws/$apiVersion';
@@ -64,59 +64,60 @@ class ApiConfig {
 
   // API Endpoints
 
-  // Auth Endpoints (working from commit 6cac314)
+  // Auth Endpoints (from Postman collection)
   static String get login => '$apiUrl/login/';
   static String get register => '$apiUrl/register/';
   static String get refreshToken => '$apiUrl/token/refresh/';
   static String get logout => '$apiUrl/logout/';
-  static String get serviceLogin => '$apiUrl/service/login';
-  static String get spotifyConnect => '$apiUrl/spotify/connect';
-  static String get spotifyCallback => '$apiUrl/spotify/callback';
-  static String get ytmusicConnect => '$apiUrl/ytmusic/connect';
-  static String get ytmusicCallback => '$apiUrl/ytmusic/callback';
-  static String get lastfmConnect => '$apiUrl/lastfm/connect';
-  static String get lastfmCallback => '$apiUrl/lastfm/callback';
-  static String get malConnect => '$apiUrl/mal/connect';
-  static String get malCallback => '$apiUrl/mal/callback';
-  static String get spotifyRefreshToken => '$apiUrl/spotify/token/refresh';
-  static String get ytmusicRefreshToken => '$apiUrl/ytmusic/token/refresh';
+  static String get serviceLogin => '$apiUrl/service/login/';
+  static String get spotifyConnect => '$apiUrl/spotify/connect/';
+  static String get spotifyCallback => '$apiUrl/spotify/callback/';
+  static String get ytmusicConnect => '$apiUrl/ytmusic/connect/';
+  static String get ytmusicCallback => '$apiUrl/ytmusic/callback/';
+  static String get lastfmConnect => '$apiUrl/lastfm/connect/';
+  static String get lastfmCallback => '$apiUrl/lastfm/callback/';
+  static String get malConnect => '$apiUrl/mal/connect/';
+  static String get malCallback => '$apiUrl/mal/callback/';
+  static String get spotifyRefreshToken => '$apiUrl/spotify/token/refresh/';
+  static String get ytmusicRefreshToken => '$apiUrl/ytmusic/token/refresh/';
 
-  // Bud matching endpoints (working from commit 6cac314)
-  static String get budLikedArtists => '$apiUrl/bud/liked/artists';
-  static String get budLikedTracks => '$apiUrl/bud/liked/tracks';
-  static String get budLikedGenres => '$apiUrl/bud/liked/genres';
-  static String get budLikedAlbums => '$apiUrl/bud/liked/albums';
-  static String get budLikedAio => '$apiUrl/bud/liked/aio';
-  static String get budTopArtists => '$apiUrl/bud/top/artists';
-  static String get budTopTracks => '$apiUrl/bud/top/tracks';
-  static String get budTopGenres => '$apiUrl/bud/top/genres';
-  static String get budTopAnime => '$apiUrl/bud/top/anime';
-  static String get budTopManga => '$apiUrl/bud/top/manga';
-  static String get budPlayedTracks => '$apiUrl/bud/played/tracks';
-  static String get budArtist => '$apiUrl/bud/artist';
-  static String get budTrack => '$apiUrl/bud/track';
-  static String get budGenre => '$apiUrl/bud/genre';
-  static String get budAlbum => '$apiUrl/bud/album';
-  static String get budSearch => '$apiUrl/bud/search';
-  static String get play => '$apiUrl/play';
-  static String get budCommonLikedArtists => '$apiUrl/bud/common/liked/artists';
-  static String get budCommonLikedTracks => '$apiUrl/bud/common/liked/tracks';
-  static String get budCommonLikedGenres => '$apiUrl/bud/common/liked/genres';
-  static String get budCommonLikedAlbums => '$apiUrl/bud/common/liked/albums';
-  static String get budCommonPlayedTracks => '$apiUrl/bud/common/played/tracks';
-  static String get budCommonTopArtists => '$apiUrl/bud/common/top/artists';
-  static String get budCommonTopTracks => '$apiUrl/bud/common/top/tracks';
-  static String get budCommonTopGenres => '$apiUrl/bud/common/top/genres';
-  static String get budCommonTopAnime => '$apiUrl/bud/common/top/anime';
-  static String get budCommonTopManga => '$apiUrl/bud/common/top/manga';
+  // Bud matching endpoints (from Postman collection)
+  static String get budProfile => '$apiUrl/bud/profile/';
+  static String get budLikedArtists => '$apiUrl/bud/liked/artists/';
+  static String get budLikedTracks => '$apiUrl/bud/liked/tracks/';
+  static String get budLikedGenres => '$apiUrl/bud/liked/genres/';
+  static String get budLikedAlbums => '$apiUrl/bud/liked/albums/';
+  static String get budLikedAio => '$apiUrl/bud/liked/aio/';
+  static String get budTopArtists => '$apiUrl/bud/top/artists/';
+  static String get budTopTracks => '$apiUrl/bud/top/tracks/';
+  static String get budTopGenres => '$apiUrl/bud/top/genres/';
+  static String get budTopAnime => '$apiUrl/bud/top/anime/';
+  static String get budTopManga => '$apiUrl/bud/top/manga/';
+  static String get budPlayedTracks => '$apiUrl/bud/played/tracks/';
+  static String get budArtist => '$apiUrl/bud/artist/';
+  static String get budTrack => '$apiUrl/bud/track/';
+  static String get budGenre => '$apiUrl/bud/genre/';
+  static String get budAlbum => '$apiUrl/bud/album/';
+  static String get budSearch => '$apiUrl/bud/search/';
+  static String get play => '$apiUrl/play/';
+  static String get budCommonLikedArtists => '$apiUrl/bud/common/liked/artists/';
+  static String get budCommonLikedTracks => '$apiUrl/bud/common/liked/tracks/';
+  static String get budCommonLikedGenres => '$apiUrl/bud/common/liked/genres/';
+  static String get budCommonLikedAlbums => '$apiUrl/bud/common/liked/albums/';
+  static String get budCommonPlayedTracks => '$apiUrl/bud/common/played/tracks/';
+  static String get budCommonTopArtists => '$apiUrl/bud/common/top/artists/';
+  static String get budCommonTopTracks => '$apiUrl/bud/common/top/tracks/';
+  static String get budCommonTopGenres => '$apiUrl/bud/common/top/genres/';
+  static String get budCommonTopAnime => '$apiUrl/bud/common/top/anime/';
+  static String get budCommonTopManga => '$apiUrl/bud/common/top/manga/';
 
   // Channel Endpoints
-  static String get channels => '$apiUrl/channels';
-  static String channelById(String id) => '$apiUrl/channels/$id';
-  static String channelMessages(String id) => '$apiUrl/channels/$id/messages';
-  static String channelMembers(String id) => '$apiUrl/channels/$id/members';
-  static String channelSettings(String id) => '$apiUrl/channels/$id/settings';
-  static String channelStats(String id) => '$apiUrl/channels/$id/stats';
+  static String get channels => '$apiUrl/channels/';
+  static String channelById(String id) => '$apiUrl/channels/$id/';
+  static String channelMessages(String id) => '$apiUrl/channels/$id/messages/';
+  static String channelMembers(String id) => '$apiUrl/channels/$id/members/';
+  static String channelSettings(String id) => '$apiUrl/channels/$id/settings/';
+  static String channelStats(String id) => '$apiUrl/channels/$id/stats/';
 
   // Chat endpoints (working from commit 6cac314)
   static String get chatHome => '$apiUrl/chat/';
@@ -155,67 +156,66 @@ class ApiConfig {
   static String get malDisconnect => '$apiUrl/mal/disconnect/';
 
   // Content Endpoints
-  static String get content => '$apiUrl/content';
-  static String get tracks => '$apiUrl/content/tracks';
-  static String get artists => '$apiUrl/content/artists';
-  static String get albums => '$apiUrl/content/albums';
-  static String get playlists => '$apiUrl/content/playlists';
-  static String get genres => '$apiUrl/content/genres';
+  static String get content => '$apiUrl/content/';
+  static String get tracks => '$apiUrl/content/tracks/';
+  static String get artists => '$apiUrl/content/artists/';
+  static String get albums => '$apiUrl/content/albums/';
+  static String get playlists => '$apiUrl/content/playlists/';
+  static String get genres => '$apiUrl/content/genres/';
 
   // Discover Content Endpoints
-  static String get featuredArtists => '$apiUrl/discover/featured-artists';
-  static String get trendingTracks => '$apiUrl/discover/trending-tracks';
-  static String get newReleases => '$apiUrl/discover/new-releases';
-  static String get discoverActions => '$apiUrl/discover/actions';
-  static String get discoverCategories => '$apiUrl/discover/categories';
+  static String get featuredArtists => '$apiUrl/discover/featured-artists/';
+  static String get trendingTracks => '$apiUrl/discover/trending-tracks/';
+  static String get newReleases => '$apiUrl/discover/new-releases/';
+  static String get discoverActions => '$apiUrl/discover/actions/';
+  static String get discoverCategories => '$apiUrl/discover/categories/';
 
   // User Endpoints (working from commit 6cac314)
-  static String get myProfile => '$apiUrl/me/profile';
-  static String get budProfile => '$apiUrl/bud/profile';
-  static String get updateProfile => '$apiUrl/me/profile';
-  static String get updateLikes => '$apiUrl/me/likes/update';
-  static String get myLikedArtists => '$apiUrl/me/liked/artists';
-  static String get myLikedTracks => '$apiUrl/me/liked/tracks';
-  static String get myLikedGenres => '$apiUrl/me/liked/genres';
-  static String get myLikedAlbums => '$apiUrl/me/liked/albums';
-  static String get myTopArtists => '$apiUrl/me/top/artists';
-  static String get myTopTracks => '$apiUrl/me/top/tracks';
-  static String get myTopGenres => '$apiUrl/me/top/genres';
-  static String get myTopAnime => '$apiUrl/me/top/anime';
-  static String get myTopManga => '$apiUrl/me/top/manga';
-  static String get myPlayedTracks => '$apiUrl/me/played/tracks';
-  static String userById(String id) => '$apiUrl/users/$id';
+  static String get myProfile => '$apiUrl/me/profile/';
+  static String get updateProfile => '$apiUrl/me/profile/';
+  static String get updateLikes => '$apiUrl/me/likes/update/';
+  static String get myLikedArtists => '$apiUrl/me/liked/artists/';
+  static String get myLikedTracks => '$apiUrl/me/liked/tracks/';
+  static String get myLikedGenres => '$apiUrl/me/liked/genres/';
+  static String get myLikedAlbums => '$apiUrl/me/liked/albums/';
+  static String get myTopArtists => '$apiUrl/me/top/artists/';
+  static String get myTopTracks => '$apiUrl/me/top/tracks/';
+  static String get myTopGenres => '$apiUrl/me/top/genres/';
+  static String get myTopAnime => '$apiUrl/me/top/anime/';
+  static String get myTopManga => '$apiUrl/me/top/manga/';
+  static String get myPlayedTracks => '$apiUrl/me/played/tracks/';
+  static String userById(String id) => '$apiUrl/users/$id/';
 
   // Search Endpoints
-  static String get search => '$apiUrl/search';
-  static String get searchSuggestions => '$apiUrl/search/suggestions';
-  static String get searchRecent => '$apiUrl/search/recent';
-  static String get searchTrending => '$apiUrl/search/trending';
+  static String get search => '$apiUrl/search/';
+  static String get searchSuggestions => '$apiUrl/search/suggestions/';
+  static String get searchRecent => '$apiUrl/search/recent/';
+  static String get searchTrending => '$apiUrl/search/trending/';
 
   // Library Endpoints
-  static String get library => '$apiUrl/library';
-  static String get libraryPlaylists => '$apiUrl/library/playlists';
-  static String get libraryLiked => '$apiUrl/library/liked';
-  static String get libraryDownloads => '$apiUrl/library/downloads';
-  static String get libraryRecent => '$apiUrl/library/recent';
+  static String get library => '$apiUrl/library/';
+  static String get libraryPlaylists => '$apiUrl/library/playlists/';
+  static String get libraryLiked => '$apiUrl/library/liked/';
+  static String get libraryDownloads => '$apiUrl/library/downloads/';
+  static String get libraryRecent => '$apiUrl/library/recent/';
 
   // Event Endpoints
-  static String get events => '$apiUrl/events';
-  static String eventById(String id) => '$apiUrl/events/$id';
+  static String get events => '$apiUrl/events/';
+  static String eventById(String id) => '$apiUrl/events/$id/';
 
   // Analytics Endpoints
-  static String get analytics => '$apiUrl/analytics';
-  static String get analyticsStats => '$apiUrl/analytics/stats';
+  static String get analytics => '$apiUrl/analytics/';
+  static String get analyticsStats => '$apiUrl/analytics/stats/';
 
   // Admin & Utility endpoints (working from commit 6cac314)
   static String get admin => '$apiUrl/admin/';
-  static String get spotifySeedUserCreate => '$apiUrl/spotify/seed/user/create';
-  static String get mergeSimilars => '$apiUrl/merge-similars';
+  static String get spotifySeedUserCreate => '$apiUrl/spotify/seed/user/create/';
+  static String get mergeSimilars => '$apiUrl/merge-similars/';
   static String get usersWeb => '$apiUrl/users/';
   static String get channelsWeb => '$apiUrl/channels/';
 
   // Health endpoint
-  static String get health => '$apiUrl/health';
+  static String get health => '$apiUrl/health/';
 
   // Private constructor to prevent instantiation
   ApiConfig._();

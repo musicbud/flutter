@@ -8,7 +8,7 @@ class SpotifyRepositoryImpl implements SpotifyRepository {
   SpotifyRepositoryImpl({required this.remoteDataSource});
 
   @override
-  Future<List<CommonTrack>> getPlayedTracks() {
+  Future<List<SpotifyCommonTrack>> getPlayedTracks() {
     return remoteDataSource.getPlayedTracks();
   }
 
@@ -33,7 +33,7 @@ class SpotifyRepositoryImpl implements SpotifyRepository {
   }
 
   @override
-  Future<List<CommonTrack>> getRecentlyPlayedTracks() {
+  Future<List<SpotifyCommonTrack>> getRecentlyPlayedTracks() {
     return remoteDataSource.getRecentlyPlayedTracks();
   }
 
@@ -83,7 +83,7 @@ class SpotifyRepositoryImpl implements SpotifyRepository {
   }
 
   @override
-  Future<List<CommonTrack>> getPlayedTracksWithLocation() {
+  Future<List<SpotifyCommonTrack>> getPlayedTracksWithLocation() {
     return remoteDataSource.getPlayedTracksWithLocation();
   }
 

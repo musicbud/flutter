@@ -128,7 +128,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       final artists = state is TopArtistsLoaded ? state.artists : <Artist>[];
                       final isLoading = state is TopArtistsLoading;
                       final hasError = state is TopArtistsError;
-                      final errorMessage = hasError ? (state as TopArtistsError).message : null;
+                      final errorMessage = hasError ? (state).message : null;
                       return FeaturedArtistsSection(
                         artists: artists,
                         isLoading: isLoading,
@@ -157,7 +157,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       final tracks = state is TopTracksLoaded ? state.tracks : <Track>[];
                       final isLoading = state is TopTracksLoading;
                       final hasError = state is TopTracksError;
-                      final errorMessage = hasError ? (state as TopTracksError).message : null;
+                      final errorMessage = hasError ? (state).message : null;
                       return TrendingTracksSection(
                         tracks: tracks,
                         isLoading: isLoading,
@@ -186,7 +186,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
                       final albums = state is LikedAlbumsLoaded ? state.albums : <Album>[];
                       final isLoading = state is LikedAlbumsLoading;
                       final hasError = state is LikedAlbumsError;
-                      final errorMessage = hasError ? (state as LikedAlbumsError).message : null;
+                      final errorMessage = hasError ? (state).message : null;
                       return NewReleasesSection(
                         albums: albums,
                         isLoading: isLoading,

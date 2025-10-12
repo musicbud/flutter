@@ -45,11 +45,12 @@ class AdminBloc extends Bloc<AdminEvent, AdminState> {
   ) async {
     emit(AdminLoading());
     final action = AdminAction(
-      actionType: event.actionType,
-      targetId: event.targetId,
-      performedBy: 'current_admin', // TODO: Get from auth
-      timestamp: DateTime.now(),
+      id: 'action_${DateTime.now().millisecondsSinceEpoch}',
+      adminId: 'current_admin', // TODO: Get from auth
+      action: event.actionType,
+      description: event.actionType,
       metadata: event.metadata,
+      timestamp: DateTime.now(),
     );
     final result = await repository.performAdminAction(action);
     result.fold(

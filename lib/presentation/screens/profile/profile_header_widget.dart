@@ -95,7 +95,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
               borderRadius: BorderRadius.circular(designSystemRadius.circular),
               boxShadow: designSystemShadows.cardHover,
               border: Border.all(
-                color: designSystemColors.primary.withValues(alpha: 0.3),
+                color: designSystemColors.primary.withOpacity(0.3),
                 width: 3,
               ),
             ),

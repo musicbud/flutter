@@ -9,9 +9,9 @@ import 'package:musicbud_flutter/blocs/auth/auth_bloc.dart';
 import 'package:musicbud_flutter/domain/repositories/auth_repository.dart';
 import 'package:musicbud_flutter/data/providers/token_provider.dart';
 import 'package:musicbud_flutter/presentation/screens/home/home_screen.dart';
+import 'package:musicbud_flutter/models/auth_response.dart';
 import 'package:musicbud_flutter/presentation/screens/auth/login_screen.dart';
 import '../test_utils/test_helpers.dart';
-
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -28,13 +28,17 @@ void main() {
     testWidgets('Successful login flow: login screen → home screen',
         (WidgetTester tester) async {
       // Get mock instances
-      final mockTokenProvider = TestSetup.getMock<MockTokenProvider>();
-      final mockAuthRepository = TestSetup.getMock<MockAuthRepository>();
+      final mockTokenProvider = TestSetup.getMock<TokenProvider>();
+      final mockAuthRepository = TestSetup.getMock<AuthRepository>();
 
       // Setup mocks for successful authentication
       when(mockTokenProvider.token).thenReturn(null); // No existing token
-      when(mockTokenProvider.updateToken('mock_token')).thenReturn(Future.value());
-      when(mockAuthRepository.login('testuser', 'password123')).thenAnswer((_) async => {'token': 'mock_token', 'user': {'id': '1', 'username': 'testuser'}});
+      when(mockTokenProvider.updateTokens('mock_token', 'refresh_token')).thenAnswer((_) async {});
+      when(mockAuthRepository.login('testuser', 'password123')).thenAnswer((_) async => const LoginResponse(
+        accessToken: 'mock_token',
+        refreshToken: 'refresh_token',
+        userId: '1',
+      ));
 
       // Create test app with mocked dependencies
       final testApp = MultiBlocProvider(
@@ -45,7 +49,10 @@ void main() {
             create: (context) => LoginBloc(authRepository: mockAuthRepository),
           ),
           BlocProvider<AuthBloc>(
-            create: (context) => AuthBloc(authRepository: mockAuthRepository),
+            create: (context) => AuthBloc(
+              authRepository: mockAuthRepository,
+              tokenProvider: mockTokenProvider,
+            ),
           ),
         ],
         child: MaterialApp(
@@ -83,15 +90,15 @@ void main() {
       expect(find.byType(HomeScreen), findsOneWidget);
       expect(find.byType(LoginScreen), findsNothing);
 
-      // Verify token was saved
-      verify(mockTokenProvider.updateToken('mock_token')).called(1);
+      // Verify tokens were saved
+      verify(mockTokenProvider.updateTokens('mock_token', 'refresh_token')).called(1);
     });
 
     testWidgets('Login failure with invalid credentials',
         (WidgetTester tester) async {
       // Get mock instances
-      final mockTokenProvider = TestSetup.getMock<MockTokenProvider>();
-      final mockAuthRepository = TestSetup.getMock<MockAuthRepository>();
+      final mockTokenProvider = TestSetup.getMock<TokenProvider>();
+      final mockAuthRepository = TestSetup.getMock<AuthRepository>();
 
       // Setup mocks for failed authentication
       when(mockTokenProvider.token).thenReturn(null);
@@ -105,7 +112,10 @@ void main() {
             create: (context) => LoginBloc(authRepository: mockAuthRepository),
           ),
           BlocProvider<AuthBloc>(
-            create: (context) => AuthBloc(authRepository: mockAuthRepository),
+            create: (context) => AuthBloc(
+              authRepository: mockAuthRepository,
+              tokenProvider: mockTokenProvider,
+            ),
           ),
         ],
         child: MaterialApp(
@@ -142,13 +152,16 @@ void main() {
     testWidgets('Auto-login when token exists',
         (WidgetTester tester) async {
       // Get mock instances
-      final mockTokenProvider = TestSetup.getMock<MockTokenProvider>();
-      final mockAuthRepository = TestSetup.getMock<MockAuthRepository>();
+      final mockTokenProvider = TestSetup.getMock<TokenProvider>();
+      final mockAuthRepository = TestSetup.getMock<AuthRepository>();
 
       // Setup mocks for existing token
       when(mockTokenProvider.token).thenReturn('existing_token');
-      when(mockTokenProvider.updateToken('new_token')).thenReturn(Future.value());
-      when(mockAuthRepository.login('testuser', 'password123')).thenAnswer((_) async => {'token': 'new_token', 'user': {'id': '1', 'username': 'testuser'}});
+      when(mockTokenProvider.updateTokens('new_token', 'refresh_token')).thenAnswer((_) async {});
+      when(mockAuthRepository.login('testuser', 'password123')).thenAnswer((_) async => const LoginResponse(
+        accessToken: 'new_token',
+        refreshToken: 'refresh_token',
+      ));
 
       final testApp = MultiBlocProvider(
         providers: [
@@ -158,7 +171,10 @@ void main() {
             create: (context) => LoginBloc(authRepository: mockAuthRepository),
           ),
           BlocProvider<AuthBloc>(
-            create: (context) => AuthBloc(authRepository: mockAuthRepository),
+            create: (context) => AuthBloc(
+              authRepository: mockAuthRepository,
+              tokenProvider: mockTokenProvider,
+            ),
           ),
         ],
         child: MaterialApp(
@@ -181,8 +197,8 @@ void main() {
     testWidgets('Network error during login',
         (WidgetTester tester) async {
       // Get mock instances
-      final mockTokenProvider = TestSetup.getMock<MockTokenProvider>();
-      final mockAuthRepository = TestSetup.getMock<MockAuthRepository>();
+      final mockTokenProvider = TestSetup.getMock<TokenProvider>();
+      final mockAuthRepository = TestSetup.getMock<AuthRepository>();
 
       // Setup mocks for network error
       when(mockTokenProvider.token).thenReturn(null);
@@ -196,7 +212,10 @@ void main() {
             create: (context) => LoginBloc(authRepository: mockAuthRepository),
           ),
           BlocProvider<AuthBloc>(
-            create: (context) => AuthBloc(authRepository: mockAuthRepository),
+            create: (context) => AuthBloc(
+              authRepository: mockAuthRepository,
+              tokenProvider: mockTokenProvider,
+            ),
           ),
         ],
         child: MaterialApp(
@@ -233,8 +252,8 @@ void main() {
     testWidgets('Form validation prevents empty submissions',
         (WidgetTester tester) async {
       // Get mock instances
-      final mockTokenProvider = TestSetup.getMock<MockTokenProvider>();
-      final mockAuthRepository = TestSetup.getMock<MockAuthRepository>();
+      final mockTokenProvider = TestSetup.getMock<TokenProvider>();
+      final mockAuthRepository = TestSetup.getMock<AuthRepository>();
 
       when(mockTokenProvider.token).thenReturn(null);
 
@@ -246,7 +265,10 @@ void main() {
             create: (context) => LoginBloc(authRepository: mockAuthRepository),
           ),
           BlocProvider<AuthBloc>(
-            create: (context) => AuthBloc(authRepository: mockAuthRepository),
+            create: (context) => AuthBloc(
+              authRepository: mockAuthRepository,
+              tokenProvider: mockTokenProvider,
+            ),
           ),
         ],
         child: MaterialApp(
@@ -275,13 +297,17 @@ void main() {
     testWidgets('State persistence after successful login',
         (WidgetTester tester) async {
       // Get mock instances
-      final mockTokenProvider = TestSetup.getMock<MockTokenProvider>();
-      final mockAuthRepository = TestSetup.getMock<MockAuthRepository>();
+      final mockTokenProvider = TestSetup.getMock<TokenProvider>();
+      final mockAuthRepository = TestSetup.getMock<AuthRepository>();
 
       // Setup mocks
       when(mockTokenProvider.token).thenReturn(null);
-      when(mockTokenProvider.updateToken('mock_token')).thenReturn(Future.value());
-      when(mockAuthRepository.login('testuser', 'password123')).thenAnswer((_) async => {'token': 'mock_token', 'user': {'id': '1', 'username': 'testuser'}});
+      when(mockTokenProvider.updateTokens('mock_token', 'refresh_token')).thenAnswer((_) async {});
+      when(mockAuthRepository.login('testuser', 'password123')).thenAnswer((_) async => const LoginResponse(
+        accessToken: 'mock_token',
+        refreshToken: 'refresh_token',
+        userId: '1',
+      ));
 
       final testApp = MultiBlocProvider(
         providers: [
@@ -291,7 +317,10 @@ void main() {
             create: (context) => LoginBloc(authRepository: mockAuthRepository),
           ),
           BlocProvider<AuthBloc>(
-            create: (context) => AuthBloc(authRepository: mockAuthRepository),
+            create: (context) => AuthBloc(
+              authRepository: mockAuthRepository,
+              tokenProvider: mockTokenProvider,
+            ),
           ),
         ],
         child: MaterialApp(

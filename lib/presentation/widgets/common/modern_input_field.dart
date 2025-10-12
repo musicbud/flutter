@@ -18,6 +18,7 @@ class ModernInputField extends StatefulWidget {
   final int? maxLines;
   final bool obscureText;
   final Widget? suffixIcon;
+  final String? Function(String?)? validator;
 
   const ModernInputField({
     super.key,
@@ -38,6 +39,7 @@ class ModernInputField extends StatefulWidget {
     this.maxLines,
     this.obscureText = false,
     this.suffixIcon,
+    this.validator,
   });
 
   @override
@@ -59,6 +61,7 @@ class _ModernInputFieldState extends State<ModernInputField> {
         obscureText: widget.obscureText,
         style: widget.customTextStyle ?? Theme.of(context).textTheme.bodyMedium,
         decoration: _getInputDecoration(context),
+        validator: widget.validator,
       ),
     );
   }

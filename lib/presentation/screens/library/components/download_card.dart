@@ -34,7 +34,7 @@ class DownloadCard extends StatelessWidget {
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
-              color: accentColor.withValues(alpha: 0.1),
+              color: accentColor.withOpacity(0.1),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(DesignSystem.radiusLG),

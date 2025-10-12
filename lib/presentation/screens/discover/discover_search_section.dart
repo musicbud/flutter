@@ -40,7 +40,7 @@ class _DiscoverSearchSectionState extends State<DiscoverSearchSection> {
       children: [
         // Header Section
         Container(
-          padding: EdgeInsets.all(DesignSystem.spacingLG),
+          padding: const EdgeInsets.all(DesignSystem.spacingLG),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -51,7 +51,7 @@ class _DiscoverSearchSectionState extends State<DiscoverSearchSection> {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              SizedBox(height: DesignSystem.spacingSM),
+              const SizedBox(height: DesignSystem.spacingSM),
               Text(
                 'Find your next favorite track',
                 style: DesignSystem.bodyMedium.copyWith(
@@ -64,7 +64,7 @@ class _DiscoverSearchSectionState extends State<DiscoverSearchSection> {
 
         // Search Section
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
+          padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
           child: ModernInputField(
             hintText: 'Search for artists, tracks, or genres...',
             controller: _searchController,
@@ -73,14 +73,14 @@ class _DiscoverSearchSectionState extends State<DiscoverSearchSection> {
           ),
         ),
 
-        SizedBox(height: DesignSystem.spacingLG),
+        const SizedBox(height: DesignSystem.spacingLG),
 
         // Categories Section
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
+          padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
           child: CategoryFilterWidget(
             selectedCategory: widget.selectedCategory,
-            categories: [
+            categories: const [
               'All',
               'Pop',
               'Rock',

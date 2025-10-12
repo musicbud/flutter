@@ -117,7 +117,10 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   Future<List<Track>> getMyTopTracks() async {
     try {
       final url = _endpointConfigService.getEndpointUrl('me - top tracks', ApiConfig.baseUrl) ?? ApiConfig.myTopTracks;
-      final response = await _dioClient.post(url, data: {});
+      final method = _endpointConfigService.getEndpointMethod('me - top tracks') ?? 'POST';
+      final response = method.toUpperCase() == 'GET' 
+          ? await _dioClient.get(url)
+          : await _dioClient.post(url, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
       return results.map((json) => Track.fromJson(json)).toList();
@@ -130,7 +133,10 @@ class ContentRemoteDataSourceImpl implements ContentRemoteDataSource {
   Future<List<Artist>> getMyTopArtists() async {
     try {
       final url = _endpointConfigService.getEndpointUrl('me - top artists', ApiConfig.baseUrl) ?? ApiConfig.myTopArtists;
-      final response = await _dioClient.post(url, data: {});
+      final method = _endpointConfigService.getEndpointMethod('me - top artists') ?? 'POST';
+      final response = method.toUpperCase() == 'GET' 
+          ? await _dioClient.get(url)
+          : await _dioClient.post(url, data: {});
       final responseData = response.data as Map<String, dynamic>;
       final results = responseData['results'] as List? ?? [];
       return results.map((json) => Artist.fromJson(json)).toList();

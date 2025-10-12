@@ -1,8 +1,8 @@
 import '../../data/models/common_track.dart';
 
 abstract class SpotifyRepository {
-  Future<List<CommonTrack>> getPlayedTracks();
-  Future<List<CommonTrack>> getRecentlyPlayedTracks();
+  Future<List<SpotifyCommonTrack>> getPlayedTracks();
+  Future<List<SpotifyCommonTrack>> getRecentlyPlayedTracks();
   Future<bool> playTrackWithLocation(String trackId, String trackName, double latitude, double longitude);
   Future<List<Map<String, dynamic>>> getSpotifyDevices();
   Future<List<Map<String, dynamic>>> getAvailableDevices();
@@ -16,6 +16,6 @@ abstract class SpotifyRepository {
   Future<void> setVolume(int volume, {String? deviceId});
   Future<void> saveLocation(double latitude, double longitude);
   Future<void> saveTrackLocation(String trackId, double latitude, double longitude);
-  Future<List<CommonTrack>> getPlayedTracksWithLocation();
+  Future<List<SpotifyCommonTrack>> getPlayedTracksWithLocation();
   Future<Map<String, dynamic>> createSeedUser();
 }

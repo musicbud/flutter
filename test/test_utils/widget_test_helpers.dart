@@ -10,6 +10,8 @@ import 'package:musicbud_flutter/domain/repositories/profile_repository.dart';
 import 'package:musicbud_flutter/domain/repositories/content_repository.dart';
 import 'package:musicbud_flutter/domain/repositories/user_profile_repository.dart';
 import 'package:musicbud_flutter/domain/repositories/settings_repository.dart';
+import 'package:musicbud_flutter/domain/repositories/discover_repository.dart';
+import 'package:musicbud_flutter/data/providers/token_provider.dart';
 
 // Import BLoCs
 import 'package:musicbud_flutter/blocs/auth/auth_bloc.dart';
@@ -79,13 +81,13 @@ class WidgetTestHelper {
   static List<BlocProvider> createMockBlocProviders() {
     return [
       BlocProvider<AuthBloc>(
-        create: (_) => AuthBloc(authRepository: TestSetup.getMock<AuthRepository>() as MockAuthRepository),
+        create: (_) => AuthBloc(
+          authRepository: TestSetup.getMock<AuthRepository>() as MockAuthRepository,
+          tokenProvider: TestSetup.getMock<TokenProvider>() as MockTokenProvider,
+        ),
       ),
       BlocProvider<UserBloc>(
-        create: (_) => UserBloc(
-          userRepository: TestSetup.getMock<UserRepository>() as MockUserRepository,
-          authRepository: TestSetup.getMock<AuthRepository>() as MockAuthRepository,
-        ),
+        create: (_) => UserBloc(),
       ),
       BlocProvider<ProfileBloc>(
         create: (_) => ProfileBloc(
@@ -102,7 +104,11 @@ class WidgetTestHelper {
         ),
       ),
       BlocProvider<MainScreenBloc>(
-        create: (_) => MainScreenBloc(profileRepository: TestSetup.getMock<ProfileRepository>() as MockProfileRepository),
+        create: (_) => MainScreenBloc(
+          profileRepository: TestSetup.getMock<ProfileRepository>() as MockProfileRepository,
+          contentRepository: TestSetup.getMock<ContentRepository>() as MockContentRepository,
+          discoverRepository: TestSetup.getMock<DiscoverRepository>() as MockDiscoverRepository,
+        ),
       ),
       BlocProvider<UserProfileBloc>(
         create: (_) => UserProfileBloc(userProfileRepository: TestSetup.getMock<UserProfileRepository>() as MockUserProfileRepository),

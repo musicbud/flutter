@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-  flutter_bloc: ^9.1.1
+  flutter_bloc: ^8.1.6
   equatable: ^2.0.5
   dio: ^5.3.2
   get_it: ^8.2.0
@@ -29,26 +29,31 @@ dependencies:
   logging: ^1.2.0
   google_fonts: ^6.2.1
   logger: ^2.6.2
-  fl_chart: ^1.1.0
+  fl_chart: ^0.68.0
   path_provider: ^2.1.1
   cached_network_image: ^3.3.0
   json_annotation: ^4.8.1
   file_selector_linux: ^0.9.3+2
   url_launcher_linux: ^3.2.1
-  geolocator: ^14.0.2
+  # geolocator: ^10.1.0  # Temporarily disabled - use permission_handler + location instead
   flutter_secure_storage: ^9.0.0
+  jwt_decoder: ^2.0.1
+  provider: ^6.1.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
+  flutter_lints: ^2.0.0
   integration_test:
     sdk: flutter
   mockito: ^5.4.4
   build_runner: ^2.4.6
-  provider: ^6.1.1
+  bloc_test: ^9.1.1
 
 flutter:
   uses-material-design: true
 
   assets:
-    - assets/
+    - assets/icons/
+    - assets/images/
+    - assets/ui/
+    - assets/endpoints_map.json

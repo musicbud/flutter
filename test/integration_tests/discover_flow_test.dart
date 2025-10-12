@@ -3,8 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mockito/mockito.dart';
-import 'package:musicbud_flutter/presentation/screens/discover/discover_screen.dart';
-import 'package:musicbud_flutter/presentation/screens/search/search_screen.dart';
+import 'package:musicbud_flutter/presentation/screens/discover/dynamic_discover_screen.dart';
+import 'package:musicbud_flutter/presentation/screens/search/dynamic_search_screen.dart';
 import 'package:musicbud_flutter/presentation/screens/profile/track_details_screen.dart';
 import 'package:musicbud_flutter/blocs/content/content_bloc.dart';
 import 'package:musicbud_flutter/blocs/content/content_event.dart';
@@ -15,24 +15,34 @@ import 'package:musicbud_flutter/models/track.dart';
 import 'package:musicbud_flutter/models/artist.dart';
 import 'package:musicbud_flutter/models/search.dart';
 import 'package:dartz/dartz.dart';
-import 'package:musicbud_flutter/core/error/failures.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Music Discovery Flow Integration Tests', () {
+    late MockSearchRepository mockSearchRepo;
+    late MockContentRepository mockContentRepo;
+    late SearchBloc searchBloc;
+    late ContentBloc contentBloc;
+
+    setUp(() {
+      mockSearchRepo = MockSearchRepository();
+      mockContentRepo = MockContentRepository();
+      searchBloc = SearchBloc(repository: mockSearchRepo);
+      contentBloc = ContentBloc(contentRepository: mockContentRepo);
+    });
 
     testWidgets('Complete discovery flow: discover → search → track details',
         (WidgetTester tester) async {
       // Setup mock data
       final mockTracks = [
-        Track(
+        const Track(
           uid: '1',
           title: 'Test Track 1',
           artistName: 'Test Artist 1',
           albumName: 'Test Album 1',
         ),
-        Track(
+        const Track(
           uid: '2',
           title: 'Test Track 2',
           artistName: 'Test Artist 2',
@@ -47,9 +57,7 @@ void main() {
         ),
       ];
 
-      // Setup mock repository responses BEFORE creating blocs
-      final mockContentRepo = MockContentRepository();
-      final mockSearchRepo = MockSearchRepository();
+      // Setup mock repository responses (repositories already initialized in setUp)
 
       // Stub all ContentRepository methods
       when(mockContentRepo.getTopTracks()).thenReturn(Future.value(mockTracks));
@@ -71,11 +79,11 @@ void main() {
           type: 'track',
           title: track.title,
           subtitle: track.artistName,
-          data: {},
+          data: const {},
           relevanceScore: 1.0,
         )).toList(),
-        suggestions: [],
-        metadata: SearchMetadata(
+        suggestions: const [],
+        metadata: const SearchMetadata(
           totalResults: 2,
           pageSize: 20,
           currentPage: 1,
@@ -84,10 +92,10 @@ void main() {
           searchTime: Duration.zero,
         ),
       )));
-      when(mockSearchRepo.getRecentSearches()).thenAnswer((_) async => Right(<String>[]));
-      when(mockSearchRepo.getTrendingSearches()).thenAnswer((_) async => Right(<String>[]));
-      when(mockSearchRepo.saveRecentSearch('test')).thenAnswer((_) async => Right(null));
-      when(mockSearchRepo.clearRecentSearches()).thenAnswer((_) async => Right(null));
+      when(mockSearchRepo.getRecentSearches()).thenAnswer((_) async => const Right(<String>[]));
+      when(mockSearchRepo.getTrendingSearches()).thenAnswer((_) async => const Right(<String>[]));
+      when(mockSearchRepo.saveRecentSearch('test')).thenAnswer((_) async => const Right(null));
+      when(mockSearchRepo.clearRecentSearches()).thenAnswer((_) async => const Right(null));
 
       // Create blocs with mocked repositories
       final contentBloc = ContentBloc(contentRepository: mockContentRepo);
@@ -104,8 +112,8 @@ void main() {
         ],
         child: MaterialApp(
           routes: {
-            '/discover': (context) => const DiscoverScreen(),
-            '/search': (context) => const SearchScreen(),
+            '/discover': (context) => const DynamicDiscoverScreen(),
+            '/search': (context) => const DynamicSearchScreen(),
             '/track-details': (context) => TrackDetailsScreen(track: mockTracks[0]),
           },
           initialRoute: '/discover',
@@ -116,7 +124,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify we're on discover screen
-      expect(find.byType(DiscoverScreen), findsOneWidget);
+      expect(find.byType(DynamicDiscoverScreen), findsOneWidget);
       expect(find.text('Discover'), findsOneWidget);
 
       // Verify content is loaded
@@ -133,21 +141,20 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify navigation to search screen
-      expect(find.byType(SearchScreen), findsOneWidget);
+      expect(find.byType(DynamicSearchScreen), findsOneWidget);
 
-      // Setup mock search repository
-      final mockSearchRepo = MockSearchRepository();
+      // Setup mock search repository (reuse existing one)
       when(mockSearchRepo.search(query: 'test song')).thenAnswer((_) async => Right(SearchResults(
         items: mockTracks.map((track) => SearchItem(
           id: track.id!,
           type: 'track',
           title: track.title,
           subtitle: track.artistName,
-          data: {},
+          data: const {},
           relevanceScore: 1.0,
         )).toList(),
-        suggestions: [],
-        metadata: SearchMetadata(
+        suggestions: const [],
+        metadata: const SearchMetadata(
           totalResults: 2,
           pageSize: 20,
           currentPage: 1,
@@ -158,7 +165,7 @@ void main() {
       )));
 
       // Trigger search
-      searchBloc.add(PerformSearch(query: 'test song'));
+      searchBloc.add(const PerformSearch(query: 'test song'));
       await tester.pumpAndSettle();
 
       // Verify search results are displayed
@@ -185,7 +192,7 @@ void main() {
         value: searchBloc,
         child: MaterialApp(
           routes: {
-            '/search': (context) => const SearchScreen(),
+            '/search': (context) => const DynamicSearchScreen(),
           },
           initialRoute: '/search',
         ),
@@ -208,7 +215,7 @@ void main() {
         (WidgetTester tester) async {
       // Setup mock repository to delay response (simulate loading) BEFORE creating bloc
       final mockContentRepo = TestSetup.getMock<MockContentRepository>();
-      when(mockContentRepo.getTopTracks()).thenReturn(Future.delayed(const Duration(milliseconds: 100), () => [Track(uid: '1', title: 'Loaded Track', artistName: 'Loaded Artist')]));
+      when(mockContentRepo.getTopTracks()).thenReturn(Future.delayed(const Duration(milliseconds: 100), () => [const Track(uid: '1', title: 'Loaded Track', artistName: 'Loaded Artist')]));
       when(mockContentRepo.getTopArtists()).thenReturn(Future.value([]));
       when(mockContentRepo.getTopGenres()).thenReturn(Future.value([]));
       when(mockContentRepo.getTopAnime()).thenReturn(Future.value([]));
@@ -308,7 +315,7 @@ void main() {
 
     testWidgets('Track details interaction and playback',
         (WidgetTester tester) async {
-      final mockTrack = Track(
+      const mockTrack = Track(
         uid: '1',
         title: 'Test Track',
         artistName: 'Test Artist',
@@ -317,7 +324,7 @@ void main() {
 
       final testApp = MaterialApp(
         routes: {
-          '/track-details': (context) => TrackDetailsScreen(track: mockTrack),
+          '/track-details': (context) => const TrackDetailsScreen(track: mockTrack),
         },
         initialRoute: '/track-details',
       );
@@ -345,7 +352,7 @@ void main() {
 
     testWidgets('Navigation persistence during flow',
         (WidgetTester tester) async {
-      final mockTracks = [Track(uid: '1', title: 'Test Track', artistName: 'Test Artist')];
+      final mockTracks = [const Track(uid: '1', title: 'Test Track', artistName: 'Test Artist')];
 
       // Setup mock repository BEFORE creating bloc
       final mockContentRepo = TestSetup.getMock<MockContentRepository>();

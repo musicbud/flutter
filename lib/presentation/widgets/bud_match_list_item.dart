@@ -45,7 +45,7 @@ class BudMatchListItem extends StatelessWidget {
                 style: DesignSystem.bodySmall,
               )
             else
-              Text(
+              const Text(
                 'Similar music tastes',
                 style: DesignSystem.bodySmall,
               ),

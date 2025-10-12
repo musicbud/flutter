@@ -387,7 +387,7 @@ class AppTheme {
     fontFamily: fontFamilySecondary,
     primaryColor: primaryRed,
     scaffoldBackgroundColor: white,
-    cardTheme: CardThemeData(
+    cardTheme: CardTheme(
       color: cardBackground,
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -415,7 +415,7 @@ class AppTheme {
     fontFamily: fontFamilySecondary,
     primaryColor: primaryRed,
     scaffoldBackgroundColor: darkTone,
-    cardTheme: CardThemeData(
+    cardTheme: CardTheme(
       color: cardBackground,
       elevation: 0,
       shape: RoundedRectangleBorder(

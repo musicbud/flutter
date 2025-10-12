@@ -32,7 +32,7 @@ class ArtistCard extends StatelessWidget {
               height: 80,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
-                color: accentColor.withValues(alpha: 0.1),
+                color: accentColor.withOpacity(0.1),
               ),
               child: (imageUrl?.isNotEmpty ?? false)
                   ? ClipRRect(

@@ -234,7 +234,7 @@ class ListBuilder<T> {
 
   Widget _buildDefaultEmptyState() {
     return Container(
-      padding: _padding ?? EdgeInsets.all(DesignSystem.spacingXL),
+      padding: _padding ?? const EdgeInsets.all(DesignSystem.spacingXL),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -243,7 +243,7 @@ class ListBuilder<T> {
             size: 64,
             color: DesignSystem.onSurfaceVariant,
           ),
-          SizedBox(height: DesignSystem.spacingLG),
+          const SizedBox(height: DesignSystem.spacingLG),
           Text(
             _emptyMessage ?? 'No items found',
             style: DesignSystem.titleMedium.copyWith(
@@ -263,7 +263,7 @@ class ListBuilder<T> {
 
   Widget _buildDefaultLoadingState() {
     return Container(
-      padding: _padding ?? EdgeInsets.all(DesignSystem.spacingXL),
+      padding: _padding ?? const EdgeInsets.all(DesignSystem.spacingXL),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -275,7 +275,7 @@ class ListBuilder<T> {
               valueColor: AlwaysStoppedAnimation<Color>(DesignSystem.primary),
             ),
           ),
-          SizedBox(height: DesignSystem.spacingLG),
+          const SizedBox(height: DesignSystem.spacingLG),
           Text(
             _loadingMessage ?? 'Loading...',
             style: DesignSystem.bodyMedium.copyWith(
@@ -293,16 +293,16 @@ class ListBuilder<T> {
 
   Widget _buildDefaultErrorState() {
     return Container(
-      padding: _padding ?? EdgeInsets.all(DesignSystem.spacingXL),
+      padding: _padding ?? const EdgeInsets.all(DesignSystem.spacingXL),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.error_outline,
             size: 64,
             color: DesignSystem.error,
           ),
-          SizedBox(height: DesignSystem.spacingLG),
+          const SizedBox(height: DesignSystem.spacingLG),
           Text(
             'Something went wrong',
             style: DesignSystem.titleMedium.copyWith(
@@ -311,7 +311,7 @@ class ListBuilder<T> {
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: DesignSystem.spacingSM),
+          const SizedBox(height: DesignSystem.spacingSM),
           Text(
             _errorMessage ?? 'Please check your connection and try again',
             style: DesignSystem.bodyMedium.copyWith(
@@ -320,7 +320,7 @@ class ListBuilder<T> {
             textAlign: TextAlign.center,
           ),
           if (_onRetry != null) ...[
-            SizedBox(height: DesignSystem.spacingXL),
+            const SizedBox(height: DesignSystem.spacingXL),
             ElevatedButton.icon(
               onPressed: _onRetry,
               icon: const Icon(Icons.refresh, size: 20),

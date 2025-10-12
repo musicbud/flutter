@@ -50,7 +50,7 @@ class _ProfileAvatar extends StatelessWidget {
         borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
         boxShadow: DesignSystem.shadowCard,
         border: Border.all(
-          color: DesignSystem.primary.withValues(alpha: 0.3),
+          color: DesignSystem.primary.withOpacity(0.3),
           width: 2,
         ),
       ),
@@ -91,7 +91,7 @@ class _WelcomeText extends StatelessWidget {
         if (state is MainScreenLoading)
           Row(
             children: [
-              SizedBox(
+              const SizedBox(
                 width: 16,
                 height: 16,
                 child: CircularProgressIndicator(

@@ -52,6 +52,15 @@ class GetRecentSearches extends SearchEvent {
 
 class ClearRecentSearches extends SearchEvent {}
 
+class RemoveRecentSearch extends SearchEvent {
+  final String search;
+
+  const RemoveRecentSearch(this.search);
+
+  @override
+  List<Object?> get props => [search];
+}
+
 class GetTrendingSearches extends SearchEvent {
   final int? limit;
 

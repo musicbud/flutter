@@ -1,4 +1,4 @@
-class CommonTrack {
+class SpotifyCommonTrack {
   final String? uid;
   final String? id;
   final String name;
@@ -22,7 +22,7 @@ class CommonTrack {
   final double? latitude;
   final double? longitude;
 
-  CommonTrack({
+  SpotifyCommonTrack({
     required this.uid,
     required this.id,
     required this.name,
@@ -47,12 +47,12 @@ class CommonTrack {
     this.longitude,
   });
 
-  factory CommonTrack.fromJson(Map<String, dynamic> json) {
+  factory SpotifyCommonTrack.fromJson(Map<String, dynamic> json) {
     if (json.containsKey('track') && json.containsKey('location')) {
       // Handle the new structure
       final trackData = json['track'] as Map<String, dynamic>;
       final locationData = json['location'] as Map<String, dynamic>;
-      return CommonTrack(
+      return SpotifyCommonTrack(
         uid: trackData['id'] ?? '',
         id: trackData['id'] ?? '',
         name: trackData['name'] ?? '',
@@ -61,7 +61,7 @@ class CommonTrack {
       );
     } else {
       // Handle the old structure
-      return CommonTrack(
+      return SpotifyCommonTrack(
         uid: json['uid'] ?? '',
         id: json['id'] ?? json['spotify_id'] ?? '',
         name: json['name'] ?? '',

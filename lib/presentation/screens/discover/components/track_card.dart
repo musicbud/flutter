@@ -34,7 +34,7 @@ class TrackCard extends StatelessWidget {
             height: 60,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
-              color: accentColor.withValues(alpha: 0.1),
+              color: accentColor.withOpacity(0.1),
             ),
             child: (imageUrl?.isNotEmpty ?? false)
                 ? ClipRRect(
@@ -86,12 +86,12 @@ class TrackCard extends StatelessWidget {
             ),
           ),
           Container(
-            padding: EdgeInsets.all(DesignSystem.spacingSM),
+            padding: const EdgeInsets.all(DesignSystem.spacingSM),
             decoration: BoxDecoration(
               color: DesignSystem.primary,
               borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.play_arrow,
               color: DesignSystem.onPrimary,
               size: 20,

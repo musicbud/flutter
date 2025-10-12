@@ -194,7 +194,7 @@ mixin LoadingStateMixin<T extends StatefulWidget> on State<T>
           Container(
             padding: EdgeInsets.all(design.designSystemSpacing.lg),
             decoration: BoxDecoration(
-              color: design.designSystemColors.error.withValues(alpha: 0.1),
+              color: design.designSystemColors.error.withOpacity(0.1),
               borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
             ),
             child: Icon(

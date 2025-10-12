@@ -66,7 +66,7 @@ class CardFactory {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(radius.lg),
-                  color: accentColor.withValues(alpha: 0.1),
+                  color: accentColor.withOpacity(0.1),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(radius.lg),
@@ -590,8 +590,8 @@ class CardFactory {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  colors.primary.withValues(alpha: 0.1),
-                  colors.primary.withValues(alpha: 0.05),
+                  colors.primary.withOpacity(0.1),
+                  colors.primary.withOpacity(0.05),
                 ],
               ),
             ),

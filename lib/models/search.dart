@@ -1,5 +1,38 @@
 import 'package:equatable/equatable.dart';
 
+class SearchResult extends Equatable {
+  final List<dynamic> tracks;
+  final List<dynamic> artists;
+  final List<dynamic> albums;
+  final List<dynamic> playlists;
+
+  const SearchResult({
+    required this.tracks,
+    required this.artists,
+    required this.albums,
+    required this.playlists,
+  });
+
+  factory SearchResult.fromJson(Map<String, dynamic> json) {
+    return SearchResult(
+      tracks: json['tracks'] ?? [],
+      artists: json['artists'] ?? [],
+      albums: json['albums'] ?? [],
+      playlists: json['playlists'] ?? [],
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    'tracks': tracks,
+    'artists': artists,
+    'albums': albums,
+    'playlists': playlists,
+  };
+
+  @override
+  List<Object?> get props => [tracks, artists, albums, playlists];
+}
+
 class SearchResults extends Equatable {
   final List<SearchItem> items;
   final List<String> suggestions;

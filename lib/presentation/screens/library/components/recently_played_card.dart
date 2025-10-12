@@ -33,7 +33,7 @@ class RecentlyPlayedCard extends StatelessWidget {
             height: 60,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
-              color: accentColor.withValues(alpha: 0.1),
+              color: accentColor.withOpacity(0.1),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(DesignSystem.radiusMD),

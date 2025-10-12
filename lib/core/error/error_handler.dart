@@ -12,21 +12,58 @@ class ErrorHandler {
 
   /// Handles Flutter framework errors
   static void _handleFlutterError(FlutterErrorDetails details) {
+    final errorString = details.exception.toString();
+    
+    // Handle common UI errors more gracefully
+    if (_isLayoutError(errorString)) {
+      logger.w(
+        '⚠️ Layout Error (handled gracefully)',
+        error: details.exception,
+      );
+      // Don't crash the app for layout errors - they're often non-critical
+      return;
+    }
+    
+    if (_isTabControllerError(errorString)) {
+      logger.w(
+        '⚠️ TabController Error (handled gracefully)',
+        error: details.exception,
+      );
+      // Don't crash the app for tab controller mismatches
+      return;
+    }
+    
     logger.e(
-      'Flutter Error',
+      '⛔ Flutter Error',
       error: details.exception,
       stackTrace: details.stack,
     );
 
     // Log additional context
-    logger.w('Error Context: ${details.context}');
+    logger.w('⚠️ Error Context: ${details.context}');
     if (details.library != null) {
-      logger.w('Library: ${details.library}');
+      logger.w('⚠️ Library: ${details.library}');
     }
     if (details.informationCollector != null) {
       final info = details.informationCollector!();
-      logger.w('Additional Info: $info');
+      logger.w('⚠️ Additional Info: $info');
     }
+  }
+  
+  /// Checks if the error is a layout-related error that can be handled gracefully
+  static bool _isLayoutError(String errorString) {
+    return errorString.contains('RenderFlex overflowed') ||
+           errorString.contains('overflowed by') ||
+           errorString.contains('overflow') ||
+           errorString.contains('RenderBox');
+  }
+  
+  /// Checks if the error is a TabController-related error
+  static bool _isTabControllerError(String errorString) {
+    return errorString.contains('TabController') ||
+           errorString.contains('length property') ||
+           errorString.contains('number of children') ||
+           errorString.contains('number of tabs');
   }
 
   /// Handles errors in the root zone

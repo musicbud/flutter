@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:musicbud_flutter/blocs/spotify/spotify_bloc.dart';
+import 'package:musicbud_flutter/blocs/spotify/spotify_event.dart';
+import 'package:musicbud_flutter/blocs/spotify/spotify_state.dart';
 
 class PlayedTracksMapScreen extends StatelessWidget {
   const PlayedTracksMapScreen({super.key});

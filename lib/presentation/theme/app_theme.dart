@@ -84,7 +84,7 @@ class AppTheme {
   // Shadows
   List<BoxShadow> get shadowCard => [
     BoxShadow(
-      color: Colors.black.withValues(alpha: 0.3),
+      color: Colors.black.withOpacity(0.3),
       blurRadius: 8,
       offset: const Offset(0, 4),
     ),
@@ -92,7 +92,7 @@ class AppTheme {
 
   List<BoxShadow> get shadowMedium => [
     BoxShadow(
-      color: Colors.black.withValues(alpha: 0.2),
+      color: Colors.black.withOpacity(0.2),
       blurRadius: 6,
       offset: const Offset(0, 3),
     ),
@@ -100,7 +100,7 @@ class AppTheme {
 
   List<BoxShadow> get shadowSmall => [
     BoxShadow(
-      color: Colors.black.withValues(alpha: 0.1),
+      color: Colors.black.withOpacity(0.1),
       blurRadius: 4,
       offset: const Offset(0, 2),
     ),
@@ -185,7 +185,7 @@ class AppTheme {
           ),
         ),
       ),
-      cardTheme: CardThemeData(
+      cardTheme: CardTheme(
         color: surfaceColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -264,7 +264,7 @@ class AppTheme {
           ),
         ),
       ),
-      cardTheme: CardThemeData(
+      cardTheme: CardTheme(
         color: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -305,7 +305,7 @@ class AppBorderRadius {
 class AppGradients {
   AppGradients();
 
-  LinearGradient get backgroundGradient => LinearGradient(
+  LinearGradient get backgroundGradient => const LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
@@ -322,25 +322,25 @@ class AppShadows {
 
   List<BoxShadow> get shadowCard => [
     BoxShadow(
-      color: Colors.black.withValues(alpha: 0.3),
+      color: Colors.black.withOpacity(0.3),
       blurRadius: 8,
-      offset: Offset(0, 4),
+      offset: const Offset(0, 4),
     ),
   ];
 
   List<BoxShadow> get shadowMedium => [
     BoxShadow(
-      color: Colors.black.withValues(alpha: 0.2),
+      color: Colors.black.withOpacity(0.2),
       blurRadius: 6,
-      offset: Offset(0, 3),
+      offset: const Offset(0, 3),
     ),
   ];
 
   List<BoxShadow> get shadowSmall => [
     BoxShadow(
-      color: Colors.black.withValues(alpha: 0.1),
+      color: Colors.black.withOpacity(0.1),
       blurRadius: 4,
-      offset: Offset(0, 2),
+      offset: const Offset(0, 2),
     ),
   ];
 }

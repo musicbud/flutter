@@ -17,6 +17,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     required this.userRepository,
   }) : super(ProfileInitial()) {
     on<ProfileRequested>(_onProfileRequested);
+    on<GetProfile>(_onGetProfile);
     on<ProfileUpdateRequested>(_onProfileUpdateRequested);
     on<ProfileAvatarUpdateRequested>(_onProfileAvatarUpdateRequested);
     on<ProfileAuthenticationChecked>(_onProfileAuthenticationChecked);
@@ -25,6 +26,14 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ProfileLikedItemsRequested>(_onProfileLikedItemsRequested);
     on<ProfileBudsRequested>(_onProfileBudsRequested);
     on<ProfileConnectedServicesRequested>(_onProfileConnectedServicesRequested);
+    
+    // New specific handlers
+    on<TopTracksRequested>(_onTopTracksRequested);
+    on<TopArtistsRequested>(_onTopArtistsRequested);
+    on<TopGenresRequested>(_onTopGenresRequested);
+    on<LikedTracksRequested>(_onLikedTracksRequested);
+    on<LikedArtistsRequested>(_onLikedArtistsRequested);
+    on<LikedGenresRequested>(_onLikedGenresRequested);
   }
 
   Future<void> _onProfileRequested(
@@ -128,6 +137,97 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       emit(const ProfileConnectedServicesLoaded(services: []));
     } catch (e) {
       emit(ProfileFailure(error: e.toString()));
+    }
+  }
+
+  Future<void> _onGetProfile(
+    GetProfile event,
+    Emitter<ProfileState> emit,
+  ) async {
+    try {
+      emit(ProfileLoading());
+      final profile = await userRepository.getUserProfile();
+      emit(ProfileLoaded(profile: profile));
+    } catch (e) {
+      emit(ProfileFailure(error: e.toString()));
+    }
+  }
+
+  Future<void> _onTopTracksRequested(
+    TopTracksRequested event,
+    Emitter<ProfileState> emit,
+  ) async {
+    try {
+      emit(ProfileLoading());
+      final tracks = await contentRepository.getTopItems('tracks');
+      emit(TopTracksLoaded(tracks: tracks));
+    } catch (e) {
+      emit(ProfileError(message: e.toString()));
+    }
+  }
+
+  Future<void> _onTopArtistsRequested(
+    TopArtistsRequested event,
+    Emitter<ProfileState> emit,
+  ) async {
+    try {
+      emit(ProfileLoading());
+      final artists = await contentRepository.getTopItems('artists');
+      emit(TopArtistsLoaded(artists: artists));
+    } catch (e) {
+      emit(ProfileError(message: e.toString()));
+    }
+  }
+
+  Future<void> _onTopGenresRequested(
+    TopGenresRequested event,
+    Emitter<ProfileState> emit,
+  ) async {
+    try {
+      emit(ProfileLoading());
+      final genres = await contentRepository.getTopItems('genres');
+      emit(TopGenresLoaded(genres: genres));
+    } catch (e) {
+      emit(ProfileError(message: e.toString()));
+    }
+  }
+
+  Future<void> _onLikedTracksRequested(
+    LikedTracksRequested event,
+    Emitter<ProfileState> emit,
+  ) async {
+    try {
+      emit(ProfileLoading());
+      final tracks = await contentRepository.getLikedItems('tracks');
+      emit(LikedTracksLoaded(tracks: tracks));
+    } catch (e) {
+      emit(ProfileError(message: e.toString()));
+    }
+  }
+
+  Future<void> _onLikedArtistsRequested(
+    LikedArtistsRequested event,
+    Emitter<ProfileState> emit,
+  ) async {
+    try {
+      emit(ProfileLoading());
+      final artists = await contentRepository.getLikedItems('artists');
+      emit(LikedArtistsLoaded(artists: artists));
+    } catch (e) {
+      emit(ProfileError(message: e.toString()));
+    }
+  }
+
+  Future<void> _onLikedGenresRequested(
+    LikedGenresRequested event,
+    Emitter<ProfileState> emit,
+  ) async {
+    try {
+      emit(ProfileLoading());
+      final genres = await contentRepository.getLikedItems('genres');
+      emit(LikedGenresLoaded(genres: genres));
+    } catch (e) {
+      emit(ProfileError(message: e.toString()));
     }
   }
 

@@ -9,7 +9,8 @@ import 'package:musicbud_flutter/presentation/screens/auth/login_screen.dart';
 import 'package:musicbud_flutter/blocs/auth/login/login_bloc.dart';
 import 'package:musicbud_flutter/blocs/auth/login/login_event.dart';
 import 'package:musicbud_flutter/blocs/auth/login/login_state.dart';
-import 'package:musicbud_flutter/blocs/auth/auth_event.dart';
+import 'package:musicbud_flutter/blocs/auth/auth_bloc.dart' as auth_bloc;
+import 'package:musicbud_flutter/blocs/auth/auth_event.dart' as auth_events;
 import 'package:musicbud_flutter/core/theme/design_system.dart';
 import 'package:musicbud_flutter/models/auth_response.dart';
 
@@ -42,12 +43,12 @@ void main() {
         (WidgetTester tester) async {
       // Arrange
       when(mockLoginBloc.state).thenReturn(LoginInitial());
-      when(mockauth_bloc.AuthBloc.state).thenReturn(auth_bloc.AuthInitial());
+      when(mockAuthBloc.state).thenReturn(auth_bloc.AuthInitial());
 
       final testApp = TestAppWrapper(
         providers: [
           BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-          BlocProvider<auth_bloc.AuthBloc>.value(value: mockauth_bloc.AuthBloc),
+          BlocProvider<auth_bloc.AuthBloc>.value(value: mockAuthBloc),
         ],
         child: const LoginScreen(),
       );
@@ -68,12 +69,12 @@ void main() {
         (WidgetTester tester) async {
       // Arrange
       when(mockLoginBloc.state).thenReturn(LoginLoading());
-      when(mockauth_bloc.AuthBloc.state).thenReturn(auth_bloc.auth_bloc.AuthInitial());
+      when(mockAuthBloc.state).thenReturn(auth_bloc.AuthInitial());
 
       final testApp = TestAppWrapper(
         providers: [
           BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-          BlocProvider<auth_bloc.AuthBloc>.value(value: mockauth_bloc.AuthBloc),
+          BlocProvider<auth_bloc.AuthBloc>.value(value: mockAuthBloc),
         ],
         child: const LoginScreen(),
       );
@@ -93,12 +94,12 @@ void main() {
         (WidgetTester tester) async {
       // Arrange
       when(mockLoginBloc.state).thenReturn(LoginInitial());
-      when(mockauth_bloc.AuthBloc.state).thenReturn(auth_bloc.auth_bloc.AuthInitial());
+      when(mockAuthBloc.state).thenReturn(auth_bloc.AuthInitial());
 
       final testApp = TestAppWrapper(
         providers: [
           BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-          BlocProvider<auth_bloc.AuthBloc>.value(value: mockauth_bloc.AuthBloc),
+          BlocProvider<auth_bloc.AuthBloc>.value(value: mockAuthBloc),
         ],
         child: const LoginScreen(),
       );
@@ -135,12 +136,12 @@ void main() {
         (WidgetTester tester) async {
       // Arrange
       when(mockLoginBloc.state).thenReturn(LoginInitial());
-      when(mockauth_bloc.AuthBloc.state).thenReturn(auth_bloc.auth_bloc.AuthInitial());
+      when(mockAuthBloc.state).thenReturn(auth_bloc.AuthInitial());
 
       final testApp = TestAppWrapper(
         providers: [
           BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-          BlocProvider<auth_bloc.AuthBloc>.value(value: mockauth_bloc.AuthBloc),
+          BlocProvider<auth_bloc.AuthBloc>.value(value: mockAuthBloc),
         ],
         child: const LoginScreen(),
       );
@@ -156,8 +157,8 @@ void main() {
       mockLoginBloc.emit(LoginSuccess(loginResponse));
       await tester.pump();
 
-      // Assert - auth_bloc.AuthBloc should receive LoginRequested event
-      verify(mockauth_bloc.AuthBloc.add(auth_bloc.LoginRequested(
+      // Assert - auth_bloc.AuthBloc should receive auth_events.LoginRequested event
+      verify(mockAuthBloc.add(auth_events.LoginRequested(
         username: '', // Empty because controllers are not set in this test
         password: '',
       ))).called(1);
@@ -167,12 +168,12 @@ void main() {
         (WidgetTester tester) async {
       // Arrange
       when(mockLoginBloc.state).thenReturn(LoginInitial());
-      when(mockauth_bloc.AuthBloc.state).thenReturn(auth_bloc.auth_bloc.AuthInitial());
+      when(mockAuthBloc.state).thenReturn(auth_bloc.AuthInitial());
 
       final testApp = TestAppWrapper(
         providers: [
           BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-          BlocProvider<auth_bloc.AuthBloc>.value(value: mockauth_bloc.AuthBloc),
+          BlocProvider<auth_bloc.AuthBloc>.value(value: mockAuthBloc),
         ],
         child: const LoginScreen(),
       );
@@ -181,12 +182,12 @@ void main() {
       await IntegrationTestUtils.pumpAndSettle(tester, testApp);
 
       // Simulate successful authentication
-      mockauth_bloc.AuthBloc.emit(auth_bloc.Authenticated(token: 'test_token'));
+      mockAuthBloc.emit(auth_bloc.Authenticated(token: 'test_token'));
       await tester.pump();
 
       // Assert - Navigation should be triggered (would navigate to home in real app)
       // In test environment, we verify the state change
-      expect(mockauth_bloc.AuthBloc.state, isA<auth_bloc.Authenticated>());
+      expect(mockAuthBloc.state, isA<auth_bloc.Authenticated>());
     });
 
     testWidgets('LoginScreen displays error message on login failure',
@@ -194,12 +195,12 @@ void main() {
       // Arrange
       const errorMessage = 'Invalid credentials';
       when(mockLoginBloc.state).thenReturn(LoginInitial());
-      when(mockauth_bloc.AuthBloc.state).thenReturn(auth_bloc.AuthInitial());
+      when(mockAuthBloc.state).thenReturn(auth_bloc.AuthInitial());
 
       final testApp = TestAppWrapper(
         providers: [
           BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-          BlocProvider<auth_bloc.AuthBloc>.value(value: mockauth_bloc.AuthBloc),
+          BlocProvider<auth_bloc.AuthBloc>.value(value: mockAuthBloc),
         ],
         child: BlocListener<LoginBloc, LoginState>(
           listener: (context, state) {
@@ -236,7 +237,7 @@ void main() {
       final testApp = TestAppWrapper(
         providers: [
           BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-          BlocProvider<auth_bloc.AuthBloc>.value(value: mockauth_bloc.AuthBloc),
+          BlocProvider<auth_bloc.AuthBloc>.value(value: mockAuthBloc),
         ],
         child: const LoginScreen(),
       );
@@ -261,7 +262,7 @@ void main() {
       final testApp = TestAppWrapper(
         providers: [
           BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-          BlocProvider<auth_bloc.AuthBloc>.value(value: mockauth_bloc.AuthBloc),
+          BlocProvider<auth_bloc.AuthBloc>.value(value: mockAuthBloc),
         ],
         child: const LoginScreen(),
       );
@@ -282,12 +283,12 @@ void main() {
         (WidgetTester tester) async {
       // Arrange
       when(mockLoginBloc.state).thenReturn(LoginInitial());
-      when(mockauth_bloc.AuthBloc.state).thenReturn(auth_bloc.AuthInitial());
+      when(mockAuthBloc.state).thenReturn(auth_bloc.AuthInitial());
 
       final testApp = TestAppWrapper(
         providers: [
           BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-          BlocProvider<auth_bloc.AuthBloc>.value(value: mockauth_bloc.AuthBloc),
+          BlocProvider<auth_bloc.AuthBloc>.value(value: mockAuthBloc),
         ],
         child: const LoginScreen(),
       );
@@ -311,7 +312,7 @@ void main() {
       final testApp = TestAppWrapper(
         providers: [
           BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-          BlocProvider<auth_bloc.AuthBloc>.value(value: mockauth_bloc.AuthBloc),
+          BlocProvider<auth_bloc.AuthBloc>.value(value: mockAuthBloc),
         ],
         child: const LoginScreen(),
       );
@@ -319,7 +320,7 @@ void main() {
       // Act - Simulate rapid state changes
       await IntegrationTestUtils.pumpAndSettle(tester, testApp);
 
-      // Initial -> Loading -> Success -> Authenticated
+      // Initial -> Loading -> Success -> auth_bloc.Authenticated
       mockLoginBloc.emit(LoginLoading());
       await tester.pump();
 
@@ -327,24 +328,24 @@ void main() {
       mockLoginBloc.emit(LoginSuccess(loginResponse));
       await tester.pump();
 
-      mockauth_bloc.AuthBloc.emit(const Authenticated(token: 'token'));
+      mockAuthBloc.emit(const auth_bloc.Authenticated(token: 'token'));
       await tester.pumpAndSettle();
 
       // Assert
       IntegrationTestUtils.expectWidgetVisible(find.byType(LoginScreen));
-      expect(mockauth_bloc.AuthBloc.state, isA<Authenticated>());
+      expect(mockAuthBloc.state, isA<auth_bloc.Authenticated>());
     });
 
     testWidgets('LoginScreen maintains state during orientation changes',
         (WidgetTester tester) async {
       // Arrange
       when(mockLoginBloc.state).thenReturn(LoginInitial());
-      when(mockauth_bloc.AuthBloc.state).thenReturn(auth_bloc.AuthInitial());
+      when(mockAuthBloc.state).thenReturn(auth_bloc.AuthInitial());
 
       final testApp = TestAppWrapper(
         providers: [
           BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-          BlocProvider<auth_bloc.AuthBloc>.value(value: mockauth_bloc.AuthBloc),
+          BlocProvider<auth_bloc.AuthBloc>.value(value: mockAuthBloc),
         ],
         child: const LoginScreen(),
       );
@@ -369,12 +370,12 @@ void main() {
         (WidgetTester tester) async {
       // Arrange
       when(mockLoginBloc.state).thenReturn(LoginInitial());
-      when(mockauth_bloc.AuthBloc.state).thenReturn(auth_bloc.AuthInitial());
+      when(mockAuthBloc.state).thenReturn(auth_bloc.AuthInitial());
 
       final testApp = TestAppWrapper(
         providers: [
           BlocProvider<LoginBloc>.value(value: mockLoginBloc),
-          BlocProvider<auth_bloc.AuthBloc>.value(value: mockauth_bloc.AuthBloc),
+          BlocProvider<auth_bloc.AuthBloc>.value(value: mockAuthBloc),
         ],
         child: const LoginScreen(),
       );

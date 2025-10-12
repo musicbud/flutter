@@ -12,7 +12,7 @@ class DiscoverMoreSection extends StatelessWidget {
     final manager = context.read<DiscoverContentManager>();
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
+      padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -23,7 +23,7 @@ class DiscoverMoreSection extends StatelessWidget {
               fontWeight: FontWeight.w700,
             ),
           ),
-          SizedBox(height: DesignSystem.spacingMD),
+          const SizedBox(height: DesignSystem.spacingMD),
           FutureBuilder<List<Map<String, dynamic>>>(
             future: manager.getDiscoverActions(),
             builder: (context, snapshot) {

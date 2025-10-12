@@ -1,94 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:equatable/equatable.dart';
-import 'package:musicbud_flutter/data/models/common_track.dart';
 import 'package:musicbud_flutter/domain/repositories/spotify_repository.dart';
 
-// Events
-abstract class SpotifyEvent extends Equatable {
-  const SpotifyEvent();
-
-  @override
-  List<Object> get props => [];
-}
-
-class LoadPlayedTracks extends SpotifyEvent {}
-
-class PlayTrackWithLocation extends SpotifyEvent {
-  final String trackId;
-  final String trackName;
-  final double latitude;
-  final double longitude;
-
-  const PlayTrackWithLocation(this.trackId, this.trackName, this.latitude, this.longitude);
-
-  @override
-  List<Object> get props => [trackId, trackName, latitude, longitude];
-}
-
-class PlaySpotifyTrack extends SpotifyEvent {
-  final String trackId;
-  final String? deviceId;
-
-  const PlaySpotifyTrack(this.trackId, this.deviceId);
-
-  @override
-  List<Object> get props => [trackId, deviceId ?? ''];
-}
-
-class SaveLocation extends SpotifyEvent {
-  final double latitude;
-  final double longitude;
-
-  const SaveLocation(this.latitude, this.longitude);
-
-  @override
-  List<Object> get props => [latitude, longitude];
-}
-
-class LoadPlayedTracksWithLocation extends SpotifyEvent {}
-
-// States
-abstract class SpotifyState extends Equatable {
-  const SpotifyState();
-
-  @override
-  List<Object> get props => [];
-}
-
-class SpotifyInitial extends SpotifyState {}
-
-class SpotifyLoading extends SpotifyState {}
-
-class PlayedTracksLoaded extends SpotifyState {
-  final List<CommonTrack> tracks;
-
-  const PlayedTracksLoaded(this.tracks);
-
-  @override
-  List<Object> get props => [tracks];
-}
-
-class TrackPlayed extends SpotifyState {}
-
-class LocationSaved extends SpotifyState {}
-
-class PlayedTracksWithLocationLoaded extends SpotifyState {
-  final List<CommonTrack> tracks;
-
-  const PlayedTracksWithLocationLoaded(this.tracks);
-
-  @override
-  List<Object> get props => [tracks];
-}
-
-class SpotifyError extends SpotifyState {
-  final String message;
-
-  const SpotifyError(this.message);
-
-  @override
-  List<Object> get props => [message];
-}
+// Import events and states from separate files
+import 'spotify_event.dart';
+import 'spotify_state.dart';
 
 // BLoC
 class SpotifyBloc extends Bloc<SpotifyEvent, SpotifyState> {

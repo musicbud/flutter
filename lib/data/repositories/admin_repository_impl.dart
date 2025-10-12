@@ -48,7 +48,7 @@ class AdminRepositoryImpl implements AdminRepository {
   Future<Either<Failure, void>> performAdminAction(AdminAction action) async {
     if (await networkInfo.isConnected) {
       try {
-        await remoteDataSource.performAdminAction(action);
+        await remoteDataSource.performAdminAction(action.action);
         return const Right(null);
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));
@@ -105,7 +105,7 @@ class AdminRepositoryImpl implements AdminRepository {
     if (await networkInfo.isConnected) {
       try {
         final result = await remoteDataSource.checkHealth();
-        return Right(result);
+        return Right(HealthResponse.fromJson(result));
       } on ServerException catch (e) {
         return Left(ServerFailure(message: e.message));
       }

@@ -10,11 +10,11 @@ mixin BaseNavigationMixin {
     required double borderRadius,
   }) {
     return BoxDecoration(
-      color: isSelected ? selectedColor.withValues(alpha: 0.1) : Colors.transparent,
+      color: isSelected ? selectedColor.withOpacity(0.1) : Colors.transparent,
       borderRadius: BorderRadius.circular(borderRadius),
       border: isSelected
           ? Border.all(
-              color: selectedColor.withValues(alpha: 0.3),
+              color: selectedColor.withOpacity(0.3),
               width: 1.5,
             )
           : null,

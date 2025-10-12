@@ -17,14 +17,30 @@ import 'package:musicbud_flutter/domain/repositories/services_repository.dart';
 import 'package:musicbud_flutter/domain/repositories/library_repository.dart';
 import 'package:musicbud_flutter/domain/repositories/common_items_repository.dart';
 import 'package:musicbud_flutter/domain/repositories/spotify_repository.dart';
+import 'package:musicbud_flutter/domain/repositories/discover_repository.dart';
 import 'package:musicbud_flutter/data/providers/token_provider.dart';
 import 'package:musicbud_flutter/injection_container.dart';
+import 'package:dartz/dartz.dart';
+import 'package:musicbud_flutter/core/error/failures.dart';
+import 'package:musicbud_flutter/models/track.dart';
 
 // Mock classes for repositories
 class MockAuthRepository extends Mock implements AuthRepository {}
 class MockUserRepository extends Mock implements UserRepository {}
 class MockProfileRepository extends Mock implements ProfileRepository {}
-class MockContentRepository extends Mock implements ContentRepository {}
+
+// Enhanced ContentRepository mock with default stubs
+class MockContentRepository extends Mock implements ContentRepository {
+  @override
+  Future<List<Track>> getTopTracks() async {
+    return noSuchMethod(
+      Invocation.method(#getTopTracks, []),
+      returnValue: Future.value(<Track>[]),
+      returnValueForMissingStub: Future.value(<Track>[]),
+    );
+  }
+}
+
 class MockBudRepository extends Mock implements BudRepository {}
 class MockChatRepository extends Mock implements ChatRepository {}
 class MockUserProfileRepository extends Mock implements UserProfileRepository {}
@@ -33,11 +49,33 @@ class MockEventRepository extends Mock implements EventRepository {}
 class MockAnalyticsRepository extends Mock implements AnalyticsRepository {}
 class MockAdminRepository extends Mock implements AdminRepository {}
 class MockChannelRepository extends Mock implements ChannelRepository {}
-class MockSearchRepository extends Mock implements SearchRepository {}
+
+// Enhanced SearchRepository mock with default stubs
+class MockSearchRepository extends Mock implements SearchRepository {
+  @override
+  Future<Either<Failure, List<String>>> getRecentSearches({int? limit}) async {
+    return noSuchMethod(
+      Invocation.method(#getRecentSearches, [], {#limit: limit}),
+      returnValue: Future.value(const Right<Failure, List<String>>(<String>[])),
+      returnValueForMissingStub: Future.value(const Right<Failure, List<String>>(<String>[])),
+    );
+  }
+  
+  @override
+  Future<Either<Failure, List<String>>> getTrendingSearches({int? limit}) async {
+    return noSuchMethod(
+      Invocation.method(#getTrendingSearches, [], {#limit: limit}),
+      returnValue: Future.value(const Right<Failure, List<String>>(<String>[])),
+      returnValueForMissingStub: Future.value(const Right<Failure, List<String>>(<String>[])),
+    );
+  }
+}
+
 class MockServicesRepository extends Mock implements ServicesRepository {}
 class MockLibraryRepository extends Mock implements LibraryRepository {}
 class MockCommonItemsRepository extends Mock implements CommonItemsRepository {}
 class MockSpotifyRepository extends Mock implements SpotifyRepository {}
+class MockDiscoverRepository extends Mock implements DiscoverRepository {}
 
 // Mock classes for providers and services
 class MockTokenProvider extends Mock implements TokenProvider {}
@@ -61,6 +99,7 @@ class TestSetup {
   static MockLibraryRepository? _mockLibraryRepository;
   static MockCommonItemsRepository? _mockCommonItemsRepository;
   static MockSpotifyRepository? _mockSpotifyRepository;
+  static MockDiscoverRepository? _mockDiscoverRepository;
   static MockTokenProvider? _mockTokenProvider;
 
   /// Initializes the dependency injection container with mock implementations
@@ -86,6 +125,7 @@ class TestSetup {
     _mockLibraryRepository = MockLibraryRepository();
     _mockCommonItemsRepository = MockCommonItemsRepository();
     _mockSpotifyRepository = MockSpotifyRepository();
+    _mockDiscoverRepository = MockDiscoverRepository();
     _mockTokenProvider = MockTokenProvider();
 
     // Note: Not registering mocks with GetIt since tests use them directly
@@ -114,6 +154,7 @@ class TestSetup {
     _mockLibraryRepository = null;
     _mockCommonItemsRepository = null;
     _mockSpotifyRepository = null;
+    _mockDiscoverRepository = null;
     _mockTokenProvider = null;
   }
 
@@ -136,6 +177,7 @@ class TestSetup {
     if (_mockLibraryRepository != null) reset(_mockLibraryRepository!);
     if (_mockCommonItemsRepository != null) reset(_mockCommonItemsRepository!);
     if (_mockSpotifyRepository != null) reset(_mockSpotifyRepository!);
+    if (_mockDiscoverRepository != null) reset(_mockDiscoverRepository!);
     if (_mockTokenProvider != null) reset(_mockTokenProvider!);
   }
 
@@ -176,6 +218,8 @@ class TestSetup {
       return (_mockCommonItemsRepository as T);
     } else if (T == SpotifyRepository || typeName == 'MockSpotifyRepository') {
       return (_mockSpotifyRepository as T);
+    } else if (T == DiscoverRepository || typeName == 'MockDiscoverRepository') {
+      return (_mockDiscoverRepository as T);
     } else if (T == TokenProvider || typeName == 'MockTokenProvider') {
       return (_mockTokenProvider as T);
     } else {

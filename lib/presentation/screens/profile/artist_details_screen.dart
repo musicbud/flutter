@@ -88,7 +88,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
         navigationController: _navigationController,
       ),
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: DesignSystem.gradientBackground,
         ),
         child: SingleChildScrollView(
@@ -120,7 +120,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
                     _errorMessage!,
-                    style: TextStyle(color: DesignSystem.error),
+                    style: const TextStyle(color: DesignSystem.error),
                   ),
                 ),
               if (_buds.isNotEmpty)
@@ -129,7 +129,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         'Buds who like this artist:',
                         style: DesignSystem.titleLarge,
                       ),
@@ -145,11 +145,11 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                             child: ListTile(
                               title: Text(
                                 bud.username,
-                                style: TextStyle(color: DesignSystem.onSurface),
+                                style: const TextStyle(color: DesignSystem.onSurface),
                               ),
                               subtitle: Text(
                                 bud.email ?? 'No email',
-                                style: TextStyle(color: DesignSystem.onSurfaceVariant),
+                                style: const TextStyle(color: DesignSystem.onSurfaceVariant),
                               ),
                             ),
                           );

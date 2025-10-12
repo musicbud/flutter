@@ -37,7 +37,7 @@ class ReleaseCard extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
-                color: accentColor.withValues(alpha: 0.1),
+                color: accentColor.withOpacity(0.1),
               ),
               child: (imageUrl?.isNotEmpty ?? false)
                   ? ClipRRect(
@@ -85,12 +85,12 @@ class ReleaseCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: EdgeInsets.all(DesignSystem.spacingSM),
+                  padding: const EdgeInsets.all(DesignSystem.spacingSM),
                   decoration: BoxDecoration(
                     color: DesignSystem.primary,
                     borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.play_arrow,
                     color: DesignSystem.onPrimary,
                     size: 20,

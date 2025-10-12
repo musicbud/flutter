@@ -42,7 +42,7 @@ class CategoryFilterWidget extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () => onCategorySelected(category),
                   child: Container(
-                    padding: EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: DesignSystem.spacingLG,
                       vertical: DesignSystem.spacingSM,
                     ),

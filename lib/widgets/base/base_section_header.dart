@@ -233,7 +233,7 @@ class SectionHeader extends BaseSectionHeader {
             style: titleStyle?.copyWith(
               color: DesignSystem.primary,
               fontWeight: FontWeight.w600,
-            ) ?? TextStyle(
+            ) ?? const TextStyle(
               color: DesignSystem.primary,
               fontWeight: FontWeight.w600,
             ),

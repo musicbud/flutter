@@ -94,9 +94,23 @@ class Authenticated extends AuthState {
 
   @override
   List<Object?> get props => [token, connectedServices];
+
+  Authenticated copyWith({
+    String? token,
+    Map<String, bool>? connectedServices,
+  }) {
+    return Authenticated(
+      token: token ?? this.token,
+      connectedServices: connectedServices ?? this.connectedServices,
+    );
+  }
 }
 
 class Unauthenticated extends AuthState {}
+
+class AuthSuccess extends AuthState {
+  const AuthSuccess();
+}
 
 class AuthError extends AuthState {
   final String message;
@@ -273,21 +287,5 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     } catch (e) {
       emit(AuthError(e.toString()));
     }
-  }
-}
-
-class AuthSuccess extends AuthState {
-  const AuthSuccess();
-}
-
-extension on Authenticated {
-  Authenticated copyWith({
-    String? token,
-    Map<String, bool>? connectedServices,
-  }) {
-    return Authenticated(
-      token: token ?? this.token,
-      connectedServices: connectedServices ?? this.connectedServices,
-    );
   }
 }

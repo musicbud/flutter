@@ -155,7 +155,7 @@ class StateBuilder {
       duration: _animationDuration,
       child: Container(
         key: ValueKey<StateType>(_state),
-        padding: _padding ?? EdgeInsets.all(DesignSystem.spacingXL),
+        padding: _padding ?? const EdgeInsets.all(DesignSystem.spacingXL),
         child: _buildStateContent(),
       ),
     );
@@ -180,7 +180,7 @@ class StateBuilder {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          padding: EdgeInsets.all(DesignSystem.spacingLG),
+          padding: const EdgeInsets.all(DesignSystem.spacingLG),
           decoration: BoxDecoration(
             color: DesignSystem.surfaceContainer,
             borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
@@ -194,7 +194,7 @@ class StateBuilder {
             ),
           ),
         ),
-        SizedBox(height: DesignSystem.spacingLG),
+        const SizedBox(height: DesignSystem.spacingLG),
         Text(
           _loadingMessage ?? 'Loading...',
           style: DesignSystem.bodyMedium.copyWith(
@@ -212,7 +212,7 @@ class StateBuilder {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          padding: EdgeInsets.all(DesignSystem.spacingLG),
+          padding: const EdgeInsets.all(DesignSystem.spacingLG),
           decoration: BoxDecoration(
             color: DesignSystem.surfaceContainer,
             borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
@@ -242,9 +242,9 @@ class StateBuilder {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          padding: EdgeInsets.all(DesignSystem.spacingLG),
+          padding: const EdgeInsets.all(DesignSystem.spacingLG),
           decoration: BoxDecoration(
-            color: DesignSystem.error.withValues(alpha: 0.1),
+            color: DesignSystem.error.withOpacity(0.1),
             borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
           ),
           child: Icon(
@@ -299,9 +299,9 @@ class StateBuilder {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
-          padding: EdgeInsets.all(DesignSystem.spacingLG),
+          padding: const EdgeInsets.all(DesignSystem.spacingLG),
           decoration: BoxDecoration(
-            color: DesignSystem.success.withValues(alpha: 0.1),
+            color: DesignSystem.success.withOpacity(0.1),
             borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
           ),
           child: Icon(

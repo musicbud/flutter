@@ -601,4 +601,39 @@ class ContentRepositoryImpl implements ContentRepository {
       throw ServerFailure(message: e.toString());
     }
   }
+
+  // Playlist management methods implementation
+  @override
+  Future<void> createPlaylist({
+    required String name,
+    String? description,
+    bool isPrivate = false,
+  }) async {
+    // TODO: Implement with actual API call
+    await Future.delayed(const Duration(milliseconds: 500)); // Simulate API call
+  }
+  
+  @override
+  Future<void> deletePlaylist(String playlistId) async {
+    // TODO: Implement with actual API call
+    await Future.delayed(const Duration(milliseconds: 500)); // Simulate API call
+  }
+  
+  @override
+  Future<void> updatePlaylist(String playlistId, {String? name, String? description, bool? isPublic}) async {
+    // TODO: Implement with actual API call
+    await Future.delayed(const Duration(milliseconds: 500)); // Simulate API call
+  }
+  
+  @override
+  Future<void> addTrackToPlaylist(String playlistId, String trackId) async {
+    // TODO: Implement with actual API call
+    await Future.delayed(const Duration(milliseconds: 300)); // Simulate API call
+  }
+  
+  @override
+  Future<void> removeTrackFromPlaylist(String playlistId, String trackId) async {
+    // TODO: Implement with actual API call
+    await Future.delayed(const Duration(milliseconds: 300)); // Simulate API call
+  }
 }

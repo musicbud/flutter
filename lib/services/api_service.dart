@@ -19,12 +19,14 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../data/network/dio_client.dart';
 import '../../core/network/network_info.dart';
 import '../../data/providers/token_provider.dart';
+import '../core/auth/auth_manager.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 class ApiService {
   late DioClient _dioClient;
   final NetworkInfo _networkInfo;
-  final FlutterSecureStorage _secureStorage = FlutterSecureStorage();
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+  final AuthManager _authManager = AuthManager();
   String? _csrfToken;
   String? _accessToken;
   String? _refreshToken;
@@ -41,7 +43,7 @@ class ApiService {
 
   ApiService._internal() : _networkInfo = NetworkInfoImpl(InternetConnectionChecker.createInstance(), connectivity: Connectivity()) {
     _dioClient = DioClient(
-      baseUrl: 'http://84.235.170.234', // Use ApiConfig.baseUrl
+      baseUrl: 'http://localhost:8000', // Updated for local debugging
       dio: Dio(),
       tokenProvider: TokenProvider(),
     );
@@ -123,7 +125,7 @@ class ApiService {
     _dioClient.updateBaseUrl(baseUrl);
     _dioClient.updateHeaders({
       'X-Requested-With': 'XMLHttpRequest',
-      'Origin': 'http://localhost:37879',
+      'Origin': 'http://localhost:8000',
     });
 
     _csrfToken = await _loadCsrfToken();
@@ -982,7 +984,7 @@ class ApiService {
     if (_accessToken == null || _expiresAt == null) {
       await _loadTokens();
     }
-    return _expiresAt != null && _expiresAt!.isBefore(DateTime.now().add(Duration(minutes: 5)));
+    return _expiresAt != null && _expiresAt!.isBefore(DateTime.now().add(const Duration(minutes: 5)));
   }
 
   Future<void> _loadTokens() async {
@@ -1208,6 +1210,102 @@ class ApiService {
     } catch (e) {
       _log('Error playing track: $e');
       throw Exception('Failed to play track: $e');
+    }
+  }
+
+  // Bud profile endpoints from Postman collection
+  Future<Map<String, dynamic>> getBudProfile(String budId) async {
+    try {
+      _log('Getting bud profile for: $budId');
+      final response = await _dioClient.post('/bud/profile', data: {'bud_id': budId});
+      _log('Bud profile response: ${response.statusCode} - ${response.data}');
+      
+      if (response.statusCode == 200 && response.data != null) {
+        return {
+          'success': true,
+          'data': response.data['data'],
+          'message': response.data['message'] ?? 'Profile retrieved successfully'
+        };
+      } else {
+        throw Exception('Failed to get bud profile: ${response.statusCode}');
+      }
+    } catch (e) {
+      _log('Error getting bud profile: $e');
+      return {
+        'success': false,
+        'message': 'Error getting bud profile: $e',
+        'data': null
+      };
+    }
+  }
+
+  // Get buds by different matching criteria
+  Future<Map<String, dynamic>> getBudsByTopArtists({int page = 1}) async {
+    return _getBudsBy('/bud/top/artists', page: page);
+  }
+
+  Future<Map<String, dynamic>> getBudsByTopTracks({int page = 1}) async {
+    return _getBudsBy('/bud/top/tracks', page: page);
+  }
+
+  Future<Map<String, dynamic>> getBudsByTopGenres({int page = 1}) async {
+    return _getBudsBy('/bud/top/genres', page: page);
+  }
+
+  Future<Map<String, dynamic>> getBudsByLikedArtists({int page = 1}) async {
+    return _getBudsBy('/bud/liked/artists', page: page);
+  }
+
+  Future<Map<String, dynamic>> getBudsByLikedTracks({int page = 1}) async {
+    return _getBudsBy('/bud/liked/tracks', page: page);
+  }
+
+  Future<Map<String, dynamic>> getBudsByLikedGenres({int page = 1}) async {
+    return _getBudsBy('/bud/liked/genres', page: page);
+  }
+
+  Future<Map<String, dynamic>> getBudsByLikedAlbums({int page = 1}) async {
+    return _getBudsBy('/bud/liked/albums', page: page);
+  }
+
+  Future<Map<String, dynamic>> getBudsByLikedAio({int page = 1}) async {
+    return _getBudsBy('/bud/liked/aio', page: page);
+  }
+
+  Future<Map<String, dynamic>> getBudsByTopAnime({int page = 1}) async {
+    return _getBudsBy('/bud/top/anime', page: page);
+  }
+
+  Future<Map<String, dynamic>> getBudsByTopManga({int page = 1}) async {
+    return _getBudsBy('/bud/top/manga', page: page);
+  }
+
+  // Helper method for bud matching requests
+  Future<Map<String, dynamic>> _getBudsBy(String endpoint, {int page = 1}) async {
+    try {
+      _log('Getting buds from: $endpoint, page: $page');
+      final response = await _dioClient.post(endpoint, data: {'page': page});
+      _log('Buds response: ${response.statusCode}');
+      
+      if (response.statusCode == 200 && response.data != null) {
+        return {
+          'success': true,
+          'data': response.data,
+          'message': response.data['message'] ?? 'Buds retrieved successfully'
+        };
+      } else {
+        throw Exception('Failed to get buds: ${response.statusCode}');
+      }
+    } catch (e) {
+      _log('Error getting buds from $endpoint: $e');
+      return {
+        'success': false,
+        'message': 'Error getting buds: $e',
+        'data': {
+          'buds': [],
+          'totalCount': 0
+        }
+      };
     }
   }
 

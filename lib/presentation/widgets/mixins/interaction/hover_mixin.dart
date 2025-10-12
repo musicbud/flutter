@@ -188,7 +188,7 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
   void setHoverEnabled(bool enabled) {
     _hoverEnabled = enabled;
     if (!enabled) {
-      _handleHoverExit(PointerExitEvent());
+      _handleHoverExit(const PointerExitEvent());
     }
   }
 
@@ -1131,7 +1131,7 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
                   horizontal: design.designSystemSpacing.xs,
                   vertical: 2,
                 ),
-                constraints: BoxConstraints(minWidth: 20),
+                constraints: const BoxConstraints(minWidth: 20),
                 child: Text(
                   count > 99 ? '99+' : count.toString(),
                   style: design.designSystemTypography.caption.copyWith(
