@@ -12,7 +12,8 @@ import 'blocs/comprehensive_chat/comprehensive_chat_bloc.dart';
 import 'blocs/simple_content_bloc.dart';
 import 'blocs/bud/bud_bloc.dart';
 import 'blocs/content/content_bloc.dart';
-import 'core/theme/design_system.dart';
+import 'services/dynamic_theme_service.dart';
+import 'services/dynamic_config_service.dart';
 import 'presentation/pages/enhanced_main_screen.dart';
 
 final sl = GetIt.instance;
@@ -20,11 +21,42 @@ final sl = GetIt.instance;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDependencies();
+  
+  // Initialize dynamic services
+  await DynamicConfigService.instance.initialize();
+  await DynamicThemeService.instance.initialize();
+  
   runApp(const MusicBudApp());
 }
 
-class MusicBudApp extends StatelessWidget {
+class MusicBudApp extends StatefulWidget {
   const MusicBudApp({super.key});
+
+  @override
+  State<MusicBudApp> createState() => _MusicBudAppState();
+}
+
+class _MusicBudAppState extends State<MusicBudApp> {
+  final DynamicThemeService _themeService = DynamicThemeService.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    // Listen to theme changes
+    _themeService.addListener(_onThemeChanged);
+  }
+
+  @override
+  void dispose() {
+    _themeService.removeListener(_onThemeChanged);
+    super.dispose();
+  }
+
+  void _onThemeChanged() {
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,10 +95,11 @@ class MusicBudApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'MusicBud',
-        theme: DesignSystem.lightTheme,
-        darkTheme: DesignSystem.darkTheme,
-        themeMode: ThemeMode.system,
+        theme: _themeService.lightTheme,
+        darkTheme: _themeService.darkTheme,
+        themeMode: _themeService.themeMode,
         home: const MainApp(),
+        debugShowCheckedModeBanner: false,
       ),
     );
   }

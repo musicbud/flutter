@@ -65,7 +65,7 @@ class MusicBudTheme {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: MusicBudComponents.secondaryButton,
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: MusicBudColors.backgroundTertiary,
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -194,7 +194,7 @@ class MusicBudTheme {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: MusicBudComponents.secondaryButton,
     ),
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: MusicBudColors.backgroundTertiary,
       elevation: 0,
       shape: RoundedRectangleBorder(

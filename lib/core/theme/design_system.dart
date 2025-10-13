@@ -443,7 +443,7 @@ class DesignSystem {
     ),
 
     // Component themes
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: neutral50,
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -662,7 +662,7 @@ class DesignSystem {
     ),
 
     // Component themes
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: surface,
       elevation: 0,
       shape: RoundedRectangleBorder(
