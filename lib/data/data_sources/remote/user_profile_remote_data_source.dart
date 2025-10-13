@@ -14,9 +14,11 @@ abstract class UserProfileRemoteDataSource {
     List<String>? interests,
   });
   Future<void> updateLikes(Map<String, dynamic> likesData);
-  Future<Map<String, dynamic>> getUserLikedContent(String contentType, String userId);
+  Future<Map<String, dynamic>> getUserLikedContent(
+      String contentType, String userId);
   Future<Map<String, dynamic>> getMyLikedContent(String contentType);
-  Future<Map<String, dynamic>> getUserTopContent(String contentType, String userId);
+  Future<Map<String, dynamic>> getUserTopContent(
+      String contentType, String userId);
   Future<Map<String, dynamic>> getMyTopContent(String contentType);
   Future<Map<String, dynamic>> getUserPlayedTracks(String userId);
   Future<Map<String, dynamic>> getMyPlayedTracks();
@@ -45,16 +47,11 @@ class UserProfileRemoteDataSourceImpl implements UserProfileRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> getMyProfile({String? service, String? token}) async {
+  Future<Map<String, dynamic>> getMyProfile(
+      {String? service, String? token}) async {
     try {
-      final data = <String, dynamic>{};
-      if (service != null) data['service'] = service;
-      if (token != null) data['token'] = token;
-
-      final response = await _dioClient.post(
-        ApiConfig.myProfile,
-        data: data.isNotEmpty ? data : null,
-      );
+      // FastAPI v1 uses GET for profile retrieval
+      final response = await _dioClient.get(ApiConfig.myProfile);
       return response.data as Map<String, dynamic>;
     } catch (e) {
       throw Exception('Failed to get my profile: $e');
@@ -81,7 +78,8 @@ class UserProfileRemoteDataSourceImpl implements UserProfileRemoteDataSource {
       if (gender != null) data['gender'] = gender;
       if (interests != null) data['interests'] = interests;
 
-      final response = await _dioClient.post(
+      // FastAPI v1 uses PUT for profile updates
+      final response = await _dioClient.put(
         ApiConfig.updateProfile,
         data: data,
       );
@@ -94,8 +92,9 @@ class UserProfileRemoteDataSourceImpl implements UserProfileRemoteDataSource {
   @override
   Future<void> updateLikes(Map<String, dynamic> likesData) async {
     try {
-      await _dioClient.post(
-        ApiConfig.updateLikes,
+      // FastAPI v1 uses PUT for preferences updates
+      await _dioClient.put(
+        ApiConfig.updatePreferences,
         data: likesData,
       );
     } catch (e) {
@@ -104,7 +103,8 @@ class UserProfileRemoteDataSourceImpl implements UserProfileRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> getUserLikedContent(String contentType, String userId) async {
+  Future<Map<String, dynamic>> getUserLikedContent(
+      String contentType, String userId) async {
     try {
       String endpoint;
       switch (contentType) {
@@ -134,39 +134,18 @@ class UserProfileRemoteDataSourceImpl implements UserProfileRemoteDataSource {
   @override
   Future<Map<String, dynamic>> getMyLikedContent(String contentType) async {
     try {
-      String endpoint;
-      switch (contentType) {
-        case 'artists':
-          endpoint = ApiConfig.myLikedArtists;
-          break;
-        case 'tracks':
-          endpoint = ApiConfig.myLikedTracks;
-          break;
-        case 'genres':
-          endpoint = ApiConfig.myLikedGenres;
-          break;
-        case 'albums':
-          endpoint = ApiConfig.myLikedAlbums;
-          break;
-        default:
-          throw Exception('Unsupported content type: $contentType');
-      }
+      // FastAPI v1 uses GET for preferences retrieval with content type filtering
+      final response = await _dioClient.get(ApiConfig.myPreferences);
 
-      final response = await _dioClient.post(endpoint);
-      // Backend returns paginated response with 'results' field
-      final responseData = response.data;
-      if (responseData is Map<String, dynamic> && responseData.containsKey('results')) {
+      // Extract specific content type from preferences response
+      final responseData = response.data as Map<String, dynamic>;
+
+      // FastAPI v1 returns preferences in structured format
+      if (responseData.containsKey(contentType)) {
         return {
-          'content': responseData['results'],
-          'pagination': {
-            'count': responseData['count'],
-            'next': responseData['next'],
-            'previous': responseData['previous'],
-          }
+          'content': responseData[contentType] ?? [],
+          'pagination': null // Preferences don't use pagination in v1
         };
-      } else if (responseData is List) {
-        // Fallback for direct array response
-        return {'content': responseData};
       } else {
         return {'content': []};
       }
@@ -176,7 +155,8 @@ class UserProfileRemoteDataSourceImpl implements UserProfileRemoteDataSource {
   }
 
   @override
-  Future<Map<String, dynamic>> getUserTopContent(String contentType, String userId) async {
+  Future<Map<String, dynamic>> getUserTopContent(
+      String contentType, String userId) async {
     try {
       String endpoint;
       switch (contentType) {
@@ -233,7 +213,8 @@ class UserProfileRemoteDataSourceImpl implements UserProfileRemoteDataSource {
       final response = await _dioClient.post(endpoint);
       // Backend returns paginated response with 'results' field
       final responseData = response.data;
-      if (responseData is Map<String, dynamic> && responseData.containsKey('results')) {
+      if (responseData is Map<String, dynamic> &&
+          responseData.containsKey('results')) {
         return {
           'content': responseData['results'],
           'pagination': {
@@ -269,7 +250,8 @@ class UserProfileRemoteDataSourceImpl implements UserProfileRemoteDataSource {
       final response = await _dioClient.post(ApiConfig.myPlayedTracks);
       // Backend returns paginated response with 'results' field
       final responseData = response.data;
-      if (responseData is Map<String, dynamic> && responseData.containsKey('results')) {
+      if (responseData is Map<String, dynamic> &&
+          responseData.containsKey('results')) {
         return {
           'tracks': responseData['results'],
           'pagination': {

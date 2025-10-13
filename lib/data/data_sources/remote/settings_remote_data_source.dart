@@ -10,9 +10,10 @@ abstract class SettingsRemoteDataSource {
 
 class SettingsRemoteDataSourceImpl implements SettingsRemoteDataSource {
   final Dio _dioClient;
-  static const String _baseUrl = 'api/settings';
+  static const String _baseUrl = '/v1/users/settings';
 
-  SettingsRemoteDataSourceImpl({required Dio dioClient}) : _dioClient = dioClient;
+  SettingsRemoteDataSourceImpl({required Dio dioClient})
+      : _dioClient = dioClient;
 
   @override
   Future<Map<String, dynamic>> getSettings() async {
@@ -27,7 +28,7 @@ class SettingsRemoteDataSourceImpl implements SettingsRemoteDataSource {
   @override
   Future<void> updateNotificationSettings(Map<String, dynamic> settings) async {
     try {
-      await _dioClient.patch(
+      await _dioClient.put(
         '$_baseUrl/notifications',
         data: settings,
       );
@@ -39,7 +40,7 @@ class SettingsRemoteDataSourceImpl implements SettingsRemoteDataSource {
   @override
   Future<void> updatePrivacySettings(Map<String, dynamic> settings) async {
     try {
-      await _dioClient.patch(
+      await _dioClient.put(
         '$_baseUrl/privacy',
         data: settings,
       );
@@ -51,7 +52,7 @@ class SettingsRemoteDataSourceImpl implements SettingsRemoteDataSource {
   @override
   Future<void> updateTheme(String theme) async {
     try {
-      await _dioClient.patch(
+      await _dioClient.put(
         '$_baseUrl/theme',
         data: {'theme': theme},
       );
@@ -63,7 +64,7 @@ class SettingsRemoteDataSourceImpl implements SettingsRemoteDataSource {
   @override
   Future<void> updateLanguage(String languageCode) async {
     try {
-      await _dioClient.patch(
+      await _dioClient.put(
         '$_baseUrl/language',
         data: {'language_code': languageCode},
       );

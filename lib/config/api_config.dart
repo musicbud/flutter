@@ -62,13 +62,13 @@ class ApiConfig {
   static const String jsonContentType = 'application/json';
   static const String formDataContentType = 'multipart/form-data';
 
-  // API Endpoints
+  // API Endpoints - Updated to match FastAPI v1 structure
 
-  // Auth Endpoints (from Postman collection)
-  static String get login => '$apiUrl/login/';
-  static String get register => '$apiUrl/register/';
-  static String get refreshToken => '$apiUrl/token/refresh/';
-  static String get logout => '$apiUrl/logout/';
+  // Auth Endpoints
+  static String get login => '$apiUrl/auth/login/json';
+  static String get register => '$apiUrl/auth/register';
+  static String get refreshToken => '$apiUrl/auth/refresh';
+  static String get logout => '$apiUrl/auth/logout';
   static String get serviceLogin => '$apiUrl/service/login/';
   static String get spotifyConnect => '$apiUrl/spotify/connect/';
   static String get spotifyCallback => '$apiUrl/spotify/callback/';
@@ -100,11 +100,13 @@ class ApiConfig {
   static String get budAlbum => '$apiUrl/bud/album/';
   static String get budSearch => '$apiUrl/bud/search/';
   static String get play => '$apiUrl/play/';
-  static String get budCommonLikedArtists => '$apiUrl/bud/common/liked/artists/';
+  static String get budCommonLikedArtists =>
+      '$apiUrl/bud/common/liked/artists/';
   static String get budCommonLikedTracks => '$apiUrl/bud/common/liked/tracks/';
   static String get budCommonLikedGenres => '$apiUrl/bud/common/liked/genres/';
   static String get budCommonLikedAlbums => '$apiUrl/bud/common/liked/albums/';
-  static String get budCommonPlayedTracks => '$apiUrl/bud/common/played/tracks/';
+  static String get budCommonPlayedTracks =>
+      '$apiUrl/bud/common/played/tracks/';
   static String get budCommonTopArtists => '$apiUrl/bud/common/top/artists/';
   static String get budCommonTopTracks => '$apiUrl/bud/common/top/tracks/';
   static String get budCommonTopGenres => '$apiUrl/bud/common/top/genres/';
@@ -119,35 +121,58 @@ class ApiConfig {
   static String channelSettings(String id) => '$apiUrl/channels/$id/settings/';
   static String channelStats(String id) => '$apiUrl/channels/$id/stats/';
 
-  // Chat endpoints (working from commit 6cac314)
-  static String get chatHome => '$apiUrl/chat/';
-  static String get chatUsers => '$apiUrl/chat/users/';
-  static String get chatChannels => '$apiUrl/chat/channels/';
-  static String get chatUserChat => '$apiUrl/chat/user_chat/';
-  static String chatUserChatByUsername(String username) => '$apiUrl/chat/chat/';
-  static String chatChannelChat(String channelId) => '$apiUrl/chat/channel/';
-  static String get chatSendMessage => '$apiUrl/chat/send_message/';
-  static String get chatCreateChannel => '$apiUrl/chat/create_channel/';
-  static String chatChannelDashboard(String channelId) => '$apiUrl/chat/channel/';
-  static String get chatAddChannelMember => '$apiUrl/chat/add_channel_member/';
-  static String get chatAcceptUserInvitation => '$apiUrl/chat/channel/';
-  static String get chatKickUser => '$apiUrl/chat/channel/';
-  static String get chatBlockUser => '$apiUrl/chat/channel/';
-  static String get chatAddModerator => '$apiUrl/chat/channel/';
-  static String get chatDeleteMessage => '$apiUrl/chat/delete_message/';
-  static String get chatHandleInvitation => '$apiUrl/chat/handle_invitation/';
+  // Chat endpoints - Updated to FastAPI v1
+  static String get chatHome => '$apiUrl/chat';
+  static String get chatUsers => '$apiUrl/chat/users';
+  static String get chatChannels => '$apiUrl/chat/channels';
+  static String get chatMessages => '$apiUrl/chat/messages';
+  static String chatUserMessages(String userId) =>
+      '$apiUrl/chat/users/$userId/messages';
+  static String chatChannelMessages(String channelId) =>
+      '$apiUrl/chat/channels/$channelId/messages';
+  static String get chatSendMessage => '$apiUrl/chat/messages';
+  static String get chatCreateChannel => '$apiUrl/chat/channels';
+  static String chatChannelById(String channelId) =>
+      '$apiUrl/chat/channels/$channelId';
+  static String chatChannelMembers(String channelId) =>
+      '$apiUrl/chat/channels/$channelId/members';
+
+  // Legacy chat endpoints (for compatibility)
+  static String get chatUserChat =>
+      '$apiUrl/chat/messages'; // Will be deprecated
+  static String chatUserChatByUsername(String username) =>
+      '$apiUrl/chat/messages'; // Will be deprecated
+  static String chatChannelChat(String channelId) =>
+      '$apiUrl/chat/channels/$channelId/messages'; // Will be deprecated
+  static String chatChannelDashboard(String channelId) =>
+      '$apiUrl/chat/channels/$channelId'; // Will be deprecated
+  static String get chatAddChannelMember =>
+      '$apiUrl/chat/channels/members'; // Will be deprecated
+  static String get chatAcceptUserInvitation =>
+      '$apiUrl/chat/channels/members'; // Will be deprecated
+  static String get chatKickUser =>
+      '$apiUrl/chat/channels/members'; // Will be deprecated
+  static String get chatBlockUser =>
+      '$apiUrl/chat/channels/members'; // Will be deprecated
+  static String get chatAddModerator =>
+      '$apiUrl/chat/channels/members'; // Will be deprecated
+  static String get chatDeleteMessage =>
+      '$apiUrl/chat/messages'; // Will be deprecated
+  static String get chatHandleInvitation =>
+      '$apiUrl/chat/channels/members'; // Will be deprecated
 
   // Additional chat endpoints for comprehensive chat (working from commit 6cac314)
   static String get chatGetChannels => '$apiUrl/chat/channels/';
   static String get chatGetChannelMessages => '$apiUrl/chat/channel/messages/';
-  static String get chatSendChannelMessage => '$apiUrl/chat/channel/send_message/';
+  static String get chatSendChannelMessage =>
+      '$apiUrl/chat/channel/send_message/';
   static String get chatSendUserMessage => '$apiUrl/chat/user/send_message/';
   static String get chatGetChannelUsers => '$apiUrl/chat/channel/users/';
   static String get chatJoinChannel => '$apiUrl/chat/channel/join/';
   static String get chatLeaveChannel => '$apiUrl/chat/channel/leave/';
   static String get chatRequestJoin => '$apiUrl/chat/channel/request_join/';
-  static String channelDetails(String channelId) => '$apiUrl/chat/channel/details/';
-
+  static String channelDetails(String channelId) =>
+      '$apiUrl/chat/channel/details/';
 
   // Service disconnect endpoints (working from commit 6cac314)
   static String get spotifyDisconnect => '$apiUrl/spotify/disconnect/';
@@ -163,28 +188,71 @@ class ApiConfig {
   static String get playlists => '$apiUrl/content/playlists/';
   static String get genres => '$apiUrl/content/genres/';
 
-  // Discover Content Endpoints
-  static String get featuredArtists => '$apiUrl/discover/featured-artists/';
-  static String get trendingTracks => '$apiUrl/discover/trending-tracks/';
-  static String get newReleases => '$apiUrl/discover/new-releases/';
-  static String get discoverActions => '$apiUrl/discover/actions/';
-  static String get discoverCategories => '$apiUrl/discover/categories/';
+  // Public Discovery Endpoints - Updated to FastAPI v1
+  static String get discoverGenres => '$apiUrl/public/discover/genres';
+  static String get discoverArtists => '$apiUrl/public/discover/artists';
+  static String get discoverTracks => '$apiUrl/public/discover/tracks';
+  static String get discoverMovies => '$apiUrl/public/discover/movies';
+  static String get discoverAnime => '$apiUrl/public/discover/anime';
+  static String get discoverManga => '$apiUrl/public/discover/manga';
+  static String get publicHealth => '$apiUrl/public/health';
 
-  // User Endpoints (working from commit 6cac314)
-  static String get myProfile => '$apiUrl/me/profile/';
-  static String get updateProfile => '$apiUrl/me/profile/';
-  static String get updateLikes => '$apiUrl/me/likes/update/';
-  static String get myLikedArtists => '$apiUrl/me/liked/artists/';
-  static String get myLikedTracks => '$apiUrl/me/liked/tracks/';
-  static String get myLikedGenres => '$apiUrl/me/liked/genres/';
-  static String get myLikedAlbums => '$apiUrl/me/liked/albums/';
-  static String get myTopArtists => '$apiUrl/me/top/artists/';
-  static String get myTopTracks => '$apiUrl/me/top/tracks/';
-  static String get myTopGenres => '$apiUrl/me/top/genres/';
-  static String get myTopAnime => '$apiUrl/me/top/anime/';
-  static String get myTopManga => '$apiUrl/me/top/manga/';
-  static String get myPlayedTracks => '$apiUrl/me/played/tracks/';
-  static String userById(String id) => '$apiUrl/users/$id/';
+  // Legacy discovery endpoints (for compatibility)
+  static String get featuredArtists =>
+      '$apiUrl/public/discover/artists'; // Will be deprecated
+  static String get trendingTracks =>
+      '$apiUrl/public/discover/tracks'; // Will be deprecated
+  static String get newReleases =>
+      '$apiUrl/public/discover/tracks'; // Will be deprecated
+  static String get discoverActions =>
+      '$apiUrl/public/discover/tracks'; // Will be deprecated
+  static String get discoverCategories =>
+      '$apiUrl/public/discover/genres'; // Will be deprecated
+
+  // User Endpoints - Updated to FastAPI v1 structure
+  static String get myProfile => '$apiUrl/users/profile';
+  static String get updateProfile => '$apiUrl/users/profile';
+  static String get myPreferences => '$apiUrl/users/preferences';
+  static String get updatePreferences => '$apiUrl/users/preferences';
+  static String get myMatchingPreferences =>
+      '$apiUrl/users/matching/preferences';
+  static String get updateMatchingPreferences =>
+      '$apiUrl/users/matching/preferences';
+
+  // Settings Endpoints
+  static String get privacySettings => '$apiUrl/users/settings/privacy';
+  static String get notificationSettings =>
+      '$apiUrl/users/settings/notifications';
+  static String get appSettings => '$apiUrl/users/settings/app';
+
+  // User Stats and Activity
+  static String get userStats => '$apiUrl/users/stats';
+  static String get recentActivity => '$apiUrl/users/activity/recent';
+
+  // Legacy compatibility (for gradual migration)
+  static String get updateLikes =>
+      '$apiUrl/users/preferences'; // Will be deprecated
+  static String get myLikedArtists =>
+      '$apiUrl/users/preferences'; // Will be deprecated
+  static String get myLikedTracks =>
+      '$apiUrl/users/preferences'; // Will be deprecated
+  static String get myLikedGenres =>
+      '$apiUrl/users/preferences'; // Will be deprecated
+  static String get myLikedAlbums =>
+      '$apiUrl/users/preferences'; // Will be deprecated
+  static String get myTopArtists =>
+      '$apiUrl/users/preferences'; // Will be deprecated
+  static String get myTopTracks =>
+      '$apiUrl/users/preferences'; // Will be deprecated
+  static String get myTopGenres =>
+      '$apiUrl/users/preferences'; // Will be deprecated
+  static String get myTopAnime =>
+      '$apiUrl/users/preferences'; // Will be deprecated
+  static String get myTopManga =>
+      '$apiUrl/users/preferences'; // Will be deprecated
+  static String get myPlayedTracks =>
+      '$apiUrl/users/preferences'; // Will be deprecated
+  static String userById(String id) => '$apiUrl/users/profile/$id';
 
   // Search Endpoints
   static String get search => '$apiUrl/search/';
@@ -209,7 +277,8 @@ class ApiConfig {
 
   // Admin & Utility endpoints (working from commit 6cac314)
   static String get admin => '$apiUrl/admin/';
-  static String get spotifySeedUserCreate => '$apiUrl/spotify/seed/user/create/';
+  static String get spotifySeedUserCreate =>
+      '$apiUrl/spotify/seed/user/create/';
   static String get mergeSimilars => '$apiUrl/merge-similars/';
   static String get usersWeb => '$apiUrl/users/';
   static String get channelsWeb => '$apiUrl/channels/';

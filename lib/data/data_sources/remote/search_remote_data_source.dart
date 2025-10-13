@@ -26,23 +26,27 @@ abstract class SearchRemoteDataSource {
   Future<void> saveRecentSearch(String query);
   Future<void> clearRecentSearches();
 
-  Future<SearchResult> search(String query, {
+  Future<SearchResult> search(
+    String query, {
     String? type,
     int? limit,
     int? offset,
   });
 
-  Future<List<CommonTrack>> searchTracks(String query, {
+  Future<List<CommonTrack>> searchTracks(
+    String query, {
     int? limit,
     int? offset,
   });
 
-  Future<List<CommonArtist>> searchArtists(String query, {
+  Future<List<CommonArtist>> searchArtists(
+    String query, {
     int? limit,
     int? offset,
   });
 
-  Future<List<CommonAlbum>> searchAlbums(String query, {
+  Future<List<CommonAlbum>> searchAlbums(
+    String query, {
     int? limit,
     int? offset,
   });
@@ -63,7 +67,7 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
     int? pageSize,
   }) async {
     try {
-      final response = await dioClient.get('/search', queryParameters: {
+      final response = await dioClient.get('/v1/search', queryParameters: {
         'q': query,
         if (types != null) 'types': types.join(','),
         if (filters != null) ...filters,
@@ -82,7 +86,8 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
     int? limit,
   }) async {
     try {
-      final response = await dioClient.get('/search/suggestions', queryParameters: {
+      final response =
+          await dioClient.get('/v1/search/suggestions', queryParameters: {
         'q': query,
         if (limit != null) 'limit': limit,
       });
@@ -95,7 +100,8 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
   @override
   Future<List<String>> getRecentSearches({int? limit}) async {
     try {
-      final response = await dioClient.get('/search/recent', queryParameters: {
+      final response =
+          await dioClient.get('/v1/search/recent', queryParameters: {
         if (limit != null) 'limit': limit,
       });
       return (response.data['recent'] as List).cast<String>();
@@ -107,7 +113,8 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
   @override
   Future<List<String>> getTrendingSearches({int? limit}) async {
     try {
-      final response = await dioClient.get('/search/trending', queryParameters: {
+      final response =
+          await dioClient.get('/v1/search/trending', queryParameters: {
         if (limit != null) 'limit': limit,
       });
       return (response.data['trending'] as List).cast<String>();
@@ -117,13 +124,14 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
   }
 
   @override
-  Future<SearchResult> search(String query, {
+  Future<SearchResult> search(
+    String query, {
     String? type,
     int? limit,
     int? offset,
   }) async {
     try {
-      final response = await dioClient.get('/search', queryParameters: {
+      final response = await dioClient.get('/v1/search', queryParameters: {
         'q': query,
         if (type != null) 'type': type,
         if (limit != null) 'limit': limit,
@@ -136,12 +144,14 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
   }
 
   @override
-  Future<List<CommonTrack>> searchTracks(String query, {
+  Future<List<CommonTrack>> searchTracks(
+    String query, {
     int? limit,
     int? offset,
   }) async {
     try {
-      final response = await dioClient.get('/search/tracks', queryParameters: {
+      final response =
+          await dioClient.get('/v1/search/tracks', queryParameters: {
         'q': query,
         if (limit != null) 'limit': limit,
         if (offset != null) 'offset': offset,
@@ -155,12 +165,14 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
   }
 
   @override
-  Future<List<CommonArtist>> searchArtists(String query, {
+  Future<List<CommonArtist>> searchArtists(
+    String query, {
     int? limit,
     int? offset,
   }) async {
     try {
-      final response = await dioClient.get('/search/artists', queryParameters: {
+      final response =
+          await dioClient.get('/v1/search/artists', queryParameters: {
         'q': query,
         if (limit != null) 'limit': limit,
         if (offset != null) 'offset': offset,
@@ -174,12 +186,14 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
   }
 
   @override
-  Future<List<CommonAlbum>> searchAlbums(String query, {
+  Future<List<CommonAlbum>> searchAlbums(
+    String query, {
     int? limit,
     int? offset,
   }) async {
     try {
-      final response = await dioClient.get('/search/albums', queryParameters: {
+      final response =
+          await dioClient.get('/v1/search/albums', queryParameters: {
         'q': query,
         if (limit != null) 'limit': limit,
         if (offset != null) 'offset': offset,
@@ -195,7 +209,8 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
   @override
   Future<List<String>> getSearchSuggestions(String query) async {
     try {
-      final response = await dioClient.get('/search/suggestions', queryParameters: {
+      final response =
+          await dioClient.get('/v1/search/suggestions', queryParameters: {
         'q': query,
       });
       return List<String>.from(response.data);
@@ -207,7 +222,7 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
   @override
   Future<void> saveRecentSearch(String query) async {
     try {
-      await dioClient.post('/search/recent', data: {
+      await dioClient.post('/v1/search/recent', data: {
         'query': query,
         'timestamp': DateTime.now().toIso8601String(),
       });
@@ -219,7 +234,7 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
   @override
   Future<void> clearRecentSearches() async {
     try {
-      await dioClient.delete('/search/recent');
+      await dioClient.delete('/v1/search/recent');
     } catch (e) {
       throw Exception('Failed to clear recent searches: $e');
     }
