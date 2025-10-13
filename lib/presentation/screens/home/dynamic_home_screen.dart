@@ -14,7 +14,14 @@ import '../../../blocs/discover/discover_bloc.dart';
 import '../../../blocs/discover/discover_event.dart';
 import '../../../blocs/discover/discover_state.dart';
 import '../../../blocs/auth/auth_bloc.dart';
-import '../../widgets/error_states/offline_error_widget.dart';
+import '../../widgets/common/error_widget.dart' as error_widgets;
+
+// Modern Components
+import '../../../core/theme/design_system.dart';
+import '../../../core/navigation/app_routes.dart';
+import '../../widgets/common/modern_card.dart';
+import '../../widgets/common/section_header.dart';
+import '../../widgets/common/loading_indicator.dart';
 /// Dynamic home screen that adapts based on configuration
 class DynamicHomeScreen extends StatefulWidget {
   const DynamicHomeScreen({super.key});
@@ -31,12 +38,9 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
   // State variables for different content types
   bool _hasTriggeredInitialLoad = false;
   bool _isOffline = false;
-  bool _isLoading = false;
-  String? _errorMessage;
   
   // Mock data for offline fallback
   List<Map<String, dynamic>>? _mockTopArtists;
-  List<Map<String, dynamic>>? _mockTopTracks;
   List<Map<String, dynamic>>? _mockActivity;
   List<Map<String, dynamic>>? _mockRecommendations;
 
@@ -48,7 +52,6 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
 
   void _initializeMockData() {
     _mockTopArtists = MockDataService.generateTopArtists(count: 10);
-    _mockTopTracks = MockDataService.generateTopTracks(count: 15);
     _mockActivity = MockDataService.generateRecentActivity(count: 10);
     _mockRecommendations = MockDataService.generateTopTracks(count: 8);
   }
@@ -90,13 +93,8 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
         // Handle Content BLoC states
         BlocListener<ContentBloc, ContentState>(
           listener: (context, state) {
-            setState(() {
-              _isLoading = state is ContentLoading;
-            });
-            
             if (state is ContentError) {
               setState(() {
-                _errorMessage = state.message;
                 if (state.message.contains('network') || state.message.contains('connection')) {
                   _isOffline = true;
                 }
@@ -104,7 +102,6 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
               _showErrorSnackBar('Failed to load content: ${state.message}');
             } else if (state is ContentLoaded) {
               setState(() {
-                _errorMessage = null;
                 _isOffline = false;
               });
             }
@@ -232,34 +229,28 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
   Widget _buildWelcomeSection() {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(_theme.getDynamicSpacing(16)),
+      margin: const EdgeInsets.all(DesignSystem.spacingMD),
+      padding: const EdgeInsets.all(DesignSystem.spacingLG),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Theme.of(context).primaryColor,
-            Theme.of(context).primaryColor.withOpacity(0.7),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(12),
+        gradient: DesignSystem.gradientPrimary,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
+        boxShadow: DesignSystem.shadowMedium,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Welcome back!',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: Colors.white,
-              fontSize: _theme.getDynamicFontSize(24),
+            style: DesignSystem.headlineMedium.copyWith(
+              color: DesignSystem.onPrimary,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: _theme.getDynamicSpacing(8)),
+          const SizedBox(height: DesignSystem.spacingSM),
           Text(
             'Discover new music and connect with friends',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withOpacity(0.9),
-              fontSize: _theme.getDynamicFontSize(14),
+            style: DesignSystem.bodyMedium.copyWith(
+              color: DesignSystem.onPrimary.withOpacity(0.9),
             ),
           ),
         ],
@@ -270,62 +261,83 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
   Widget _buildQuickActions() {
     final actions = _getAvailableActions();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: _theme.getDynamicSpacing(16)),
-          child: Text(
-            'Quick Actions',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-              fontSize: _theme.getDynamicFontSize(20),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingMD),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: DesignSystem.spacingLG),
+          const SectionHeader(
+            title: 'Quick Actions',
+            actionText: 'More',
+          ),
+          const SizedBox(height: DesignSystem.spacingMD),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: DesignSystem.spacingMD,
+              mainAxisSpacing: DesignSystem.spacingMD,
+              childAspectRatio: 1.3,
             ),
+            itemCount: actions.length,
+            itemBuilder: (context, index) {
+              final action = actions[index];
+              return _buildModernActionCard(action);
+            },
           ),
-        ),
-        GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: _theme.compactMode ? 3 : 2,
-            crossAxisSpacing: _theme.getDynamicSpacing(12),
-            mainAxisSpacing: _theme.getDynamicSpacing(12),
-            childAspectRatio: _theme.compactMode ? 1.2 : 1.5,
-          ),
-          itemCount: actions.length,
-          itemBuilder: (context, index) {
-            final action = actions[index];
-            return _buildActionCard(action);
-          },
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildActionCard(Map<String, dynamic> action) {
-    return Card(
-      elevation: 2,
-      child: InkWell(
-        onTap: () => _navigation.navigateTo(action['route']),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: EdgeInsets.all(_theme.getDynamicSpacing(16)),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                action['icon'],
-                size: _theme.getDynamicFontSize(32),
-                color: Theme.of(context).primaryColor,
-              ),
-              SizedBox(height: _theme.getDynamicSpacing(8)),
-              Text(
-                action['title'],
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontSize: _theme.getDynamicFontSize(14),
+  Widget _buildModernActionCard(Map<String, dynamic> action) {
+    return Container(
+      decoration: BoxDecoration(
+        color: DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
+        boxShadow: DesignSystem.shadowSmall,
+        border: Border.all(
+          color: DesignSystem.border.withOpacity(0.1),
+          width: 1,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () => _navigation.navigateTo(action['route']),
+          borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
+          child: Padding(
+            padding: const EdgeInsets.all(DesignSystem.spacingMD),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(DesignSystem.spacingSM),
+                  decoration: BoxDecoration(
+                    color: DesignSystem.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
+                  ),
+                  child: Icon(
+                    action['icon'],
+                    size: 28,
+                    color: DesignSystem.primary,
+                  ),
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+                const SizedBox(height: DesignSystem.spacingSM),
+                Text(
+                  action['title'],
+                  style: DesignSystem.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: DesignSystem.onSurface,
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -337,147 +349,134 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
       return const SizedBox.shrink();
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(vertical: _theme.getDynamicSpacing(16)),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Featured Content',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontSize: _theme.getDynamicFontSize(20),
-                ),
-              ),
-              TextButton(
-                onPressed: () => _navigation.navigateTo('/discover'),
-                child: const Text('See All'),
-              ),
-            ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingMD),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: DesignSystem.spacingXL),
+          SectionHeader(
+            title: 'Featured Content',
+            actionText: 'See All',
+            onActionPressed: () => _navigation.navigateTo(AppRoutes.discover),
           ),
-        ),
-        // Featured content with BLoC integration
-        BlocBuilder<ContentBloc, ContentState>(
-          builder: (context, state) {
-            if (state is ContentLoading && !_isOffline) {
+          const SizedBox(height: DesignSystem.spacingMD),
+          // Featured content with BLoC integration
+          BlocBuilder<ContentBloc, ContentState>(
+            builder: (context, state) {
+              if (state is ContentLoading && !_isOffline) {
+                return const SizedBox(
+                  height: 180,
+                  child: Center(
+                    child: LoadingIndicator(),
+                  ),
+                );
+              }
+              
+              List<Map<String, dynamic>> artists = [];
+              
+              if (state is ContentLoaded) {
+                // Use real data if available
+                artists = state.topArtists.take(5).map((artist) => {
+                  'id': artist.id,
+                  'name': artist.name,
+                  'imageUrl': artist.imageUrls?.isNotEmpty == true ? artist.imageUrls!.first : null,
+                }).toList();
+              } else if (state is ContentError || _isOffline) {
+                // Use mock data as fallback
+                artists = _mockTopArtists?.take(5).toList() ?? [];
+              }
+              
+              if (artists.isEmpty) {
+                return error_widgets.NetworkErrorWidget(
+                  onRetry: () => context.read<ContentBloc>().add(LoadTopArtists()),
+                  customMessage: 'Unable to load featured artists. Try again or use offline mode.',
+                );
+              }
+              
               return SizedBox(
-                height: _theme.getDynamicSpacing(200),
-                child: const Center(child: CircularProgressIndicator()),
-              );
-            }
-            
-            List<Map<String, dynamic>> artists = [];
-            
-            if (state is ContentLoaded) {
-              // Use real data if available
-              artists = state.topArtists.take(5).map((artist) => {
-                'id': artist.id,
-                'name': artist.name,
-                'imageUrl': artist.imageUrls?.isNotEmpty == true ? artist.imageUrls!.first : null,
-              }).toList();
-            } else if (state is ContentError || _isOffline) {
-              // Use mock data as fallback
-              artists = _mockTopArtists?.take(5).toList() ?? [];
-            }
-            
-            if (artists.isEmpty) {
-              return NetworkErrorWidget(
-                onRetry: () => context.read<ContentBloc>().add(LoadTopArtists()),
-                onUseMockData: _enableOfflineMode,
-              );
-            }
-            
-            return SizedBox(
-              height: _theme.getDynamicSpacing(200),
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: artists.length,
-                itemBuilder: (context, index) {
-                  final artist = artists[index];
-                  return Container(
-                    width: _theme.getDynamicSpacing(150),
-                    margin: EdgeInsets.only(right: _theme.getDynamicSpacing(12)),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: Theme.of(context).dividerColor,
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColor.withOpacity(0.1),
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(12),
-                              ),
-                            ),
-                            child: artist['imageUrl'] != null
-                                ? ClipRRect(
-                                    borderRadius: const BorderRadius.vertical(
-                                      top: Radius.circular(12),
-                                    ),
-                                    child: Image.network(
-                                      artist['imageUrl'],
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      errorBuilder: (context, error, stackTrace) => Center(
+                height: 180,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingXS),
+                  itemCount: artists.length,
+                  itemBuilder: (context, index) {
+                    final artist = artists[index];
+                    return Container(
+                      width: 140,
+                      margin: const EdgeInsets.only(right: DesignSystem.spacingMD),
+                      child: ModernCard(
+                        onTap: () {
+                          _navigation.navigateTo('${AppRoutes.artistDetails}?id=${artist['id']}');
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: DesignSystem.primary.withOpacity(0.1),
+                                  borderRadius: const BorderRadius.vertical(
+                                    top: Radius.circular(12),
+                                  ),
+                                ),
+                                child: artist['imageUrl'] != null
+                                    ? ClipRRect(
+                                        borderRadius: const BorderRadius.vertical(
+                                          top: Radius.circular(12),
+                                        ),
+                                        child: Image.network(
+                                          artist['imageUrl'],
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          errorBuilder: (context, error, stackTrace) => const Center(
+                                            child: Icon(
+                                              Icons.music_note,
+                                              size: 48,
+                                              color: DesignSystem.primary,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : const Center(
                                         child: Icon(
                                           Icons.music_note,
-                                          size: _theme.getDynamicFontSize(48),
-                                          color: Theme.of(context).primaryColor,
+                                          size: 48,
+                                          color: DesignSystem.primary,
                                         ),
                                       ),
-                                    ),
-                                  )
-                                : Center(
-                                    child: Icon(
-                                      Icons.music_note,
-                                      size: _theme.getDynamicFontSize(48),
-                                      color: Theme.of(context).primaryColor,
-                                    ),
-                                  ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(_theme.getDynamicSpacing(12)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                artist['name'] ?? 'Unknown Artist',
-                                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                  fontSize: _theme.getDynamicFontSize(14),
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
                               ),
-                              if (_isOffline)
-                                Text(
-                                  'Preview Mode',
-                                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    fontSize: _theme.getDynamicFontSize(10),
-                                    color: Theme.of(context).colorScheme.outline,
-                                    fontStyle: FontStyle.italic,
-                                  ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              artist['name'] ?? 'Unknown Artist',
+                              style: DesignSystem.bodyMedium.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            if (_isOffline) ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                'Preview Mode',
+                                style: DesignSystem.bodySmall.copyWith(
+                                  color: DesignSystem.onSurfaceVariant,
+                                  fontStyle: FontStyle.italic,
                                 ),
-                            ],
-                          ),
+                              ),
+                            ]
+                          ],
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            );
-          },
-        ),
-      ],
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -935,7 +934,6 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
   void _retryConnection() {
     setState(() {
       _isOffline = false;
-      _errorMessage = null;
       _hasTriggeredInitialLoad = false;
     });
     _triggerInitialDataLoad();
