@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/design_system/design_system.dart';
+import '../../core/theme/design_system.dart';
 import '../../core/constants/ui_assets.dart';
 
 class UIShowcasePage extends StatefulWidget {
@@ -56,10 +56,13 @@ class _UIShowcasePageState extends State<UIShowcasePage>
               ),
               indicatorSize: TabBarIndicatorSize.tab,
               dividerColor: Colors.transparent,
-              labelStyle: MusicBudTypography.bodyMedium.copyWith(
+              labelStyle: DesignSystem.bodyMedium.copyWith(
                 fontWeight: FontWeight.w600,
+                color: DesignSystem.onPrimary,
               ),
-              unselectedLabelStyle: MusicBudTypography.bodyMedium,
+              unselectedLabelStyle: DesignSystem.bodyMedium.copyWith(
+                color: DesignSystem.onSurfaceVariant,
+              ),
               tabs: const [
                 Tab(text: 'Main'),
                 Tab(text: 'Extra'),
@@ -145,11 +148,12 @@ class _UIShowcasePageState extends State<UIShowcasePage>
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(MusicBudSpacing.sm),
+                  padding: const EdgeInsets.all(DesignSystem.spacingSM),
                   child: Text(
                     screenName,
-                    style: MusicBudTypography.bodyMedium.copyWith(
+                    style: DesignSystem.bodyMedium.copyWith(
                       fontWeight: FontWeight.w600,
+                      color: DesignSystem.onSurface,
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 1,
@@ -166,12 +170,12 @@ class _UIShowcasePageState extends State<UIShowcasePage>
 
   Widget _buildExtraScreensTab() {
     return GridView.builder(
-      padding: const EdgeInsets.all(MusicBudSpacing.lg),
+      padding: const EdgeInsets.all(DesignSystem.spacingLG),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.6,
-        crossAxisSpacing: MusicBudSpacing.md,
-        mainAxisSpacing: MusicBudSpacing.md,
+        crossAxisSpacing: 16.0, // DesignSystem.spacingMD
+        mainAxisSpacing: 16.0, // DesignSystem.spacingMD
       ),
       itemCount: UIAssets.extraScreenAssets.length,
       itemBuilder: (context, index) {
@@ -225,11 +229,12 @@ class _UIShowcasePageState extends State<UIShowcasePage>
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(MusicBudSpacing.sm),
+                  padding: const EdgeInsets.all(DesignSystem.spacingSM),
                   child: Text(
                     screenName,
-                    style: MusicBudTypography.bodyMedium.copyWith(
+                    style: DesignSystem.bodyMedium.copyWith(
                       fontWeight: FontWeight.w600,
+                      color: DesignSystem.onSurface,
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 2,
@@ -304,11 +309,12 @@ class _UIShowcasePageState extends State<UIShowcasePage>
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(MusicBudSpacing.sm),
+                  padding: const EdgeInsets.all(DesignSystem.spacingSM),
                   child: Text(
                     screenName,
-                    style: MusicBudTypography.bodyMedium.copyWith(
+                    style: DesignSystem.bodyMedium.copyWith(
                       fontWeight: FontWeight.w600,
+                      color: DesignSystem.onSurface,
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 2,
@@ -409,15 +415,15 @@ class _UIShowcasePageState extends State<UIShowcasePage>
                               const SizedBox(height: 16),
                               Text(
                                 'Image could not be loaded',
-                                style: MusicBudTypography.bodyMedium.copyWith(
-                                  color: MusicBudColors.textSecondary,
+                                style: DesignSystem.bodyMedium.copyWith(
+                                  color: DesignSystem.onSurfaceVariant,
                                 ),
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 assetPath,
-                                style: MusicBudTypography.bodySmall.copyWith(
-                                  color: MusicBudColors.textSecondary,
+                                style: DesignSystem.bodySmall.copyWith(
+                                  color: DesignSystem.onSurfaceVariant,
                                 ),
                                 textAlign: TextAlign.center,
                               ),

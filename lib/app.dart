@@ -38,6 +38,7 @@ import "presentation/screens/settings/enhanced_settings_screen.dart";
 import "presentation/screens/connect/connect_services_screen.dart";
 import "presentation/screens/spotify/played_tracks_map_screen.dart";
 import "presentation/screens/spotify/spotify_control_screen.dart";
+import "presentation/pages/ui_showcase_page.dart";
 
 // New onboarding page
 import "presentation/pages/onboarding_page.dart";
@@ -56,6 +57,9 @@ import "services/dynamic_navigation_service.dart";
 
 // Legacy constants (for backward compatibility during migration)
 import "core/theme/app_constants.dart";
+
+// Navigation
+import "core/navigation/app_routes.dart";
 
 /// Main application widget for MusicBud
 class App extends StatelessWidget {
@@ -135,26 +139,27 @@ class App extends StatelessWidget {
   Map<String, WidgetBuilder> _buildAppRoutes() {
     return {
       // Note: homeRoute ('/') is removed since we use AuthGate as home
-      AppConstants.loginRoute: (context) => const LoginScreen(),
-      AppConstants.homePageRoute: (context) => const DynamicHomeScreen(),
-      "/discover": (context) => const DynamicDiscoverScreen(),
-      "/top-tracks": (context) => const TopTracksPage(),
-      "/library": (context) => const DynamicLibraryScreen(),
-      "/profile": (context) => const DynamicProfileScreen(),
-      "/edit-profile": (context) => const EditProfileScreen(),
-      "/chat": (context) => const DynamicChatScreen(),
-      "/search": (context) => const DynamicSearchScreen(),
-      "/buds": (context) => const DynamicBudsScreen(),
-      "/settings": (context) => const EnhancedSettingsScreen(),
-      "/settings-old": (context) => const DynamicSettingsScreen(),
-      "/connect-services": (context) => const ConnectServicesScreen(),
-      "/register": (context) => const RegisterScreen(),
-      "/onboarding": (context) => const OnboardingPage(),
-      "/artist-details": (context) => const ArtistDetailsScreen(),
-      "/genre-details": (context) => const GenreDetailsScreen(),
-      "/track-details": (context) => const TrackDetailsScreen(),
-      "/played-tracks-map": (context) => const PlayedTracksMapScreen(),
-      "/spotify-control": (context) => const SpotifyControlScreen(),
+      AppRoutes.login: (context) => const LoginScreen(),
+      AppRoutes.home: (context) => const DynamicHomeScreen(),
+      AppRoutes.discover: (context) => const DynamicDiscoverScreen(),
+      AppRoutes.topTracks: (context) => const TopTracksPage(),
+      AppRoutes.library: (context) => const DynamicLibraryScreen(),
+      AppRoutes.profile: (context) => const DynamicProfileScreen(),
+      AppRoutes.editProfile: (context) => const EditProfileScreen(),
+      AppRoutes.chat: (context) => const DynamicChatScreen(),
+      AppRoutes.search: (context) => const DynamicSearchScreen(),
+      AppRoutes.buds: (context) => const DynamicBudsScreen(),
+      AppRoutes.settings: (context) => const EnhancedSettingsScreen(),
+      AppRoutes.settingsOld: (context) => const DynamicSettingsScreen(),
+      AppRoutes.connectServices: (context) => const ConnectServicesScreen(),
+      AppRoutes.register: (context) => const RegisterScreen(),
+      AppRoutes.onboarding: (context) => const OnboardingPage(),
+      AppRoutes.artistDetails: (context) => const ArtistDetailsScreen(),
+      AppRoutes.genreDetails: (context) => const GenreDetailsScreen(),
+      AppRoutes.trackDetails: (context) => const TrackDetailsScreen(),
+      AppRoutes.playedTracksMap: (context) => const PlayedTracksMapScreen(),
+      AppRoutes.spotifyControl: (context) => const SpotifyControlScreen(),
+      AppRoutes.uiShowcase: (context) => const UIShowcasePage(),
     };
   }
 }
