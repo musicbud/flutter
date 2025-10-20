@@ -203,7 +203,7 @@ class _OfflineDownloadManagerState extends State<OfflineDownloadManager>
       padding: EdgeInsets.all(_theme.getDynamicSpacing(16)),
       margin: EdgeInsets.all(_theme.getDynamicSpacing(16)),
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(0.1),
+        color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -229,7 +229,7 @@ class _OfflineDownloadManagerState extends State<OfflineDownloadManager>
           SizedBox(height: _theme.getDynamicSpacing(12)),
           LinearProgressIndicator(
             value: progress,
-            backgroundColor: Colors.grey.withOpacity(0.3),
+            backgroundColor: Colors.grey.withValues(alpha: 0.3),
             valueColor: AlwaysStoppedAnimation<Color>(
               Theme.of(context).primaryColor,
             ),
@@ -247,7 +247,7 @@ class _OfflineDownloadManagerState extends State<OfflineDownloadManager>
       margin: EdgeInsets.only(bottom: _theme.getDynamicSpacing(8)),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: _getStatusColor(status).withOpacity(0.1),
+          backgroundColor: _getStatusColor(status).withValues(alpha: 0.1),
           child: Icon(
             _getStatusIcon(status),
             color: _getStatusColor(status),
@@ -275,7 +275,7 @@ class _OfflineDownloadManagerState extends State<OfflineDownloadManager>
                 Expanded(
                   child: LinearProgressIndicator(
                     value: progress,
-                    backgroundColor: Colors.grey.withOpacity(0.3),
+                    backgroundColor: Colors.grey.withValues(alpha: 0.3),
                     valueColor: AlwaysStoppedAnimation<Color>(
                       _getStatusColor(status),
                     ),
@@ -352,7 +352,7 @@ class _OfflineDownloadManagerState extends State<OfflineDownloadManager>
         ...offlineItems.map((item) => Card(
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: Colors.green.withOpacity(0.1),
+                  backgroundColor: Colors.green.withValues(alpha: 0.1),
                   child: const Icon(Icons.offline_bolt, color: Colors.green),
                 ),
                 title: Text(item['title'] ?? 'Unknown'),

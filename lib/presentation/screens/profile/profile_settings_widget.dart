@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'components/settings_option.dart';
 import '../../../core/theme/design_system.dart';
-import '../../../widgets/common/index.dart';
+// MIGRATED: import '../../../widgets/common/index.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class ProfileSettingsWidget extends StatelessWidget {
   const ProfileSettingsWidget({super.key});

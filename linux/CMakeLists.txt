@@ -54,15 +54,7 @@ add_subdirectory(${FLUTTER_MANAGED_DIR})
 find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTK REQUIRED IMPORTED_TARGET gtk+-3.0)
 pkg_check_modules(FONTCONFIG REQUIRED IMPORTED_TARGET fontconfig)
-
-# Use environment-provided library paths for libepoxy
-if(DEFINED ENV{CMAKE_LIBRARY_PATH})
-  link_directories($ENV{CMAKE_LIBRARY_PATH})
-endif()
-
-if(DEFINED ENV{CMAKE_INCLUDE_PATH})
-  include_directories($ENV{CMAKE_INCLUDE_PATH})
-endif()
+pkg_check_modules(EPOXY REQUIRED IMPORTED_TARGET epoxy)
 
 add_definitions(-DAPPLICATION_ID="${APPLICATION_ID}")
 
@@ -84,7 +76,7 @@ apply_standard_settings(${BINARY_NAME})
 target_link_libraries(${BINARY_NAME} PRIVATE flutter)
 target_link_libraries(${BINARY_NAME} PRIVATE PkgConfig::GTK)
 target_link_libraries(${BINARY_NAME} PRIVATE PkgConfig::FONTCONFIG)
-target_link_libraries(${BINARY_NAME} PRIVATE epoxy)
+target_link_libraries(${BINARY_NAME} PRIVATE PkgConfig::EPOXY)
 
 # Run the Flutter tool portions of the build. This must not be removed.
 add_dependencies(${BINARY_NAME} flutter_assemble)

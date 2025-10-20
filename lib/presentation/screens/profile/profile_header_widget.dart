@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/user_profile/user_profile_bloc.dart';
 import '../../../models/user_profile.dart';
 import '../../../core/theme/design_system.dart';
-import '../../../widgets/common/index.dart';
+// MIGRATED: import '../../../widgets/common/index.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart' hide UserProfile;
 
 class ProfileHeaderWidget extends StatefulWidget {
   final UserProfile? userProfile;
@@ -95,7 +96,7 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
               borderRadius: BorderRadius.circular(designSystemRadius.circular),
               boxShadow: designSystemShadows.cardHover,
               border: Border.all(
-                color: designSystemColors.primary.withOpacity(0.3),
+                color: designSystemColors.primary.withValues(alpha: 0.3),
                 width: 3,
               ),
             ),

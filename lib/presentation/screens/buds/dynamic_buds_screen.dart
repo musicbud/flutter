@@ -464,10 +464,10 @@ class _DynamicBudsScreenState extends State<DynamicBudsScreen>
         vertical: DesignSystem.spacingXXS,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DesignSystem.radiusFull),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
           width: 1.5,
         ),
       ),
@@ -523,7 +523,7 @@ class _DynamicBudsScreenState extends State<DynamicBudsScreen>
         '${type.replaceAll(RegExp(r'([A-Z])'), ' \$1').trim()}: $count',
         style: TextStyle(fontSize: _theme.getDynamicFontSize(12)),
       ),
-      backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+      backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
       labelStyle: TextStyle(
         color: Theme.of(context).primaryColor,
         fontSize: _theme.getDynamicFontSize(11),
@@ -627,7 +627,7 @@ class _DynamicBudsScreenState extends State<DynamicBudsScreen>
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(_theme.getDynamicSpacing(12)),
-      color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+      color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
       child: Row(
         children: [
           Icon(
@@ -678,7 +678,7 @@ class _DynamicBudsScreenState extends State<DynamicBudsScreen>
                     _loadBudsBasedOnSelection();
                   }
                 },
-                selectedColor: Theme.of(context).primaryColor.withOpacity(0.2),
+                selectedColor: Theme.of(context).primaryColor.withValues(alpha: 0.2),
                 checkmarkColor: Theme.of(context).primaryColor,
               ),
             );

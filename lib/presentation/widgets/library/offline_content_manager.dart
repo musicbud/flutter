@@ -60,7 +60,7 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: DesignSystem.onSurfaceVariant.withOpacity(0.4),
+              color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.4),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -95,10 +95,10 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
             padding: const EdgeInsets.all(16),
             margin: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: DesignSystem.primary.withOpacity(0.1),
+              color: DesignSystem.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: DesignSystem.primary.withOpacity(0.3),
+                color: DesignSystem.primary.withValues(alpha: 0.3),
               ),
             ),
             child: Row(
@@ -155,10 +155,10 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
             padding: const EdgeInsets.all(16),
             margin: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: DesignSystem.secondary.withOpacity(0.1),
+              color: DesignSystem.secondary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: DesignSystem.secondary.withOpacity(0.3),
+                color: DesignSystem.secondary.withValues(alpha: 0.3),
               ),
             ),
             child: Row(
@@ -222,7 +222,7 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: DesignSystem.primary.withOpacity(0.1),
+              color: DesignSystem.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: const Icon(
@@ -263,13 +263,13 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: _isOfflineMode
-            ? DesignSystem.primary.withOpacity(0.2)
-            : DesignSystem.surfaceContainer.withOpacity(0.1),
+            ? DesignSystem.primary.withValues(alpha: 0.2)
+            : DesignSystem.surfaceContainer.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: _isOfflineMode
               ? DesignSystem.primary
-              : DesignSystem.onSurfaceVariant.withOpacity(0.3),
+              : DesignSystem.onSurfaceVariant.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
@@ -368,10 +368,10 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
           margin: const EdgeInsets.all(24),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: DesignSystem.surfaceContainer.withOpacity(0.1),
+            color: DesignSystem.surfaceContainer.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: DesignSystem.onSurfaceVariant.withOpacity(0.2),
+              color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
             ),
           ),
           child: Row(
@@ -472,10 +472,10 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: DesignSystem.surfaceContainer.withOpacity(0.1),
+        color: DesignSystem.surfaceContainer.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: statusColor.withOpacity(0.3),
+          color: statusColor.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -569,7 +569,7 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
             const SizedBox(height: 12),
             LinearProgressIndicator(
               value: progress,
-              backgroundColor: DesignSystem.onSurfaceVariant.withOpacity(0.2),
+              backgroundColor: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
               valueColor: AlwaysStoppedAnimation<Color>(statusColor),
             ),
           ],
@@ -614,10 +614,10 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: color.withOpacity(0.3),
+            color: color.withValues(alpha: 0.3),
           ),
         ),
         child: Column(
@@ -647,7 +647,7 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
           Icon(
             Icons.download_outlined,
             size: 64,
-            color: DesignSystem.onSurfaceVariant.withOpacity(0.5),
+            color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.5),
           ),
           const SizedBox(height: 16),
           Text(
@@ -698,10 +698,10 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: DesignSystem.surfaceContainer.withOpacity(0.1),
+        color: DesignSystem.surfaceContainer.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: DesignSystem.onSurfaceVariant.withOpacity(0.2),
+          color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -747,10 +747,10 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: DesignSystem.secondary.withOpacity(0.1),
+        color: DesignSystem.secondary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: DesignSystem.secondary.withOpacity(0.3),
+          color: DesignSystem.secondary.withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -784,7 +784,7 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
               const SizedBox(height: 16),
               LinearProgressIndicator(
                 value: state.itemsSynced! / state.totalItems!,
-                backgroundColor: DesignSystem.onSurfaceVariant.withOpacity(0.2),
+                backgroundColor: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
                 valueColor: const AlwaysStoppedAnimation<Color>(DesignSystem.secondary),
               ),
               const SizedBox(height: 8),
@@ -971,7 +971,7 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
         ),
-        tileColor: DesignSystem.surfaceContainer.withOpacity(0.1),
+        tileColor: DesignSystem.surfaceContainer.withValues(alpha: 0.1),
       ),
     );
   }
@@ -995,10 +995,10 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: DesignSystem.surfaceContainer.withOpacity(0.1),
+        color: DesignSystem.surfaceContainer.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: DesignSystem.onSurfaceVariant.withOpacity(0.2),
+          color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -1020,7 +1020,7 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
                 child: CircularProgressIndicator(
                   value: 0.65, // 65% used
                   strokeWidth: 12,
-                  backgroundColor: DesignSystem.onSurfaceVariant.withOpacity(0.2),
+                  backgroundColor: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
                   valueColor: const AlwaysStoppedAnimation<Color>(DesignSystem.accentPurple),
                 ),
               ),
@@ -1088,10 +1088,10 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: DesignSystem.surfaceContainer.withOpacity(0.1),
+        color: DesignSystem.surfaceContainer.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withValues(alpha: 0.3),
         ),
       ),
       child: Row(

@@ -130,7 +130,7 @@ class EnhancedMusicCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: isPlaying
             ? MusicBudColors.primaryRed
-            : MusicBudColors.primaryRed.withOpacity(0.1),
+            : MusicBudColors.primaryRed.withValues(alpha: 0.1),
         shape: BoxShape.circle,
       ),
       child: Icon(

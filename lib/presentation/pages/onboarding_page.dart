@@ -38,7 +38,7 @@ class OnboardingPage extends StatelessWidget {
                   width: 120,
                   height: 120,
                   decoration: BoxDecoration(
-                    color: MusicBudColors.primaryRed.withOpacity(0.1),
+                    color: MusicBudColors.primaryRed.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(
                       MusicBudSpacing.radiusXxl,
                     ),
@@ -117,7 +117,7 @@ class OnboardingPage extends StatelessWidget {
                           );
                         },
                         style: OutlinedButton.styleFrom(
-                          backgroundColor: MusicBudColors.backgroundTertiary.withOpacity(0.5),
+                          backgroundColor: MusicBudColors.backgroundTertiary.withValues(alpha: 0.5),
                           side: BorderSide.none,
                         ),
                         child: const Text('Sign up'),

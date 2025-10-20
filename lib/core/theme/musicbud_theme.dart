@@ -26,9 +26,9 @@ class MusicBudTheme {
     cardColor: MusicBudColors.backgroundTertiary,
     dividerColor: MusicBudColors.disabled,
     focusColor: MusicBudColors.focus,
-    hoverColor: MusicBudColors.focus.withOpacity(0.08),
-    highlightColor: MusicBudColors.focus.withOpacity(0.12),
-    splashColor: MusicBudColors.focus.withOpacity(0.12),
+    hoverColor: MusicBudColors.focus.withValues(alpha: 0.08),
+    highlightColor: MusicBudColors.focus.withValues(alpha: 0.12),
+    splashColor: MusicBudColors.focus.withValues(alpha: 0.12),
     unselectedWidgetColor: MusicBudColors.disabled,
     disabledColor: MusicBudColors.disabled,
     buttonTheme: const ButtonThemeData(
@@ -155,9 +155,9 @@ class MusicBudTheme {
     cardColor: MusicBudColors.backgroundTertiary,
     dividerColor: MusicBudColors.disabled,
     focusColor: MusicBudColors.focus,
-    hoverColor: MusicBudColors.focus.withOpacity(0.08),
-    highlightColor: MusicBudColors.focus.withOpacity(0.12),
-    splashColor: MusicBudColors.focus.withOpacity(0.12),
+    hoverColor: MusicBudColors.focus.withValues(alpha: 0.08),
+    highlightColor: MusicBudColors.focus.withValues(alpha: 0.12),
+    splashColor: MusicBudColors.focus.withValues(alpha: 0.12),
     unselectedWidgetColor: MusicBudColors.disabled,
     disabledColor: MusicBudColors.disabled,
     buttonTheme: const ButtonThemeData(
@@ -258,7 +258,7 @@ class MusicBudTheme {
       color: MusicBudColors.textOnPrimary,
       size: 24,
     ),
-    tabBarTheme: const TabBarTheme(
+    tabBarTheme: const TabBarThemeData(
       labelColor: MusicBudColors.textPrimary,
       unselectedLabelColor: MusicBudColors.textSecondary,
       labelStyle: MusicBudTypography.labelLarge,
@@ -275,7 +275,7 @@ class MusicBudTheme {
       }),
       trackColor: WidgetStateProperty.resolveWith<Color>((states) {
         if (states.contains(WidgetState.selected)) {
-          return MusicBudColors.primaryRed.withOpacity(0.5);
+          return MusicBudColors.primaryRed.withValues(alpha: 0.5);
         }
         return MusicBudColors.backgroundTertiary;
       }),
@@ -285,7 +285,7 @@ class MusicBudTheme {
       linearTrackColor: MusicBudColors.backgroundTertiary,
       circularTrackColor: MusicBudColors.backgroundTertiary,
     ),
-    dialogTheme: DialogTheme(
+    dialogTheme: DialogThemeData(
       backgroundColor: MusicBudColors.backgroundTertiary,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(MusicBudSpacing.radiusLg),

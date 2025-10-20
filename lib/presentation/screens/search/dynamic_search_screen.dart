@@ -34,6 +34,12 @@ class _DynamicSearchScreenState extends State<DynamicSearchScreen>
   bool _useOfflineMode = false;
   bool _hasTriggeredInitialLoad = false;
   Timer? _debounceTimer;
+  bool _isSearching = false;
+  
+  // State variables for search data
+  List<String> _recentSearches = [];
+  List<String> _trendingSearches = [];
+  List<Map<String, dynamic>> _searchResults = [];
   
   // Mock data for offline fallback
   List<String>? _mockRecentSearches;
@@ -382,9 +388,9 @@ class _DynamicSearchScreenState extends State<DynamicSearchScreen>
                 ),
               ),
               onPressed: () => _selectSearchTerm(search),
-              backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+              backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
               side: BorderSide(
-                color: Theme.of(context).primaryColor.withOpacity(0.3),
+                color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
               ),
             );
           }).toList(),
@@ -423,7 +429,7 @@ class _DynamicSearchScreenState extends State<DynamicSearchScreen>
         style: TextStyle(fontSize: _theme.getDynamicFontSize(12)),
       ),
       onPressed: () => _selectSearchTerm(search),
-      backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+      backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
       labelStyle: TextStyle(
         color: Theme.of(context).primaryColor,
       ),
@@ -636,7 +642,7 @@ class _DynamicSearchScreenState extends State<DynamicSearchScreen>
       margin: EdgeInsets.only(bottom: _theme.getDynamicSpacing(8)),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+          backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
           child: Icon(
             Icons.music_note,
             color: Theme.of(context).primaryColor,
@@ -732,7 +738,7 @@ class _DynamicSearchScreenState extends State<DynamicSearchScreen>
       margin: EdgeInsets.only(bottom: _theme.getDynamicSpacing(8)),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+          backgroundColor: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
           child: Icon(
             Icons.playlist_play,
             color: Theme.of(context).colorScheme.secondary,
@@ -764,7 +770,7 @@ class _DynamicSearchScreenState extends State<DynamicSearchScreen>
       margin: EdgeInsets.only(bottom: _theme.getDynamicSpacing(8)),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+          backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
           child: Icon(
             Icons.search,
             color: Theme.of(context).primaryColor,
@@ -851,7 +857,9 @@ class _DynamicSearchScreenState extends State<DynamicSearchScreen>
     if (_currentQuery.isEmpty) return [];
 
     final tabs = <Map<String, dynamic>>[];
-    final resultTypes = _searchResults.map((r) => r['type']).toSet();
+    // Get result types from either mock data or actual search results
+    final results = _mockSearchResults ?? _searchResults;
+    final resultTypes = results.map((r) => r['type']).toSet();
 
     if (resultTypes.contains('track')) {
       tabs.add({'title': 'Tracks', 'type': 'track'});
@@ -911,8 +919,10 @@ class _DynamicSearchScreenState extends State<DynamicSearchScreen>
 
   Future<void> _loadSearchData() async {
     // Load recent searches from local storage - no hardcoded data
-    _recentSearches = [];
-    _trendingSearches = [];
+    setState(() {
+      _recentSearches = [];
+      _trendingSearches = [];
+    });
   }
 
   void _onSearchChanged(String query) {
@@ -937,16 +947,23 @@ class _DynamicSearchScreenState extends State<DynamicSearchScreen>
   Future<void> _performSearch(String query) async {
     if (query.isEmpty) return;
 
+    setState(() {
+      _isSearching = true;
+    });
+
     // Use ContentBloc for real API search
     context.read<ContentBloc>().add(SearchContent(query: query, type: 'all'));
 
     // Add to recent searches
-    if (!_recentSearches.contains(query)) {
-      _recentSearches.insert(0, query);
-      if (_recentSearches.length > 10) {
-        _recentSearches = _recentSearches.take(10).toList();
+    setState(() {
+      if (!_recentSearches.contains(query)) {
+        _recentSearches.insert(0, query);
+        if (_recentSearches.length > 10) {
+          _recentSearches = _recentSearches.take(10).toList();
+        }
       }
-    }
+      _isSearching = false;
+    });
   }
 
   // Search results are now handled by SearchBloc
@@ -1073,7 +1090,9 @@ class _DynamicSearchScreenState extends State<DynamicSearchScreen>
 
   void _removeRecentSearchFromList(String search) {
     // Remove from local list
-    _recentSearches.remove(search);
+    setState(() {
+      _recentSearches.remove(search);
+    });
     
     // If using BLoC data, trigger a removal request
     context.read<SearchBloc>().add(RemoveRecentSearch(search));

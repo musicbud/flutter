@@ -5,8 +5,9 @@ import '../../../blocs/main/main_screen_event.dart';
 import '../../../blocs/main/main_screen_state.dart';
 import '../../../core/theme/design_system.dart';
 import '../../../models/common_track.dart';
-import '../../widgets/home/recent_activity_list.dart';
-import '../../widgets/common/error_state_widget.dart';
+// MIGRATED: import '../../widgets/home/recent_activity_list.dart';
+// MIGRATED: import '../../widgets/common/error_state_widget.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class HomeRecentActivity extends StatelessWidget {
   const HomeRecentActivity({super.key});
@@ -77,7 +78,7 @@ class HomeRecentActivity extends StatelessWidget {
                 width: 200,
                 margin: const EdgeInsets.only(right: DesignSystem.spacingMD),
                 decoration: BoxDecoration(
-                  color: DesignSystem.surface.withOpacity(0.3),
+                  color: DesignSystem.surface.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
                 ),
                 child: const Center(
@@ -96,9 +97,8 @@ class HomeRecentActivity extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ErrorStateWidget(
-          title: 'Failed to load recent activity',
-          message: message,
+        ErrorCard(
+          error: message,
           onRetry: onRetry,
         ),
         const SizedBox(height: DesignSystem.spacingXL),
@@ -110,7 +110,7 @@ class HomeRecentActivity extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        EmptyStateWidget(
+        EmptyState(
           title: title,
           message: message,
           icon: Icons.history_outlined,

@@ -163,7 +163,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final result =
           await _authRepository.login(event.username, event.password);
       // Store tokens securely
-      await _tokenProvider.updateTokens(result.accessToken, result.refreshToken);
+      await _tokenProvider.updateTokens(
+        result.accessToken, 
+        result.refreshToken ?? '', // Use empty string if null
+      );
       emit(Authenticated(token: result.accessToken));
     } catch (e) {
       emit(AuthError(e.toString()));

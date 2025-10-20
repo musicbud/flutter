@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/design_system.dart';
-import '../../../widgets/common/modern_input_field.dart';
+// MIGRATED: import '../../../widgets/common/modern_input_field.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class MessageInput extends StatelessWidget {
   final TextEditingController controller;

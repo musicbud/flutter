@@ -7,14 +7,19 @@ import '../../models/common_anime.dart';
 import '../../models/common_manga.dart';
 import '../../models/spotify_device.dart';
 import '../data_sources/remote/content_remote_data_source.dart';
+import '../data_sources/local/tracking_local_data_source.dart';
 import '../../core/error/exceptions.dart';
 import '../../core/error/failures.dart';
 
 class ContentRepositoryImpl implements ContentRepository {
   final ContentRemoteDataSource _remoteDataSource;
+  final TrackingLocalDataSource _trackingLocalDataSource;
 
-  ContentRepositoryImpl({required ContentRemoteDataSource remoteDataSource})
-      : _remoteDataSource = remoteDataSource;
+  ContentRepositoryImpl({
+    required ContentRemoteDataSource remoteDataSource,
+    required TrackingLocalDataSource trackingLocalDataSource,
+  })  : _remoteDataSource = remoteDataSource,
+        _trackingLocalDataSource = trackingLocalDataSource;
 
   Future<List<Track>> getMyLikedTracks() async {
     try {
@@ -192,11 +197,15 @@ class ContentRepositoryImpl implements ContentRepository {
   @override
   Future<List<Track>> getPlayedTracks() async {
     try {
-      return await _remoteDataSource.getPlayedTracks();
-    } on ServerException catch (e) {
-      throw ServerFailure(message: e.message);
+      // Try to get from remote first, fallback to local if remote fails
+      try {
+        return await _remoteDataSource.getPlayedTracks();
+      } catch (e) {
+        // If remote fails, get from local storage
+        return await _trackingLocalDataSource.getPlayedTracks();
+      }
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ServerFailure(message: 'Failed to get played tracks: $e');
     }
   }
 
@@ -204,12 +213,16 @@ class ContentRepositoryImpl implements ContentRepository {
   @override
   Future<List<Track>> getPlayedTracksWithLocation() async {
     try {
-      final data = await _remoteDataSource.getPlayedTracksWithLocation();
-      return data.map((json) => Track.fromJson(json)).toList();
-    } on ServerException catch (e) {
-      throw ServerFailure(message: e.message);
+      // Try to get from remote first, fallback to local if remote fails
+      try {
+        final data = await _remoteDataSource.getPlayedTracksWithLocation();
+        return data.map((json) => Track.fromJson(json)).toList();
+      } catch (e) {
+        // If remote fails, get from local storage
+        return await _trackingLocalDataSource.getPlayedTracksWithLocation();
+      }
     } catch (e) {
-      throw ServerFailure(message: e.toString());
+      throw ServerFailure(message: 'Failed to get played tracks with location: $e');
     }
   }
 
@@ -254,7 +267,11 @@ class ContentRepositoryImpl implements ContentRepository {
 
   @override
   Future<void> saveTrackLocation(String trackId, double latitude, double longitude) async {
-    // TODO: Implement actual logic
+    try {
+      await _trackingLocalDataSource.saveTrackLocation(trackId, latitude, longitude);
+    } catch (e) {
+      throw ServerFailure(message: 'Failed to save track location: $e');
+    }
   }
 
 
@@ -284,7 +301,24 @@ class ContentRepositoryImpl implements ContentRepository {
 
   @override
   Future<void> savePlayedTrack(String trackId) async {
-    // TODO: Implement actual logic
+    try {
+      // First try to get track details from remote to get full track info
+      Track? track;
+      try {
+        track = await getTrackDetails(trackId);
+      } catch (e) {
+        // If we can't get details, create a minimal track record
+        track = Track(
+          uid: trackId,
+          title: 'Unknown Track',
+          playedAt: DateTime.now(),
+        );
+      }
+      
+      await _trackingLocalDataSource.savePlayedTrack(track);
+    } catch (e) {
+      throw ServerFailure(message: 'Failed to save played track: $e');
+    }
   }
 
 

@@ -45,8 +45,8 @@ class QuickActionItem extends StatelessWidget {
             boxShadow: DesignSystem.shadowCard,
             border: Border.all(
               color: action.isPrimary
-                  ? DesignSystem.primary.withOpacity(0.3)
-                  : DesignSystem.border.withOpacity(0.3),
+                  ? DesignSystem.primary.withValues(alpha: 0.3)
+                  : DesignSystem.border.withValues(alpha: 0.3),
               width: 1,
             ),
           ),

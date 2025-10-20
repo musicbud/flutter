@@ -70,6 +70,13 @@ class Album {
     };
   }
 
+  // Getter methods for backward compatibility
+  String get title => name;
+  String get artist => artistName;
+  String? get imageUrl => imageUrls?.isNotEmpty == true ? imageUrls!.first : null;
+  String? get coverUrl => imageUrl;
+  String? get coverImageUrl => imageUrl;
+
   CommonAlbum toCommonAlbum() {
     return CommonAlbum(
       id: id,

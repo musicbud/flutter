@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import '../../../blocs/auth/login/login_bloc.dart';
 import '../../../blocs/auth/login/login_event.dart';
 import '../../../blocs/auth/login/login_state.dart';
 import '../../../blocs/auth/auth_bloc.dart';
+import '../../../data/providers/token_provider.dart';
 import '../../../core/theme/design_system.dart';
-import '../../../presentation/widgets/common/modern_input_field.dart';
-import '../../../presentation/widgets/common/modern_button.dart';
+import '../../../blocs/auth/auth_event.dart';
 import 'register_screen.dart';
+
+// Enhanced UI Library
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -46,47 +50,52 @@ class _LoginScreenState extends State<LoginScreen> {
           child: MultiBlocListener(
             listeners: [
               BlocListener<LoginBloc, LoginState>(
-                listener: (context, state) {
+                listener: (context, state) async {
                   if (state is LoginSuccess) {
-                    // Trigger AuthBloc login to handle token management
-                    context.read<AuthBloc>().add(LoginRequested(
-                      username: _usernameController.text.trim(),
-                      password: _passwordController.text,
-                    ));
+                    // Store tokens securely
+                    try {
+                      final tokenProvider = GetIt.instance<TokenProvider>();
+                      await tokenProvider.updateTokens(
+                        state.data.accessToken,
+                        state.data.refreshToken ?? '',
+                      );
+                      
+                      // Trigger AuthBloc to update its state
+                      if (context.mounted) {
+                        context.read<AuthBloc>().add(TokenRefreshRequested());
+                      }
+                      
+                      // Show success message
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Login successful! Welcome back!'),
+                            backgroundColor: DesignSystem.success,
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                        
+                        // Navigate back to root by popping all routes
+                        // This will bring us back to AuthGate which will properly show MainScreenWithGuest
+                        // with authenticated state
+                        Navigator.of(context).popUntil((route) => route.isFirst);
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Error storing auth data: $e'),
+                            backgroundColor: DesignSystem.error,
+                          ),
+                        );
+                      }
+                    }
                   } else if (state is LoginFailure) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(state.error),
                         backgroundColor: DesignSystem.error,
-                      ),
-                    );
-                  }
-                },
-              ),
-              BlocListener<AuthBloc, AuthState>(
-                listener: (context, state) {
-                  if (state is Authenticated) {
-                    // Navigate to home on successful authentication
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Login successful! Welcome back!'),
-                        backgroundColor: DesignSystem.success,
-                      ),
-                    );
-                    Navigator.pushReplacementNamed(context, '/home');
-                  } else if (state is AuthError) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Authentication failed: ${state.message}'),
-                        backgroundColor: DesignSystem.error,
-                        duration: const Duration(seconds: 4),
-                        action: SnackBarAction(
-                          label: 'DISMISS',
-                          textColor: DesignSystem.onError,
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          },
-                        ),
+                        duration: const Duration(seconds: 3),
                       ),
                     );
                   }

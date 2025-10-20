@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/repositories/user_repository.dart';
 import 'user_event.dart';
 import 'user_state.dart';

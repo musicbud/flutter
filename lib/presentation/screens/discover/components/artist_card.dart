@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/design_system.dart';
-import '../../../widgets/common/index.dart';
+// MIGRATED: import '../../../widgets/common/index.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class ArtistCard extends StatelessWidget {
   final String name;
@@ -32,7 +33,7 @@ class ArtistCard extends StatelessWidget {
               height: 80,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
-                color: accentColor.withOpacity(0.1),
+                color: accentColor.withValues(alpha: 0.1),
               ),
               child: (imageUrl?.isNotEmpty ?? false)
                   ? ClipRRect(

@@ -186,3 +186,46 @@ class ContentLikedAlbumsLoaded extends ContentState {
   @override
   List<Object> get props => [albums];
 }
+
+// Tracking states
+class ContentPlayedTracksLoaded extends ContentState {
+  final List<Track> tracks;
+
+  const ContentPlayedTracksLoaded({required this.tracks});
+
+  @override
+  List<Object> get props => [tracks];
+}
+
+class ContentPlayedTracksWithLocationLoaded extends ContentState {
+  final List<Track> tracks;
+
+  const ContentPlayedTracksWithLocationLoaded({required this.tracks});
+
+  @override
+  List<Object> get props => [tracks];
+}
+
+class ContentTrackSaved extends ContentState {
+  final String trackId;
+
+  const ContentTrackSaved({required this.trackId});
+
+  @override
+  List<Object> get props => [trackId];
+}
+
+class ContentTrackLocationSaved extends ContentState {
+  final String trackId;
+  final double latitude;
+  final double longitude;
+
+  const ContentTrackLocationSaved({
+    required this.trackId,
+    required this.latitude,
+    required this.longitude,
+  });
+
+  @override
+  List<Object> get props => [trackId, latitude, longitude];
+}

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../widgets/common/index.dart';
+// MIGRATED: import '../../../widgets/common/index.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 import '../../../../core/theme/design_system.dart';
 
 class SongCard extends StatelessWidget {
@@ -33,7 +34,7 @@ class SongCard extends StatelessWidget {
             height: 60,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
-              color: accentColor.withOpacity(0.1),
+              color: accentColor.withValues(alpha: 0.1),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
@@ -88,7 +89,7 @@ class SongCard extends StatelessWidget {
                     vertical: DesignSystem.spacingXS,
                   ),
                   decoration: BoxDecoration(
-                    color: accentColor.withOpacity(0.1),
+                    color: accentColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
                   ),
                   child: Text(

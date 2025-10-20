@@ -453,7 +453,7 @@ class MusicBudBottomNav extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: isSelected 
-              ? DesignSystem.pinkAccent.withOpacity(0.1)
+              ? DesignSystem.pinkAccent.withValues(alpha: 0.1)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
         ),

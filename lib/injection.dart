@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'data/network/dio_client.dart';
 import 'data/providers/token_provider.dart';
 import 'core/network/network_info.dart';
@@ -37,6 +38,7 @@ import 'data/data_sources/remote/user_profile_remote_data_source.dart';
 import 'data/data_sources/remote/user_remote_data_source.dart';
 import 'data/data_sources/remote/user_remote_data_source_impl.dart';
 import 'data/data_sources/remote/bud_matching_remote_data_source.dart';
+import 'data/data_sources/local/tracking_local_data_source.dart';
 import 'services/endpoint_config_service.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'blocs/auth/login/login_bloc.dart';
@@ -50,12 +52,18 @@ import 'blocs/bud_matching/bud_matching_bloc.dart';
 import 'blocs/comprehensive_chat/comprehensive_chat_bloc.dart';
 import 'blocs/simple_content_bloc.dart';
 import 'blocs/content/content_bloc.dart';
+import 'debug/debug_dashboard.dart';
 
 final sl = GetIt.instance;
 
 Future<void> initializeDependencies() async {
   // External
   final dio = Dio();
+  
+  // Add debug interceptor in debug mode
+  if (kDebugMode) {
+    dio.interceptors.add(DebugDioInterceptor());
+  }
   
   // Add comprehensive logging interceptor
   dio.interceptors.add(InterceptorsWrapper(
@@ -98,6 +106,15 @@ Future<void> initializeDependencies() async {
   
   // Data sources
   sl.registerLazySingleton<TokenProvider>(() => TokenProvider());
+  
+  // SharedPreferences
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+  
+  // Register TrackingLocalDataSource
+  sl.registerLazySingleton<TrackingLocalDataSource>(() => TrackingLocalDataSourceImpl(
+    sharedPreferences: sl(),
+  ));
   
   // Services - Initialize EndpointConfigService
   final endpointConfigService = EndpointConfigService();
@@ -174,7 +191,10 @@ Future<void> initializeDependencies() async {
   
   // Now register ContentRepository using the proper implementation
   sl.registerLazySingleton<ContentRepository>(
-    () => ContentRepositoryImpl(remoteDataSource: sl()),
+    () => ContentRepositoryImpl(
+      remoteDataSource: sl(),
+      trackingLocalDataSource: sl(),
+    ),
   );
   
   // Register DiscoverRepository using the proper implementation

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../../widgets/common/index.dart';
+// MIGRATED: import '../../../widgets/common/index.dart';
 import '../../../../core/theme/design_system.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class DownloadCard extends StatelessWidget {
   final String title;
@@ -34,7 +35,7 @@ class DownloadCard extends StatelessWidget {
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
-              color: accentColor.withOpacity(0.1),
+              color: accentColor.withValues(alpha: 0.1),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(DesignSystem.radiusLG),

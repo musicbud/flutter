@@ -1,25 +1,28 @@
 class LoginResponse {
   final String accessToken;
-  final String refreshToken;
+  final String? refreshToken;
   final String tokenType;
   final int? expiresIn;
   final String? userId;
 
   const LoginResponse({
     required this.accessToken,
-    required this.refreshToken,
+    this.refreshToken,
     this.tokenType = 'Bearer',
     this.expiresIn,
     this.userId,
   });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
+    // Handle wrapped response (with 'data' field)
+    final data = json['data'] as Map<String, dynamic>? ?? json;
+    
     return LoginResponse(
-      accessToken: json['access_token'] as String? ?? json['access'] as String,
-      refreshToken: json['refresh_token'] as String? ?? json['refresh'] as String,
-      tokenType: json['token_type'] as String? ?? 'Bearer',
-      expiresIn: json['expires_in'] as int?,
-      userId: json['user_id'] as String? ?? (json['user']?['id']?.toString()),
+      accessToken: data['access_token'] as String? ?? data['access'] as String,
+      refreshToken: data['refresh_token'] as String?,
+      tokenType: data['token_type'] as String? ?? 'Bearer',
+      expiresIn: data['expires_in'] as int?,
+      userId: data['user_id'] as String? ?? (data['user']?['id']?.toString()),
     );
   }
 

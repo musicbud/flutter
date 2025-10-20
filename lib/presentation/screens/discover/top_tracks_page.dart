@@ -4,9 +4,10 @@ import '../../../blocs/discover/discover_bloc.dart';
 import '../../../blocs/discover/discover_event.dart';
 import '../../../blocs/discover/discover_state.dart';
 import '../../../core/theme/design_system.dart';
-import '../../../presentation/widgets/common/image_with_fallback.dart';
-import '../../../presentation/widgets/common/modern_button.dart';
 import '../../../models/common_track.dart';
+
+// Enhanced UI Library - All components
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class TopTracksPage extends StatefulWidget {
   const TopTracksPage({super.key});
@@ -184,8 +185,8 @@ class _TopTracksPageState extends State<TopTracksPage> {
             imageUrl: track.imageUrl,
             width: 60,
             height: 60,
-            borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
-            placeholderIcon: Icons.music_note,
+            borderRadius: DesignSystem.radiusSM,
+            fallbackIcon: Icons.music_note,
           ),
           const SizedBox(width: DesignSystem.spacingMD),
 

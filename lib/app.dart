@@ -4,6 +4,7 @@ import "package:get_it/get_it.dart";
 
 // BLoCs
 import "blocs/auth/auth_bloc.dart";
+import "blocs/auth/auth_event.dart";
 import "blocs/auth/login/login_bloc.dart";
 import "blocs/auth/register/register_bloc.dart";
 import "blocs/likes/likes_bloc.dart";
@@ -12,6 +13,8 @@ import "blocs/event/event_bloc.dart";
 import "blocs/spotify/spotify_bloc.dart";
 import "blocs/bud_matching/bud_matching_bloc.dart";
 import "blocs/discover/discover_bloc.dart";
+import "blocs/user/user_bloc.dart";
+import "blocs/content/content_bloc.dart";
 
 // Repositories
 import "domain/repositories/auth_repository.dart";
@@ -46,8 +49,8 @@ import "presentation/pages/onboarding_page.dart";
 // Providers
 import "data/providers/token_provider.dart";
 
-// Auth Gate
-import "widgets/auth/auth_gate.dart";
+// Screens
+import "presentation/screens/main_screen_with_guest.dart";
 
 // Design System
 import "core/theme/musicbud_theme.dart";
@@ -114,6 +117,14 @@ class App extends StatelessWidget {
       BlocProvider<DiscoverBloc>(
         create: (context) => sl<DiscoverBloc>(),
       ),
+      // User BLoC
+      BlocProvider<UserBloc>(
+        create: (context) => sl<UserBloc>(),
+      ),
+      // Content BLoC
+      BlocProvider<ContentBloc>(
+        create: (context) => sl<ContentBloc>(),
+      ),
     ];
   }
 
@@ -128,7 +139,7 @@ class App extends StatelessWidget {
       darkTheme: MusicBudTheme.darkTheme,
       themeMode: ThemeMode.dark, // Default to dark theme to match UI designs
       navigatorKey: navigationService.navigatorKey,
-      home: const AuthGate(),
+      home: const AppNavigator(),
       routes: _buildAppRoutes(),
       onGenerateRoute: navigationService.onGenerateRoute,
     );
@@ -161,5 +172,60 @@ class App extends StatelessWidget {
       AppRoutes.spotifyControl: (context) => const SpotifyControlScreen(),
       AppRoutes.uiShowcase: (context) => const UIShowcasePage(),
     };
+  }
+}
+
+/// Navigator widget that reacts to authentication state
+class AppNavigator extends StatefulWidget {
+  const AppNavigator({super.key});
+
+  @override
+  State<AppNavigator> createState() => _AppNavigatorState();
+}
+
+class _AppNavigatorState extends State<AppNavigator> {
+  @override
+  void initState() {
+    super.initState();
+    // Trigger auth check on startup
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AuthBloc>().add(TokenRefreshRequested());
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, state) {
+        if (state is AuthInitial || state is AuthLoading) {
+          return const Scaffold(
+            backgroundColor: Colors.black,
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    color: Colors.deepPurple,
+                    strokeWidth: 3,
+                  ),
+                  SizedBox(height: 24),
+                  Text(
+                    'Loading...',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        
+        // Show main screen regardless of auth state
+        // MainScreenWithGuest handles guest vs authenticated states internally
+        return const MainScreenWithGuest();
+      },
+    );
   }
 }

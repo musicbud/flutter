@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../blocs/library/library_bloc.dart';
 import '../../../../blocs/library/library_state.dart';
-import '../../../widgets/common/index.dart';
+// MIGRATED: import '../../../widgets/common/index.dart';
 import '../../../../core/theme/design_system.dart';
 import '../components/playlist_card.dart';
 import '../dialogs/create_playlist_dialog.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class PlaylistsTab extends StatelessWidget {
   const PlaylistsTab({super.key});

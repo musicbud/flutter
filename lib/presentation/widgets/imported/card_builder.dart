@@ -249,7 +249,7 @@ class CardBuilder {
         );
       case CardVariant.accent:
         return _CardThemeData(
-          color: DesignSystem.primary.withOpacity(0.1),
+          color: DesignSystem.primary.withValues(alpha: 0.1),
           shadows: DesignSystem.shadowMedium,
         );
       case CardVariant.outlined:

@@ -533,8 +533,8 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
         onLongPress: (_tapHandlingEnabled && _tapConfig?.enableLongPress == true)
             ? onLongPress ?? _handleLongPress
             : null,
-        splashColor: splashColor ?? design.designSystemColors.primary.withOpacity(0.1),
-        highlightColor: highlightColor ?? design.designSystemColors.primary.withOpacity(0.05),
+        splashColor: splashColor ?? design.designSystemColors.primary.withValues(alpha: 0.1),
+        highlightColor: highlightColor ?? design.designSystemColors.primary.withValues(alpha: 0.05),
         borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.sm),
         child: Container(
           padding: padding ?? EdgeInsets.all(design.designSystemSpacing.md),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../widgets/imported/index.dart';
 import '../../blocs/user/user_bloc.dart';
 import '../../blocs/user/user_event.dart';
 import '../../blocs/user/user_state.dart';
@@ -17,7 +18,9 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with LoadingStateMixin, ErrorStateMixin, TickerProviderStateMixin {
+  
   UserProfile? _userProfile;
 
   @override
@@ -27,6 +30,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _initializeData() {
+    setLoadingState(LoadingState.loading);
     context.read<UserBloc>().add(LoadMyProfile());
   }
 
@@ -35,31 +39,19 @@ class _HomePageState extends State<HomePage> {
     return BlocConsumer<UserBloc, UserState>(
       listener: (context, state) {
         if (state is UserError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: ${state.message}'),
-              action: SnackBarAction(
-                label: 'Retry',
-                onPressed: _initializeData,
-              ),
-            ),
+          setError(
+            state.message,
+            type: ErrorType.network,
+            retryable: true,
           );
+          setLoadingState(LoadingState.error);
+        } else if (state is ProfileLoaded) {
+          _userProfile = state.profile;
+          setLoadingState(LoadingState.loaded);
         }
       },
       builder: (context, state) {
-        if (state is UserLoading) {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
-          );
-        }
-
-        if (state is ProfileLoaded) {
-          _userProfile = state.profile;
-        }
-
-        return Scaffold(
+        return AppScaffold(
           appBar: AppBar(
             title: const Text('MusicBud'),
             centerTitle: true,
@@ -71,84 +63,240 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-          body: RefreshIndicator(
-            onRefresh: () async {
-              _initializeData();
+          body: ResponsiveLayout(
+            builder: (context, breakpoint) {
+              switch (breakpoint) {
+                case ResponsiveBreakpoint.xs:
+                case ResponsiveBreakpoint.sm:
+                  return _buildMobileLayout();
+                case ResponsiveBreakpoint.md:
+                  return _buildTabletLayout();
+                case ResponsiveBreakpoint.lg:
+                case ResponsiveBreakpoint.xl:
+                  return _buildDesktopLayout();
+              }
             },
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Welcome section
-                  _buildWelcomeSection(context),
-                  const SizedBox(height: 24),
-                  
-                  // Quick actions
-                  _buildQuickActions(context),
-                  const SizedBox(height: 24),
-                  
-                  // Featured services
-                  _buildFeaturedServices(context),
-                  const SizedBox(height: 24),
-                  
-                  // Recent activity placeholder
-                  _buildRecentActivity(context),
-                ],
-              ),
-            ),
           ),
         );
       },
     );
   }
 
-  Widget _buildWelcomeSection(BuildContext context) {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Row(
+  Widget _buildMobileLayout() {
+    return buildLoadingState(
+      context: context,
+      loadedWidget: _buildContent(),
+      loadingWidget: const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          LoadingIndicator(),
+          SizedBox(height: 16),
+          Text(
+            'Loading your dashboard...',
+            style: TextStyle(fontSize: 16),
+          ),
+        ],
+      ),
+      errorWidget: buildDefaultErrorWidget(
+        context: context,
+        onRetry: _initializeData,
+      ),
+    );
+  }
+
+  Widget _buildTabletLayout() {
+    return Row(
+      children: [
+        Expanded(flex: 2, child: _buildContent()),
+        Expanded(flex: 1, child: _buildSidebar()),
+      ],
+    );
+  }
+
+  Widget _buildDesktopLayout() {
+    return Row(
+      children: [
+        SizedBox(width: 300, child: _buildSidebar()),
+        Expanded(child: _buildContent()),
+      ],
+    );
+  }
+
+  Widget _buildContent() {
+    return RefreshIndicator(
+      onRefresh: () async {
+        _initializeData();
+        await Future.delayed(const Duration(seconds: 1));
+      },
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CircleAvatar(
-              radius: 35,
-              backgroundImage: _userProfile?.avatarUrl != null
-                  ? NetworkImage(_userProfile!.avatarUrl!)
-                  : null,
-              child: _userProfile?.avatarUrl == null
-                  ? const Icon(Icons.person, size: 35)
-                  : null,
+            // Welcome section
+            _buildWelcomeSection(),
+            const SizedBox(height: 24),
+            
+            // Quick actions
+            const SectionHeader(
+              title: 'Quick Actions',
+              actionText: 'Customize',
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Welcome back!',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: Colors.grey[600],
-                    ),
+            const SizedBox(height: 16),
+            _buildQuickActionsGrid(),
+            const SizedBox(height: 24),
+            
+            // Featured services
+            const SectionHeader(
+              title: 'Featured Services',
+            ),
+            const SizedBox(height: 16),
+            _buildFeaturedServices(),
+            const SizedBox(height: 24),
+            
+            // Recent activity
+            const SectionHeader(title: 'Recent Activity'),
+            const SizedBox(height: 16),
+            _buildRecentActivity(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWelcomeSection() {
+    return ModernCard(
+      variant: ModernCardVariant.elevated,
+      padding: const EdgeInsets.all(20),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 35,
+            backgroundImage: _userProfile?.avatarUrl != null
+                ? NetworkImage(_userProfile!.avatarUrl!)
+                : null,
+            child: _userProfile?.avatarUrl == null
+                ? const Icon(Icons.person, size: 35)
+                : null,
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Welcome back!',
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Colors.grey[600],
                   ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _userProfile?.displayName ?? 
+                  _userProfile?.username ?? 
+                  'Music Lover',
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                if (_userProfile?.bio?.isNotEmpty == true) ...[
                   const SizedBox(height: 4),
                   Text(
-                    _userProfile?.displayName ?? _userProfile?.username ?? 'Music Lover',
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    _userProfile!.bio!,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  if (_userProfile?.bio != null && _userProfile!.bio!.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      _userProfile!.bio!,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
                 ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickActionsGrid() {
+    final actions = [
+      _QuickAction(
+        'Find Buds',
+        Icons.people_rounded,
+        Colors.blue,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const BudsScreen()),
+        ),
+      ),
+      _QuickAction(
+        'Chat',
+        Icons.chat_bubble_rounded,
+        Colors.green,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ChatScreen()),
+        ),
+      ),
+      _QuickAction(
+        'Connect Services',
+        Icons.link_rounded,
+        Colors.orange,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ConnectServicesScreen()),
+        ),
+      ),
+      _QuickAction(
+        'Profile',
+        Icons.person_rounded,
+        Colors.purple,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ProfileScreen()),
+        ),
+      ),
+    ];
+
+    // Use standard GridView since ContentGrid has complex API
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      mainAxisSpacing: 12,
+      crossAxisSpacing: 12,
+      childAspectRatio: 1.2,
+      children: actions.map((action) => _buildActionCard(action)).toList(),
+    );
+  }
+
+  Widget _buildActionCard(_QuickAction action) {
+    return ModernCard(
+      variant: ModernCardVariant.elevated,
+      onTap: action.onTap,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: action.color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(12),
               ),
+              child: Icon(
+                action.icon,
+                size: 28,
+                color: action.color,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              action.title,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w600,
+              ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),
@@ -156,217 +304,42 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildQuickActions(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Quick Actions',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
-        GridView.count(
-          crossAxisCount: 2,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 12,
-          crossAxisSpacing: 12,
-          childAspectRatio: 1.2,
-          children: [
-            _buildQuickActionCard(
+  Widget _buildFeaturedServices() {
+    return SizedBox(
+      height: 120,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        children: [
+          _buildServiceCard(
+            'Spotify Control',
+            Icons.music_note,
+            Colors.green[700]!,
+            'Control your Spotify playback',
+            () => Navigator.push(
               context,
-              'Find Buds',
-              Icons.people_rounded,
-              Colors.blue,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const BudsScreen()),
-              ),
-            ),
-            _buildQuickActionCard(
-              context,
-              'Chat',
-              Icons.chat_bubble_rounded,
-              Colors.green,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ChatScreen()),
-              ),
-            ),
-            _buildQuickActionCard(
-              context,
-              'Connect Services',
-              Icons.link_rounded,
-              Colors.orange,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ConnectServicesScreen()),
-              ),
-            ),
-            _buildQuickActionCard(
-              context,
-              'Profile',
-              Icons.person_rounded,
-              Colors.purple,
-              () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const ProfileScreen()),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFeaturedServices(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Featured Services',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 120,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: [
-              _buildServiceCard(
-                context,
-                'Spotify Control',
-                Icons.music_note,
-                Colors.green[700]!,
-                'Control your Spotify playback',
-                () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SpotifyControlScreen()),
-                ),
-              ),
-              _buildServiceCard(
-                context,
-                'Discover Music',
-                Icons.explore,
-                Colors.red[700]!,
-                'Find new music based on your taste',
-                () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Music discovery coming soon!')),
-                  );
-                },
-              ),
-              _buildServiceCard(
-                context,
-                'Statistics',
-                Icons.analytics,
-                Colors.indigo[700]!,
-                'View your music listening stats',
-                () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Statistics coming soon!')),
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildRecentActivity(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Recent Activity',
-          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 16),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              children: [
-                Icon(
-                  Icons.timeline,
-                  size: 48,
-                  color: Colors.grey[400],
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  'No recent activity yet',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Start connecting with buds and using services to see activity here',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey[600],
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+              MaterialPageRoute(builder: (context) => const SpotifyControlScreen()),
             ),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildQuickActionCard(
-    BuildContext context,
-    String title,
-    IconData icon,
-    Color color,
-    VoidCallback onTap,
-  ) {
-    return Card(
-      elevation: 2,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
-                  icon,
-                  size: 28,
-                  color: color,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+          _buildServiceCard(
+            'Discover Music',
+            Icons.explore,
+            Colors.red[700]!,
+            'Find new music based on your taste',
+            () => _showComingSoon('Music discovery'),
           ),
-        ),
+          _buildServiceCard(
+            'Statistics',
+            Icons.analytics,
+            Colors.indigo[700]!,
+            'View your music listening stats',
+            () => _showComingSoon('Statistics'),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildServiceCard(
-    BuildContext context,
     String title,
     IconData icon,
     Color color,
@@ -376,54 +349,151 @@ class _HomePageState extends State<HomePage> {
     return Container(
       width: 200,
       margin: const EdgeInsets.only(right: 12),
-      child: Card(
-        elevation: 2,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: color.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    icon,
-                    size: 24,
-                    color: color,
-                  ),
+      child: ModernCard(
+        variant: ModernCardVariant.elevated,
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        title,
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                child: Icon(icon, size: 24, color: color),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      title,
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.w600,
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        description,
-                        style: Theme.of(context).textTheme.bodySmall,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      description,
+                      style: Theme.of(context).textTheme.bodySmall,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
+
+  Widget _buildRecentActivity() {
+    // Using EmptyState component
+    return EmptyState(
+      icon: Icons.timeline,
+      title: 'No recent activity yet',
+      message: 'Start connecting with buds and using services to see activity here',
+      actionText: 'Explore Services',
+      actionCallback: () => Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ConnectServicesScreen()),
+      ),
+    );
+  }
+
+  Widget _buildSidebar() {
+    return ModernCard(
+      variant: ModernCardVariant.outlined,
+      margin: const EdgeInsets.all(16),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Quick Stats',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            _buildStatItem('Connected Services', '3'),
+            _buildStatItem('Total Buds', '12'),
+            _buildStatItem('Messages', '5'),
+            const SizedBox(height: 24),
+            ModernButton(
+              text: 'View All Stats',
+              variant: ModernButtonVariant.outline,
+              onPressed: () => _showComingSoon('Statistics'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatItem(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showComingSoon(String feature) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$feature coming soon!'),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  @override
+  VoidCallback? get retryLoading => _initializeData;
+
+  @override
+  VoidCallback? get onLoadingStarted => () {
+    if (mounted) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    }
+  };
+
+  @override
+  VoidCallback? get onLoadingCompleted => () {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Dashboard updated!'),
+          duration: Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  };
+}
+
+class _QuickAction {
+  final String title;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  _QuickAction(this.title, this.icon, this.color, this.onTap);
 }

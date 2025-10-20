@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/design_system.dart';
-import '../../../widgets/common/index.dart';
+// MIGRATED: import '../../../widgets/common/index.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class TrackCard extends StatelessWidget {
   final String title;
@@ -34,7 +35,7 @@ class TrackCard extends StatelessWidget {
             height: 60,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
-              color: accentColor.withOpacity(0.1),
+              color: accentColor.withValues(alpha: 0.1),
             ),
             child: (imageUrl?.isNotEmpty ?? false)
                 ? ClipRRect(

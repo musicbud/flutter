@@ -14,11 +14,17 @@
       {
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
+            # Flutter and Dart
+            flutter
+            
             # Core build tools
             pkg-config
             cmake
             ninja
             clang
+            gcc
+            stdenv.cc
+            stdenv.cc.libc
             
             # GTK and desktop development
             gtk3
@@ -27,6 +33,7 @@
             cairo
             pango
             atk
+            at-spi2-atk
             
             # Additional Linux desktop dependencies
             xorg.libX11
@@ -39,6 +46,16 @@
             libGL
             libxkbcommon
             wayland
+            
+            # Libraries
+            zlib
+            freetype
+            fontconfig
+            libepoxy
+            libsecret
+            harfbuzz
+            glibc
+            glibc.dev
             
             # Development utilities
             git
@@ -71,7 +88,9 @@
           
           # GTK and GLib paths
           PKG_CONFIG_PATH = "${pkgs.gtk3.dev}/lib/pkgconfig:${pkgs.glib.dev}/lib/pkgconfig:${pkgs.libxkbcommon.dev}/lib/pkgconfig";
-          LD_LIBRARY_PATH = "${pkgs.gtk3}/lib:${pkgs.glib}/lib:${pkgs.libGL}/lib:${pkgs.libxkbcommon}/lib";
+          LD_LIBRARY_PATH = "${pkgs.gtk3}/lib:${pkgs.glib}/lib:${pkgs.libGL}/lib:${pkgs.libxkbcommon}/lib:${pkgs.zlib}/lib:${pkgs.freetype}/lib:${pkgs.fontconfig.lib}/lib:${pkgs.cairo}/lib:${pkgs.pango}/lib";
+          C_INCLUDE_PATH = "${pkgs.glibc.dev}/include";
+          CPLUS_INCLUDE_PATH = "${pkgs.glibc.dev}/include";
         };
       });
 }

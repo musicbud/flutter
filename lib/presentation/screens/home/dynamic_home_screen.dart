@@ -14,14 +14,14 @@ import '../../../blocs/discover/discover_bloc.dart';
 import '../../../blocs/discover/discover_event.dart';
 import '../../../blocs/discover/discover_state.dart';
 import '../../../blocs/auth/auth_bloc.dart';
-import '../../widgets/common/error_widget.dart' as error_widgets;
+// MIGRATED: import '../../widgets/common/error_widget.dart' as error_widgets;
 
 // Modern Components
 import '../../../core/theme/design_system.dart';
 import '../../../core/navigation/app_routes.dart';
-import '../../widgets/common/modern_card.dart';
-import '../../widgets/common/section_header.dart';
-import '../../widgets/common/loading_indicator.dart';
+
+// Enhanced UI Library - All components in one import
+import '../../widgets/enhanced/enhanced_widgets.dart';
 /// Dynamic home screen that adapts based on configuration
 class DynamicHomeScreen extends StatefulWidget {
   const DynamicHomeScreen({super.key});
@@ -160,7 +160,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.2),
+                color: Colors.orange.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.orange, width: 1),
               ),
@@ -250,7 +250,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
           Text(
             'Discover new music and connect with friends',
             style: DesignSystem.bodyMedium.copyWith(
-              color: DesignSystem.onPrimary.withOpacity(0.9),
+              color: DesignSystem.onPrimary.withValues(alpha: 0.9),
             ),
           ),
         ],
@@ -269,7 +269,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
           const SizedBox(height: DesignSystem.spacingLG),
           const SectionHeader(
             title: 'Quick Actions',
-            actionText: 'More',
+            actionLabel: 'More',
           ),
           const SizedBox(height: DesignSystem.spacingMD),
           GridView.builder(
@@ -299,7 +299,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
         borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
         boxShadow: DesignSystem.shadowSmall,
         border: Border.all(
-          color: DesignSystem.border.withOpacity(0.1),
+          color: DesignSystem.border.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -316,7 +316,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
                 Container(
                   padding: const EdgeInsets.all(DesignSystem.spacingSM),
                   decoration: BoxDecoration(
-                    color: DesignSystem.primary.withOpacity(0.1),
+                    color: DesignSystem.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
                   ),
                   child: Icon(
@@ -357,8 +357,8 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
           const SizedBox(height: DesignSystem.spacingXL),
           SectionHeader(
             title: 'Featured Content',
-            actionText: 'See All',
-            onActionPressed: () => _navigation.navigateTo(AppRoutes.discover),
+            actionLabel: 'See All',
+            onActionTap: () => _navigation.navigateTo(AppRoutes.discover),
           ),
           const SizedBox(height: DesignSystem.spacingMD),
           // Featured content with BLoC integration
@@ -415,7 +415,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
                             Expanded(
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: DesignSystem.primary.withOpacity(0.1),
+                                  color: DesignSystem.primary.withValues(alpha: 0.1),
                                   borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(12),
                                   ),
@@ -573,7 +573,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
                 
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+                    backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                     child: Icon(
                       iconData,
                       color: Theme.of(context).primaryColor,
@@ -727,7 +727,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
                   margin: EdgeInsets.only(bottom: _theme.getDynamicSpacing(8)),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+                      backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                       backgroundImage: recommendation['imageUrl'] != null 
                           ? NetworkImage(recommendation['imageUrl']) 
                           : null,

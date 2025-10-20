@@ -222,7 +222,7 @@ class _AppInputFieldState extends State<AppInputField> {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       borderSide: BorderSide(
-        color: DesignSystem.primary.withOpacity(0.3),
+        color: DesignSystem.primary.withValues(alpha: 0.3),
       ),
     );
   }
@@ -251,7 +251,7 @@ class _AppInputFieldState extends State<AppInputField> {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       borderSide: BorderSide(
-        color: DesignSystem.onSurfaceVariant.withOpacity(0.3),
+        color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.3),
       ),
     );
   }
@@ -260,7 +260,7 @@ class _AppInputFieldState extends State<AppInputField> {
     return OutlineInputBorder(
       borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       borderSide: BorderSide(
-        color: DesignSystem.onSurfaceVariant.withOpacity(0.2),
+        color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
       ),
     );
   }
@@ -270,11 +270,11 @@ class _AppInputFieldState extends State<AppInputField> {
       case AppInputVariant.primary:
         return DesignSystem.onPrimary;
       case AppInputVariant.secondary:
-        return DesignSystem.onSurfaceVariant.withOpacity(0.1);
+        return DesignSystem.onSurfaceVariant.withValues(alpha: 0.1);
       case AppInputVariant.outline:
         return DesignSystem.onPrimary;
       case AppInputVariant.filled:
-        return DesignSystem.onSurfaceVariant.withOpacity(0.1);
+        return DesignSystem.onSurfaceVariant.withValues(alpha: 0.1);
       case AppInputVariant.transparent:
         return DesignSystem.transparent;
       case AppInputVariant.search:

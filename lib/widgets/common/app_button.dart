@@ -142,7 +142,7 @@ class AppButton extends StatelessWidget {
       ),
       padding: padding,
       elevation: isOutlined ? 0 : (variant == AppButtonVariant.primary ? 4 : 0),
-      shadowColor: isOutlined ? null : DesignSystem.primary.withOpacity(0.3),
+      shadowColor: isOutlined ? null : DesignSystem.primary.withValues(alpha: 0.3),
     );
   }
 

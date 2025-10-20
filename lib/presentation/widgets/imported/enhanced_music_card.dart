@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../../core/design_system/design_system.dart';
+import '../../../../core/theme/design_system.dart';
 
 /// Enhanced music card widget using MusicBud design system
 class EnhancedMusicCard extends StatelessWidget {
@@ -27,26 +27,29 @@ class EnhancedMusicCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(
-        horizontal: MusicBudSpacing.md,
-        vertical: MusicBudSpacing.xs,
+        horizontal: DesignSystem.spacingMD,
+        vertical: DesignSystem.spacingXS,
       ),
-      decoration: MusicBudComponents.cardDecoration.copyWith(
+      decoration: BoxDecoration(
+        color: DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         border: isPlaying
-            ? Border.all(color: MusicBudColors.primaryRed, width: 2)
+            ? Border.all(color: DesignSystem.pinkAccent, width: 2)
             : null,
+        boxShadow: DesignSystem.shadowCard,
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(MusicBudSpacing.radiusLg),
+          borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
           child: Padding(
-            padding: const EdgeInsets.all(MusicBudSpacing.sm),
+            padding: const EdgeInsets.all(DesignSystem.spacingSM),
             child: Row(
               children: [
                 // Album/Track artwork
                 _buildArtwork(),
-                const SizedBox(width: MusicBudSpacing.md),
+                const SizedBox(width: DesignSystem.spacingMD),
                 
                 // Title and subtitle
                 Expanded(
@@ -56,18 +59,19 @@ class EnhancedMusicCard extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: MusicBudTypography.bodyLarge.copyWith(
+                        style: DesignSystem.bodyLarge.copyWith(
                           fontWeight: FontWeight.w600,
+                          color: DesignSystem.onSurface,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       if (subtitle != null) ...[ 
-                        const SizedBox(height: MusicBudSpacing.xs),
+                        const SizedBox(height: DesignSystem.spacingXS),
                         Text(
                           subtitle!,
-                          style: MusicBudTypography.bodySmall.copyWith(
-                            color: MusicBudColors.textSecondary,
+                          style: DesignSystem.bodySmall.copyWith(
+                            color: DesignSystem.onSurfaceVariant,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -95,11 +99,11 @@ class EnhancedMusicCard extends StatelessWidget {
       width: 56,
       height: 56,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(MusicBudSpacing.radiusMd),
-        color: MusicBudColors.backgroundSecondary,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
+        color: DesignSystem.surfaceContainerHigh,
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(MusicBudSpacing.radiusMd),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: imageUrl != null && imageUrl!.isNotEmpty
             ? CachedNetworkImage(
                 imageUrl: imageUrl!,
@@ -114,10 +118,10 @@ class EnhancedMusicCard extends StatelessWidget {
 
   Widget _buildPlaceholder() {
     return Container(
-      color: MusicBudColors.backgroundSecondary,
+      color: DesignSystem.surfaceContainerHigh,
       child: const Icon(
         Icons.music_note,
-        color: MusicBudColors.textSecondary,
+        color: DesignSystem.onSurfaceVariant,
         size: 24,
       ),
     );
@@ -129,15 +133,15 @@ class EnhancedMusicCard extends StatelessWidget {
       height: 40,
       decoration: BoxDecoration(
         color: isPlaying
-            ? MusicBudColors.primaryRed
-            : MusicBudColors.primaryRed.withOpacity(0.1),
+            ? DesignSystem.pinkAccent
+            : DesignSystem.pinkAccent.withValues(alpha: 0.1),
         shape: BoxShape.circle,
       ),
       child: Icon(
         isPlaying ? Icons.pause : Icons.play_arrow,
         color: isPlaying
-            ? MusicBudColors.textOnPrimary
-            : MusicBudColors.primaryRed,
+            ? DesignSystem.onPrimary
+            : DesignSystem.pinkAccent,
         size: 20,
       ),
     );
@@ -164,16 +168,19 @@ class EnhancedMusicCardGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: MusicBudComponents.cardDecoration.copyWith(
+      decoration: BoxDecoration(
+        color: DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         border: isPlaying
-            ? Border.all(color: MusicBudColors.primaryRed, width: 2)
+            ? Border.all(color: DesignSystem.pinkAccent, width: 2)
             : null,
+        boxShadow: DesignSystem.shadowCard,
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(MusicBudSpacing.radiusLg),
+          borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -183,15 +190,15 @@ class EnhancedMusicCardGrid extends StatelessWidget {
                   width: double.infinity,
                   decoration: const BoxDecoration(
                     borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(MusicBudSpacing.radiusLg),
-                      topRight: Radius.circular(MusicBudSpacing.radiusLg),
+                      topLeft: Radius.circular(DesignSystem.radiusMD),
+                      topRight: Radius.circular(DesignSystem.radiusMD),
                     ),
-                    color: MusicBudColors.backgroundSecondary,
+                    color: DesignSystem.surfaceContainerHigh,
                   ),
                   child: ClipRRect(
                     borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(MusicBudSpacing.radiusLg),
-                      topRight: Radius.circular(MusicBudSpacing.radiusLg),
+                      topLeft: Radius.circular(DesignSystem.radiusMD),
+                      topRight: Radius.circular(DesignSystem.radiusMD),
                     ),
                     child: imageUrl != null && imageUrl!.isNotEmpty
                         ? CachedNetworkImage(
@@ -208,25 +215,26 @@ class EnhancedMusicCardGrid extends StatelessWidget {
               
               // Title and subtitle
               Padding(
-                padding: const EdgeInsets.all(MusicBudSpacing.sm),
+                padding: const EdgeInsets.all(DesignSystem.spacingSM),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       title,
-                      style: MusicBudTypography.bodyMedium.copyWith(
+                      style: DesignSystem.bodyMedium.copyWith(
                         fontWeight: FontWeight.w600,
+                        color: DesignSystem.onSurface,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     if (subtitle != null) ...[
-                      const SizedBox(height: MusicBudSpacing.xs),
+                      const SizedBox(height: DesignSystem.spacingXS),
                       Text(
                         subtitle!,
-                        style: MusicBudTypography.bodySmall.copyWith(
-                          color: MusicBudColors.textSecondary,
+                        style: DesignSystem.bodySmall.copyWith(
+                          color: DesignSystem.onSurfaceVariant,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -244,11 +252,11 @@ class EnhancedMusicCardGrid extends StatelessWidget {
 
   Widget _buildPlaceholder() {
     return Container(
-      color: MusicBudColors.backgroundSecondary,
+      color: DesignSystem.surfaceContainerHigh,
       child: const Center(
         child: Icon(
           Icons.music_note,
-          color: MusicBudColors.textSecondary,
+          color: DesignSystem.onSurfaceVariant,
           size: 48,
         ),
       ),
@@ -277,18 +285,18 @@ class CompactMusicCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(
-        horizontal: MusicBudSpacing.md,
-        vertical: MusicBudSpacing.xs,
+        horizontal: DesignSystem.spacingMD,
+        vertical: DesignSystem.spacingXS,
       ),
       leading: Container(
         width: 48,
         height: 48,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(MusicBudSpacing.radiusSm),
-          color: MusicBudColors.backgroundSecondary,
+          borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
+          color: DesignSystem.surfaceContainerHigh,
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(MusicBudSpacing.radiusSm),
+          borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
           child: imageUrl != null && imageUrl!.isNotEmpty
               ? CachedNetworkImage(
                   imageUrl: imageUrl!,
@@ -301,8 +309,9 @@ class CompactMusicCard extends StatelessWidget {
       ),
       title: Text(
         title,
-        style: MusicBudTypography.bodyMedium.copyWith(
+        style: DesignSystem.bodyMedium.copyWith(
           fontWeight: FontWeight.w600,
+          color: DesignSystem.onSurface,
         ),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
@@ -310,8 +319,8 @@ class CompactMusicCard extends StatelessWidget {
       subtitle: subtitle != null
           ? Text(
               subtitle!,
-              style: MusicBudTypography.bodySmall.copyWith(
-                color: MusicBudColors.textSecondary,
+              style: DesignSystem.bodySmall.copyWith(
+                color: DesignSystem.onSurfaceVariant,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
@@ -324,10 +333,10 @@ class CompactMusicCard extends StatelessWidget {
 
   Widget _buildPlaceholder() {
     return Container(
-      color: MusicBudColors.backgroundSecondary,
+      color: DesignSystem.surfaceContainerHigh,
       child: const Icon(
         Icons.music_note,
-        color: MusicBudColors.textSecondary,
+        color: DesignSystem.onSurfaceVariant,
         size: 20,
       ),
     );

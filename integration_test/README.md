@@ -70,7 +70,39 @@ Tests all major app features:
 
 **Test Count:** 19 tests
 
-### 4. **Existing Integration Tests**
+### 4. **Error Recovery and Resilience** (`error_recovery_test.dart`)
+
+Tests app behavior under error conditions:
+- ✅ Network timeout handling
+- ✅ API failure with fallback
+- ✅ Invalid authentication token recovery
+- ✅ Corrupted data handling
+- ✅ Session expiration
+- ✅ Rapid screen transitions
+- ✅ Back navigation from deep state
+- ✅ Empty state transitions
+- ✅ Concurrent operations
+- ✅ State preservation after errors
+
+**Test Count:** 10 tests
+
+### 5. **Offline Mode** (`offline_mode_test.dart`)
+
+Tests offline functionality:
+- ✅ Offline mode toggle
+- ✅ Cached library access
+- ✅ Download progress indicators
+- ✅ Downloaded content management
+- ✅ Sync after reconnection
+- ✅ Offline indicator display
+- ✅ Action queuing when offline
+- ✅ Offline playlist access
+- ✅ Partial content availability
+- ✅ Storage usage display
+
+**Test Count:** 10 tests
+
+### 6. **Existing Integration Tests**
 
 - `api_data_flow_test.dart` - API to UI data flow
 - `bloc_integration_test.dart` - BLoC state management
@@ -126,7 +158,9 @@ flutter test integration_test/ --device-id=<simulator_id>
 | Settings | comprehensive_app_flow_test.dart | 4 | ✅ Complete |
 | Stories/Feed | comprehensive_app_flow_test.dart | 3 | ✅ Complete |
 | App-Wide Features | comprehensive_app_flow_test.dart | 5 | ✅ Complete |
-| **Total** | | **41+** | ✅ |
+|| Error Recovery | error_recovery_test.dart | 10 | ✅ Complete |
+|| Offline Mode | offline_mode_test.dart | 10 | ✅ Complete |
+|| **Total** | | **61+** | ✅ |
 
 ---
 
@@ -139,7 +173,23 @@ These tests run automatically in GitHub Actions on:
 
 **CI Job:** `integration-tests` (runs on macOS with iOS Simulator)
 
-See `.github/workflows/flutter-tests.yml` for configuration.
+### Workflow Structure
+
+The workflow runs tests in the following sequence:
+1. **Comprehensive app flow tests** - Main navigation and features
+2. **Authentication flow tests** - Login, register, validation
+3. **Onboarding flow tests** - First-time user experience
+4. **Chat flow tests** - Messaging functionality
+5. **API data flow tests** - Backend integration
+6. **Screen integration tests** - All screen-specific tests
+7. **Navigation tests** - Deep linking and routing
+8. **Bloc integration tests** - State management
+9. **Error recovery tests** - Resilience and error handling
+10. **Offline mode tests** - Offline functionality and sync
+
+Each test category runs independently with proper error handling and continues even if individual tests fail, allowing the full test suite to complete.
+
+See `.github/workflows/flutter-tests.yml` for full configuration.
 
 ---
 

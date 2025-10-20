@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Network
 import 'data/network/dio_client.dart';
@@ -40,6 +41,7 @@ import 'data/data_sources/remote/common_items_remote_data_source.dart';
 import 'data/data_sources/remote/spotify_remote_data_source.dart';
 import 'data/data_sources/remote/spotify_remote_data_source_impl.dart';
 import 'presentation/screens/discover/discover_content_manager.dart';
+import 'data/data_sources/local/tracking_local_data_source.dart';
 
 // Repositories
 import 'data/repositories/auth_repository_impl.dart';
@@ -139,6 +141,10 @@ Future<void> _registerExternalDependencies() async {
   // Token Provider
   sl.registerLazySingleton<TokenProvider>(() => TokenProvider());
   await sl<TokenProvider>().initialize();
+
+  // SharedPreferences
+  final sharedPreferences = await SharedPreferences.getInstance();
+  sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
 
   // Network Info
   sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(
@@ -290,6 +296,11 @@ Future<void> _registerDataSources() async {
   sl.registerLazySingleton<SpotifyRemoteDataSource>(
     () => SpotifyRemoteDataSourceImpl(dioClient: sl<DioClient>()),
   );
+
+  // Tracking Local Data Source
+  sl.registerLazySingleton<TrackingLocalDataSource>(
+    () => TrackingLocalDataSourceImpl(sharedPreferences: sl<SharedPreferences>()),
+  );
 }
 
 /// Registers repository dependencies
@@ -306,6 +317,7 @@ Future<void> _registerRepositories() async {
   sl.registerLazySingleton<ContentRepository>(
     () => ContentRepositoryImpl(
       remoteDataSource: sl<ContentRemoteDataSource>(),
+      trackingLocalDataSource: sl<TrackingLocalDataSource>(),
     ),
   );
 

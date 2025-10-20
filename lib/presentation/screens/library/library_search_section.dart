@@ -4,7 +4,8 @@ import '../../../blocs/library/library_bloc.dart';
 import '../../../blocs/library/library_event.dart';
 import '../../../blocs/library/library_state.dart';
 import '../../../core/theme/design_system.dart';
-import '../../../widgets/common/index.dart';
+// MIGRATED: import '../../../widgets/common/index.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class LibrarySearchSection extends StatefulWidget {
   final String selectedTab;
@@ -54,7 +55,7 @@ class _LibrarySearchSectionState extends State<LibrarySearchSection> {
                   color: DesignSystem.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: DesignSystem.onSurfaceVariant.withOpacity(0.3),
+                    color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.3),
                   ),
                 ),
                 child: IconButton(
@@ -71,7 +72,7 @@ class _LibrarySearchSectionState extends State<LibrarySearchSection> {
                     color: DesignSystem.surface,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: DesignSystem.onSurfaceVariant.withOpacity(0.3),
+                      color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.3),
                     ),
                   ),
                   child: IconButton(
@@ -148,10 +149,10 @@ class _LibrarySearchSectionState extends State<LibrarySearchSection> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: DesignSystem.surfaceContainer.withOpacity(0.3),
+        color: DesignSystem.surfaceContainer.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: DesignSystem.onSurfaceVariant.withOpacity(0.2),
+          color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
         ),
       ),
       child: Column(
@@ -230,7 +231,7 @@ class _LibrarySearchSectionState extends State<LibrarySearchSection> {
           color: DesignSystem.surface,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: DesignSystem.onSurfaceVariant.withOpacity(0.3),
+            color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.3),
           ),
         ),
         child: Column(
@@ -270,7 +271,7 @@ class _LibrarySearchSectionState extends State<LibrarySearchSection> {
           color: DesignSystem.surface,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: DesignSystem.secondary.withOpacity(0.3),
+            color: DesignSystem.secondary.withValues(alpha: 0.3),
           ),
         ),
         child: Column(
@@ -300,10 +301,10 @@ class _LibrarySearchSectionState extends State<LibrarySearchSection> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: DesignSystem.primary.withOpacity(0.1),
+        color: DesignSystem.primary.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: DesignSystem.primary.withOpacity(0.3),
+          color: DesignSystem.primary.withValues(alpha: 0.3),
         ),
       ),
       child: Row(

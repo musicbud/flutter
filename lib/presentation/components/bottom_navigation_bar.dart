@@ -22,7 +22,7 @@ class MusicBudBottomNavigationBar extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: MusicBudColors.backgroundPrimary.withOpacity(0.1),
+            color: MusicBudColors.backgroundPrimary.withValues(alpha: 0.1),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -91,7 +91,7 @@ class MusicBudBottomNavigationBar extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: isSelected 
-              ? MusicBudColors.primaryRed.withOpacity(0.15)
+              ? MusicBudColors.primaryRed.withValues(alpha: 0.15)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(
             MusicBudSpacing.radiusLg,

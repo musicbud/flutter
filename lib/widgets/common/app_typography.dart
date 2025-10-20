@@ -458,7 +458,7 @@ class AppTypography extends StatelessWidget {
             color: DesignSystem.surfaceContainer,
             borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             border: Border.all(
-              color: DesignSystem.onSurfaceVariant.withOpacity(0.2),
+              color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
             ),
           ),
           child: Column(
@@ -543,7 +543,7 @@ class AppTypography extends StatelessWidget {
               color: color,
               borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
               border: Border.all(
-                color: DesignSystem.onSurfaceVariant.withOpacity(0.3),
+                color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.3),
               ),
             ),
           ),

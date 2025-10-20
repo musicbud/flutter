@@ -74,7 +74,7 @@ class MainNavigationDrawer extends StatelessWidget {
             margin: const EdgeInsets.all(16.0),
             padding: const EdgeInsets.all(12.0),
             decoration: BoxDecoration(
-              color: DesignSystem.primary.withOpacity(0.1),
+              color: DesignSystem.primary.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color: DesignSystem.primary,

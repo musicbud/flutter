@@ -84,7 +84,7 @@ class AppTheme {
   // Shadows
   List<BoxShadow> get shadowCard => [
     BoxShadow(
-      color: Colors.black.withOpacity(0.3),
+      color: Colors.black.withValues(alpha: 0.3),
       blurRadius: 8,
       offset: const Offset(0, 4),
     ),
@@ -92,7 +92,7 @@ class AppTheme {
 
   List<BoxShadow> get shadowMedium => [
     BoxShadow(
-      color: Colors.black.withOpacity(0.2),
+      color: Colors.black.withValues(alpha: 0.2),
       blurRadius: 6,
       offset: const Offset(0, 3),
     ),
@@ -100,7 +100,7 @@ class AppTheme {
 
   List<BoxShadow> get shadowSmall => [
     BoxShadow(
-      color: Colors.black.withOpacity(0.1),
+      color: Colors.black.withValues(alpha: 0.1),
       blurRadius: 4,
       offset: const Offset(0, 2),
     ),
@@ -185,7 +185,7 @@ class AppTheme {
           ),
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: surfaceColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -264,7 +264,7 @@ class AppTheme {
           ),
         ),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -322,7 +322,7 @@ class AppShadows {
 
   List<BoxShadow> get shadowCard => [
     BoxShadow(
-      color: Colors.black.withOpacity(0.3),
+      color: Colors.black.withValues(alpha: 0.3),
       blurRadius: 8,
       offset: const Offset(0, 4),
     ),
@@ -330,7 +330,7 @@ class AppShadows {
 
   List<BoxShadow> get shadowMedium => [
     BoxShadow(
-      color: Colors.black.withOpacity(0.2),
+      color: Colors.black.withValues(alpha: 0.2),
       blurRadius: 6,
       offset: const Offset(0, 3),
     ),
@@ -338,7 +338,7 @@ class AppShadows {
 
   List<BoxShadow> get shadowSmall => [
     BoxShadow(
-      color: Colors.black.withOpacity(0.1),
+      color: Colors.black.withValues(alpha: 0.1),
       blurRadius: 4,
       offset: const Offset(0, 2),
     ),

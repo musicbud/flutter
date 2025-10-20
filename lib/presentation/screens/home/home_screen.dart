@@ -6,8 +6,10 @@ import '../../../blocs/main/main_screen_state.dart';
 import '../../../blocs/user/user_bloc.dart';
 import '../../../blocs/user/user_event.dart';
 import '../../../core/theme/design_system.dart';
-import '../../../presentation/widgets/common/modern_input_field.dart';
-import '../../../presentation/widgets/navigation/main_navigation_scaffold.dart';
+import '../../../presentation/widgets/navigation/main_navigation_scaffold.dart' as nav;
+
+// Enhanced UI Library
+import '../../widgets/enhanced/enhanced_widgets.dart';
 import '../../../presentation/navigation/main_navigation.dart';
 import 'home_header_widget.dart';
 import 'home_quick_actions.dart';
@@ -51,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return MainNavigationScaffold(
+    return nav.MainNavigationScaffold(
       navigationController: _navigationController,
       body: BlocBuilder<MainScreenBloc, MainScreenState>(
         builder: (context, state) {

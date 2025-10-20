@@ -203,7 +203,7 @@ class ThemeHelper {
 
   /// Create a color with opacity
   static Color withOpacity(Color color, double opacity) {
-    return color.withOpacity(opacity);
+    return color.withValues(alpha: opacity);
   }
 
   /// Lighten a color by a percentage

@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/auth/auth_bloc.dart';
 import '../../../core/theme/design_system.dart';
-import '../../../presentation/widgets/common/modern_input_field.dart';
-import '../../../presentation/widgets/common/modern_button.dart';
+
+// Enhanced UI Library
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});

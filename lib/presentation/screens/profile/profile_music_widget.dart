@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../widgets/common/section_header.dart';
+// MIGRATED: import '../../widgets/common/section_header.dart';
 import 'components/music_category_card.dart';
 import '../../../core/theme/design_system.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class ProfileMusicWidget extends StatelessWidget {
   const ProfileMusicWidget({super.key});

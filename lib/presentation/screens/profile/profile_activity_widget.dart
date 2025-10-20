@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../widgets/common/section_header.dart';
+// MIGRATED: import '../../widgets/common/section_header.dart';
 import 'components/activity_card.dart';
 import '../../../core/theme/design_system.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class ProfileActivityWidget extends StatelessWidget {
   const ProfileActivityWidget({super.key});

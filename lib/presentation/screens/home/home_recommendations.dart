@@ -5,8 +5,9 @@ import '../../../blocs/user/user_state.dart';
 import '../../../blocs/user/user_event.dart';
 import '../../../core/theme/design_system.dart';
 import '../../widgets/home/recommendations_list.dart';
-import '../../widgets/common/error_state_widget.dart';
-import '../../../widgets/common/empty_state.dart';
+// MIGRATED: import '../../widgets/common/error_state_widget.dart';
+// MIGRATED: import '../../../widgets/common/empty_state.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class HomeRecommendations extends StatelessWidget {
   const HomeRecommendations({super.key});
@@ -99,7 +100,7 @@ class HomeRecommendations extends StatelessWidget {
                 width: 120,
                 margin: const EdgeInsets.only(right: DesignSystem.spacingMD),
                 decoration: BoxDecoration(
-                  color: DesignSystem.surface.withOpacity(0.3),
+                  color: DesignSystem.surface.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
                 ),
                 child: const Center(
@@ -114,9 +115,8 @@ class HomeRecommendations extends StatelessWidget {
   }
 
   Widget _buildErrorState(String message, VoidCallback onRetry) {
-    return ErrorStateWidget(
-      title: 'Failed to load recommendations',
-      message: message,
+    return ErrorCard(
+      error: message,
       onRetry: onRetry,
     );
   }

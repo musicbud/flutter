@@ -37,7 +37,7 @@ class LoadingWidget extends StatelessWidget {
             Text(
               message!,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),
@@ -161,7 +161,7 @@ class LoadingOverlay extends StatelessWidget {
         if (isLoading)
           Container(
             color: overlayColor ??
-                Theme.of(context).colorScheme.surface.withOpacity(0.8),
+                Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
             child: LoadingWidget(
               message: loadingMessage,
               size: 50.0,
@@ -198,7 +198,7 @@ class SkeletonCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(MusicBudSpacing.radiusMd),
         boxShadow: [
           BoxShadow(
-            color: theme.colorScheme.shadow.withOpacity(0.1),
+            color: theme.colorScheme.shadow.withValues(alpha: 0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),

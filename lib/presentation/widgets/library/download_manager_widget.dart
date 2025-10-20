@@ -91,7 +91,7 @@ class _DownloadManagerWidgetState extends State<DownloadManagerWidget> {
                   SizedBox(height: _theme.getDynamicSpacing(8)),
                   LinearProgressIndicator(
                     value: progress,
-                    backgroundColor: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                    backgroundColor: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
                   ),
                 ],
               ],
@@ -155,7 +155,7 @@ class _DownloadManagerWidgetState extends State<DownloadManagerWidget> {
         children: [
           CircularProgressIndicator(
             value: isCompleted ? 1.0 : progress,
-            backgroundColor: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+            backgroundColor: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
             strokeWidth: 3,
           ),
           Icon(
@@ -254,7 +254,7 @@ class _DownloadManagerWidgetState extends State<DownloadManagerWidget> {
               children: [
                 CircularProgressIndicator(
                   value: state.progress,
-                  backgroundColor: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                  backgroundColor: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
                   strokeWidth: 3,
                 ),
                 Icon(
@@ -277,7 +277,7 @@ class _DownloadManagerWidgetState extends State<DownloadManagerWidget> {
                   ),
                   LinearProgressIndicator(
                     value: state.progress,
-                    backgroundColor: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                    backgroundColor: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
                   ),
                   SizedBox(height: _theme.getDynamicSpacing(4)),
                   Text(
@@ -335,7 +335,7 @@ class _DownloadManagerWidgetState extends State<DownloadManagerWidget> {
               SizedBox(height: _theme.getDynamicSpacing(8)),
               LinearProgressIndicator(
                 value: state.totalItems! > 0 ? state.itemsSynced! / state.totalItems! : 0.0,
-                backgroundColor: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+                backgroundColor: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
               ),
               SizedBox(height: _theme.getDynamicSpacing(4)),
               Text(

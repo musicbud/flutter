@@ -3,8 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../blocs/user/profile/profile_bloc.dart';
 import '../../../blocs/user/profile/profile_event.dart';
 import '../../../blocs/user/profile/profile_state.dart';
-import '../../../core/theme/design_system.dart';
-import '../../../widgets/common/index.dart';
+import '../../widgets/imported/index.dart';
 import '../../../presentation/navigation/main_navigation.dart';
 import '../../../presentation/navigation/navigation_drawer.dart';
 import 'profile_header_widget.dart';
@@ -22,49 +21,60 @@ class ProfileScreen extends StatefulWidget {
   State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+class _ProfileScreenState extends State<ProfileScreen>
+    with LoadingStateMixin, ErrorStateMixin, TickerProviderStateMixin {
+  
   late final MainNavigationController _navigationController;
+  late final TabController _tabController;
   int _selectedIndex = 0;
-
 
   @override
   void initState() {
     super.initState();
     _navigationController = MainNavigationController();
-    // Load user profile when page initializes
-    context.read<ProfileBloc>().add(const GetProfile());
+    _tabController = TabController(length: 4, vsync: this);
+    _tabController.addListener(_onTabChanged);
+    _initializeData();
   }
 
   @override
   void dispose() {
     _navigationController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
-  void _onTabChanged(int index) {
+  void _initializeData() {
+    setLoadingState(LoadingState.loading);
+    context.read<ProfileBloc>().add(const GetProfile());
+  }
+
+  void _onTabChanged() {
+    if (_tabController.indexIsChanging) return;
+    
+    final newIndex = _tabController.index;
+    if (newIndex == _selectedIndex) return;
+
     setState(() {
-      _selectedIndex = index;
+      _selectedIndex = newIndex;
     });
+
     // Load data based on tab
-    switch (index) {
+    switch (newIndex) {
       case 0:
         context.read<ProfileBloc>().add(const GetProfile());
         break;
       case 1:
-        // Top items - fetch all top content
         context.read<ProfileBloc>().add(TopTracksRequested());
         context.read<ProfileBloc>().add(TopArtistsRequested());
         context.read<ProfileBloc>().add(TopGenresRequested());
         break;
       case 2:
-        // Liked items
         context.read<ProfileBloc>().add(LikedTracksRequested());
         context.read<ProfileBloc>().add(LikedArtistsRequested());
         context.read<ProfileBloc>().add(LikedGenresRequested());
         break;
       case 3:
-        // Buds - load connected users/friends
         context.read<ProfileBloc>().add(const BudProfileRequested('current_user'));
         break;
     }
@@ -72,72 +82,165 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final designSystemColors = Theme.of(context).designSystemColors!;
-    final designSystemGradients = Theme.of(context).designSystemGradients!;
-
-    return BlocListener<ProfileBloc, ProfileState>(
+    return BlocConsumer<ProfileBloc, ProfileState>(
       listener: (context, state) {
         if (state is ProfileError || state is ProfileFailure) {
           final error = state is ProfileError ? state.error : (state as ProfileFailure).error;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: $error'),
-              backgroundColor: designSystemColors.error,
-            ),
+          setError(
+            error,
+            type: ErrorType.server,
+            retryable: true,
           );
+          setLoadingState(LoadingState.error);
         } else if (state is ProfileUpdated) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Profile updated successfully'),
-              backgroundColor: designSystemColors.success,
-            ),
-          );
+          setLoadingState(LoadingState.loaded);
+          // Show success message
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Profile updated successfully'),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
           // Refresh profile after update
           context.read<ProfileBloc>().add(const GetProfile());
+        } else if (state is ProfileLoaded) {
+          setLoadingState(LoadingState.loaded);
         }
       },
-      child: Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          title: const Text('Profile'),
-          leading: IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {
-              _scaffoldKey.currentState?.openDrawer();
+      builder: (context, state) {
+        return AppScaffold(
+          appBar: AppBar(
+            title: const Text('Profile'),
+            centerTitle: true,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.refresh),
+                onPressed: _initializeData,
+                tooltip: 'Refresh Profile',
+              ),
+            ],
+            bottom: TabBar(
+              controller: _tabController,
+              tabs: const [
+                Tab(icon: Icon(Icons.person), text: 'Profile'),
+                Tab(icon: Icon(Icons.trending_up), text: 'Top'),
+                Tab(icon: Icon(Icons.favorite), text: 'Liked'),
+                Tab(icon: Icon(Icons.people), text: 'Buds'),
+              ],
+            ),
+          ),
+          drawer: MainNavigationDrawer(
+            navigationController: _navigationController,
+          ),
+          body: ResponsiveLayout(
+            builder: (context, breakpoint) {
+              switch (breakpoint) {
+                case ResponsiveBreakpoint.xs:
+                case ResponsiveBreakpoint.sm:
+                  return _buildMobileLayout();
+                case ResponsiveBreakpoint.md:
+                  return _buildTabletLayout();
+                case ResponsiveBreakpoint.lg:
+                case ResponsiveBreakpoint.xl:
+                  return _buildDesktopLayout();
+              }
             },
           ),
-        ),
-        drawer: MainNavigationDrawer(
-          navigationController: _navigationController,
-        ),
-        body: Container(
-          decoration: BoxDecoration(
-            gradient: designSystemGradients.background,
+        );
+      },
+    );
+  }
+
+  Widget _buildMobileLayout() {
+    return Column(
+      children: [
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildProfileTab(),
+              _buildTopTab(),
+              _buildLikedTab(),
+              _buildBudsTab(),
+            ],
           ),
-          child: _buildBody(),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          currentIndex: _selectedIndex,
-          onTap: _onTabChanged,
-          backgroundColor: designSystemColors.surface,
-          selectedItemColor: designSystemColors.primary,
-          unselectedItemColor: designSystemColors.onSurfaceVariant,
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: 'Profile',
+      ],
+    );
+  }
+
+  Widget _buildTabletLayout() {
+    return Row(
+      children: [
+        Expanded(
+          flex: 3,
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildProfileTab(),
+              _buildTopTab(),
+              _buildLikedTab(),
+              _buildBudsTab(),
+            ],
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: _buildSidebar(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopLayout() {
+    return Row(
+      children: [
+        SizedBox(
+          width: 300,
+          child: _buildSidebar(),
+        ),
+        Expanded(
+          child: TabBarView(
+            controller: _tabController,
+            children: [
+              _buildProfileTab(),
+              _buildTopTab(),
+              _buildLikedTab(),
+              _buildBudsTab(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSidebar() {
+    return ModernCard(
+      variant: ModernCardVariant.outlined,
+      margin: const EdgeInsets.all(16),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Quick Stats',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.trending_up),
-              label: 'Top',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.favorite),
-              label: 'Liked',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.people),
-              label: 'Buds',
+            const SizedBox(height: 16),
+            _buildStatItem('Total Plays', '1,234'),
+            _buildStatItem('Favorite Artists', '42'),
+            _buildStatItem('Liked Songs', '156'),
+            _buildStatItem('Connected Buds', '8'),
+            const SizedBox(height: 24),
+            ModernButton(
+              text: 'Edit Profile',
+              variant: ModernButtonVariant.text,
+              onPressed: () => _showComingSoon('Edit Profile'),
             ),
           ],
         ),
@@ -145,101 +248,120 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildBody() {
-    switch (_selectedIndex) {
-      case 0:
-        return _buildProfileTab();
-      case 1:
-        return _buildTopTab();
-      case 2:
-        return _buildLikedTab();
-      case 3:
-        return _buildBudsTab();
-      default:
-        return _buildProfileTab();
-    }
+  Widget _buildStatItem(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label),
+          Text(
+            value,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildProfileTab() {
-    final designSystemSpacing = Theme.of(context).designSystemSpacing!;
-    return BlocBuilder<ProfileBloc, ProfileState>(
-      builder: (context, state) {
-        return RefreshIndicator(
-          onRefresh: () async {
-            context.read<ProfileBloc>().add(const GetProfile());
-          },
-          child: CustomScrollView(
-            slivers: [
-              // Profile Header Section
-              SliverToBoxAdapter(
-                child: ProfileHeaderWidget(
-                  userProfile: state is ProfileLoaded ? state.profile : null,
-                  isLoading: state is ProfileLoading,
-                  hasError: state is ProfileError || state is ProfileFailure,
+    return buildLoadingState(
+      context: context,
+      loadedWidget: RefreshIndicator(
+        onRefresh: () async {
+          _initializeData();
+          await Future.delayed(const Duration(seconds: 1));
+        },
+        child: CustomScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          slivers: [
+            // Profile Header Section
+            SliverToBoxAdapter(
+              child: BlocBuilder<ProfileBloc, ProfileState>(
+                builder: (context, state) {
+                  return ProfileHeaderWidget(
+                    userProfile: state is ProfileLoaded ? state.profile : null,
+                    isLoading: state is ProfileLoading,
+                    hasError: state is ProfileError || state is ProfileFailure,
+                  );
+                },
+              ),
+            ),
+
+            // Profile Sections
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+
+            // My Music Section
+            const SliverToBoxAdapter(
+              child: ProfileMusicWidget(),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+
+            // Recent Activity Section  
+            const SliverToBoxAdapter(
+              child: ProfileActivityWidget(),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+
+            // Settings Section
+            const SliverToBoxAdapter(
+              child: ProfileSettingsWidget(),
+            ),
+
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+
+            // Logout Section
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: ModernButton(
+                  text: 'Logout',
+                  variant: ModernButtonVariant.text,
+                  onPressed: () => _showLogoutDialog(),
+                  icon: Icons.logout,
                 ),
               ),
+            ),
 
-              // Profile Sections
-              if (state is ProfileLoaded) ...[
-                const SliverToBoxAdapter(child: SizedBox(height: 32)),
-
-                  // My Music Section
-                  const SliverToBoxAdapter(
-                    child: ProfileMusicWidget(),
-                  ),
-
-                  const SliverToBoxAdapter(child: SizedBox(height: 32)),
-
-                  // Recent Activity Section
-                  const SliverToBoxAdapter(
-                    child: ProfileActivityWidget(),
-                  ),
-
-                  const SliverToBoxAdapter(child: SizedBox(height: 32)),
-
-                  // Settings Section
-                  const SliverToBoxAdapter(
-                    child: ProfileSettingsWidget(),
-                  ),
-
-                  const SliverToBoxAdapter(child: SizedBox(height: 32)),
-
-                  // Logout Section
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: designSystemSpacing.lg),
-                      child: AppButton.secondary(
-                        text: 'Logout',
-                        onPressed: () {
-                          // Handle logout
-                        },
-                        icon: Icons.logout,
-                        size: AppButtonSize.large,
-                        width: double.infinity,
-                      ),
-                    ),
-                  ),
-
-                  const SliverToBoxAdapter(child: SizedBox(height: 32)),
-              ],
-            ],
+            const SliverToBoxAdapter(child: SizedBox(height: 32)),
+          ],
+        ),
+      ),
+      loadingWidget: const Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          LoadingIndicator(),
+          SizedBox(height: 16),
+          Text(
+            'Loading your profile...',
+            style: TextStyle(fontSize: 16),
           ),
-        );
-      },
+        ],
+      ),
+      errorWidget: buildDefaultErrorWidget(
+        context: context,
+        onRetry: _initializeData,
+      ),
     );
   }
 
   Widget _buildTopTab() {
-    final designSystemSpacing = Theme.of(context).designSystemSpacing!;
-
     return RefreshIndicator(
       onRefresh: () async {
         context.read<ProfileBloc>().add(TopTracksRequested());
         context.read<ProfileBloc>().add(TopArtistsRequested());
         context.read<ProfileBloc>().add(TopGenresRequested());
+        await Future.delayed(const Duration(seconds: 1));
       },
       child: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
+          const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
           // Top Tracks Section
           SliverToBoxAdapter(
             child: BlocBuilder<ProfileBloc, ProfileState>(
@@ -247,21 +369,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 final tracks = state is TopTracksLoaded ? state.tracks : [];
                 final isLoading = state is ProfileLoading;
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: designSystemSpacing.lg),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SectionHeader(title: 'Top Tracks'),
-                      SizedBox(height: designSystemSpacing.md),
-                      _buildTopTracksList(tracks, isLoading),
-                    ],
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ModernCard(
+                    variant: ModernCardVariant.elevated,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SectionHeader(title: 'Top Tracks'),
+                        const SizedBox(height: 16),
+                        _buildTopTracksList(tracks, isLoading),
+                      ],
+                    ),
                   ),
                 );
               },
             ),
           ),
 
-          SliverToBoxAdapter(child: SizedBox(height: designSystemSpacing.xl)),
+          const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
           // Top Artists Section
           SliverToBoxAdapter(
@@ -270,21 +395,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 final artists = state is TopArtistsLoaded ? state.artists : [];
                 final isLoading = state is ProfileLoading;
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: designSystemSpacing.lg),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SectionHeader(title: 'Top Artists'),
-                      SizedBox(height: designSystemSpacing.md),
-                      _buildTopArtistsList(artists, isLoading),
-                    ],
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ModernCard(
+                    variant: ModernCardVariant.elevated,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SectionHeader(title: 'Top Artists'),
+                        const SizedBox(height: 16),
+                        _buildTopArtistsList(artists, isLoading),
+                      ],
+                    ),
                   ),
                 );
               },
             ),
           ),
 
-          SliverToBoxAdapter(child: SizedBox(height: designSystemSpacing.xl)),
+          const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
           // Top Genres Section
           SliverToBoxAdapter(
@@ -293,21 +421,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 final genres = state is TopGenresLoaded ? state.genres : [];
                 final isLoading = state is ProfileLoading;
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: designSystemSpacing.lg),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SectionHeader(title: 'Top Genres'),
-                      SizedBox(height: designSystemSpacing.md),
-                      _buildTopGenresList(genres, isLoading),
-                    ],
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ModernCard(
+                    variant: ModernCardVariant.elevated,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SectionHeader(title: 'Top Genres'),
+                        const SizedBox(height: 16),
+                        _buildTopGenresList(genres, isLoading),
+                      ],
+                    ),
                   ),
                 );
               },
             ),
           ),
 
-          SliverToBoxAdapter(child: SizedBox(height: designSystemSpacing.xl)),
+          const SliverToBoxAdapter(child: SizedBox(height: 24)),
         ],
       ),
     );
@@ -315,109 +446,147 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildTopTracksList(List<dynamic> tracks, bool isLoading) {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Column(
+        children: [
+          LoadingIndicator(),
+          SizedBox(height: 8),
+          Text('Loading top tracks...'),
+        ],
+      );
     }
     if (tracks.isEmpty) {
-      return const Text('No top tracks available');
+      return EmptyState(
+        icon: Icons.music_note,
+        title: 'No top tracks yet',
+        message: 'Start listening to see your top tracks here',
+        actionText: 'Discover Music',
+        actionCallback: () => _showComingSoon('Music Discovery'),
+      );
     }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: tracks.length,
-      itemBuilder: (context, index) {
-        final track = tracks[index];
-        return ListTile(
+    return Column(
+      children: tracks.take(5).map((track) => ModernCard(
+        variant: ModernCardVariant.primary,
+        margin: const EdgeInsets.only(bottom: 8),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TrackDetailsScreen(track: track),
+            ),
+          );
+        },
+        child: ListTile(
+          leading: const Icon(Icons.music_note),
           title: Text(track.name ?? 'Unknown Track'),
           subtitle: Text(track.artistName ?? 'Unknown Artist'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TrackDetailsScreen(track: track),
-              ),
-            );
-          },
-        );
-      },
+          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        ),
+      )).toList(),
     );
   }
 
   Widget _buildTopArtistsList(List<dynamic> artists, bool isLoading) {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Column(
+        children: [
+          LoadingIndicator(),
+          SizedBox(height: 8),
+          Text('Loading top artists...'),
+        ],
+      );
     }
     if (artists.isEmpty) {
-      return const Text('No top artists available');
+      return EmptyState(
+        icon: Icons.person,
+        title: 'No top artists yet',
+        message: 'Listen to your favorite artists to see them here',
+        actionText: 'Discover Artists',
+        actionCallback: () => _showComingSoon('Artist Discovery'),
+      );
     }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: artists.length,
-      itemBuilder: (context, index) {
-        final artist = artists[index];
-        return ListTile(
-          title: Text(artist.name ?? 'Unknown Artist'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ArtistDetailsScreen(
-                  artistId: artist.id ?? '',
-                  artistName: artist.name ?? 'Unknown Artist',
-                ),
+    return Column(
+      children: artists.take(5).map((artist) => ModernCard(
+        variant: ModernCardVariant.primary,
+        margin: const EdgeInsets.only(bottom: 8),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ArtistDetailsScreen(
+                artistId: artist.id ?? '',
+                artistName: artist.name ?? 'Unknown Artist',
               ),
-            );
-          },
-        );
-      },
+            ),
+          );
+        },
+        child: ListTile(
+          leading: const Icon(Icons.person),
+          title: Text(artist.name ?? 'Unknown Artist'),
+          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        ),
+      )).toList(),
     );
   }
 
   Widget _buildTopGenresList(List<dynamic> genres, bool isLoading) {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Column(
+        children: [
+          LoadingIndicator(),
+          SizedBox(height: 8),
+          Text('Loading top genres...'),
+        ],
+      );
     }
     if (genres.isEmpty) {
-      return const Text('No top genres available');
+      return EmptyState(
+        icon: Icons.category,
+        title: 'No top genres yet',
+        message: 'Explore different genres to see your preferences',
+        actionText: 'Browse Genres',
+        actionCallback: () => _showComingSoon('Genre Browser'),
+      );
     }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: genres.length,
-      itemBuilder: (context, index) {
-        final genre = genres[index];
-        return ListTile(
-          title: Text(genre.name ?? 'Unknown Genre'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => GenreDetailsScreen(
-                  genreId: genre.name ?? '',
-                  genreName: genre.name ?? 'Unknown Genre',
-                ),
+    return Column(
+      children: genres.take(5).map((genre) => ModernCard(
+        variant: ModernCardVariant.primary,
+        margin: const EdgeInsets.only(bottom: 8),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GenreDetailsScreen(
+                genreId: genre.name ?? '',
+                genreName: genre.name ?? 'Unknown Genre',
               ),
-            );
-          },
-        );
-      },
+            ),
+          );
+        },
+        child: ListTile(
+          leading: const Icon(Icons.category),
+          title: Text(genre.name ?? 'Unknown Genre'),
+          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        ),
+      )).toList(),
     );
   }
 
   Widget _buildLikedTab() {
-    final designSystemSpacing = Theme.of(context).designSystemSpacing!;
-
     return RefreshIndicator(
       onRefresh: () async {
         context.read<ProfileBloc>().add(LikedTracksRequested());
         context.read<ProfileBloc>().add(LikedArtistsRequested());
         context.read<ProfileBloc>().add(LikedGenresRequested());
+        await Future.delayed(const Duration(seconds: 1));
       },
       child: CustomScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
         slivers: [
+          const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
           // Liked Tracks Section
           SliverToBoxAdapter(
             child: BlocBuilder<ProfileBloc, ProfileState>(
@@ -425,21 +594,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 final tracks = state is LikedTracksLoaded ? state.tracks : [];
                 final isLoading = state is ProfileLoading;
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: designSystemSpacing.lg),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SectionHeader(title: 'Liked Tracks'),
-                      SizedBox(height: designSystemSpacing.md),
-                      _buildLikedTracksList(tracks, isLoading),
-                    ],
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ModernCard(
+                    variant: ModernCardVariant.elevated,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SectionHeader(title: 'Liked Tracks'),
+                        const SizedBox(height: 16),
+                        _buildLikedTracksList(tracks, isLoading),
+                      ],
+                    ),
                   ),
                 );
               },
             ),
           ),
 
-          SliverToBoxAdapter(child: SizedBox(height: designSystemSpacing.xl)),
+          const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
           // Liked Artists Section
           SliverToBoxAdapter(
@@ -448,21 +620,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 final artists = state is LikedArtistsLoaded ? state.artists : [];
                 final isLoading = state is ProfileLoading;
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: designSystemSpacing.lg),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SectionHeader(title: 'Liked Artists'),
-                      SizedBox(height: designSystemSpacing.md),
-                      _buildLikedArtistsList(artists, isLoading),
-                    ],
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ModernCard(
+                    variant: ModernCardVariant.elevated,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SectionHeader(title: 'Liked Artists'),
+                        const SizedBox(height: 16),
+                        _buildLikedArtistsList(artists, isLoading),
+                      ],
+                    ),
                   ),
                 );
               },
             ),
           ),
 
-          SliverToBoxAdapter(child: SizedBox(height: designSystemSpacing.xl)),
+          const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
           // Liked Genres Section
           SliverToBoxAdapter(
@@ -471,21 +646,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 final genres = state is LikedGenresLoaded ? state.genres : [];
                 final isLoading = state is ProfileLoading;
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: designSystemSpacing.lg),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SectionHeader(title: 'Liked Genres'),
-                      SizedBox(height: designSystemSpacing.md),
-                      _buildLikedGenresList(genres, isLoading),
-                    ],
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ModernCard(
+                    variant: ModernCardVariant.elevated,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SectionHeader(title: 'Liked Genres'),
+                        const SizedBox(height: 16),
+                        _buildLikedGenresList(genres, isLoading),
+                      ],
+                    ),
                   ),
                 );
               },
             ),
           ),
 
-          SliverToBoxAdapter(child: SizedBox(height: designSystemSpacing.xl)),
+          const SliverToBoxAdapter(child: SizedBox(height: 24)),
         ],
       ),
     );
@@ -493,100 +671,200 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildLikedTracksList(List<dynamic> tracks, bool isLoading) {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Column(
+        children: [
+          LoadingIndicator(),
+          SizedBox(height: 8),
+          Text('Loading liked tracks...'),
+        ],
+      );
     }
     if (tracks.isEmpty) {
-      return const Text('No liked tracks available');
+      return EmptyState(
+        icon: Icons.favorite,
+        title: 'No liked tracks yet',
+        message: 'Like songs to see them here',
+        actionText: 'Discover Music',
+        actionCallback: () => _showComingSoon('Music Discovery'),
+      );
     }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: tracks.length,
-      itemBuilder: (context, index) {
-        final track = tracks[index];
-        return ListTile(
+    return Column(
+      children: tracks.take(10).map((track) => ModernCard(
+        variant: ModernCardVariant.primary,
+        margin: const EdgeInsets.only(bottom: 8),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TrackDetailsScreen(track: track),
+            ),
+          );
+        },
+        child: ListTile(
+          leading: const Icon(Icons.favorite, color: Colors.red),
           title: Text(track.name ?? 'Unknown Track'),
           subtitle: Text(track.artistName ?? 'Unknown Artist'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => TrackDetailsScreen(track: track),
-              ),
-            );
-          },
-        );
-      },
+          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        ),
+      )).toList(),
     );
   }
 
   Widget _buildLikedArtistsList(List<dynamic> artists, bool isLoading) {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Column(
+        children: [
+          LoadingIndicator(),
+          SizedBox(height: 8),
+          Text('Loading liked artists...'),
+        ],
+      );
     }
     if (artists.isEmpty) {
-      return const Text('No liked artists available');
+      return EmptyState(
+        icon: Icons.favorite,
+        title: 'No liked artists yet',
+        message: 'Follow artists to see them here',
+        actionText: 'Discover Artists',
+        actionCallback: () => _showComingSoon('Artist Discovery'),
+      );
     }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: artists.length,
-      itemBuilder: (context, index) {
-        final artist = artists[index];
-        return ListTile(
-          title: Text(artist.name ?? 'Unknown Artist'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => ArtistDetailsScreen(
-                  artistId: artist.id ?? '',
-                  artistName: artist.name ?? 'Unknown Artist',
-                ),
+    return Column(
+      children: artists.take(10).map((artist) => ModernCard(
+        variant: ModernCardVariant.primary,
+        margin: const EdgeInsets.only(bottom: 8),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ArtistDetailsScreen(
+                artistId: artist.id ?? '',
+                artistName: artist.name ?? 'Unknown Artist',
               ),
-            );
-          },
-        );
-      },
+            ),
+          );
+        },
+        child: ListTile(
+          leading: const Icon(Icons.favorite, color: Colors.red),
+          title: Text(artist.name ?? 'Unknown Artist'),
+          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        ),
+      )).toList(),
     );
   }
 
   Widget _buildLikedGenresList(List<dynamic> genres, bool isLoading) {
     if (isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Column(
+        children: [
+          LoadingIndicator(),
+          SizedBox(height: 8),
+          Text('Loading liked genres...'),
+        ],
+      );
     }
     if (genres.isEmpty) {
-      return const Text('No liked genres available');
+      return EmptyState(
+        icon: Icons.favorite,
+        title: 'No liked genres yet',
+        message: 'Explore genres and like your favorites',
+        actionText: 'Browse Genres',
+        actionCallback: () => _showComingSoon('Genre Browser'),
+      );
     }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: genres.length,
-      itemBuilder: (context, index) {
-        final genre = genres[index];
-        return ListTile(
-          title: Text(genre.name ?? 'Unknown Genre'),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => GenreDetailsScreen(
-                  genreId: genre.name ?? '',
-                  genreName: genre.name ?? 'Unknown Genre',
-                ),
+    return Column(
+      children: genres.take(10).map((genre) => ModernCard(
+        variant: ModernCardVariant.primary,
+        margin: const EdgeInsets.only(bottom: 8),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => GenreDetailsScreen(
+                genreId: genre.name ?? '',
+                genreName: genre.name ?? 'Unknown Genre',
               ),
-            );
-          },
-        );
-      },
+            ),
+          );
+        },
+        child: ListTile(
+          leading: const Icon(Icons.favorite, color: Colors.red),
+          title: Text(genre.name ?? 'Unknown Genre'),
+          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        ),
+      )).toList(),
     );
   }
 
   Widget _buildBudsTab() {
-    // Placeholder for buds - could integrate with BudMatchingBloc here
-    return const Center(child: Text('Buds Coming Soon'));
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: EmptyState(
+        icon: Icons.people,
+        title: 'Connect with Music Buds',
+        message: 'Find friends who share your musical taste and discover new music together',
+        actionText: 'Find Buds',
+        actionCallback: () => _showComingSoon('Bud Matching'),
+      ),
+    );
   }
+
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Logout'),
+        content: const Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text('Cancel'),
+          ),
+          ModernButton(
+            text: 'Logout',
+            variant: ModernButtonVariant.text,
+            onPressed: () {
+              Navigator.of(context).pop();
+              _showComingSoon('Logout functionality');
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showComingSoon(String feature) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$feature coming soon!'),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  @override
+  VoidCallback? get retryLoading => _initializeData;
+
+  @override
+  VoidCallback? get onLoadingStarted => () {
+    if (mounted) {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    }
+  };
+
+  @override
+  VoidCallback? get onLoadingCompleted => () {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Profile updated!'),
+          duration: Duration(seconds: 2),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  };
 }

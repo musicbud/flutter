@@ -186,7 +186,7 @@ class _DynamicProfileScreenState extends State<DynamicProfileScreen>
         gradient: LinearGradient(
           colors: [
             Theme.of(context).primaryColor,
-            Theme.of(context).primaryColor.withOpacity(0.7),
+            Theme.of(context).primaryColor.withValues(alpha: 0.7),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -196,7 +196,7 @@ class _DynamicProfileScreenState extends State<DynamicProfileScreen>
         children: [
           CircleAvatar(
             radius: _theme.getDynamicFontSize(50),
-            backgroundColor: Colors.white.withOpacity(0.2),
+            backgroundColor: Colors.white.withValues(alpha: 0.2),
             child: Icon(
               Icons.person,
               size: _theme.getDynamicFontSize(60),
@@ -216,7 +216,7 @@ class _DynamicProfileScreenState extends State<DynamicProfileScreen>
           Text(
             _userProfile['username'] ?? '@musicbud_user',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
               fontSize: _theme.getDynamicFontSize(16),
             ),
           ),
@@ -243,8 +243,8 @@ class _DynamicProfileScreenState extends State<DynamicProfileScreen>
               color: Colors.white,
             ),
           ),
-          backgroundColor: Colors.white.withOpacity(0.2),
-          side: BorderSide(color: Colors.white.withOpacity(0.3)),
+          backgroundColor: Colors.white.withValues(alpha: 0.2),
+          side: BorderSide(color: Colors.white.withValues(alpha: 0.3)),
         );
       }).toList(),
     );
@@ -474,7 +474,7 @@ class _DynamicProfileScreenState extends State<DynamicProfileScreen>
           margin: EdgeInsets.only(bottom: _theme.getDynamicSpacing(8)),
           child: ListTile(
             leading: CircleAvatar(
-              backgroundColor: _getServiceColor(service['name']).withOpacity(0.1),
+              backgroundColor: _getServiceColor(service['name']).withValues(alpha: 0.1),
               child: Icon(
                 _getServiceIcon(service['name']),
                 color: _getServiceColor(service['name']),
@@ -610,7 +610,7 @@ class _DynamicProfileScreenState extends State<DynamicProfileScreen>
           children: [
             CircleAvatar(
               radius: _theme.getDynamicFontSize(25),
-              backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+              backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
               backgroundImage: imageUrl != null ? NetworkImage(imageUrl) : null,
               child: imageUrl == null
                   ? Text(
@@ -859,7 +859,7 @@ class _DynamicProfileScreenState extends State<DynamicProfileScreen>
       margin: EdgeInsets.only(bottom: _theme.getDynamicSpacing(8)),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Theme.of(context).colorScheme.tertiary.withOpacity(0.1),
+          backgroundColor: Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.1),
           child: Icon(
             _getActivityIcon(type),
             color: Theme.of(context).colorScheme.tertiary,
@@ -1024,7 +1024,7 @@ class _DynamicProfileScreenState extends State<DynamicProfileScreen>
       margin: EdgeInsets.only(bottom: _theme.getDynamicSpacing(8)),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+          backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
           child: Icon(
             Icons.playlist_play,
             color: Theme.of(context).primaryColor,
@@ -1069,7 +1069,7 @@ class _DynamicProfileScreenState extends State<DynamicProfileScreen>
       margin: EdgeInsets.only(bottom: _theme.getDynamicSpacing(8)),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+          backgroundColor: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
           child: Icon(
             Icons.public,
             color: Theme.of(context).colorScheme.secondary,

@@ -50,7 +50,7 @@ class _ProfileAvatar extends StatelessWidget {
         borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
         boxShadow: DesignSystem.shadowCard,
         border: Border.all(
-          color: DesignSystem.primary.withOpacity(0.3),
+          color: DesignSystem.primary.withValues(alpha: 0.3),
           width: 2,
         ),
       ),
@@ -103,7 +103,7 @@ class _WelcomeText extends StatelessWidget {
               Text(
                 'Loading profile...',
                 style: DesignSystem.headlineSmall.copyWith(
-                  color: DesignSystem.onSurface.withOpacity(0.7),
+                  color: DesignSystem.onSurface.withValues(alpha: 0.7),
                   fontWeight: FontWeight.w700,
                 ),
               ),

@@ -13,7 +13,7 @@ mixin BaseNavigationMixin {
     return NavigationColors(
       background: isDark ? const Color.fromARGB(200, 20, 20, 20) : Colors.white,
       selected: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
-      unselected: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.6),
+      unselected: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.6),
       surface: theme.colorScheme.surface,
       onSurface: theme.colorScheme.onSurface,
     );
@@ -26,11 +26,11 @@ mixin BaseNavigationMixin {
     double borderRadius = NavigationConstants.defaultBorderRadius,
   }) {
     return BoxDecoration(
-      color: isSelected ? selectedColor.withOpacity(0.2) : Colors.transparent,
+      color: isSelected ? selectedColor.withValues(alpha: 0.2) : Colors.transparent,
       borderRadius: BorderRadius.circular(borderRadius),
       border: isSelected
           ? Border.all(
-              color: selectedColor.withOpacity(0.3),
+              color: selectedColor.withValues(alpha: 0.3),
               width: 1,
             )
           : null,

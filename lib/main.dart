@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'injection.dart';
+import 'debug/debug_dashboard.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'blocs/user/user_bloc.dart';
 import 'blocs/main/main_screen_bloc.dart';
@@ -20,6 +22,12 @@ final sl = GetIt.instance;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Set up debug BLoC observer in debug mode
+  if (kDebugMode) {
+    Bloc.observer = DebugBlocObserver();
+  }
+  
   await initializeDependencies();
   
   // Initialize dynamic services

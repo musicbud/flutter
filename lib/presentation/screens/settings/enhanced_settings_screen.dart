@@ -51,7 +51,7 @@ class EnhancedSettingsScreen extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 30,
-              backgroundColor: DesignSystem.primary.withOpacity(0.1),
+              backgroundColor: DesignSystem.primary.withValues(alpha: 0.1),
               child: const Icon(
                 Icons.person,
                 size: 30,

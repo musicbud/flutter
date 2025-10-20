@@ -1,6 +1,8 @@
 { pkgs ? import <nixpkgs> {} }:
 
 pkgs.mkShell {
+  name = "flutter-dev-shell";
+  
   buildInputs = with pkgs; [
     clang
     cmake
@@ -16,25 +18,33 @@ pkgs.mkShell {
     glib.dev
     libepoxy
     libepoxy.dev
+    fontconfig
+    fontconfig.dev
+    freetype
+    freetype.dev
     vulkan-headers
     vulkan-loader
     vulkan-tools
     chromium
     libsecret
-    libsecret.dev  # Development headers for flutter_secure_storage
-    libsysprof-capture  # Sysprof capture library
-    sysprof  # System profiler
-    pcre2.dev  # PCRE2 development headers for GLib
-    util-linux.dev  # Provides mount.pc for gio-2.0
+    libsecret.dev
+    libsysprof-capture
+    sysprof
+    pcre2.dev
+    util-linux.dev
   ];
 
   shellHook = ''
     export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [
       pkgs.gtk3
+      pkgs.glib
+      pkgs.libepoxy
+      pkgs.fontconfig.lib
+      pkgs.freetype
       pkgs.vulkan-loader
     ]}"
     export CHROME_EXECUTABLE=${pkgs.chromium}/bin/chromium
-    export PKG_CONFIG_PATH="/run/current-system/sw/lib/pkgconfig:$PKG_CONFIG_PATH"
+    export PKG_CONFIG_PATH="${pkgs.libepoxy.dev}/lib/pkgconfig:${pkgs.fontconfig.dev}/lib/pkgconfig:${pkgs.glib.dev}/lib/pkgconfig:/run/current-system/sw/lib/pkgconfig:$PKG_CONFIG_PATH"
     export CXXFLAGS="-Wno-error=deprecated-literal-operator $CXXFLAGS"
     export CFLAGS="-Wno-error=deprecated-literal-operator $CFLAGS"
     echo "Flutter development environment loaded with system libraries"

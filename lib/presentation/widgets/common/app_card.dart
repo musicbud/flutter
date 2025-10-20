@@ -59,7 +59,7 @@ class AppCard extends StatelessWidget {
           color: DesignSystem.surface,
           borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
           border: Border.all(
-            color: DesignSystem.onSurfaceVariant.withOpacity(0.2),
+            color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
           ),
         );
       case AppCardVariant.secondary:
@@ -67,7 +67,7 @@ class AppCard extends StatelessWidget {
           color: DesignSystem.surface,
           borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
           border: Border.all(
-            color: DesignSystem.primary.withOpacity(0.3),
+            color: DesignSystem.primary.withValues(alpha: 0.3),
           ),
         );
       case AppCardVariant.outline:
@@ -75,7 +75,7 @@ class AppCard extends StatelessWidget {
           color: DesignSystem.surface,
           borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
           border: Border.all(
-            color: DesignSystem.onSurfaceVariant.withOpacity(0.3),
+            color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.3),
           ),
         );
       case AppCardVariant.elevated:
@@ -84,7 +84,7 @@ class AppCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
           boxShadow: [
             BoxShadow(
-              color: DesignSystem.surface.withOpacity(0.3),
+              color: DesignSystem.surface.withValues(alpha: 0.3),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -95,7 +95,7 @@ class AppCard extends StatelessWidget {
           color: DesignSystem.surface,
           borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
           border: Border.all(
-            color: DesignSystem.onSurfaceVariant.withOpacity(0.2),
+            color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
           ),
         );
       case AppCardVariant.profile:
@@ -103,7 +103,7 @@ class AppCard extends StatelessWidget {
           color: DesignSystem.surface,
           borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
           border: Border.all(
-            color: DesignSystem.onSurfaceVariant.withOpacity(0.2),
+            color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
           ),
         );
       case AppCardVariant.event:
@@ -111,7 +111,7 @@ class AppCard extends StatelessWidget {
           color: DesignSystem.surface,
           borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
           border: Border.all(
-            color: DesignSystem.onSurfaceVariant.withOpacity(0.2),
+            color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
           ),
         );
       case AppCardVariant.gradient:

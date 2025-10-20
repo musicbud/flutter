@@ -57,8 +57,8 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.purple.withOpacity(0.8),
-            Colors.blue.withOpacity(0.8),
+            Colors.purple.withValues(alpha: 0.8),
+            Colors.blue.withValues(alpha: 0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
@@ -79,7 +79,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
           Text(
             'Find new music and trending tracks',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
             ),
           ),
         ],
@@ -135,7 +135,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           child: const Icon(Icons.trending_up, color: Colors.white),
         ),
         title: Text(
@@ -167,7 +167,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
           children: [
             CircleAvatar(
               radius: 25,
-              backgroundColor: Colors.purple.withOpacity(0.8),
+              backgroundColor: Colors.purple.withValues(alpha: 0.8),
               child: const Icon(Icons.person, color: Colors.white),
             ),
             const SizedBox(height: 8),
@@ -189,7 +189,7 @@ class _DiscoverScreenState extends State<DiscoverScreen> {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Colors.blue.withOpacity(0.8),
+          backgroundColor: Colors.blue.withValues(alpha: 0.8),
           child: const Icon(Icons.recommend, color: Colors.white),
         ),
         title: Text(

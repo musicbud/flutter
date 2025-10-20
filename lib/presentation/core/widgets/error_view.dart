@@ -48,7 +48,7 @@ class ErrorView extends StatelessWidget {
             Text(
               message,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
+                color: theme.textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),
@@ -124,7 +124,7 @@ class InlineErrorView extends StatelessWidget {
         color: theme.colorScheme.errorContainer,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: theme.colorScheme.error.withOpacity(0.3),
+          color: theme.colorScheme.error.withValues(alpha: 0.3),
         ),
       ),
       child: Row(

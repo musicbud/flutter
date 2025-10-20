@@ -279,7 +279,7 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
       ),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: MusicBudColors.primaryRed.withOpacity(0.1),
+          backgroundColor: MusicBudColors.primaryRed.withValues(alpha: 0.1),
           child: const Icon(
             Icons.person_rounded,
             color: MusicBudColors.primaryRed,
@@ -311,8 +311,8 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            MusicBudColors.primaryRed.withOpacity(0.2),
-            MusicBudColors.primaryDark.withOpacity(0.3),
+            MusicBudColors.primaryRed.withValues(alpha: 0.2),
+            MusicBudColors.primaryDark.withValues(alpha: 0.3),
           ],
         ),
         borderRadius: BorderRadius.circular(

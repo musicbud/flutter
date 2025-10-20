@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../blocs/library/library_bloc.dart';
 import '../../../../blocs/library/library_event.dart';
-import '../../../widgets/common/index.dart';
+// MIGRATED: import '../../../widgets/common/index.dart';
 import '../../../../core/theme/design_system.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class CreatePlaylistDialog extends StatefulWidget {
   const CreatePlaylistDialog({super.key});

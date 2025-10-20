@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/theme/design_system.dart';
-import '../../../presentation/widgets/common/modern_button.dart';
+// MIGRATED: import '../../../presentation/widgets/common/modern_button.dart';
 import '../../../blocs/settings/settings_bloc.dart';
 import '../../../blocs/settings/settings_event.dart';
 import '../../../blocs/settings/settings_state.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class ConnectServicesScreen extends StatelessWidget {
   const ConnectServicesScreen({super.key});
@@ -144,7 +145,7 @@ class ConnectServicesScreen extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
               ),
               child: Icon(

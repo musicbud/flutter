@@ -116,13 +116,13 @@
     {
         "name": "auth - login",
         "method": "POST",
-        "url": "/login/",
+        "url": "/v1/auth/login/json",
         "status": "done"
     },
     {
         "name": "auth - register",
         "method": "POST",
-        "url": "/register/",
+        "url": "/v1/auth/register",
         "status": "done"
     },
     {

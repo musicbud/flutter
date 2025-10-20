@@ -53,8 +53,8 @@ class _BudsScreenState extends State<BudsScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.pink.withOpacity(0.8),
-            Colors.orange.withOpacity(0.8),
+            Colors.pink.withValues(alpha: 0.8),
+            Colors.orange.withValues(alpha: 0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
@@ -75,7 +75,7 @@ class _BudsScreenState extends State<BudsScreen> {
           Text(
             'Connect with people who share your music taste',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Colors.white.withOpacity(0.9),
+              color: Colors.white.withValues(alpha: 0.9),
             ),
           ),
         ],
@@ -127,7 +127,7 @@ class _BudsScreenState extends State<BudsScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.green.withOpacity(0.1),
+                color: Colors.green.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -185,7 +185,7 @@ class _BudsScreenState extends State<BudsScreen> {
       Colors.indigo,
       Colors.pink,
     ];
-    return colors[DateTime.now().microsecond % colors.length].withOpacity(0.8);
+    return colors[DateTime.now().microsecond % colors.length].withValues(alpha: 0.8);
   }
 
   Widget _buildErrorState(String message) {

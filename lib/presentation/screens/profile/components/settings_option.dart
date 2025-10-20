@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../../../models/settings_option.dart';
+// MIGRATED: import '../../../widgets/common/index.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 import '../../../../core/theme/design_system.dart';
-import '../../../widgets/common/index.dart';
 
 class SettingsOption extends StatelessWidget {
   final String title;

@@ -102,7 +102,7 @@ class AppTextField extends StatelessWidget {
           ),
         ),
         hintStyle: TextStyle(
-          color: DesignSystem.borderLight.withOpacity(0.7),
+          color: DesignSystem.borderLight.withValues(alpha: 0.7),
           fontSize: 16,
         ),
         labelStyle: const TextStyle(

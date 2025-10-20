@@ -337,7 +337,7 @@ class _GuestDiscoverScreenState extends State<GuestDiscoverScreen>
       child: ListTile(
         leading: CircleAvatar(
           radius: 24,
-          backgroundColor: DesignSystem.primary.withOpacity(0.1),
+          backgroundColor: DesignSystem.primary.withValues(alpha: 0.1),
           child: Text(
             artist['name'][0],
             style: const TextStyle(
@@ -375,7 +375,7 @@ class _GuestDiscoverScreenState extends State<GuestDiscoverScreen>
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: DesignSystem.primary.withOpacity(0.1),
+            color: DesignSystem.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: const Icon(
@@ -419,8 +419,8 @@ class _GuestDiscoverScreenState extends State<GuestDiscoverScreen>
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              genre['color'].withOpacity(0.8),
-              genre['color'].withOpacity(0.6),
+              genre['color'].withValues(alpha: 0.8),
+              genre['color'].withValues(alpha: 0.6),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -462,8 +462,8 @@ class _GuestDiscoverScreenState extends State<GuestDiscoverScreen>
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              genreColor.withOpacity(0.8),
-              genreColor.withOpacity(0.6),
+              genreColor.withValues(alpha: 0.8),
+              genreColor.withValues(alpha: 0.6),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,

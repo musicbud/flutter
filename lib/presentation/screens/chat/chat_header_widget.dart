@@ -58,7 +58,7 @@ class ChatHeaderWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(999),
                       border: Border.all(
-                        color: DesignSystem.error.withOpacity(0.3),
+                        color: DesignSystem.error.withValues(alpha: 0.3),
                         width: 2,
                       ),
                     ),

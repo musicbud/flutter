@@ -1,7 +1,7 @@
 /// Application-wide constants
 class AppConstants {
   // API Configuration
-  static const String apiBaseUrl = 'http://84.235.170.234/';
+  static const String apiBaseUrl = 'http://localhost:8000';
   static const String apiVersion = 'v1';
   
   // App Information

@@ -376,7 +376,7 @@ class _DynamicLibraryScreenState extends State<DynamicLibraryScreen>
       margin: EdgeInsets.only(bottom: _theme.getDynamicSpacing(8)),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+          backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
           child: Icon(
             _getItemIcon(item['type']),
             color: Theme.of(context).primaryColor,
@@ -548,7 +548,7 @@ class _DynamicLibraryScreenState extends State<DynamicLibraryScreen>
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor.withOpacity(0.1),
+                  color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(8),
                   ),
@@ -612,7 +612,7 @@ class _DynamicLibraryScreenState extends State<DynamicLibraryScreen>
       margin: EdgeInsets.only(bottom: _theme.getDynamicSpacing(8)),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+          backgroundColor: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
           child: Icon(
             Icons.recommend,
             color: Theme.of(context).colorScheme.secondary,
@@ -719,7 +719,7 @@ class _DynamicLibraryScreenState extends State<DynamicLibraryScreen>
       margin: EdgeInsets.only(bottom: _theme.getDynamicSpacing(8)),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Theme.of(context).colorScheme.tertiary.withOpacity(0.1),
+          backgroundColor: Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.1),
           child: Icon(
             Icons.offline_bolt,
             color: Theme.of(context).colorScheme.tertiary,
@@ -795,7 +795,7 @@ class _DynamicLibraryScreenState extends State<DynamicLibraryScreen>
       margin: EdgeInsets.only(bottom: _theme.getDynamicSpacing(8)),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Theme.of(context).colorScheme.outline.withOpacity(0.1),
+          backgroundColor: Theme.of(context).colorScheme.outline.withValues(alpha: 0.1),
           child: Icon(
             Icons.history,
             color: Theme.of(context).colorScheme.outline,
@@ -838,7 +838,7 @@ class _DynamicLibraryScreenState extends State<DynamicLibraryScreen>
       margin: EdgeInsets.only(bottom: _theme.getDynamicSpacing(8)),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+          backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
           child: Icon(
             Icons.add_circle,
             color: Theme.of(context).primaryColor,
@@ -1582,7 +1582,7 @@ class _DynamicLibraryScreenState extends State<DynamicLibraryScreen>
         leading: Stack(
           children: [
             CircleAvatar(
-              backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+              backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
               child: Icon(
                 _getItemIcon(item['type'] ?? 'track'),
                 color: Theme.of(context).primaryColor,

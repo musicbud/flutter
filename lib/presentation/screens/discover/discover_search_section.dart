@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/design_system.dart';
-import '../../../widgets/common/index.dart';
 import 'widgets/category_filter_widget.dart';
+
+// Enhanced UI Library
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class DiscoverSearchSection extends StatefulWidget {
   final String selectedCategory;

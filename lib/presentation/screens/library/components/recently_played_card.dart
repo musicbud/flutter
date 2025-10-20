@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../widgets/common/index.dart';
+// MIGRATED: import '../../../widgets/common/index.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 import '../../../../core/theme/design_system.dart';
 
 class RecentlyPlayedCard extends StatelessWidget {
@@ -33,7 +34,7 @@ class RecentlyPlayedCard extends StatelessWidget {
             height: 60,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
-              color: accentColor.withOpacity(0.1),
+              color: accentColor.withValues(alpha: 0.1),
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(DesignSystem.radiusMD),

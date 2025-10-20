@@ -317,7 +317,7 @@ class AppTheme {
   AppGradients get gradients => AppGradients();
 
   // Enhanced Component Themes
-  CardTheme get cardTheme => CardTheme(
+  CardThemeData get cardTheme => CardThemeData(
     color: cardBackground,
     elevation: 0,
     shape: RoundedRectangleBorder(
@@ -387,7 +387,7 @@ class AppTheme {
     fontFamily: fontFamilySecondary,
     primaryColor: primaryRed,
     scaffoldBackgroundColor: white,
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: cardBackground,
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -415,7 +415,7 @@ class AppTheme {
     fontFamily: fontFamilySecondary,
     primaryColor: primaryRed,
     scaffoldBackgroundColor: darkTone,
-    cardTheme: CardTheme(
+    cardTheme: CardThemeData(
       color: cardBackground,
       elevation: 0,
       shape: RoundedRectangleBorder(

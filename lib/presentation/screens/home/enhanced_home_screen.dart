@@ -15,6 +15,7 @@ import '../../../blocs/discover/discover_event.dart';
 import '../../../blocs/discover/discover_state.dart';
 import '../../../blocs/auth/auth_bloc.dart';
 import '../../../blocs/simple_content_bloc.dart';
+import '../../widgets/imported/empty_state.dart';
 
 /// Enhanced Home Screen using MusicBud Components Library
 /// Preserves all BLoC architecture and real data consumption
@@ -147,7 +148,7 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
                 vertical: 2,
               ),
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.2),
+                color: Colors.orange.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
                 border: Border.all(color: Colors.orange, width: 1),
               ),
@@ -554,35 +555,13 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
     return Container(
       height: 180,
       margin: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingMD),
-      decoration: BoxDecoration(
-        color: DesignSystem.surfaceContainer,
-        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
-      ),
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.music_note,
-              size: 48,
-              color: DesignSystem.onSurfaceVariant,
-            ),
-            const SizedBox(height: DesignSystem.spacingSM),
-            Text(
-              message,
-              style: DesignSystem.bodyMedium.copyWith(
-                color: DesignSystem.onSurfaceVariant,
-              ),
-            ),
-            if (_isOffline) ...[
-              const SizedBox(height: DesignSystem.spacingSM),
-              MusicBudButton(
-                text: 'Retry',
-                onPressed: _retryConnection,
-                isOutlined: true,
-              ),
-            ],
-          ],
+        child: EmptyState(
+          title: message,
+          icon: Icons.music_note,
+          iconSize: 48,
+          actionText: _isOffline ? 'Retry' : null,
+          actionCallback: _isOffline ? _retryConnection : null,
         ),
       ),
     );
@@ -857,7 +836,7 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
             Container(
               padding: const EdgeInsets.all(DesignSystem.spacingSM),
               decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
+                color: color.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
               ),
               child: Icon(
@@ -985,10 +964,10 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
                     vertical: DesignSystem.spacingXXS,
                   ),
                   decoration: BoxDecoration(
-                    color: DesignSystem.successGreen.withOpacity(0.1),
+                    color: DesignSystem.successGreen.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(DesignSystem.radiusFull),
                     border: Border.all(
-                      color: DesignSystem.successGreen.withOpacity(0.3),
+                      color: DesignSystem.successGreen.withValues(alpha: 0.3),
                       width: 1,
                     ),
                   ),

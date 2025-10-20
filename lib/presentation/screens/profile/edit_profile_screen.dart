@@ -182,7 +182,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             children: [
               CircleAvatar(
                 radius: 60,
-                backgroundColor: DesignSystem.primary.withOpacity(0.1),
+                backgroundColor: DesignSystem.primary.withValues(alpha: 0.1),
                 child: const Icon(
                   Icons.person,
                   size: 60,
@@ -352,7 +352,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       onDeleted: () {
         // Remove genre
       },
-      backgroundColor: DesignSystem.primary.withOpacity(0.1),
+      backgroundColor: DesignSystem.primary.withValues(alpha: 0.1),
       deleteIconColor: DesignSystem.primary,
     );
   }

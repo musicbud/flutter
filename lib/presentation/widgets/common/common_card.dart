@@ -40,7 +40,7 @@ class CommonCard extends StatelessWidget {
         boxShadow: [
           shadow ??
               BoxShadow(
-                color: theme.colorScheme.shadow.withOpacity(0.1),
+                color: theme.colorScheme.shadow.withValues(alpha: 0.1),
                 blurRadius: elevation ?? 4,
                 offset: const Offset(0, 2),
               ),
@@ -160,7 +160,7 @@ class MusicItemCard extends StatelessWidget {
                   Text(
                     subtitle!,
                     style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -298,7 +298,7 @@ class GridCard extends StatelessWidget {
                     Text(
                       subtitle!,
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -361,7 +361,7 @@ class SectionCard extends StatelessWidget {
                       Text(
                         subtitle!,
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withOpacity(0.7),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                     ],

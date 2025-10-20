@@ -17,15 +17,39 @@ class MainScreenWithGuest extends StatefulWidget {
   State<MainScreenWithGuest> createState() => _MainScreenWithGuestState();
 }
 
-class _MainScreenWithGuestState extends State<MainScreenWithGuest> {
+class _MainScreenWithGuestState extends State<MainScreenWithGuest> with WidgetsBindingObserver {
   int _currentIndex = 0;
   bool _isAuthenticated = false;
   final AuthService _authService = AuthService();
+  
+  // Method to navigate to home tab (useful after login)
+  void _navigateToHome() {
+    if (mounted) {
+      setState(() {
+        _currentIndex = 0;
+      });
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _checkAuthStatus();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Re-check auth status when app resumes
+    if (state == AppLifecycleState.resumed) {
+      _checkAuthStatus();
+    }
   }
 
   Future<void> _checkAuthStatus() async {
@@ -52,7 +76,12 @@ class _MainScreenWithGuestState extends State<MainScreenWithGuest> {
           const DynamicSearchScreen(), // Public search (works for guests)
           _isAuthenticated 
             ? const DynamicProfileScreen() 
-            : const GuestProfileScreen(), // Profile or login prompt
+            : GuestProfileScreen(
+                onAuthChanged: () {
+                  _checkAuthStatus();
+                  _navigateToHome();
+                },
+              ), // Profile or login prompt
         ],
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
@@ -98,7 +127,9 @@ class _MainScreenWithGuestState extends State<MainScreenWithGuest> {
 
 /// Guest profile screen that prompts login or shows limited features
 class GuestProfileScreen extends StatelessWidget {
-  const GuestProfileScreen({super.key});
+  final VoidCallback? onAuthChanged;
+  
+  const GuestProfileScreen({super.key, this.onAuthChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +148,7 @@ class GuestProfileScreen extends StatelessWidget {
               Icon(
                 Icons.person_outline,
                 size: 80,
-                color: DesignSystem.primary.withOpacity(0.6),
+                color: DesignSystem.primary.withValues(alpha: 0.6),
               ),
               const SizedBox(height: 24),
               Text(
@@ -138,12 +169,14 @@ class GuestProfileScreen extends StatelessWidget {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).push(
+                  onPressed: () async {
+                    await Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (context) => const LoginScreen(),
                       ),
                     );
+                    // Trigger auth refresh after returning from login
+                    onAuthChanged?.call();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: DesignSystem.primary,

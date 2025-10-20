@@ -28,11 +28,11 @@ class _UIShowcasePageState extends State<UIShowcasePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MusicBudColors.backgroundPrimary,
+      backgroundColor: DesignSystem.surface,
       appBar: AppBar(
         title: Text(
           'UI Design Showcase',
-          style: MusicBudTypography.heading4.copyWith(
+          style: DesignSystem.headlineSmall.copyWith(
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -43,16 +43,16 @@ class _UIShowcasePageState extends State<UIShowcasePage>
         children: [
           // Tab Bar
           Container(
-            margin: const EdgeInsets.all(MusicBudSpacing.lg),
+            margin: const EdgeInsets.all(DesignSystem.spacingLG),
             decoration: BoxDecoration(
-              color: MusicBudColors.backgroundTertiary,
-              borderRadius: BorderRadius.circular(MusicBudSpacing.radiusLg),
+              color: DesignSystem.surfaceContainer,
+              borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
             ),
             child: TabBar(
               controller: _tabController,
               indicator: BoxDecoration(
-                color: MusicBudColors.primaryRed,
-                borderRadius: BorderRadius.circular(MusicBudSpacing.radiusLg),
+                color: DesignSystem.primary,
+                borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
               ),
               indicatorSize: TabBarIndicatorSize.tab,
               dividerColor: Colors.transparent,
@@ -89,12 +89,12 @@ class _UIShowcasePageState extends State<UIShowcasePage>
 
   Widget _buildMainScreensTab() {
     return GridView.builder(
-      padding: const EdgeInsets.all(MusicBudSpacing.lg),
+      padding: const EdgeInsets.all(DesignSystem.spacingLG),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.6,
-        crossAxisSpacing: MusicBudSpacing.md,
-        mainAxisSpacing: MusicBudSpacing.md,
+        crossAxisSpacing: DesignSystem.spacingMD,
+        mainAxisSpacing: DesignSystem.spacingMD,
       ),
       itemCount: UIAssets.mainScreenAssets.length,
       itemBuilder: (context, index) {
@@ -105,17 +105,17 @@ class _UIShowcasePageState extends State<UIShowcasePage>
           onTap: () => _showImageDialog(context, assetPath, screenName),
           child: Container(
             decoration: BoxDecoration(
-              color: MusicBudColors.backgroundTertiary,
-              borderRadius: BorderRadius.circular(MusicBudSpacing.radiusLg),
-              boxShadow: MusicBudShadows.medium,
+              color: DesignSystem.surfaceContainer,
+              borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
+              boxShadow: DesignSystem.shadowMedium,
             ),
             child: Column(
               children: [
                 Expanded(
                   child: ClipRRect(
                     borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(MusicBudSpacing.radiusLg),
-                      topRight: Radius.circular(MusicBudSpacing.radiusLg),
+                      topLeft: Radius.circular(DesignSystem.radiusLG),
+                      topRight: Radius.circular(DesignSystem.radiusLG),
                     ),
                     child: Image.asset(
                       assetPath,
@@ -123,21 +123,21 @@ class _UIShowcasePageState extends State<UIShowcasePage>
                       width: double.infinity,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
-                          color: MusicBudColors.backgroundSecondary,
+                          color: DesignSystem.surfaceContainerHigh,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Icon(
                                 Icons.image_not_supported,
                                 size: 40,
-                                color: MusicBudColors.textSecondary,
+                                color: DesignSystem.onSurfaceVariant,
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 'Preview\nUnavailable',
                                 textAlign: TextAlign.center,
-                                style: MusicBudTypography.bodySmall.copyWith(
-                                  color: MusicBudColors.textSecondary,
+                                style: DesignSystem.bodySmall.copyWith(
+                                  color: DesignSystem.onSurfaceVariant,
                                 ),
                               ),
                             ],
@@ -174,8 +174,8 @@ class _UIShowcasePageState extends State<UIShowcasePage>
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
         childAspectRatio: 0.6,
-        crossAxisSpacing: 16.0, // DesignSystem.spacingMD
-        mainAxisSpacing: 16.0, // DesignSystem.spacingMD
+        crossAxisSpacing: DesignSystem.spacingMD,
+        mainAxisSpacing: DesignSystem.spacingMD,
       ),
       itemCount: UIAssets.extraScreenAssets.length,
       itemBuilder: (context, index) {
@@ -186,17 +186,17 @@ class _UIShowcasePageState extends State<UIShowcasePage>
           onTap: () => _showImageDialog(context, assetPath, screenName),
           child: Container(
             decoration: BoxDecoration(
-              color: MusicBudColors.backgroundTertiary,
-              borderRadius: BorderRadius.circular(MusicBudSpacing.radiusLg),
-              boxShadow: MusicBudShadows.medium,
+              color: DesignSystem.surfaceContainer,
+              borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
+              boxShadow: DesignSystem.shadowMedium,
             ),
             child: Column(
               children: [
                 Expanded(
                   child: ClipRRect(
                     borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(MusicBudSpacing.radiusLg),
-                      topRight: Radius.circular(MusicBudSpacing.radiusLg),
+                      topLeft: Radius.circular(DesignSystem.radiusLG),
+                      topRight: Radius.circular(DesignSystem.radiusLG),
                     ),
                     child: Image.asset(
                       assetPath,
@@ -204,21 +204,21 @@ class _UIShowcasePageState extends State<UIShowcasePage>
                       width: double.infinity,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
-                          color: MusicBudColors.backgroundSecondary,
+                          color: DesignSystem.surfaceContainerHigh,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Icon(
                                 Icons.image_not_supported,
                                 size: 40,
-                                color: MusicBudColors.textSecondary,
+                                color: DesignSystem.onSurfaceVariant,
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 'Preview\nUnavailable',
                                 textAlign: TextAlign.center,
-                                style: MusicBudTypography.bodySmall.copyWith(
-                                  color: MusicBudColors.textSecondary,
+                                style: DesignSystem.bodySmall.copyWith(
+                                  color: DesignSystem.onSurfaceVariant,
                                 ),
                               ),
                             ],
@@ -251,11 +251,12 @@ class _UIShowcasePageState extends State<UIShowcasePage>
 
   Widget _buildCaseStudyTab() {
     return GridView.builder(
-      padding: const EdgeInsets.all(MusicBudSpacing.lg),
+      padding: const EdgeInsets.all(DesignSystem.spacingLG),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 1,
-        childAspectRatio: 1.5,
-        mainAxisSpacing: MusicBudSpacing.md,
+        crossAxisCount: 2,
+        childAspectRatio: 0.6,
+        crossAxisSpacing: DesignSystem.spacingMD,
+        mainAxisSpacing: DesignSystem.spacingMD,
       ),
       itemCount: UIAssets.caseStudyAssets.length,
       itemBuilder: (context, index) {
@@ -266,17 +267,17 @@ class _UIShowcasePageState extends State<UIShowcasePage>
           onTap: () => _showImageDialog(context, assetPath, screenName),
           child: Container(
             decoration: BoxDecoration(
-              color: MusicBudColors.backgroundTertiary,
-              borderRadius: BorderRadius.circular(MusicBudSpacing.radiusLg),
-              boxShadow: MusicBudShadows.medium,
+              color: DesignSystem.surfaceContainer,
+              borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
+              boxShadow: DesignSystem.shadowMedium,
             ),
             child: Column(
               children: [
                 Expanded(
                   child: ClipRRect(
                     borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(MusicBudSpacing.radiusLg),
-                      topRight: Radius.circular(MusicBudSpacing.radiusLg),
+                      topLeft: Radius.circular(DesignSystem.radiusLG),
+                      topRight: Radius.circular(DesignSystem.radiusLG),
                     ),
                     child: Image.asset(
                       assetPath,
@@ -284,21 +285,21 @@ class _UIShowcasePageState extends State<UIShowcasePage>
                       width: double.infinity,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
-                          color: MusicBudColors.backgroundSecondary,
+                          color: DesignSystem.surfaceContainerHigh,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Icon(
                                 Icons.image_not_supported,
                                 size: 40,
-                                color: MusicBudColors.textSecondary,
+                                color: DesignSystem.onSurfaceVariant,
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 'Preview\nUnavailable',
                                 textAlign: TextAlign.center,
-                                style: MusicBudTypography.bodySmall.copyWith(
-                                  color: MusicBudColors.textSecondary,
+                                style: DesignSystem.bodySmall.copyWith(
+                                  color: DesignSystem.onSurfaceVariant,
                                 ),
                               ),
                             ],
@@ -348,97 +349,91 @@ class _UIShowcasePageState extends State<UIShowcasePage>
   void _showImageDialog(BuildContext context, String assetPath, String screenName) {
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        child: Container(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height * 0.8,
-            maxWidth: MediaQuery.of(context).size.width * 0.9,
-          ),
-          decoration: BoxDecoration(
-            color: MusicBudColors.backgroundTertiary,
-            borderRadius: BorderRadius.circular(MusicBudSpacing.radiusLg),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Header
-              Container(
-                padding: const EdgeInsets.all(MusicBudSpacing.md),
-                decoration: const BoxDecoration(
-                  color: MusicBudColors.primaryRed,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(MusicBudSpacing.radiusLg),
-                    topRight: Radius.circular(MusicBudSpacing.radiusLg),
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(DesignSystem.spacingLG),
+          child: Container(
+            decoration: BoxDecoration(
+              color: DesignSystem.surface,
+              borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
+              boxShadow: DesignSystem.shadowLarge,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header
+                Container(
+                  padding: const EdgeInsets.all(DesignSystem.spacingMD),
+                  decoration: BoxDecoration(
+                    color: DesignSystem.surfaceContainer,
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(DesignSystem.radiusLG),
+                      topRight: Radius.circular(DesignSystem.radiusLG),
+                    ),
                   ),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        screenName,
-                        style: MusicBudTypography.heading5.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          screenName,
+                          style: DesignSystem.titleMedium.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: DesignSystem.onSurface,
+                          ),
                         ),
                       ),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.close, color: Colors.white),
-                    ),
-                  ],
+                      IconButton(
+                        onPressed: () => Navigator.of(context).pop(),
+                        icon: const Icon(Icons.close),
+                        color: DesignSystem.onSurface,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              
-              // Image
-              Flexible(
-                child: Container(
-                  margin: const EdgeInsets.all(MusicBudSpacing.md),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(MusicBudSpacing.radiusMd),
+                // Image
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(DesignSystem.spacingMD),
                     child: Image.asset(
                       assetPath,
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
                           height: 200,
-                          color: MusicBudColors.backgroundSecondary,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.broken_image,
-                                size: 64,
-                                color: MusicBudColors.textSecondary,
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'Image could not be loaded',
-                                style: DesignSystem.bodyMedium.copyWith(
+                          decoration: BoxDecoration(
+                            color: DesignSystem.surfaceContainerHigh,
+                            borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
+                          ),
+                          child: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Icons.image_not_supported,
+                                  size: 48,
                                   color: DesignSystem.onSurfaceVariant,
                                 ),
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                assetPath,
-                                style: DesignSystem.bodySmall.copyWith(
-                                  color: DesignSystem.onSurfaceVariant,
+                                const SizedBox(height: DesignSystem.spacingSM),
+                                Text(
+                                  'Image not available',
+                                  style: DesignSystem.bodyMedium.copyWith(
+                                    color: DesignSystem.onSurfaceVariant,
+                                  ),
                                 ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         );
                       },
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

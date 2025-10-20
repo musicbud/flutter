@@ -20,9 +20,9 @@ class ErrorStateWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DesignSystem.spacingLG),
       decoration: BoxDecoration(
-        color: DesignSystem.error.withOpacity(0.1),
+        color: DesignSystem.error.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
-        border: Border.all(color: DesignSystem.error.withOpacity(0.3)),
+        border: Border.all(color: DesignSystem.error.withValues(alpha: 0.3)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -46,7 +46,7 @@ class ErrorStateWidget extends StatelessWidget {
                     Text(
                       message,
                       style: DesignSystem.bodyMedium.copyWith(
-                        color: DesignSystem.error.withOpacity(0.9),
+                        color: DesignSystem.error.withValues(alpha: 0.9),
                       ),
                     ),
                   ],
@@ -91,7 +91,7 @@ class LoadingStateWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DesignSystem.spacingLG),
       decoration: BoxDecoration(
-        color: DesignSystem.surface.withOpacity(0.3),
+        color: DesignSystem.surface.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       ),
       child: Row(
@@ -109,7 +109,7 @@ class LoadingStateWidget extends StatelessWidget {
           Text(
             message,
             style: DesignSystem.bodyMedium.copyWith(
-              color: DesignSystem.onSurface.withOpacity(0.8),
+              color: DesignSystem.onSurface.withValues(alpha: 0.8),
             ),
           ),
         ],
@@ -139,7 +139,7 @@ class EmptyStateWidget extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(DesignSystem.spacingLG),
       decoration: BoxDecoration(
-        color: DesignSystem.surface.withOpacity(0.5),
+        color: DesignSystem.surface.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       ),
       child: Column(
@@ -147,7 +147,7 @@ class EmptyStateWidget extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, color: DesignSystem.onSurface.withOpacity(0.6), size: 24),
+              Icon(icon, color: DesignSystem.onSurface.withValues(alpha: 0.6), size: 24),
               const SizedBox(width: DesignSystem.spacingMD),
               Expanded(
                 child: Column(
@@ -164,7 +164,7 @@ class EmptyStateWidget extends StatelessWidget {
                     Text(
                       message,
                       style: DesignSystem.bodySmall.copyWith(
-                        color: DesignSystem.onSurface.withOpacity(0.7),
+                        color: DesignSystem.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ],

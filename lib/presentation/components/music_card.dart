@@ -35,7 +35,7 @@ class MusicCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: MusicBudColors.backgroundPrimary.withOpacity(0.1),
+            color: MusicBudColors.backgroundPrimary.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -60,7 +60,7 @@ class MusicCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(
                       MusicBudSpacing.radiusMd,
                     ),
-                    color: MusicBudColors.primaryRed.withOpacity(0.1),
+                    color: MusicBudColors.primaryRed.withValues(alpha: 0.1),
                   ),
                   child: albumArt != null
                       ? ClipRRect(
@@ -132,7 +132,7 @@ class MusicCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(
           MusicBudSpacing.radiusMd,
         ),
-        color: MusicBudColors.primaryRed.withOpacity(0.1),
+        color: MusicBudColors.primaryRed.withValues(alpha: 0.1),
       ),
       child: const Icon(
         Icons.music_note_rounded,

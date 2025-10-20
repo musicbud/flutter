@@ -30,6 +30,12 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
     on<LoadLikedArtists>(_onLoadLikedArtists);
     on<LoadLikedGenres>(_onLoadLikedGenres);
     on<LoadLikedAlbums>(_onLoadLikedAlbums);
+    
+    // Tracking events
+    on<SavePlayedTrack>(_onSavePlayedTrack);
+    on<SaveTrackLocation>(_onSaveTrackLocation);
+    on<LoadPlayedTracksWithLocation>(_onLoadPlayedTracksWithLocation);
+    on<ToggleTrackLike>(_onToggleTrackLike);
   }
 
   Future<void> _onLoadTopContent(
@@ -348,6 +354,76 @@ class ContentBloc extends Bloc<ContentEvent, ContentState> {
       emit(ContentLikedAlbumsLoaded(albums: albums));
     } catch (e) {
       emit(ContentError(e.toString()));
+    }
+  }
+
+  // Tracking event handlers
+  Future<void> _onSavePlayedTrack(
+    SavePlayedTrack event,
+    Emitter<ContentState> emit,
+  ) async {
+    try {
+      logger.i('Saving played track: ${event.trackId}');
+      await _contentRepository.savePlayedTrack(event.trackId);
+      emit(ContentTrackSaved(trackId: event.trackId));
+      logger.i('Track saved successfully: ${event.trackId}');
+    } catch (e) {
+      logger.e('Failed to save played track: ${event.trackId}', error: e);
+      emit(ContentError('Failed to save track: $e'));
+    }
+  }
+
+  Future<void> _onSaveTrackLocation(
+    SaveTrackLocation event,
+    Emitter<ContentState> emit,
+  ) async {
+    try {
+      logger.i('Saving track location: ${event.trackId} at (${event.latitude}, ${event.longitude})');
+      await _contentRepository.saveTrackLocation(event.trackId, event.latitude, event.longitude);
+      emit(ContentTrackLocationSaved(
+        trackId: event.trackId,
+        latitude: event.latitude,
+        longitude: event.longitude,
+      ));
+      logger.i('Track location saved successfully: ${event.trackId}');
+    } catch (e) {
+      logger.e('Failed to save track location: ${event.trackId}', error: e);
+      emit(ContentError('Failed to save track location: $e'));
+    }
+  }
+
+  Future<void> _onLoadPlayedTracksWithLocation(
+    LoadPlayedTracksWithLocation event,
+    Emitter<ContentState> emit,
+  ) async {
+    try {
+      logger.i('Loading played tracks with location');
+      emit(ContentLoading());
+      final tracks = await _contentRepository.getPlayedTracksWithLocation();
+      emit(ContentPlayedTracksWithLocationLoaded(tracks: tracks));
+      logger.i('Loaded ${tracks.length} played tracks with location');
+    } catch (e) {
+      logger.e('Failed to load played tracks with location', error: e);
+      emit(ContentError('Failed to load played tracks with location: $e'));
+    }
+  }
+
+  Future<void> _onToggleTrackLike(
+    ToggleTrackLike event,
+    Emitter<ContentState> emit,
+  ) async {
+    try {
+      logger.i('Toggling like for track: ${event.trackId}');
+      await _contentRepository.toggleLike(event.trackId, 'track');
+      emit(ContentLikeStatusChanged(
+        id: event.trackId,
+        type: 'track',
+        isLiked: true, // This would need to be determined from the repository
+      ));
+      logger.i('Track like toggled successfully: ${event.trackId}');
+    } catch (e) {
+      logger.e('Failed to toggle track like: ${event.trackId}', error: e);
+      emit(ContentError('Failed to toggle track like: $e'));
     }
   }
 }

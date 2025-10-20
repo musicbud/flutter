@@ -161,7 +161,7 @@ class AuthService {
         
         await _tokenProvider?.updateTokens(
           loginResult.accessToken,
-          loginResult.refreshToken,
+          loginResult.refreshToken ?? '',
         );
         
         debugPrint('🔐 AuthService: Repository login successful, tokens saved');

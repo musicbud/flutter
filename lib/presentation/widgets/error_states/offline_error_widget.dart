@@ -31,7 +31,7 @@ class OfflineErrorWidget extends StatelessWidget {
             Icon(
               icon,
               size: 80,
-              color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 24),
             Text(
@@ -46,7 +46,7 @@ class OfflineErrorWidget extends StatelessWidget {
             Text(
               message,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
               maxLines: 3,
@@ -87,7 +87,7 @@ class OfflineErrorWidget extends StatelessWidget {
                 child: Text(
                   'Preview mode uses sample data for development',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
                     fontStyle: FontStyle.italic,
                   ),
                   textAlign: TextAlign.center,
@@ -201,7 +201,7 @@ class _LoadingWithOfflineFallbackState extends State<LoadingWithOfflineFallback>
           Text(
             'Falling back to preview mode if this takes too long...',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
               fontStyle: FontStyle.italic,
             ),
             textAlign: TextAlign.center,
@@ -240,7 +240,7 @@ class EmptyStateWidget extends StatelessWidget {
             Icon(
               icon,
               size: 64,
-              color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
             Text(
@@ -255,7 +255,7 @@ class EmptyStateWidget extends StatelessWidget {
             Text(
               message,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
               ),
               textAlign: TextAlign.center,
             ),

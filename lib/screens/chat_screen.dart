@@ -42,8 +42,8 @@ class _ChatScreenState extends State<ChatScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.indigo.withOpacity(0.8),
-            Colors.cyan.withOpacity(0.8),
+            Colors.indigo.withValues(alpha: 0.8),
+            Colors.cyan.withValues(alpha: 0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
@@ -66,7 +66,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 Text(
                   'Chat with your music buddies',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                   ),
                 ),
               ],
@@ -183,7 +183,7 @@ class _ChatScreenState extends State<ChatScreen> {
       Colors.pink,
       Colors.cyan,
     ];
-    return colors[name.hashCode % colors.length].withOpacity(0.8);
+    return colors[name.hashCode % colors.length].withValues(alpha: 0.8);
   }
 
   String _getInitials(String name) {

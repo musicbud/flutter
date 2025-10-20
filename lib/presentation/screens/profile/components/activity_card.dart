@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import '../../../../models/activity.dart';
+// MIGRATED: import '../../../widgets/common/index.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 import '../../../../core/theme/design_system.dart';
-import '../../../widgets/common/index.dart';
 
 class ActivityCard extends StatelessWidget {
   final String title;
@@ -31,7 +33,7 @@ class ActivityCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(DesignSystem.spacingSM),
             decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.1),
+              color: iconColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             ),
             child: Icon(

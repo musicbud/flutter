@@ -6,7 +6,6 @@ import '../../blocs/main/main_screen_event.dart';
 import '../../blocs/main/main_screen_state.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../core/theme/design_system.dart';
-import '../../core/components/musicbud_components.dart';
 import '../screens/auth/login_screen.dart';
 import '../screens/home/enhanced_home_screen.dart';
 import '../screens/profile/enhanced_profile_screen.dart';
@@ -14,6 +13,9 @@ import '../screens/buds/dynamic_buds_screen.dart';
 import '../screens/chat/enhanced_chat_screen.dart';
 import 'enhanced_search_page.dart';
 import '../../screens/debug/api_test_screen.dart';
+import '../widgets/imported/app_bottom_navigation_bar.dart';
+import '../../navigation/navigation_item.dart';
+import '../widgets/imported/loading_indicator.dart';
 
 /// Enhanced Main Screen using new MusicBud Components
 /// Replaces old MainScreen with enhanced versions of all screens
@@ -36,12 +38,37 @@ class _EnhancedMainScreenState extends State<EnhancedMainScreen> {
     EnhancedProfileScreen(),   // Index 4: Profile
   ];
 
-  final List<String> _pageTitles = const [
-    'Home',
-    'Search',
-    'Buds', 
-    'Chat',
-    'Profile',
+  final List<NavigationItem> _navigationItems = const [
+    NavigationItem(
+      label: 'Home',
+      icon: Icons.home_outlined,
+      activeIcon: Icons.home,
+      route: '/home',
+    ),
+    NavigationItem(
+      label: 'Search',
+      icon: Icons.search_outlined,
+      activeIcon: Icons.search,
+      route: '/search',
+    ),
+    NavigationItem(
+      label: 'Buds',
+      icon: Icons.people_outline,
+      activeIcon: Icons.people,
+      route: '/buds',
+    ),
+    NavigationItem(
+      label: 'Chat',
+      icon: Icons.chat_bubble_outline,
+      activeIcon: Icons.chat_bubble,
+      route: '/chat',
+    ),
+    NavigationItem(
+      label: 'Profile',
+      icon: Icons.person_outline,
+      activeIcon: Icons.person,
+      route: '/profile',
+    ),
   ];
 
   @override
@@ -98,9 +125,7 @@ class _EnhancedMainScreenState extends State<EnhancedMainScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const CircularProgressIndicator(
-                      color: DesignSystem.pinkAccent,
-                    ),
+                    const LoadingIndicator(),
                     const SizedBox(height: DesignSystem.spacingLG),
                     Text(
                       'Loading MusicBud...',
@@ -126,14 +151,20 @@ class _EnhancedMainScreenState extends State<EnhancedMainScreen> {
                 });
               },
             ),
-            bottomNavigationBar: MusicBudBottomNav(
+            bottomNavigationBar: AppBottomNavigationBar(
               currentIndex: _currentIndex,
+              items: _navigationItems,
               onTap: (index) {
                 setState(() {
                   _currentIndex = index;
                 });
                 _pageController.jumpToPage(index);
               },
+              selectedItemColor: DesignSystem.pinkAccent,
+              unselectedItemColor: DesignSystem.onSurfaceVariant,
+              backgroundColor: DesignSystem.surfaceContainer,
+              enableBlur: true,
+              enableGradient: true,
             ),
             floatingActionButton: _buildFloatingActionButton(),
             floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,

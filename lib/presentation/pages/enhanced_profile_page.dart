@@ -44,7 +44,7 @@ class _EnhancedProfilePageState extends State<EnhancedProfilePage>
       expandedHeight: 100,
       floating: false,
       pinned: true,
-      backgroundColor: MusicBudColors.backgroundPrimary.withOpacity(0.95),
+      backgroundColor: MusicBudColors.backgroundPrimary.withValues(alpha: 0.95),
       actions: [
         IconButton(
           icon: const Icon(Icons.settings_outlined),
@@ -300,7 +300,7 @@ class _EnhancedProfilePageState extends State<EnhancedProfilePage>
             children: [
               CircleAvatar(
                 radius: 30,
-                backgroundColor: MusicBudColors.primaryRed.withOpacity(0.2),
+                backgroundColor: MusicBudColors.primaryRed.withValues(alpha: 0.2),
                 child: const Icon(
                   Icons.person_rounded,
                   size: 30,
@@ -347,7 +347,7 @@ class _EnhancedProfilePageState extends State<EnhancedProfilePage>
               height: 50,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(MusicBudSpacing.radiusMd),
-                color: MusicBudColors.primaryRed.withOpacity(0.1),
+                color: MusicBudColors.primaryRed.withValues(alpha: 0.1),
               ),
               child: const Icon(
                 Icons.music_note_rounded,

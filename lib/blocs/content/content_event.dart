@@ -73,3 +73,39 @@ class LoadLikedArtists extends ContentEvent {}
 class LoadLikedGenres extends ContentEvent {}
 
 class LoadLikedAlbums extends ContentEvent {}
+
+// Tracking events
+class SavePlayedTrack extends ContentEvent {
+  final String trackId;
+  
+  const SavePlayedTrack({required this.trackId});
+  
+  @override
+  List<Object?> get props => [trackId];
+}
+
+class SaveTrackLocation extends ContentEvent {
+  final String trackId;
+  final double latitude;
+  final double longitude;
+  
+  const SaveTrackLocation({
+    required this.trackId,
+    required this.latitude,
+    required this.longitude,
+  });
+  
+  @override
+  List<Object?> get props => [trackId, latitude, longitude];
+}
+
+class LoadPlayedTracksWithLocation extends ContentEvent {}
+
+class ToggleTrackLike extends ContentEvent {
+  final String trackId;
+  
+  const ToggleTrackLike({required this.trackId});
+  
+  @override
+  List<Object?> get props => [trackId];
+}

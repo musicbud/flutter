@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geolocator/geolocator.dart';
+// import 'package:geolocator/geolocator.dart'; // Removed - not available
 import 'package:musicbud_flutter/blocs/spotify/spotify_bloc.dart';
 import 'package:musicbud_flutter/blocs/spotify/spotify_event.dart';
 import 'package:musicbud_flutter/blocs/spotify/spotify_state.dart';
@@ -34,20 +34,11 @@ class _SpotifyControlScreenContentState extends State<_SpotifyControlScreenConte
   }
 
   Future<void> _sendLocation() async {
-    try {
-      final position = await _getCurrentLocation();
-      if (mounted) {
-        context.read<SpotifyBloc>().add(SaveLocation(position.latitude, position.longitude));
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Location sent successfully')),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to send location')),
-        );
-      }
+    // Location functionality disabled due to missing geolocator dependency
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Location functionality currently disabled')),
+      );
     }
   }
 
@@ -80,26 +71,16 @@ class _SpotifyControlScreenContentState extends State<_SpotifyControlScreenConte
                   if (!mounted) return;
                   final bloc = context.read<SpotifyBloc>();
                   final messenger = ScaffoldMessenger.of(context);
-                  try {
-                    final position = await Geolocator.getCurrentPosition();
-                    if (mounted) {
-                      bloc.add(PlayTrackWithLocation(
-                        track.id ?? '',
-                        track.title,
-                        position.latitude,
-                        position.longitude,
-                      ));
-                      messenger.showSnackBar(
-                        const SnackBar(content: Text('Track played with location')),
-                      );
-                    }
-                  } catch (e) {
-                    if (mounted) {
-                      messenger.showSnackBar(
-                        const SnackBar(content: Text('Failed to play track with location')),
-                      );
-                    }
-                  }
+                  // Play track without location due to missing geolocator dependency
+                  bloc.add(PlayTrackWithLocation(
+                    track.id ?? '',
+                    track.title,
+                    0.0, // Default latitude
+                    0.0, // Default longitude
+                  ));
+                  messenger.showSnackBar(
+                    const SnackBar(content: Text('Track played (location disabled)')),
+                  );
                 },
               ),
             );
@@ -110,29 +91,6 @@ class _SpotifyControlScreenContentState extends State<_SpotifyControlScreenConte
   }
 
 
-  Future<Position> _getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied.');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      return Future.error('Location permissions are permanently denied.');
-    }
-
-    return await Geolocator.getCurrentPosition();
-  }
 
   @override
   Widget build(BuildContext context) {

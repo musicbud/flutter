@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/design_system.dart';
 import '../../../../models/artist.dart';
-import '../../../widgets/common/section_header.dart';
+// MIGRATED: import '../../../widgets/common/section_header.dart';
 import '../components/artist_card.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class FeaturedArtistsSection extends StatelessWidget {
   final List<Artist> artists;

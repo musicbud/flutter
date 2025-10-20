@@ -66,8 +66,8 @@ class _LibraryScreenState extends State<LibraryScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Colors.green.withOpacity(0.8),
-            Colors.teal.withOpacity(0.8),
+            Colors.green.withValues(alpha: 0.8),
+            Colors.teal.withValues(alpha: 0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
@@ -90,7 +90,7 @@ class _LibraryScreenState extends State<LibraryScreen>
                 Text(
                   'Your music collection',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Colors.white.withOpacity(0.9),
+                    color: Colors.white.withValues(alpha: 0.9),
                   ),
                 ),
               ],
@@ -201,7 +201,7 @@ class _LibraryScreenState extends State<LibraryScreen>
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Colors.green.withOpacity(0.8),
+          backgroundColor: Colors.green.withValues(alpha: 0.8),
           child: const Icon(Icons.playlist_play, color: Colors.white),
         ),
         title: Text(
@@ -228,7 +228,7 @@ class _LibraryScreenState extends State<LibraryScreen>
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Colors.red.withOpacity(0.8),
+          backgroundColor: Colors.red.withValues(alpha: 0.8),
           child: const Icon(Icons.favorite, color: Colors.white),
         ),
         title: Text(

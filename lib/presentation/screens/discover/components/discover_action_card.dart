@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/design_system.dart';
-import '../../../widgets/common/index.dart';
+// MIGRATED: import '../../../widgets/common/index.dart';
+import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class DiscoverActionCard extends StatelessWidget {
   final String title;
@@ -28,7 +29,7 @@ class DiscoverActionCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(DesignSystem.spacingLG),
             decoration: BoxDecoration(
-              color: accentColor.withOpacity(0.1),
+              color: accentColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             ),
             child: Icon(

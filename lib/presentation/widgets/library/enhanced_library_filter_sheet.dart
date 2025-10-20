@@ -119,7 +119,7 @@ class _EnhancedLibraryFilterSheetState extends State<EnhancedLibraryFilterSheet>
     return Container(
       padding: EdgeInsets.all(_theme.getDynamicSpacing(16)),
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColor.withOpacity(0.1),
+        color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
       child: Column(
@@ -198,7 +198,7 @@ class _EnhancedLibraryFilterSheetState extends State<EnhancedLibraryFilterSheet>
           _selectedSortBy = selected ? option : null;
         });
       },
-      selectedColor: Theme.of(context).primaryColor.withOpacity(0.2),
+      selectedColor: Theme.of(context).primaryColor.withValues(alpha: 0.2),
       checkmarkColor: Theme.of(context).primaryColor,
     );
   }

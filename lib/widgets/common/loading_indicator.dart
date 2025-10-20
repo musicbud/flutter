@@ -126,7 +126,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator>
       case LoadingIndicatorType.linear:
         return LinearProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(color),
-          backgroundColor: widget.backgroundColor ?? color.withOpacity(0.2),
+          backgroundColor: widget.backgroundColor ?? color.withValues(alpha: 0.2),
         );
 
       case LoadingIndicatorType.dots:
@@ -154,7 +154,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator>
               height: widget.size / 6,
               margin: const EdgeInsets.symmetric(horizontal: 2),
               decoration: BoxDecoration(
-                color: color.withOpacity(opacity),
+                color: color.withValues(alpha: opacity),
                 shape: BoxShape.circle,
               ),
             );
@@ -204,7 +204,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator>
             width: widget.size,
             height: widget.size,
             decoration: BoxDecoration(
-              color: color.withOpacity(0.6),
+              color: color.withValues(alpha: 0.6),
               shape: BoxShape.circle,
             ),
           ),

@@ -6,7 +6,7 @@ import '../../blocs/main/main_screen_event.dart';
 import '../../blocs/main/main_screen_state.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../core/design_system/design_system.dart';
-import '../widgets/common/loading_widget.dart';
+// MIGRATED: import '../widgets/common/loading_widget.dart';
 import '../components/bottom_navigation_bar.dart';
 import '../screens/auth/login_screen.dart';
 import 'home_page.dart';
@@ -15,6 +15,7 @@ import '../screens/buds/buds_screen.dart';
 import '../screens/chat/chat_screen.dart';
 import 'enhanced_search_page.dart';
 import '../../screens/debug/api_test_screen.dart';
+import '../widgets/enhanced/enhanced_widgets.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);

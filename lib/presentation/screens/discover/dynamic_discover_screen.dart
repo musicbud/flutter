@@ -380,7 +380,7 @@ class _DynamicDiscoverScreenState extends State<DynamicDiscoverScreen>
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withOpacity(0.1),
+                color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(12),
                 ),
@@ -466,7 +466,7 @@ class _DynamicDiscoverScreenState extends State<DynamicDiscoverScreen>
       margin: EdgeInsets.only(bottom: _theme.getDynamicSpacing(8)),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+          backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
           child: Icon(
             Icons.music_note,
             color: Theme.of(context).primaryColor,
@@ -509,7 +509,7 @@ class _DynamicDiscoverScreenState extends State<DynamicDiscoverScreen>
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor.withOpacity(0.1),
+                color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(12),
                 ),
@@ -585,7 +585,7 @@ class _DynamicDiscoverScreenState extends State<DynamicDiscoverScreen>
       itemBuilder: (context, index) {
         return ListTile(
           leading: CircleAvatar(
-            backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+            backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
             child: Text(
               '${index + 1}',
               style: TextStyle(
@@ -663,7 +663,7 @@ class _DynamicDiscoverScreenState extends State<DynamicDiscoverScreen>
       elevation: 2,
       child: Container(
         decoration: BoxDecoration(
-          color: colors[index % colors.length].withOpacity(0.1),
+          color: colors[index % colors.length].withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Center(
@@ -698,7 +698,7 @@ class _DynamicDiscoverScreenState extends State<DynamicDiscoverScreen>
       itemBuilder: (context, index) {
         return ListTile(
           leading: CircleAvatar(
-            backgroundColor: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+            backgroundColor: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
             child: Icon(
               Icons.play_circle,
               color: Theme.of(context).colorScheme.secondary,
@@ -724,7 +724,7 @@ class _DynamicDiscoverScreenState extends State<DynamicDiscoverScreen>
       itemBuilder: (context, index) {
         return ListTile(
           leading: CircleAvatar(
-            backgroundColor: Theme.of(context).colorScheme.tertiary.withOpacity(0.1),
+            backgroundColor: Theme.of(context).colorScheme.tertiary.withValues(alpha: 0.1),
             child: Icon(
               Icons.menu_book,
               color: Theme.of(context).colorScheme.tertiary,
@@ -750,7 +750,7 @@ class _DynamicDiscoverScreenState extends State<DynamicDiscoverScreen>
       itemBuilder: (context, index) {
         return ListTile(
           leading: CircleAvatar(
-            backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
+            backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
             child: Icon(
               Icons.explore,
               color: Theme.of(context).primaryColor,

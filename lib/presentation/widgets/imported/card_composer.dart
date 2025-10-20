@@ -199,7 +199,7 @@ class CardComposer {
             end: Alignment.bottomCenter,
             colors: [
               Colors.transparent,
-              _overlayColor ?? Colors.black.withOpacity(0.3),
+              _overlayColor ?? Colors.black.withValues(alpha: 0.3),
             ],
           ),
         ),
