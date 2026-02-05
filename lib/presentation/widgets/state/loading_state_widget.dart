@@ -65,29 +65,26 @@ class LoadingStateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Padding(
-      padding: padding ?? EdgeInsets.all(design.designSystemSpacing.xl),
+      padding: padding ?? const EdgeInsets.all(DesignSystem.spacingXL),
       child: Center(
-        child: _buildStateContent(context, design),
+        child: _buildStateContent(context),
       ),
     );
   }
 
-  Widget _buildStateContent(BuildContext context, DesignSystemThemeExtension design) {
+  Widget _buildStateContent(BuildContext context) {
     switch (state) {
       case LoadingState.loading:
-        return _buildLoadingState(design);
+        return _buildLoadingState();
       case LoadingState.empty:
-        return emptyWidget ?? _buildDefaultEmptyState(design);
+        return emptyWidget ?? _buildDefaultEmptyState();
       case LoadingState.error:
-        return errorWidget ?? _buildDefaultErrorState(design);
+        return errorWidget ?? _buildDefaultErrorState();
     }
   }
 
-  Widget _buildLoadingState(DesignSystemThemeExtension design) {
+  Widget _buildLoadingState() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -96,51 +93,51 @@ class LoadingStateWidget extends StatelessWidget {
           height: loadingSize,
           child: CircularProgressIndicator(
             strokeWidth: 3,
-            valueColor: AlwaysStoppedAnimation<Color>(design.designSystemColors.primary),
+            valueColor: AlwaysStoppedAnimation<Color>(DesignSystem.primary),
           ),
         ),
         const SizedBox(height: 16),
         Text(
           'Loading...',
-          style: design.designSystemTypography.bodyMedium.copyWith(
-            color: design.designSystemColors.onSurfaceVariant,
+          style: DesignSystem.bodyMedium.copyWith(
+            color: DesignSystem.onSurfaceVariant,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildDefaultEmptyState(DesignSystemThemeExtension design) {
+  Widget _buildDefaultEmptyState() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.xl),
+          padding: const EdgeInsets.all(DesignSystem.spacingXL),
           decoration: BoxDecoration(
-            color: design.designSystemColors.surfaceContainer,
-            borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+            color: DesignSystem.surfaceContainer,
+            borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
           ),
           child: Icon(
             emptyIcon ?? Icons.inbox_outlined,
             size: 64,
-            color: design.designSystemColors.onSurfaceVariant,
+            color: DesignSystem.onSurfaceVariant,
           ),
         ),
-        SizedBox(height: design.designSystemSpacing.lg),
+        const SizedBox(height: DesignSystem.spacingLG),
         Text(
           emptyMessage ?? 'No items found',
-          style: design.designSystemTypography.titleMedium.copyWith(
-            color: design.designSystemColors.onSurface,
+          style: DesignSystem.titleMedium.copyWith(
+            color: DesignSystem.onSurface,
             fontWeight: FontWeight.w600,
           ),
           textAlign: TextAlign.center,
         ),
         if (emptyMessage != null) ...[
-          SizedBox(height: design.designSystemSpacing.sm),
+          const SizedBox(height: DesignSystem.spacingSM),
           Text(
             emptyMessage!,
-            style: design.designSystemTypography.bodyMedium.copyWith(
-              color: design.designSystemColors.onSurfaceVariant,
+            style: DesignSystem.bodyMedium.copyWith(
+              color: DesignSystem.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -149,54 +146,54 @@ class LoadingStateWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDefaultErrorState(DesignSystemThemeExtension design) {
+  Widget _buildDefaultErrorState() {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.xl),
+          padding: const EdgeInsets.all(DesignSystem.spacingXL),
           decoration: BoxDecoration(
-            color: design.designSystemColors.error.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+            color: DesignSystem.error.withAlpha((255 * 0.1).round()),
+            borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
           ),
           child: Icon(
             errorIcon ?? Icons.error_outline,
             size: 64,
-            color: design.designSystemColors.error,
+            color: DesignSystem.error,
           ),
         ),
-        SizedBox(height: design.designSystemSpacing.lg),
+        const SizedBox(height: DesignSystem.spacingLG),
         Text(
           'Something went wrong',
-          style: design.designSystemTypography.titleMedium.copyWith(
-            color: design.designSystemColors.onSurface,
+          style: DesignSystem.titleMedium.copyWith(
+            color: DesignSystem.onSurface,
             fontWeight: FontWeight.w600,
           ),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: design.designSystemSpacing.sm),
+        const SizedBox(height: DesignSystem.spacingSM),
         Text(
           errorMessage ?? 'Please check your connection and try again',
-          style: design.designSystemTypography.bodyMedium.copyWith(
-            color: design.designSystemColors.onSurfaceVariant,
+          style: DesignSystem.bodyMedium.copyWith(
+            color: DesignSystem.onSurfaceVariant,
           ),
           textAlign: TextAlign.center,
         ),
         if (showRetryButton && onRetry != null) ...[
-          SizedBox(height: design.designSystemSpacing.xl),
+          const SizedBox(height: DesignSystem.spacingXL),
           ElevatedButton.icon(
             onPressed: onRetry,
             icon: const Icon(Icons.refresh, size: 20),
             label: const Text('Try Again'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: design.designSystemColors.primary,
-              foregroundColor: design.designSystemColors.onPrimary,
+              backgroundColor: DesignSystem.primary,
+              foregroundColor: DesignSystem.onPrimary,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+                borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
               ),
-              padding: EdgeInsets.symmetric(
-                horizontal: design.designSystemSpacing.lg,
-                vertical: design.designSystemSpacing.md,
+              padding: const EdgeInsets.symmetric(
+                horizontal: DesignSystem.spacingLG,
+                vertical: DesignSystem.spacingMD,
               ),
             ),
           ),

@@ -51,25 +51,22 @@ class _HorizontalListState extends State<HorizontalList>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.title != null)
           Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: design.designSystemSpacing.md,
-              vertical: design.designSystemSpacing.sm,
+            padding: const EdgeInsets.symmetric(
+              horizontal: DesignSystem.spacingMD,
+              vertical: DesignSystem.spacingSM,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
                   widget.title!,
-                  style: design.designSystemTypography.titleMedium.copyWith(
-                    color: design.designSystemColors.onSurface,
+                  style: DesignSystem.titleMedium.copyWith(
+                    color: DesignSystem.onSurface,
                   ),
                 ),
                 if (widget.onSeeAll != null)
@@ -84,8 +81,8 @@ class _HorizontalListState extends State<HorizontalList>
           ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          padding: widget.padding ?? EdgeInsets.symmetric(
-            horizontal: design.designSystemSpacing.md,
+          padding: widget.padding ?? const EdgeInsets.symmetric(
+            horizontal: DesignSystem.spacingMD,
           ),
           child: Row(
             children: widget.items.expand((child) => [

@@ -22,14 +22,13 @@ class DiscoverActionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ModernCard(
-      variant: ModernCardVariant.accent,
       onTap: onTap,
       child: Column(
         children: [
           Container(
             padding: const EdgeInsets.all(DesignSystem.spacingLG),
             decoration: BoxDecoration(
-              color: accentColor.withValues(alpha: 0.1),
+              color: accentColor.withAlpha((255 * 0.1).round()),
               borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             ),
             child: Icon(

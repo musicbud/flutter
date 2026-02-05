@@ -68,8 +68,7 @@ class _VerticalTimeline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final connectorColor = lineColor ?? design?.designSystemColors.border ?? theme.colorScheme.outline;
+    final connectorColor = lineColor ?? DesignSystem.border;
 
     return ListView.builder(
       shrinkWrap: true,
@@ -103,12 +102,12 @@ class _VerticalTimeline extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(width: design?.designSystemSpacing.md ?? 12),
+              const SizedBox(width: DesignSystem.spacingMD),
               // Content
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.only(
-                    bottom: isLast ? 0 : (design?.designSystemSpacing.lg ?? 16),
+                    bottom: isLast ? 0 : (DesignSystem.spacingLG),
                   ),
                   child: _TimelineEventCard(event: event),
                 ),
@@ -135,8 +134,7 @@ class _HorizontalTimeline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final connectorColor = lineColor ?? design?.designSystemColors.border ?? theme.colorScheme.outline;
+    final connectorColor = lineColor ?? DesignSystem.border;
 
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
@@ -151,7 +149,7 @@ class _HorizontalTimeline extends StatelessWidget {
                   color: events[i].color,
                   backgroundColor: events[i].backgroundColor,
                 ),
-                SizedBox(height: design?.designSystemSpacing.sm ?? 8),
+                const SizedBox(height: DesignSystem.spacingSM),
                 SizedBox(
                   width: 200,
                   child: _TimelineEventCard(event: events[i]),
@@ -160,7 +158,7 @@ class _HorizontalTimeline extends StatelessWidget {
             ),
             if (i < events.length - 1)
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: design?.designSystemSpacing.sm ?? 8),
+                padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingSM),
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
@@ -193,9 +191,8 @@ class _TimelineIndicator extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final indicatorColor = color ?? design?.designSystemColors.primary ?? theme.colorScheme.primary;
-    final bgColor = backgroundColor ?? indicatorColor.withValues(alpha: 0.1);
+    final indicatorColor = color ?? DesignSystem.primary;
+    final bgColor = backgroundColor ?? indicatorColor.withAlpha(25);
 
     return Container(
       width: 40,
@@ -219,38 +216,35 @@ class _TimelineEventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (event.time != null) ...[
           Text(
             event.time!,
-            style: (design?.designSystemTypography.caption ?? theme.textTheme.bodySmall)?.copyWith(
-              color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+            style: (DesignSystem.caption).copyWith(
+              color: DesignSystem.textMuted,
             ),
           ),
-          SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+          const SizedBox(height: DesignSystem.spacingXS),
         ],
         Text(
           event.title,
-          style: (design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium)?.copyWith(
+          style: (DesignSystem.bodyMedium).copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),
         if (event.description != null) ...[
-          SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+          const SizedBox(height: DesignSystem.spacingXS),
           Text(
             event.description!,
-            style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
-              color: design?.designSystemColors.onSurfaceVariant ?? theme.colorScheme.onSurfaceVariant,
+            style: (DesignSystem.bodySmall).copyWith(
+              color: DesignSystem.onSurfaceVariant,
             ),
           ),
         ],
         if (event.child != null) ...[
-          SizedBox(height: design?.designSystemSpacing.sm ?? 8),
+          const SizedBox(height: DesignSystem.spacingSM),
           event.child!,
         ],
       ],
@@ -292,9 +286,7 @@ class CompactTimeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final connectorColor = lineColor ?? design?.designSystemColors.border ?? theme.colorScheme.outline;
+    final connectorColor = lineColor ?? DesignSystem.border;
 
     return Column(
       children: [
@@ -323,9 +315,6 @@ class _CompactTimelineItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -337,7 +326,7 @@ class _CompactTimelineItem extends StatelessWidget {
                 width: 8,
                 height: 8,
                 decoration: BoxDecoration(
-                  color: event.color ?? design?.designSystemColors.primary ?? theme.colorScheme.primary,
+                  color: event.color ?? DesignSystem.primary,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -346,16 +335,16 @@ class _CompactTimelineItem extends StatelessWidget {
                   child: Container(
                     width: 2,
                     color: connectorColor,
-                    margin: EdgeInsets.symmetric(vertical: design?.designSystemSpacing.xs ?? 4),
+                    margin: const EdgeInsets.symmetric(vertical: DesignSystem.spacingXS),
                   ),
                 ),
             ],
           ),
-          SizedBox(width: design?.designSystemSpacing.md ?? 12),
+          const SizedBox(width: DesignSystem.spacingMD),
           // Content
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(bottom: design?.designSystemSpacing.md ?? 12),
+              padding: const EdgeInsets.only(bottom: DesignSystem.spacingMD),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -365,24 +354,24 @@ class _CompactTimelineItem extends StatelessWidget {
                       Expanded(
                         child: Text(
                           event.title,
-                          style: design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium,
+                          style: DesignSystem.bodyMedium,
                         ),
                       ),
                       if (event.time != null)
                         Text(
                           event.time!,
-                          style: (design?.designSystemTypography.caption ?? theme.textTheme.bodySmall)?.copyWith(
-                            color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+                          style: (DesignSystem.caption).copyWith(
+                            color: DesignSystem.textMuted,
                           ),
                         ),
                     ],
                   ),
                   if (event.subtitle != null) ...[
-                    SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+                    const SizedBox(height: DesignSystem.spacingXS),
                     Text(
                       event.subtitle!,
-                      style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
-                        color: design?.designSystemColors.onSurfaceVariant ?? theme.colorScheme.onSurfaceVariant,
+                      style: (DesignSystem.bodySmall).copyWith(
+                        color: DesignSystem.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -423,7 +412,6 @@ class ActivityTimeline extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     return ListView.builder(
       shrinkWrap: true,
@@ -456,18 +444,18 @@ class ActivityTimeline extends StatelessWidget {
                     Expanded(
                       child: Container(
                         width: 2,
-                        margin: EdgeInsets.symmetric(vertical: design?.designSystemSpacing.xs ?? 4),
-                        color: design?.designSystemColors.border ?? theme.colorScheme.outline,
+                        margin: const EdgeInsets.symmetric(vertical: DesignSystem.spacingXS),
+                        color: DesignSystem.border,
                       ),
                     ),
                 ],
               ),
-              SizedBox(width: design?.designSystemSpacing.md ?? 12),
+              const SizedBox(width: DesignSystem.spacingMD),
               // Content
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.only(
-                    bottom: isLast ? 0 : (design?.designSystemSpacing.lg ?? 16),
+                  padding: const EdgeInsets.only(
+                    bottom: DesignSystem.spacingLG,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -480,13 +468,13 @@ class ActivityTimeline extends StatelessWidget {
                                 children: [
                                   TextSpan(
                                     text: activity.userName,
-                                    style: (design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium)?.copyWith(
+                                    style: (DesignSystem.bodyMedium).copyWith(
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                   TextSpan(
                                     text: ' ${activity.action}',
-                                    style: design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium,
+                                    style: DesignSystem.bodyMedium,
                                   ),
                                 ],
                               ),
@@ -495,16 +483,16 @@ class ActivityTimeline extends StatelessWidget {
                         ],
                       ),
                       if (activity.time != null) ...[
-                        SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+                        const SizedBox(height: DesignSystem.spacingXS),
                         Text(
                           activity.time!,
-                          style: (design?.designSystemTypography.caption ?? theme.textTheme.bodySmall)?.copyWith(
-                            color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+                          style: (DesignSystem.caption).copyWith(
+                            color: DesignSystem.textMuted,
                           ),
                         ),
                       ],
                       if (activity.content != null) ...[
-                        SizedBox(height: design?.designSystemSpacing.sm ?? 8),
+                        const SizedBox(height: DesignSystem.spacingSM),
                         activity.content!,
                       ],
                     ],

@@ -86,9 +86,6 @@ class _ModernCardState extends State<ModernCard>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
@@ -100,22 +97,22 @@ class _ModernCardState extends State<ModernCard>
             child: GestureDetector(
               onTap: widget.onTap,
               child: Container(
-                margin: widget.margin ?? EdgeInsets.all(theme.designSystem?.designSystemSpacing.md ?? 16.0),
+                margin: widget.margin ?? const EdgeInsets.all(DesignSystem.spacingMD),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(
-                    widget.borderRadius ?? theme.designSystem?.designSystemRadius.xl ?? 31.0,
+                    widget.borderRadius ?? DesignSystem.radiusXL,
                   ),
-                  color: _getBackgroundColor(theme),
-                  gradient: _getGradient(theme),
-                  border: _getBorder(theme),
-                  boxShadow: _getShadows(theme),
+                  color: _getBackgroundColor(),
+                  gradient: _getGradient(),
+                  border: _getBorder(),
+                  boxShadow: _getShadows(),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(
-                    widget.borderRadius ?? theme.designSystem?.designSystemRadius.xl ?? 31.0,
+                    widget.borderRadius ?? DesignSystem.radiusXL,
                   ),
                   child: Padding(
-                    padding: widget.padding ?? EdgeInsets.all(theme.designSystem?.designSystemSpacing.lg ?? 24.0),
+                    padding: widget.padding ?? const EdgeInsets.all(DesignSystem.spacingLG),
                     child: widget.child,
                   ),
                 ),
@@ -127,45 +124,45 @@ class _ModernCardState extends State<ModernCard>
     );
   }
 
-  Color _getBackgroundColor(ThemeData theme) {
+  Color _getBackgroundColor() {
     if (widget.backgroundColor != null) return widget.backgroundColor!;
 
     switch (widget.variant) {
       case ModernCardVariant.primary:
-        return theme.designSystem?.designSystemColors.surfaceContainer ?? const Color(0xFF1A1A1A);
+        return DesignSystem.surfaceContainer;
       case ModernCardVariant.secondary:
-        return theme.designSystem?.designSystemColors.surfaceContainerHigh ?? const Color(0xFF282828);
+        return DesignSystem.surfaceContainerHigh;
       case ModernCardVariant.accent:
-        return theme.designSystem?.designSystemColors.surfaceContainerHighest ?? const Color(0xFF3E3E3E);
+        return DesignSystem.surfaceContainerHighest;
       case ModernCardVariant.gradient:
         return Colors.transparent;
       case ModernCardVariant.elevated:
-        return theme.designSystem?.designSystemColors.surfaceContainer ?? const Color(0xFF1A1A1A);
+        return DesignSystem.surfaceContainer;
       case ModernCardVariant.outlined:
         return Colors.transparent;
     }
   }
 
-  Gradient? _getGradient(ThemeData theme) {
+  Gradient? _getGradient() {
     if (widget.customGradient != null) return widget.customGradient;
 
     switch (widget.variant) {
       case ModernCardVariant.gradient:
-        return theme.designSystem?.designSystemGradients.card ?? DesignSystem.gradientCard;
+        return DesignSystem.gradientCard;
       case ModernCardVariant.accent:
-        return theme.designSystem?.designSystemGradients.accent ?? DesignSystem.gradientAccent;
+        return DesignSystem.gradientPrimary;
       default:
         return null;
     }
   }
 
-  Border? _getBorder(ThemeData theme) {
+  Border? _getBorder() {
     if (widget.customBorder != null) return widget.customBorder;
 
     switch (widget.variant) {
       case ModernCardVariant.outlined:
         return Border.all(
-          color: theme.designSystem?.designSystemColors.border ?? Colors.grey,
+          color: DesignSystem.border,
           width: 1.0,
         );
       default:
@@ -173,24 +170,24 @@ class _ModernCardState extends State<ModernCard>
     }
   }
 
-  List<BoxShadow> _getShadows(ThemeData theme) {
+  List<BoxShadow> _getShadows() {
     if (widget.customShadows != null) return widget.customShadows!;
 
     switch (widget.variant) {
       case ModernCardVariant.elevated:
         return _isHovered
-            ? theme.designSystem?.designSystemShadows.cardHover ?? []
-            : theme.designSystem?.designSystemShadows.card ?? [];
+            ? DesignSystem.shadowLarge
+            : DesignSystem.shadowMedium;
       case ModernCardVariant.primary:
       case ModernCardVariant.secondary:
       case ModernCardVariant.accent:
         return _isHovered
-            ? theme.designSystem?.designSystemShadows.cardHover ?? []
-            : theme.designSystem?.designSystemShadows.card ?? [];
+            ? DesignSystem.shadowLarge
+            : DesignSystem.shadowMedium;
       default:
         return _isHovered
-            ? theme.designSystem?.designSystemShadows.medium ?? []
-            : theme.designSystem?.designSystemShadows.small ?? [];
+            ? DesignSystem.shadowMedium
+            : DesignSystem.shadowSmall;
     }
   }
 }
@@ -220,8 +217,6 @@ class MusicCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return ModernCard(
       variant: ModernCardVariant.primary,
       onTap: onTap,
@@ -233,47 +228,47 @@ class MusicCard extends StatelessWidget {
             height: 120,
             width: double.infinity,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(theme.designSystem?.designSystemRadius.lg ?? 24.0),
-              color: theme.designSystem?.designSystemColors.surfaceContainerHigh ?? const Color(0xFF282828),
+              borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
+              color: DesignSystem.surfaceContainerHigh,
             ),
             child: imageUrl != null
                 ? ClipRRect(
-                    borderRadius: BorderRadius.circular(theme.designSystem?.designSystemRadius.lg ?? 24.0),
+                    borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
                     child: Image.network(
                       imageUrl!,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
-                        return _buildIconFallback(theme);
+                        return _buildIconFallback();
                       },
                     ),
                   )
-                : _buildIconFallback(theme),
+                : _buildIconFallback(),
           ),
 
-          SizedBox(height: theme.designSystem?.designSystemSpacing.md ?? 16.0),
+          const SizedBox(height: DesignSystem.spacingMD),
 
           // Title and Subtitle
           Text(
             title,
-            style: theme.designSystem?.designSystemTypography.titleMedium.copyWith(
-              color: theme.designSystem?.designSystemColors.onSurface,
-            ) ?? const TextStyle(),
+            style: DesignSystem.titleMedium.copyWith(
+              color: DesignSystem.onSurface,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
 
-          SizedBox(height: theme.designSystem?.designSystemSpacing.xs ?? 8.0),
+          const SizedBox(height: DesignSystem.spacingXS),
 
           Text(
             subtitle,
-            style: theme.designSystem?.designSystemTypography.bodySmall.copyWith(
-              color: theme.designSystem?.designSystemColors.onSurfaceVariant,
-            ) ?? const TextStyle(),
+            style: DesignSystem.bodySmall.copyWith(
+              color: DesignSystem.onSurfaceVariant,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
 
-          SizedBox(height: theme.designSystem?.designSystemSpacing.md ?? 16.0),
+          const SizedBox(height: DesignSystem.spacingMD),
 
           // Action Row
           Row(
@@ -281,14 +276,14 @@ class MusicCard extends StatelessWidget {
             children: [
               // Play Button
               Container(
-                padding: EdgeInsets.all(theme.designSystem?.designSystemSpacing.sm ?? 12.0),
-                decoration: BoxDecoration(
-                  color: theme.designSystem?.designSystemColors.primary ?? const Color(0xFFFE2C54),
-                  borderRadius: BorderRadius.circular(theme.designSystem?.designSystemRadius.circular ?? 50.0),
+                padding: const EdgeInsets.all(DesignSystem.spacingSM),
+                decoration: const BoxDecoration(
+                  color: DesignSystem.primary,
+                  shape: BoxShape.circle,
                 ),
                 child: Icon(
                   isPlaying ? Icons.pause : Icons.play_arrow,
-                  color: theme.designSystem?.designSystemColors.onPrimary ?? Colors.white,
+                  color: DesignSystem.onPrimary,
                   size: 20,
                 ),
               ),
@@ -296,7 +291,7 @@ class MusicCard extends StatelessWidget {
               // Like Button
               Icon(
                 isLiked ? Icons.favorite : Icons.favorite_border,
-                color: isLiked ? theme.designSystem?.designSystemColors.primary ?? const Color(0xFFFE2C54) : theme.designSystem?.designSystemColors.onSurfaceVariant ?? const Color(0xFFB3B3B3),
+                color: isLiked ? DesignSystem.primary : DesignSystem.onSurfaceVariant,
                 size: 24,
               ),
             ],
@@ -306,15 +301,15 @@ class MusicCard extends StatelessWidget {
     );
   }
 
-  Widget _buildIconFallback(ThemeData theme) {
+  Widget _buildIconFallback() {
     return Container(
       decoration: BoxDecoration(
-        gradient: theme.designSystem?.designSystemGradients.card ?? DesignSystem.gradientCard,
-        borderRadius: BorderRadius.circular(theme.designSystem?.designSystemRadius.lg ?? 24.0),
+        gradient: DesignSystem.gradientCard,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
       ),
       child: Icon(
         icon ?? Icons.music_note,
-        color: iconColor ?? theme.designSystem?.designSystemColors.primary ?? const Color(0xFFFE2C54),
+        color: iconColor ?? DesignSystem.primary,
         size: 48,
       ),
     );
@@ -339,8 +334,6 @@ class ProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return ModernCard(
       variant: ModernCardVariant.primary,
       onTap: onTap,
@@ -349,18 +342,18 @@ class ProfileCard extends StatelessWidget {
           // Avatar
           CircleAvatar(
             radius: 30,
-            backgroundColor: theme.designSystem?.designSystemColors.primary ?? const Color(0xFFFE2C54),
+            backgroundColor: DesignSystem.primary,
             backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
             child: avatarUrl == null
-                ? Icon(
+                ? const Icon(
                     Icons.person,
-                    color: theme.designSystem?.designSystemColors.onPrimary ?? Colors.white,
+                    color: DesignSystem.onPrimary,
                     size: 32,
                   )
                 : null,
           ),
 
-          SizedBox(width: theme.designSystem?.designSystemSpacing.md ?? 16.0),
+          const SizedBox(width: DesignSystem.spacingMD),
 
           // Name and Subtitle
           Expanded(
@@ -369,17 +362,17 @@ class ProfileCard extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: theme.designSystem?.designSystemTypography.titleMedium.copyWith(
-                    color: theme.designSystem?.designSystemColors.onSurface,
-                  ) ?? const TextStyle(),
+                  style: DesignSystem.titleMedium.copyWith(
+                    color: DesignSystem.onSurface,
+                  ),
                 ),
                 if (subtitle != null) ...[
-                  SizedBox(height: theme.designSystem?.designSystemSpacing.xs ?? 8.0),
+                  const SizedBox(height: DesignSystem.spacingXS),
                   Text(
                     subtitle!,
-                    style: theme.designSystem?.designSystemTypography.bodySmall.copyWith(
-                      color: theme.designSystem?.designSystemColors.onSurfaceVariant,
-                    ) ?? const TextStyle(),
+                    style: DesignSystem.bodySmall.copyWith(
+                      color: DesignSystem.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ],
@@ -388,7 +381,7 @@ class ProfileCard extends StatelessWidget {
 
           // Actions
           if (actions != null) ...[
-            SizedBox(width: theme.designSystem?.designSystemSpacing.sm ?? 12.0),
+            const SizedBox(width: DesignSystem.spacingSM),
             ...actions!,
           ],
         ],

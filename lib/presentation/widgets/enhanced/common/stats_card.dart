@@ -21,16 +21,15 @@ class StatsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final cardColor = color ?? design?.designSystemColors.primary ?? theme.colorScheme.primary;
+    final cardColor = color ?? DesignSystem.primary;
 
     return Container(
-      padding: EdgeInsets.all(design?.designSystemSpacing.lg ?? 16),
+      padding: const EdgeInsets.all(DesignSystem.spacingLG),
       decoration: BoxDecoration(
-        color: cardColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+        color: cardColor.withAlpha(25),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         border: Border.all(
-          color: cardColor.withValues(alpha: 0.3),
+          color: cardColor.withAlpha(77),
           width: 1,
         ),
       ),
@@ -39,23 +38,23 @@ class StatsCard extends StatelessWidget {
         children: [
           if (icon != null)
             Icon(icon, color: cardColor, size: 24),
-          SizedBox(height: design?.designSystemSpacing.sm ?? 8),
+          const SizedBox(height: DesignSystem.spacingSM),
           Text(
             value,
-            style: (design?.designSystemTypography.displaySmall ?? theme.textTheme.displaySmall)?.copyWith(
+            style: (DesignSystem.displaySmall).copyWith(
               color: cardColor,
               fontWeight: FontWeight.bold,
               fontSize: 32,
             ),
           ),
-          SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+          const SizedBox(height: DesignSystem.spacingXS),
           Row(
             children: [
               Expanded(
                 child: Text(
                   label,
-                  style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
-                    color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+                  style: (DesignSystem.bodySmall).copyWith(
+                    color: DesignSystem.textMuted,
                   ),
                 ),
               ),
@@ -96,8 +95,6 @@ class StatsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>();
-
     return Row(
       children: [
         for (int i = 0; i < stats.length; i++) ...[
@@ -111,7 +108,7 @@ class StatsRow extends StatelessWidget {
             ),
           ),
           if (i < stats.length - 1)
-            SizedBox(width: design?.designSystemSpacing.md ?? 12),
+            const SizedBox(width: DesignSystem.spacingMD),
         ],
       ],
     );
@@ -149,27 +146,24 @@ class CompactStat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         if (icon != null) ...[
           Icon(icon, size: 20),
-          SizedBox(width: design?.designSystemSpacing.xs ?? 4),
+          const SizedBox(width: DesignSystem.spacingXS),
         ],
         Text(
           value,
-          style: (design?.designSystemTypography.titleMedium ?? theme.textTheme.titleMedium)?.copyWith(
+          style: (DesignSystem.titleMedium).copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),
-        SizedBox(width: design?.designSystemSpacing.xs ?? 4),
+        const SizedBox(width: DesignSystem.spacingXS),
         Text(
           label,
-          style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
-            color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+          style: (DesignSystem.bodySmall).copyWith(
+            color: DesignSystem.textMuted,
           ),
         ),
       ],

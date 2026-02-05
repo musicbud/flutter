@@ -172,19 +172,16 @@ class ModernDropdown<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: design?.designSystemSpacing.md ?? 12,
-        vertical: design?.designSystemSpacing.xs ?? 4,
+      padding: const EdgeInsets.symmetric(
+        horizontal: DesignSystem.spacingMD,
+        vertical: DesignSystem.spacingXS,
       ),
       decoration: BoxDecoration(
         border: Border.all(
-          color: design?.designSystemColors.border ?? theme.colorScheme.outline,
+          color: DesignSystem.border,
         ),
-        borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       ),
       child: DropdownButton<T>(
         value: value,
@@ -198,7 +195,7 @@ class ModernDropdown<T> extends StatelessWidget {
               children: [
                 if (item.icon != null) ...[
                   Icon(item.icon, size: 20),
-                  SizedBox(width: design?.designSystemSpacing.sm ?? 8),
+                  const SizedBox(width: DesignSystem.spacingSM),
                 ],
                 Expanded(child: Text(item.label)),
               ],
@@ -251,18 +248,15 @@ class BottomSheetMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return SafeArea(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: EdgeInsets.all(design?.designSystemSpacing.lg ?? 16),
+            padding: const EdgeInsets.all(DesignSystem.spacingLG),
             child: Text(
               title,
-              style: (design?.designSystemTypography.titleMedium ?? theme.textTheme.titleMedium)?.copyWith(
+              style: (DesignSystem.titleMedium).copyWith(
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -282,7 +276,7 @@ class BottomSheetMenu extends StatelessWidget {
               },
             );
           }),
-          SizedBox(height: design?.designSystemSpacing.md ?? 12),
+          const SizedBox(height: DesignSystem.spacingMD),
         ],
       ),
     );

@@ -250,7 +250,7 @@ class _PlaylistCreationDialogState extends State<PlaylistCreationDialog> {
             ),
             SizedBox(height: _theme.getDynamicSpacing(12)),
             DropdownButtonFormField<String>(
-              value: _selectedFolderId,
+              initialValue: _selectedFolderId,
               decoration: InputDecoration(
                 hintText: 'Select a folder',
                 border: OutlineInputBorder(

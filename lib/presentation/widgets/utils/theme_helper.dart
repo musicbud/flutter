@@ -35,32 +35,117 @@ class ThemeHelper {
 
   /// Get design system colors from context
   static DesignSystemColors getDesignSystemColors(BuildContext context) {
-    return Theme.of(context).extension<DesignSystemThemeExtension>()!.designSystemColors;
+    // Access DesignSystem static members directly
+    return DesignSystemColors(
+      primary: DesignSystem.primary,
+      secondary: DesignSystem.secondary,
+      surface: DesignSystem.surface,
+      background: DesignSystem.background,
+      onSurface: DesignSystem.onSurface,
+      onSurfaceVariant: DesignSystem.onSurfaceVariant,
+      error: DesignSystem.error,
+      success: DesignSystem.success,
+      warning: DesignSystem.warning,
+      info: DesignSystem.info,
+      accentBlue: DesignSystem.accentBlue,
+      accentPurple: DesignSystem.accentPurple,
+      accentGreen: DesignSystem.accentGreen,
+      accentOrange: DesignSystem.accentOrange,
+      border: DesignSystem.border,
+      overlay: DesignSystem.overlay,
+      surfaceContainer: DesignSystem.surfaceContainer,
+      surfaceContainerHigh: DesignSystem.surfaceContainerHigh,
+      surfaceContainerHighest: DesignSystem.surfaceContainerHighest,
+      onPrimary: DesignSystem.onPrimary,
+      onError: DesignSystem.onError,
+      onErrorContainer: DesignSystem.onErrorContainer,
+      textMuted: DesignSystem.textMuted,
+      primaryRed: DesignSystem.primaryRed,
+      white: Colors.white, // Assuming white is directly from Colors
+      surfaceDark: DesignSystem.surfaceDark,
+      surfaceLight: DesignSystem.surfaceLight,
+      cardBackground: DesignSystem.cardBackground,
+      borderColor: DesignSystem.borderColor,
+      textPrimary: DesignSystem.textPrimary,
+    );
   }
 
   /// Get design system typography from context
   static DesignSystemTypography getDesignSystemTypography(BuildContext context) {
-    return Theme.of(context).extension<DesignSystemThemeExtension>()!.designSystemTypography;
+    // Access DesignSystem static members directly
+    return DesignSystemTypography(
+      displayLarge: DesignSystem.displayLarge,
+      displayMedium: DesignSystem.displayMedium,
+      displaySmall: DesignSystem.displaySmall,
+      headlineLarge: DesignSystem.headlineLarge,
+      headlineMedium: DesignSystem.headlineMedium,
+      headlineSmall: DesignSystem.headlineSmall,
+      titleLarge: DesignSystem.titleLarge,
+      titleMedium: DesignSystem.titleMedium,
+      titleSmall: DesignSystem.titleSmall,
+      bodyLarge: DesignSystem.bodyLarge,
+      bodyMedium: DesignSystem.bodyMedium,
+      bodySmall: DesignSystem.bodySmall,
+      labelLarge: DesignSystem.labelLarge,
+      labelMedium: DesignSystem.labelMedium,
+      labelSmall: DesignSystem.labelSmall,
+      caption: DesignSystem.caption,
+      overline: DesignSystem.bodySmall, // Closest equivalent in new system
+      arabicText: DesignSystem.bodyMedium, // Closest equivalent in new system
+    );
   }
 
   /// Get design system spacing from context
   static DesignSystemSpacing getDesignSystemSpacing(BuildContext context) {
-    return Theme.of(context).extension<DesignSystemThemeExtension>()!.designSystemSpacing;
+    // Access DesignSystem static members directly
+    return DesignSystemSpacing(
+      xxs: DesignSystem.spacingXXS,
+      xs: DesignSystem.spacingXS,
+      sm: DesignSystem.spacingSM,
+      md: DesignSystem.spacingMD,
+      lg: DesignSystem.spacingLG,
+      xl: DesignSystem.spacingXL,
+      xxl: DesignSystem.spacingXXL,
+      xxxl: DesignSystem.spacingXXL, // Closest equivalent
+      huge: DesignSystem.spacingXXL, // Closest equivalent
+    );
   }
 
   /// Get design system radius from context
   static DesignSystemRadius getDesignSystemRadius(BuildContext context) {
-    return Theme.of(context).extension<DesignSystemThemeExtension>()!.designSystemRadius;
+    // Access DesignSystem static members directly
+    return DesignSystemRadius(
+      xs: DesignSystem.radiusXS,
+      sm: DesignSystem.radiusSM,
+      md: DesignSystem.radiusMD,
+      lg: DesignSystem.radiusLG,
+      xl: DesignSystem.radiusXL,
+      xxl: DesignSystem.radiusXL, // Closest equivalent
+      circular: DesignSystem.radiusFull,
+      xxs: DesignSystem.radiusXS,
+    );
   }
 
   /// Get design system shadows from context
   static DesignSystemShadows getDesignSystemShadows(BuildContext context) {
-    return Theme.of(context).extension<DesignSystemThemeExtension>()!.designSystemShadows;
+    return DesignSystemShadows(
+      small: DesignSystem.shadowSmall,
+      medium: DesignSystem.shadowMedium,
+      large: DesignSystem.shadowLarge,
+      card: DesignSystem.shadowCard,
+      text: DesignSystem.shadowText,
+    );
   }
 
   /// Get design system gradients from context
   static DesignSystemGradients getDesignSystemGradients(BuildContext context) {
-    return Theme.of(context).extension<DesignSystemThemeExtension>()!.designSystemGradients;
+    return DesignSystemGradients(
+      primary: DesignSystem.gradientPrimary,
+      secondary: DesignSystem.gradientSecondary,
+      overlay: DesignSystem.gradientOverlay,
+      background: DesignSystem.gradientBackground,
+      card: DesignSystem.gradientCard,
+    );
   }
 
   /// Check if current theme is dark mode
@@ -121,13 +206,12 @@ class ThemeHelper {
     bool showShadow = false,
     BorderRadius? borderRadius,
   }) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>()!;
-    final colors = design.designSystemColors;
+    final colors = ThemeHelper.getDesignSystemColors(context);
 
     return BoxDecoration(
       color: color ?? colors.surfaceContainer,
-      borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.lg),
-      boxShadow: showShadow ? design.designSystemShadows.card : null,
+      borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusLG),
+      boxShadow: showShadow ? DesignSystem.shadowCard : null,
     );
   }
 
@@ -138,19 +222,18 @@ class ThemeHelper {
     Size? minimumSize,
     EdgeInsetsGeometry? padding,
   }) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>()!;
-    final colors = design.designSystemColors;
+    final colors = ThemeHelper.getDesignSystemColors(context);
 
     return ElevatedButton.styleFrom(
       backgroundColor: backgroundColor ?? colors.primary,
       foregroundColor: foregroundColor ?? colors.onPrimary,
       minimumSize: minimumSize ?? const Size(88, 36),
-      padding: padding ?? EdgeInsets.symmetric(
-        horizontal: design.designSystemSpacing.lg,
-        vertical: design.designSystemSpacing.md,
+      padding: padding ?? const EdgeInsets.symmetric(
+        horizontal: DesignSystem.spacingLG,
+        vertical: DesignSystem.spacingMD,
       ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       ),
     );
   }
@@ -160,16 +243,14 @@ class ThemeHelper {
     Color? foregroundColor,
     TextStyle? textStyle,
   }) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>()!;
-    final colors = design.designSystemColors;
-    final typography = design.designSystemTypography;
+    final colors = ThemeHelper.getDesignSystemColors(context);
 
     return TextButton.styleFrom(
       foregroundColor: foregroundColor ?? colors.primary,
-      textStyle: textStyle ?? typography.labelLarge,
-      padding: EdgeInsets.symmetric(
-        horizontal: design.designSystemSpacing.md,
-        vertical: design.designSystemSpacing.sm,
+      textStyle: textStyle ?? DesignSystem.labelLarge,
+      padding: const EdgeInsets.symmetric(
+        horizontal: DesignSystem.spacingMD,
+        vertical: DesignSystem.spacingSM,
       ),
     );
   }
@@ -179,18 +260,17 @@ class ThemeHelper {
     Color? foregroundColor,
     Color? sideColor,
   }) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>()!;
-    final colors = design.designSystemColors;
+    final colors = ThemeHelper.getDesignSystemColors(context);
 
     return OutlinedButton.styleFrom(
       foregroundColor: foregroundColor ?? colors.onSurface,
       side: BorderSide(color: sideColor ?? colors.border),
-      padding: EdgeInsets.symmetric(
-        horizontal: design.designSystemSpacing.lg,
-        vertical: design.designSystemSpacing.md,
+      padding: const EdgeInsets.symmetric(
+        horizontal: DesignSystem.spacingLG,
+        vertical: DesignSystem.spacingMD,
       ),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       ),
     );
   }
@@ -203,7 +283,7 @@ class ThemeHelper {
 
   /// Create a color with opacity
   static Color withOpacity(Color color, double opacity) {
-    return color.withValues(alpha: opacity);
+    return color.withAlpha((255 * opacity).round());
   }
 
   /// Lighten a color by a percentage
@@ -242,55 +322,53 @@ class ThemeHelper {
 
   /// Get spacing value by name
   static double getSpacingByName(BuildContext context, String name) {
-    final spacing = getDesignSystemSpacing(context);
-
+    // Access DesignSystem static members directly
     switch (name) {
       case 'xxs':
-        return spacing.xxs;
+        return DesignSystem.spacingXXS;
       case 'xs':
-        return spacing.xs;
+        return DesignSystem.spacingXS;
       case 'sm':
-        return spacing.sm;
+        return DesignSystem.spacingSM;
       case 'md':
-        return spacing.md;
+        return DesignSystem.spacingMD;
       case 'lg':
-        return spacing.lg;
+        return DesignSystem.spacingLG;
       case 'xl':
-        return spacing.xl;
+        return DesignSystem.spacingXL;
       case 'xxl':
-        return spacing.xxl;
+        return DesignSystem.spacingXXL;
       case 'xxxl':
-        return spacing.xxxl;
+        return DesignSystem.spacingXXL; // Closest equivalent
       case 'huge':
-        return spacing.huge;
+        return DesignSystem.spacingXXL; // Closest equivalent
       default:
-        return spacing.md;
+        return DesignSystem.spacingMD;
     }
   }
 
   /// Get radius value by name
   static double getRadiusByName(BuildContext context, String name) {
-    final radius = getDesignSystemRadius(context);
-
+    // Access DesignSystem static members directly
     switch (name) {
       case 'xxs':
-        return radius.xxs;
+        return DesignSystem.radiusXS;
       case 'xs':
-        return radius.xs;
+        return DesignSystem.radiusXS;
       case 'sm':
-        return radius.sm;
+        return DesignSystem.radiusSM;
       case 'md':
-        return radius.md;
+        return DesignSystem.radiusMD;
       case 'lg':
-        return radius.lg;
+        return DesignSystem.radiusLG;
       case 'xl':
-        return radius.xl;
+        return DesignSystem.radiusXL;
       case 'xxl':
-        return radius.xxl;
+        return DesignSystem.radiusXL; // Closest equivalent
       case 'circular':
-        return radius.circular;
+        return DesignSystem.radiusFull;
       default:
-        return radius.md;
+        return DesignSystem.radiusMD;
     }
   }
 }
@@ -301,4 +379,191 @@ enum ScreenSizeCategory {
   tablet,        // 600px - 900px
   smallDesktop,  // 900px - 1200px
   largeDesktop,  // >= 1200px
+}
+
+// Dummy classes for DesignSystem components since they were removed
+class DesignSystemColors {
+  final Color primary;
+  final Color secondary;
+  final Color surface;
+  final Color background;
+  final Color onSurface;
+  final Color onSurfaceVariant;
+  final Color error;
+  final Color success;
+  final Color warning;
+  final Color info;
+  final Color accentBlue;
+  final Color accentPurple;
+  final Color accentGreen;
+  final Color accentOrange;
+  final Color border;
+  final Color overlay;
+  final Color surfaceContainer;
+  final Color surfaceContainerHigh;
+  final Color surfaceContainerHighest;
+  final Color onPrimary;
+  final Color onError;
+  final Color onErrorContainer;
+  final Color textMuted;
+  final Color primaryRed;
+  final Color white;
+  final Color surfaceDark;
+  final Color surfaceLight;
+  final Color cardBackground;
+  final Color borderColor;
+  final Color textPrimary;
+
+  const DesignSystemColors({
+    required this.primary,
+    required this.secondary,
+    required this.surface,
+    required this.background,
+    required this.onSurface,
+    required this.onSurfaceVariant,
+    required this.error,
+    required this.success,
+    required this.warning,
+    required this.info,
+    required this.accentBlue,
+    required this.accentPurple,
+    required this.accentGreen,
+    required this.accentOrange,
+    required this.border,
+    required this.overlay,
+    required this.surfaceContainer,
+    required this.surfaceContainerHigh,
+    required this.surfaceContainerHighest,
+    required this.onPrimary,
+    required this.onError,
+    required this.onErrorContainer,
+    required this.textMuted,
+    required this.primaryRed,
+    required this.white,
+    required this.surfaceDark,
+    required this.surfaceLight,
+    required this.cardBackground,
+    required this.borderColor,
+    required this.textPrimary,
+  });
+}
+
+class DesignSystemTypography {
+  final TextStyle displayLarge;
+  final TextStyle displayMedium;
+  final TextStyle displaySmall;
+  final TextStyle headlineLarge;
+  final TextStyle headlineMedium;
+  final TextStyle headlineSmall;
+  final TextStyle titleLarge;
+  final TextStyle titleMedium;
+  final TextStyle titleSmall;
+  final TextStyle bodyLarge;
+  final TextStyle bodyMedium;
+  final TextStyle bodySmall;
+  final TextStyle labelLarge;
+  final TextStyle labelMedium;
+  final TextStyle labelSmall;
+  final TextStyle caption;
+  final TextStyle overline;
+  final TextStyle arabicText;
+
+  const DesignSystemTypography({
+    required this.displayLarge,
+    required this.displayMedium,
+    required this.displaySmall,
+    required this.headlineLarge,
+    required this.headlineMedium,
+    required this.headlineSmall,
+    required this.titleLarge,
+    required this.titleMedium,
+    required this.titleSmall,
+    required this.bodyLarge,
+    required this.bodyMedium,
+    required this.bodySmall,
+    required this.labelLarge,
+    required this.labelMedium,
+    required this.labelSmall,
+    required this.caption,
+    required this.overline,
+    required this.arabicText,
+  });
+}
+
+class DesignSystemSpacing {
+  final double xxs;
+  final double xs;
+  final double sm;
+  final double md;
+  final double lg;
+  final double xl;
+  final double xxl;
+  final double xxxl;
+  final double huge;
+
+  const DesignSystemSpacing({
+    required this.xxs,
+    required this.xs,
+    required this.sm,
+    required this.md,
+    required this.lg,
+    required this.xl,
+    required this.xxl,
+    required this.xxxl,
+    required this.huge,
+  });
+}
+
+class DesignSystemRadius {
+  final double xxs;
+  final double xs;
+  final double sm;
+  final double md;
+  final double lg;
+  final double xl;
+  final double xxl;
+  final double circular;
+
+  const DesignSystemRadius({
+    required this.xxs,
+    required this.xs,
+    required this.sm,
+    required this.md,
+    required this.lg,
+    required this.xl,
+    required this.xxl,
+    required this.circular,
+  });
+}
+
+class DesignSystemShadows {
+  final List<BoxShadow> small;
+  final List<BoxShadow> medium;
+  final List<BoxShadow> large;
+  final List<BoxShadow> card;
+  final List<BoxShadow> text;
+
+  const DesignSystemShadows({
+    required this.small,
+    required this.medium,
+    required this.large,
+    required this.card,
+    required this.text,
+  });
+}
+
+class DesignSystemGradients {
+  final LinearGradient primary;
+  final LinearGradient secondary;
+  final LinearGradient overlay;
+  final LinearGradient background;
+  final LinearGradient card;
+
+  const DesignSystemGradients({
+    required this.primary,
+    required this.secondary,
+    required this.overlay,
+    required this.background,
+    required this.card,
+  });
 }

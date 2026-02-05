@@ -225,7 +225,7 @@ class _HomePageState extends State<HomePage>
         Colors.blue,
         () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const BudsScreen()),
+          MaterialPageRoute(builder: (context) => BudsScreen()),
         ),
       ),
       _QuickAction(
@@ -402,7 +402,7 @@ class _HomePageState extends State<HomePage>
       actionText: 'Explore Services',
       actionCallback: () => Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const ConnectServicesScreen()),
+        MaterialPageRoute(builder: (context) => ConnectServicesScreen()),
       ),
     );
   }

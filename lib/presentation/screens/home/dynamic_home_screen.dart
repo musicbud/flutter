@@ -160,7 +160,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.2),
+                color: Colors.orange.withAlpha((255 * 0.2).round()),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.orange, width: 1),
               ),
@@ -250,7 +250,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
           Text(
             'Discover new music and connect with friends',
             style: DesignSystem.bodyMedium.copyWith(
-              color: DesignSystem.onPrimary.withValues(alpha: 0.9),
+              color: DesignSystem.onPrimary.withAlpha((255 * 0.9).round()),
             ),
           ),
         ],
@@ -299,7 +299,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
         borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
         boxShadow: DesignSystem.shadowSmall,
         border: Border.all(
-          color: DesignSystem.border.withValues(alpha: 0.1),
+          color: DesignSystem.border.withOpacity(0.1),
           width: 1,
         ),
       ),
@@ -316,7 +316,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
                 Container(
                   padding: const EdgeInsets.all(DesignSystem.spacingSM),
                   decoration: BoxDecoration(
-                    color: DesignSystem.primary.withValues(alpha: 0.1),
+                    color: DesignSystem.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
                   ),
                   child: Icon(
@@ -388,9 +388,30 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
               }
               
               if (artists.isEmpty) {
-                return error_widgets.NetworkErrorWidget(
-                  onRetry: () => context.read<ContentBloc>().add(LoadTopArtists()),
-                  customMessage: 'Unable to load featured artists. Try again or use offline mode.',
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.cloud_off,
+                        size: 64,
+                        color: DesignSystem.onSurfaceVariant,
+                      ),
+                      const SizedBox(height: DesignSystem.spacingLG),
+                      Text(
+                        'Unable to load featured artists. Try again or use offline mode.',
+                        style: DesignSystem.bodyLarge.copyWith(
+                          color: DesignSystem.onSurfaceVariant,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: DesignSystem.spacingMD),
+                      ElevatedButton(
+                        onPressed: () => context.read<ContentBloc>().add(LoadTopArtists()),
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
                 );
               }
               
@@ -415,7 +436,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
                             Expanded(
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: DesignSystem.primary.withValues(alpha: 0.1),
+                                  color: DesignSystem.primary.withAlpha((255 * 0.1).round()),
                                   borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(12),
                                   ),
@@ -572,12 +593,10 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
                 }
                 
                 return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
-                    child: Icon(
-                      iconData,
-                      color: Theme.of(context).primaryColor,
-                    ),
+                  tileColor: Theme.of(context).primaryColor.withAlpha((255 * 0.1).round()),
+                  leading: Icon(
+                    iconData,
+                    color: Theme.of(context).primaryColor,
                   ),
                   title: Text(
                     trackName,
@@ -727,7 +746,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
                   margin: EdgeInsets.only(bottom: _theme.getDynamicSpacing(8)),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+                      backgroundColor: Theme.of(context).primaryColor.withAlpha((255 * 0.1).round()),
                       backgroundImage: recommendation['imageUrl'] != null 
                           ? NetworkImage(recommendation['imageUrl']) 
                           : null,

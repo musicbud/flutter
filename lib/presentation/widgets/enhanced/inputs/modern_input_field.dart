@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/design_system.dart';
+import 'package:musicbud_flutter/core/theme/design_system.dart';
 
 /// Input field size options
 enum ModernInputFieldSize {
@@ -122,9 +122,6 @@ class _ModernInputFieldState extends State<ModernInputField> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
       type: MaterialType.transparency,
       child: TextFormField(
@@ -139,23 +136,23 @@ class _ModernInputFieldState extends State<ModernInputField> {
         validator: widget.validator,
         keyboardType: widget.keyboardType,
         textInputAction: widget.textInputAction,
-        style: widget.customTextStyle ?? design.designSystemTypography.bodyMedium,
-        decoration: _getInputDecoration(design),
+        style: widget.customTextStyle ?? DesignSystem.bodyMedium,
+        decoration: _getInputDecoration(),
       ),
     );
   }
 
-  InputDecoration _getInputDecoration(DesignSystemThemeExtension design) {
-    final borderRadius = BorderRadius.circular(_getBorderRadius(design));
+  InputDecoration _getInputDecoration() {
+    final borderRadius = BorderRadius.circular(_getBorderRadius());
     final borderSide = BorderSide(
-      color: widget.customBorderColor ?? design.designSystemColors.textMuted,
+      color: widget.customBorderColor ?? DesignSystem.textMuted,
     );
     final focusedBorderSide = BorderSide(
-      color: widget.customBorderColor ?? design.designSystemColors.primaryRed,
+      color: widget.customBorderColor ?? DesignSystem.primaryRed,
       width: 2,
     );
     final errorBorderSide = BorderSide(
-      color: design.designSystemColors.error,
+      color: DesignSystem.error,
       width: 2,
     );
 
@@ -164,25 +161,25 @@ class _ModernInputFieldState extends State<ModernInputField> {
       hintText: widget.hintText,
       errorText: widget.errorText,
       labelStyle: widget.customLabelStyle ??
-          design.designSystemTypography.bodyMedium.copyWith(
+          DesignSystem.bodyMedium.copyWith(
             color: _isFocused
-                ? design.designSystemColors.primaryRed
-                : design.designSystemColors.textMuted,
+                ? DesignSystem.primaryRed
+                : DesignSystem.textMuted,
           ),
       hintStyle: widget.customHintStyle ??
-          design.designSystemTypography.bodyMedium.copyWith(
-            color: design.designSystemColors.textMuted,
+          DesignSystem.bodyMedium.copyWith(
+            color: DesignSystem.textMuted,
           ),
       filled: widget.variant == ModernInputFieldVariant.filled,
       fillColor: widget.customBackgroundColor ??
           (widget.variant == ModernInputFieldVariant.filled
-              ? design.designSystemColors.surfaceDark
+              ? DesignSystem.surfaceDark
               : Colors.transparent),
       suffixIcon: widget.suffixIcon,
       prefixIcon: widget.prefixIcon,
       contentPadding: EdgeInsets.symmetric(
-        horizontal: _getHorizontalPadding(design),
-        vertical: _getVerticalPadding(design),
+        horizontal: _getHorizontalPadding(),
+        vertical: _getVerticalPadding(),
       ),
     );
 
@@ -259,30 +256,30 @@ class _ModernInputFieldState extends State<ModernInputField> {
     return decoration;
   }
 
-  double _getBorderRadius(DesignSystemThemeExtension design) {
+  double _getBorderRadius() {
     switch (widget.size) {
       case ModernInputFieldSize.small:
-        return design.designSystemRadius.sm;
+        return DesignSystem.radiusSM;
       case ModernInputFieldSize.medium:
-        return design.designSystemRadius.md;
+        return DesignSystem.radiusMD;
       case ModernInputFieldSize.large:
-        return design.designSystemRadius.lg;
+        return DesignSystem.radiusLG;
     }
   }
 
-  double _getVerticalPadding(DesignSystemThemeExtension design) {
+  double _getVerticalPadding() {
     switch (widget.size) {
       case ModernInputFieldSize.small:
-        return design.designSystemSpacing.sm;
+        return DesignSystem.spacingSM;
       case ModernInputFieldSize.medium:
-        return design.designSystemSpacing.md;
+        return DesignSystem.spacingMD;
       case ModernInputFieldSize.large:
-        return design.designSystemSpacing.lg;
+        return DesignSystem.spacingLG;
     }
   }
 
-  double _getHorizontalPadding(DesignSystemThemeExtension design) {
-    return design.designSystemSpacing.md;
+  double _getHorizontalPadding() {
+    return DesignSystem.spacingMD;
   }
 }
 

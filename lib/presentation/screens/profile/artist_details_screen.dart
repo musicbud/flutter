@@ -10,7 +10,7 @@ class ArtistDetailsScreen extends StatefulWidget {
   final String? artistId;
   final String? artistName;
 
-  const ArtistDetailsScreen({
+  ArtistDetailsScreen({
     super.key,
     this.artistId,
     this.artistName,
@@ -129,7 +129,7 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Buds who like this artist:',
                         style: DesignSystem.titleLarge,
                       ),
@@ -145,11 +145,11 @@ class _ArtistDetailsScreenState extends State<ArtistDetailsScreen> {
                             child: ListTile(
                               title: Text(
                                 bud.username,
-                                style: const TextStyle(color: DesignSystem.onSurface),
+                                style: TextStyle(color: DesignSystem.onSurface),
                               ),
                               subtitle: Text(
                                 bud.email ?? 'No email',
-                                style: const TextStyle(color: DesignSystem.onSurfaceVariant),
+                                style: TextStyle(color: DesignSystem.onSurfaceVariant),
                               ),
                             ),
                           );

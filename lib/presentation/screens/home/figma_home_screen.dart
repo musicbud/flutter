@@ -5,7 +5,7 @@ import '../../../core/components/musicbud_components.dart';
 /// Home Screen matching Figma Design
 /// Features: Hero card, category tabs, content carousels, avatars with stories
 class FigmaHomeScreen extends StatefulWidget {
-  const FigmaHomeScreen({Key? key}) : super(key: key);
+  const FigmaHomeScreen({super.key});
 
   @override
   State<FigmaHomeScreen> createState() => _FigmaHomeScreenState();

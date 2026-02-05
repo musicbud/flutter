@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../lib/core/theme/design_system.dart';
 import 'music_buds_0_screen.dart';
 import 'music_bud_screen.dart';
 
@@ -7,22 +8,20 @@ void main() {
 }
 
 class MusicBudApp extends StatelessWidget {
-  const MusicBudApp({Key? key}) : super(key: key);
+  const MusicBudApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Music Bud App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: DesignSystem.darkTheme,
       home: const HomeScreen(),
     );
   }
 }
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

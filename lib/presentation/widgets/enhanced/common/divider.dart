@@ -37,9 +37,8 @@ class ModernDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
     final dividerColor = color ??
-        design?.designSystemColors.textMuted.withValues(alpha: 0.2) ??
+        DesignSystem.textMuted.withAlpha(51) ??
         theme.dividerColor;
 
     if (label == null) {
@@ -62,13 +61,13 @@ class ModernDivider extends StatelessWidget {
         ),
         Padding(
           padding: labelPadding ??
-              EdgeInsets.symmetric(
-                horizontal: design?.designSystemSpacing.md ?? 16,
+              const EdgeInsets.symmetric(
+                horizontal: DesignSystem.spacingMD,
               ),
           child: Text(
             label!,
-            style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
-              color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+            style: (DesignSystem.bodySmall).copyWith(
+              color: DesignSystem.textMuted,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -107,9 +106,8 @@ class VerticalModernDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
     final dividerColor = color ??
-        design?.designSystemColors.textMuted.withValues(alpha: 0.2) ??
+        DesignSystem.textMuted.withAlpha(51) ??
         theme.dividerColor;
 
     if (label == null) {
@@ -132,13 +130,13 @@ class VerticalModernDivider extends StatelessWidget {
         ),
         Padding(
           padding: labelPadding ??
-              EdgeInsets.symmetric(
-                vertical: design?.designSystemSpacing.sm ?? 8,
+              const EdgeInsets.symmetric(
+                vertical: DesignSystem.spacingSM,
               ),
           child: Text(
             label!,
-            style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
-              color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+            style: (DesignSystem.bodySmall).copyWith(
+              color: DesignSystem.textMuted,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -193,9 +191,8 @@ class DottedDivider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
     final dividerColor = color ??
-        design?.designSystemColors.textMuted.withValues(alpha: 0.2) ??
+        DesignSystem.textMuted.withAlpha(51) ??
         theme.dividerColor;
 
     return LayoutBuilder(

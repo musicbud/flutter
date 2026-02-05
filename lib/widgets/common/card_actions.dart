@@ -94,14 +94,11 @@ class CardActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
       decoration: showBackground
           ? BoxDecoration(
-              color: backgroundColor ?? design.designSystemColors.surfaceContainer.withValues(alpha: 0.8),
-              borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.md),
+              color: backgroundColor ?? DesignSystem.surfaceContainer.withAlpha((255 * 0.8).round()),
+              borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
             )
           : null,
       padding: padding,
@@ -109,25 +106,25 @@ class CardActions extends StatelessWidget {
         mainAxisAlignment: mainAxisAlignment,
         children: [
           // Like Button
-          _buildLikeButton(design),
+          _buildLikeButton(),
 
           if (onSharePressed != null || onMorePressed != null || menuItems != null)
             SizedBox(width: spacing),
 
           // Share Button
           if (onSharePressed != null) ...[
-            _buildShareButton(design),
+            _buildShareButton(),
             SizedBox(width: spacing),
           ],
 
           // More Options Button/Menu
-          _buildMoreButton(design),
+          _buildMoreButton(),
         ],
       ),
     );
   }
 
-  Widget _buildLikeButton(DesignSystemThemeExtension design) {
+  Widget _buildLikeButton() {
     return Column(
       children: [
         IconButton(
@@ -136,8 +133,8 @@ class CardActions extends StatelessWidget {
             isLiked ? Icons.favorite : Icons.favorite_border,
             size: iconSize,
             color: isLiked
-                ? (likedButtonColor ?? design.designSystemColors.error)
-                : (likeButtonColor ?? design.designSystemColors.onSurfaceVariant),
+                ? (likedButtonColor ?? DesignSystem.error)
+                : (likeButtonColor ?? DesignSystem.onSurfaceVariant),
           ),
           style: IconButton.styleFrom(
             fixedSize: Size(buttonSize, buttonSize),
@@ -147,15 +144,15 @@ class CardActions extends StatelessWidget {
         if (showLabels)
           Text(
             isLiked ? 'Liked' : 'Like',
-            style: labelStyle ?? design.designSystemTypography.caption.copyWith(
-              color: design.designSystemColors.onSurfaceVariant,
+            style: labelStyle ?? DesignSystem.caption.copyWith(
+              color: DesignSystem.onSurfaceVariant,
             ),
           ),
       ],
     );
   }
 
-  Widget _buildShareButton(DesignSystemThemeExtension design) {
+  Widget _buildShareButton() {
     return Column(
       children: [
         IconButton(
@@ -163,7 +160,7 @@ class CardActions extends StatelessWidget {
           icon: Icon(
             Icons.share,
             size: iconSize,
-            color: shareButtonColor ?? design.designSystemColors.onSurfaceVariant,
+            color: shareButtonColor ?? DesignSystem.onSurfaceVariant,
           ),
           style: IconButton.styleFrom(
             fixedSize: Size(buttonSize, buttonSize),
@@ -173,15 +170,15 @@ class CardActions extends StatelessWidget {
         if (showLabels)
           Text(
             'Share',
-            style: labelStyle ?? design.designSystemTypography.caption.copyWith(
-              color: design.designSystemColors.onSurfaceVariant,
+            style: labelStyle ?? DesignSystem.caption.copyWith(
+              color: DesignSystem.onSurfaceVariant,
             ),
           ),
       ],
     );
   }
 
-  Widget _buildMoreButton(DesignSystemThemeExtension design) {
+  Widget _buildMoreButton() {
     return Column(
       children: [
         PopupMenuButton<String>(
@@ -214,7 +211,7 @@ class CardActions extends StatelessWidget {
                 value: 'more',
                 child: Text(
                   'More options',
-                  style: design.designSystemTypography.bodyMedium,
+                  style: DesignSystem.bodyMedium,
                 ),
               ),
             ];
@@ -224,7 +221,7 @@ class CardActions extends StatelessWidget {
             icon: Icon(
               Icons.more_vert,
               size: iconSize,
-              color: moreButtonColor ?? design.designSystemColors.onSurfaceVariant,
+              color: moreButtonColor ?? DesignSystem.onSurfaceVariant,
             ),
             style: IconButton.styleFrom(
               fixedSize: Size(buttonSize, buttonSize),
@@ -235,8 +232,8 @@ class CardActions extends StatelessWidget {
         if (showLabels)
           Text(
             'More',
-            style: labelStyle ?? design.designSystemTypography.caption.copyWith(
-              color: design.designSystemColors.onSurfaceVariant,
+            style: labelStyle ?? DesignSystem.caption.copyWith(
+              color: DesignSystem.onSurfaceVariant,
             ),
           ),
       ],

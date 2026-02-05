@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/design_system.dart';
+import 'package:musicbud_flutter/core/theme/design_system.dart';
 
 /// A rating display and input widget.
 ///
@@ -44,9 +44,8 @@ class Rating extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final ratingColor = color ?? design?.designSystemColors.warning ?? Colors.amber;
-    final unrated = unratedColor ?? design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant;
+    final ratingColor = color ?? DesignSystem.warning;
+    final unrated = unratedColor ?? DesignSystem.textMuted;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -62,11 +61,11 @@ class Rating extends StatelessWidget {
           );
         }),
         if (showCount && count != null) ...[
-          SizedBox(width: design?.designSystemSpacing.xs ?? 4),
+          const SizedBox(width: DesignSystem.spacingXS),
           Text(
             '($count)',
-            style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
-              color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+            style: (DesignSystem.bodySmall).copyWith(
+              color: DesignSystem.textMuted,
             ),
           ),
         ],
@@ -104,22 +103,19 @@ class CompactRating extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(
+        const Icon(
           Icons.star,
-          size: size,
-          color: design?.designSystemColors.warning ?? Colors.amber,
+          size: 16.0,
+          color: DesignSystem.warning,
         ),
         if (showNumeric) ...[
-          SizedBox(width: design?.designSystemSpacing.xs ?? 4),
+          const SizedBox(width: DesignSystem.spacingXS),
           Text(
             rating.toStringAsFixed(1),
-            style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
+            style: (DesignSystem.bodySmall).copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -149,71 +145,70 @@ class ScoreDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final scoreColor = color ?? _getScoreColor(design, theme);
+    final scoreColor = color ?? _getScoreColor(theme);
 
     return Container(
       padding: EdgeInsets.symmetric(
-        horizontal: _getPadding(design),
-        vertical: _getPadding(design) * 0.5,
+        horizontal: _getPadding(),
+        vertical: _getPadding() * 0.5,
       ),
       decoration: BoxDecoration(
-        color: scoreColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(_getBorderRadius(design)),
+        color: scoreColor.withAlpha(25),
+        borderRadius: BorderRadius.circular(_getBorderRadius()),
         border: Border.all(color: scoreColor, width: 1.5),
       ),
       child: Text(
         showMax ? '${score.toInt()}/${maxScore.toInt()}' : '${score.toInt()}',
-        style: (_getTextStyle(design, theme) ?? const TextStyle()).copyWith(color: scoreColor),
+        style: (_getTextStyle(theme) ?? const TextStyle()).copyWith(color: scoreColor),
       ),
     );
   }
 
-  Color _getScoreColor(DesignSystemThemeExtension? design, ThemeData theme) {
+  Color _getScoreColor(ThemeData theme) {
     final percentage = score / maxScore;
     if (percentage >= 0.8) {
-      return design?.designSystemColors.success ?? Colors.green;
+      return DesignSystem.success;
     } else if (percentage >= 0.6) {
-      return design?.designSystemColors.warning ?? Colors.amber;
+      return DesignSystem.warning;
     } else {
-      return design?.designSystemColors.error ?? Colors.red;
+      return DesignSystem.error;
     }
   }
 
-  double _getPadding(DesignSystemThemeExtension? design) {
+  double _getPadding() {
     switch (size) {
       case ScoreSize.small:
-        return design?.designSystemSpacing.xs ?? 4;
+        return DesignSystem.spacingXS;
       case ScoreSize.medium:
-        return design?.designSystemSpacing.sm ?? 8;
+        return DesignSystem.spacingSM;
       case ScoreSize.large:
-        return design?.designSystemSpacing.md ?? 12;
+        return DesignSystem.spacingMD;
     }
   }
 
-  double _getBorderRadius(DesignSystemThemeExtension? design) {
+  double _getBorderRadius() {
     switch (size) {
       case ScoreSize.small:
-        return design?.designSystemRadius.sm ?? 4;
+        return DesignSystem.radiusSM;
       case ScoreSize.medium:
-        return design?.designSystemRadius.md ?? 8;
+        return DesignSystem.radiusMD;
       case ScoreSize.large:
-        return design?.designSystemRadius.lg ?? 12;
+        return DesignSystem.radiusLG;
     }
   }
 
-  TextStyle? _getTextStyle(DesignSystemThemeExtension? design, ThemeData theme) {
+  TextStyle? _getTextStyle(ThemeData theme) {
     switch (size) {
       case ScoreSize.small:
-        return (design?.designSystemTypography.caption ?? theme.textTheme.bodySmall)?.copyWith(
+        return (DesignSystem.caption).copyWith(
           fontWeight: FontWeight.w700,
         );
       case ScoreSize.medium:
-        return (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
+        return (DesignSystem.bodySmall).copyWith(
           fontWeight: FontWeight.w700,
         );
       case ScoreSize.large:
-        return (design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium)?.copyWith(
+        return (DesignSystem.bodyMedium).copyWith(
           fontWeight: FontWeight.w700,
         );
     }
@@ -292,9 +287,6 @@ class LabeledRating extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -302,9 +294,9 @@ class LabeledRating extends StatelessWidget {
         if (label != null) ...[
           Text(
             label!,
-            style: design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall,
+            style: DesignSystem.bodySmall,
           ),
-          SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+          const SizedBox(height: DesignSystem.spacingXS),
         ],
         Rating(
           rating: rating,

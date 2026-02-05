@@ -10,7 +10,7 @@ class GenreDetailsScreen extends StatefulWidget {
   final String? genreId;
   final String? genreName;
 
-  const GenreDetailsScreen({
+  GenreDetailsScreen({
     super.key,
     this.genreId,
     this.genreName,
@@ -129,7 +129,7 @@ class _GenreDetailsScreenState extends State<GenreDetailsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Buds who like this genre:',
                         style: DesignSystem.titleLarge,
                       ),
@@ -145,11 +145,11 @@ class _GenreDetailsScreenState extends State<GenreDetailsScreen> {
                             child: ListTile(
                               title: Text(
                                 bud.username,
-                                style: const TextStyle(color: DesignSystem.onSurface),
+                                style: TextStyle(color: DesignSystem.onSurface),
                               ),
                               subtitle: Text(
                                 bud.email ?? 'No email',
-                                style: const TextStyle(color: DesignSystem.onSurfaceVariant),
+                                style: TextStyle(color: DesignSystem.onSurfaceVariant),
                               ),
                             ),
                           );

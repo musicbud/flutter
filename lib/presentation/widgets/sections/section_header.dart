@@ -57,14 +57,11 @@ class SimpleSectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Column(
       crossAxisAlignment: crossAxisAlignment ?? CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: padding ?? EdgeInsets.symmetric(horizontal: design.designSystemSpacing.lg),
+          padding: padding ?? const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -72,8 +69,8 @@ class SimpleSectionHeader extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: titleStyle ?? design.designSystemTypography.headlineSmall.copyWith(
-                    color: design.designSystemColors.onSurface,
+                  style: titleStyle ?? DesignSystem.headlineSmall.copyWith(
+                    color: DesignSystem.onSurface,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -86,19 +83,19 @@ class SimpleSectionHeader extends StatelessWidget {
                     ? OutlinedButton(
                         onPressed: onActionPressed,
                         style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: design.designSystemColors.primary),
+                          side: const BorderSide(color: DesignSystem.primary),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+                            borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
                           ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: design.designSystemSpacing.md,
-                            vertical: design.designSystemSpacing.sm,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: DesignSystem.spacingMD,
+                            vertical: DesignSystem.spacingSM,
                           ),
                         ),
                         child: Text(
                           actionText!,
-                          style: actionStyle ?? design.designSystemTypography.labelLarge.copyWith(
-                            color: design.designSystemColors.primary,
+                          style: actionStyle ?? DesignSystem.labelLarge.copyWith(
+                            color: DesignSystem.primary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -106,15 +103,15 @@ class SimpleSectionHeader extends StatelessWidget {
                     : TextButton(
                         onPressed: onActionPressed,
                         style: TextButton.styleFrom(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: design.designSystemSpacing.md,
-                            vertical: design.designSystemSpacing.sm,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: DesignSystem.spacingMD,
+                            vertical: DesignSystem.spacingSM,
                           ),
                         ),
                         child: Text(
                           actionText!,
-                          style: actionStyle ?? design.designSystemTypography.labelLarge.copyWith(
-                            color: design.designSystemColors.primary,
+                          style: actionStyle ?? DesignSystem.labelLarge.copyWith(
+                            color: DesignSystem.primary,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -129,8 +126,8 @@ class SimpleSectionHeader extends StatelessWidget {
           const SizedBox(height: 16),
           Container(
             height: 1,
-            color: dividerColor ?? design.designSystemColors.border,
-            margin: EdgeInsets.symmetric(horizontal: design.designSystemSpacing.lg),
+            color: dividerColor ?? DesignSystem.border,
+            margin: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
           ),
         ],
       ],

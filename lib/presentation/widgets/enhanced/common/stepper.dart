@@ -103,9 +103,6 @@ class HorizontalStepIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return Row(
       children: [
         for (int i = 0; i < steps.length; i++) ...[
@@ -122,10 +119,10 @@ class HorizontalStepIndicator extends StatelessWidget {
             Expanded(
               child: Container(
                 height: 2,
-                margin: EdgeInsets.symmetric(horizontal: design?.designSystemSpacing.xs ?? 4),
+                margin: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingXS),
                 color: i < currentStep
-                    ? (design?.designSystemColors.primary ?? theme.colorScheme.primary)
-                    : (design?.designSystemColors.border ?? theme.colorScheme.outline),
+                    ? DesignSystem.primary
+                    : DesignSystem.border,
               ),
             ),
         ],
@@ -152,11 +149,10 @@ class _StepIndicatorItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     final color = isCompleted || isActive
-        ? (design?.designSystemColors.primary ?? theme.colorScheme.primary)
-        : (design?.designSystemColors.onSurfaceVariant ?? theme.colorScheme.onSurfaceVariant);
+        ? DesignSystem.primary
+        : DesignSystem.onSurfaceVariant;
 
     return InkWell(
       onTap: onTap,
@@ -175,7 +171,7 @@ class _StepIndicatorItem extends StatelessWidget {
             ),
             child: Center(
               child: isCompleted
-                  ? Icon(Icons.check, size: 16, color: Colors.white)
+                  ? const Icon(Icons.check, size: 16, color: Colors.white)
                   : Text(
                       stepNumber.toString(),
                       style: TextStyle(
@@ -186,11 +182,11 @@ class _StepIndicatorItem extends StatelessWidget {
                     ),
             ),
           ),
-          SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+          const SizedBox(height: DesignSystem.spacingXS),
           Text(
             label,
-            style: (design?.designSystemTypography.caption ?? theme.textTheme.bodySmall)?.copyWith(
-              color: isActive ? color : (design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant),
+            style: (DesignSystem.caption).copyWith(
+              color: isActive ? color : DesignSystem.textMuted,
               fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
             ),
             textAlign: TextAlign.center,
@@ -220,9 +216,6 @@ class DotsProgressIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: List.generate(stepCount, (index) {
@@ -234,8 +227,8 @@ class DotsProgressIndicator extends StatelessWidget {
             height: dotSize,
             decoration: BoxDecoration(
               color: index <= currentStep
-                  ? (design?.designSystemColors.primary ?? theme.colorScheme.primary)
-                  : (design?.designSystemColors.border ?? theme.colorScheme.outline),
+                  ? DesignSystem.primary
+                  : DesignSystem.border,
               borderRadius: BorderRadius.circular(dotSize / 2),
             ),
           ),
@@ -264,8 +257,6 @@ class LinearProgressStepper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
     final progress = (currentStep + 1) / stepCount;
 
     return Column(
@@ -277,16 +268,16 @@ class LinearProgressStepper extends StatelessWidget {
           child: LinearProgressIndicator(
             value: progress,
             minHeight: height,
-            backgroundColor: backgroundColor ?? design?.designSystemColors.surfaceContainer ?? theme.colorScheme.surfaceContainerHighest,
+            backgroundColor: backgroundColor ?? DesignSystem.surfaceContainer,
             valueColor: AlwaysStoppedAnimation(
-              progressColor ?? design?.designSystemColors.primary ?? theme.colorScheme.primary,
+              progressColor ?? DesignSystem.primary,
             ),
           ),
         ),
-        SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+        const SizedBox(height: DesignSystem.spacingXS),
         Text(
           'Step ${currentStep + 1} of $stepCount',
-          style: design?.designSystemTypography.caption ?? theme.textTheme.bodySmall,
+          style: DesignSystem.caption,
         ),
       ],
     );
@@ -318,8 +309,6 @@ class StepControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
     final isLastStep = currentStep == stepCount - 1;
 
     return Row(
@@ -338,7 +327,7 @@ class StepControls extends StatelessWidget {
           icon: Icon(isLastStep ? Icons.check : Icons.arrow_forward),
           label: Text(isLastStep ? completeLabel : nextLabel),
           style: ElevatedButton.styleFrom(
-            backgroundColor: design?.designSystemColors.primary ?? theme.colorScheme.primary,
+            backgroundColor: DesignSystem.primary,
             foregroundColor: Colors.white,
           ),
         ),
@@ -360,9 +349,6 @@ class VerticalStepProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -383,10 +369,10 @@ class VerticalStepProgress extends StatelessWidget {
                   height: 32,
                   decoration: BoxDecoration(
                     color: isCompleted || isActive
-                        ? (design?.designSystemColors.primary ?? theme.colorScheme.primary)
+                        ? DesignSystem.primary
                         : Colors.transparent,
                     border: Border.all(
-                      color: design?.designSystemColors.primary ?? theme.colorScheme.primary,
+                      color: DesignSystem.primary,
                       width: 2,
                     ),
                     shape: BoxShape.circle,
@@ -397,7 +383,7 @@ class VerticalStepProgress extends StatelessWidget {
                         : Text(
                             (index + 1).toString(),
                             style: TextStyle(
-                              color: isActive ? Colors.white : (design?.designSystemColors.primary ?? theme.colorScheme.primary),
+                              color: isActive ? Colors.white : DesignSystem.primary,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -408,30 +394,30 @@ class VerticalStepProgress extends StatelessWidget {
                     width: 2,
                     height: 40,
                     color: isCompleted
-                        ? (design?.designSystemColors.primary ?? theme.colorScheme.primary)
-                        : (design?.designSystemColors.border ?? theme.colorScheme.outline),
+                        ? DesignSystem.primary
+                        : DesignSystem.border,
                   ),
               ],
             ),
-            SizedBox(width: design?.designSystemSpacing.md ?? 12),
+            const SizedBox(width: DesignSystem.spacingMD),
             Expanded(
               child: Padding(
-                padding: EdgeInsets.only(bottom: design?.designSystemSpacing.md ?? 12),
+                padding: const EdgeInsets.only(bottom: DesignSystem.spacingMD),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       step.title,
-                      style: (design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium)?.copyWith(
+                      style: (DesignSystem.bodyMedium).copyWith(
                         fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
                       ),
                     ),
                     if (step.description != null) ...[
-                      SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+                      const SizedBox(height: DesignSystem.spacingXS),
                       Text(
                         step.description!,
-                        style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
-                          color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+                        style: (DesignSystem.bodySmall).copyWith(
+                          color: DesignSystem.textMuted,
                         ),
                       ),
                     ],

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/design_system.dart';
 import '../../../../models/artist.dart';
-// MIGRATED: import '../../../widgets/common/section_header.dart';
+import '../../../widgets/common/section_header.dart'; // Changed import
 import '../components/artist_card.dart';
-import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class FeaturedArtistsSection extends StatelessWidget {
   final List<Artist> artists;
@@ -30,7 +29,7 @@ class FeaturedArtistsSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SectionHeader(
+          SectionHeader( // Changed to SimpleSectionHeader
             title: 'Featured Artists',
             actionText: 'View All',
             onActionPressed: onViewAllPressed,

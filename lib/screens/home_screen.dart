@@ -211,7 +211,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _showSnackBar('Navigate to Tracks');
       }),
       const SizedBox(height: 12),
-      ...tracks.take(5).map((track) => _buildTrackTile(track)).toList(),
+      ...tracks.take(5).map((track) => _buildTrackTile(track)),
       const SizedBox(height: 24),
     ];
   }
@@ -314,7 +314,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _showSnackBar('Navigate to Chats');
       }),
       const SizedBox(height: 12),
-      ...chats.take(3).map((chat) => _buildChatTile(chat)).toList(),
+      ...chats.take(3).map((chat) => _buildChatTile(chat)),
       const SizedBox(height: 24),
     ];
   }
@@ -353,7 +353,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _showSnackBar('Navigate to Library');
       }),
       const SizedBox(height: 12),
-      ...playlists.take(3).map((playlist) => _buildPlaylistTile(playlist)).toList(),
+      ...playlists.take(3).map((playlist) => _buildPlaylistTile(playlist)),
       const SizedBox(height: 24),
     ];
   }

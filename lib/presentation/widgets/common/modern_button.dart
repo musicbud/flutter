@@ -103,15 +103,6 @@ class _ModernButtonState extends State<ModernButton>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    
-    // Fallback if design system extension is not available
-    if (design == null) {
-      debugPrint('⚠️ ModernButton: DesignSystemThemeExtension not found, using fallback');
-      return _buildFallbackButton(context);
-    }
-
     return AnimatedBuilder(
       animation: _animationController,
       builder: (context, child) {
@@ -127,17 +118,17 @@ class _ModernButtonState extends State<ModernButton>
               onTap: widget.onPressed,
               child: Container(
                 width: widget.isFullWidth ? double.infinity : null,
-                padding: _getPadding(design),
+                padding: _getPadding(),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(
-                    widget.borderRadius ?? _getBorderRadius(design),
+                    widget.borderRadius ?? _getBorderRadius(),
                   ),
-                  color: _getBackgroundColor(design),
-                  gradient: _getGradient(design),
-                  border: _getBorder(design),
-                  boxShadow: _getShadows(design),
+                  color: _getBackgroundColor(),
+                  gradient: _getGradient(),
+                  border: _getBorder(),
+                  boxShadow: _getShadows(),
                 ),
-                child: _buildContent(design),
+                child: _buildContent(),
               ),
             ),
           ),
@@ -146,15 +137,15 @@ class _ModernButtonState extends State<ModernButton>
     );
   }
 
-  Widget _buildContent(DesignSystemThemeExtension design) {
+  Widget _buildContent() {
     if (widget.isLoading) {
       return SizedBox(
-        height: _getIconSize(design),
-        width: _getIconSize(design),
+        height: _getIconSize(),
+        width: _getIconSize(),
         child: CircularProgressIndicator(
           strokeWidth: 2,
           valueColor: AlwaysStoppedAnimation<Color>(
-            _getTextColor(design),
+            _getTextColor(),
           ),
         ),
       );
@@ -167,26 +158,26 @@ class _ModernButtonState extends State<ModernButton>
         if (widget.icon != null) ...[
           Icon(
             widget.icon,
-            size: _getIconSize(design),
-            color: _getTextColor(design),
+            size: _getIconSize(),
+            color: _getTextColor(),
           ),
-          if (widget.text.isNotEmpty) SizedBox(width: design.designSystemSpacing.sm),
+          if (widget.text.isNotEmpty) const SizedBox(width: DesignSystem.spacingSM),
         ],
         if (widget.text.isNotEmpty)
           Flexible(
             child: Text(
               widget.text,
-              style: _getTextStyle(design),
+              style: _getTextStyle(),
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
             ),
           ),
         if (widget.trailingIcon != null) ...[
-          if (widget.text.isNotEmpty) SizedBox(width: design.designSystemSpacing.sm),
+          if (widget.text.isNotEmpty) const SizedBox(width: DesignSystem.spacingSM),
           Icon(
             widget.trailingIcon,
-            size: _getIconSize(design),
-            color: _getTextColor(design),
+            size: _getIconSize(),
+            color: _getTextColor(),
           ),
         ],
       ],
@@ -195,100 +186,47 @@ class _ModernButtonState extends State<ModernButton>
     return content;
   }
   
-  /// Fallback button when DesignSystemThemeExtension is not available
-  Widget _buildFallbackButton(BuildContext context) {
-    final theme = Theme.of(context);
-    
-    return ElevatedButton(
-      onPressed: widget.isLoading ? null : widget.onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: widget.customColor ?? theme.primaryColor,
-        foregroundColor: Colors.white,
-        padding: widget.padding ?? const EdgeInsets.symmetric(
-          horizontal: 24,
-          vertical: 12,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(widget.borderRadius ?? 8),
-        ),
-        minimumSize: widget.isFullWidth 
-            ? const Size(double.infinity, 48) 
-            : null,
-      ),
-      child: widget.isLoading
-          ? const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-              ),
-            )
-          : Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (widget.icon != null) ...[
-                  Icon(widget.icon, size: 18),
-                  if (widget.text.isNotEmpty) const SizedBox(width: 8),
-                ],
-                if (widget.text.isNotEmpty)
-                  Text(
-                    widget.text,
-                    style: widget.textStyle ?? const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                if (widget.trailingIcon != null) ...[
-                  if (widget.text.isNotEmpty) const SizedBox(width: 8),
-                  Icon(widget.trailingIcon, size: 18),
-                ],
-              ],
-            ),
-    );
-  }
-
-  EdgeInsetsGeometry _getPadding(DesignSystemThemeExtension design) {
+  EdgeInsetsGeometry _getPadding() {
     if (widget.padding != null) return widget.padding!;
 
     switch (widget.size) {
       case ModernButtonSize.small:
-        return EdgeInsets.symmetric(
-          horizontal: design.designSystemSpacing.md,
-          vertical: design.designSystemSpacing.sm,
+        return const EdgeInsets.symmetric(
+          horizontal: DesignSystem.spacingMD,
+          vertical: DesignSystem.spacingSM,
         );
       case ModernButtonSize.medium:
-        return EdgeInsets.symmetric(
-          horizontal: design.designSystemSpacing.lg,
-          vertical: design.designSystemSpacing.md,
+        return const EdgeInsets.symmetric(
+          horizontal: DesignSystem.spacingLG,
+          vertical: DesignSystem.spacingMD,
         );
       case ModernButtonSize.large:
-        return EdgeInsets.symmetric(
-          horizontal: design.designSystemSpacing.xl,
-          vertical: design.designSystemSpacing.lg,
+        return const EdgeInsets.symmetric(
+          horizontal: DesignSystem.spacingXL,
+          vertical: DesignSystem.spacingLG,
         );
       case ModernButtonSize.extraLarge:
-        return EdgeInsets.symmetric(
-          horizontal: design.designSystemSpacing.xxl,
-          vertical: design.designSystemSpacing.xl,
+        return const EdgeInsets.symmetric(
+          horizontal: DesignSystem.spacingXXL,
+          vertical: DesignSystem.spacingXL,
         );
     }
   }
 
-  double _getBorderRadius(DesignSystemThemeExtension design) {
+  double _getBorderRadius() {
     switch (widget.size) {
       case ModernButtonSize.small:
-        return design.designSystemRadius.sm;
+        return DesignSystem.radiusSM;
       case ModernButtonSize.medium:
-        return design.designSystemRadius.md;
+        return DesignSystem.radiusMD;
       case ModernButtonSize.large:
-        return design.designSystemRadius.lg;
+        return DesignSystem.radiusLG;
       case ModernButtonSize.extraLarge:
-        return design.designSystemRadius.xl;
+        return DesignSystem.radiusXL;
     }
   }
 
-  double _getIconSize(DesignSystemThemeExtension design) {
+  double _getIconSize() {
     switch (widget.size) {
       case ModernButtonSize.small:
         return 16;
@@ -301,20 +239,20 @@ class _ModernButtonState extends State<ModernButton>
     }
   }
 
-  Color _getBackgroundColor(DesignSystemThemeExtension design) {
+  Color _getBackgroundColor() {
     if (widget.customColor != null) return widget.customColor!;
 
     if (widget.onPressed == null) {
-      return design.designSystemColors.textMuted;
+      return DesignSystem.textMuted;
     }
 
     switch (widget.variant) {
       case ModernButtonVariant.primary:
-        return design.designSystemColors.primaryRed;
+        return DesignSystem.primaryRed;
       case ModernButtonVariant.secondary:
-        return design.designSystemColors.surfaceDark;
+        return DesignSystem.surfaceDark;
       case ModernButtonVariant.accent:
-        return design.designSystemColors.accentBlue;
+        return DesignSystem.accentBlue;
       case ModernButtonVariant.outline:
       case ModernButtonVariant.text:
       case ModernButtonVariant.gradient:
@@ -322,20 +260,20 @@ class _ModernButtonState extends State<ModernButton>
     }
   }
 
-  Gradient? _getGradient(DesignSystemThemeExtension design) {
+  Gradient? _getGradient() {
     if (widget.customGradient != null) return widget.customGradient;
 
     if (widget.variant == ModernButtonVariant.gradient) {
-      return design.designSystemGradients.primary;
+      return DesignSystem.gradientPrimary;
     }
     return null;
   }
 
-  Border? _getBorder(DesignSystemThemeExtension design) {
+  Border? _getBorder() {
     switch (widget.variant) {
       case ModernButtonVariant.outline:
         return Border.all(
-          color: _getBorderColor(design),
+          color: _getBorderColor(),
           width: 1.5,
         );
       default:
@@ -343,63 +281,63 @@ class _ModernButtonState extends State<ModernButton>
     }
   }
 
-  Color _getBorderColor(DesignSystemThemeExtension design) {
-    if (widget.onPressed == null) return design.designSystemColors.textMuted;
+  Color _getBorderColor() {
+    if (widget.onPressed == null) return DesignSystem.textMuted;
 
     switch (widget.variant) {
       case ModernButtonVariant.outline:
-        return design.designSystemColors.primaryRed;
+        return DesignSystem.primaryRed;
       default:
         return Colors.transparent;
     }
   }
 
-  Color _getTextColor(DesignSystemThemeExtension design) {
-    if (widget.onPressed == null) return design.designSystemColors.textMuted;
+  Color _getTextColor() {
+    if (widget.onPressed == null) return DesignSystem.textMuted;
 
     switch (widget.variant) {
       case ModernButtonVariant.primary:
       case ModernButtonVariant.accent:
-        return design.designSystemColors.white;
+        return DesignSystem.onPrimary;
       case ModernButtonVariant.secondary:
-        return design.designSystemColors.textPrimary;
+        return DesignSystem.textPrimary;
       case ModernButtonVariant.outline:
-        return design.designSystemColors.primaryRed;
+        return DesignSystem.primaryRed;
       case ModernButtonVariant.text:
-        return design.designSystemColors.primaryRed;
+        return DesignSystem.primaryRed;
       case ModernButtonVariant.gradient:
-        return design.designSystemColors.white;
+        return DesignSystem.onPrimary;
     }
   }
 
-  TextStyle _getTextStyle(DesignSystemThemeExtension design) {
+  TextStyle _getTextStyle() {
     if (widget.textStyle != null) return widget.textStyle!;
 
     switch (widget.size) {
       case ModernButtonSize.small:
-        return design.designSystemTypography.caption.copyWith(
-          color: _getTextColor(design),
+        return DesignSystem.caption.copyWith(
+          color: _getTextColor(),
           fontWeight: FontWeight.w600,
         );
       case ModernButtonSize.medium:
-        return design.designSystemTypography.bodySmall.copyWith(
-          color: _getTextColor(design),
+        return DesignSystem.bodySmall.copyWith(
+          color: _getTextColor(),
           fontWeight: FontWeight.w600,
         );
       case ModernButtonSize.large:
-        return design.designSystemTypography.bodyMedium.copyWith(
-          color: _getTextColor(design),
+        return DesignSystem.bodyMedium.copyWith(
+          color: _getTextColor(),
           fontWeight: FontWeight.w600,
         );
       case ModernButtonSize.extraLarge:
-        return design.designSystemTypography.titleSmall.copyWith(
-          color: _getTextColor(design),
+        return DesignSystem.titleSmall.copyWith(
+          color: _getTextColor(),
           fontWeight: FontWeight.w600,
         );
     }
   }
 
-  List<BoxShadow> _getShadows(DesignSystemThemeExtension design) {
+  List<BoxShadow> _getShadows() {
     if (widget.onPressed == null) return [];
 
     switch (widget.variant) {
@@ -407,13 +345,13 @@ class _ModernButtonState extends State<ModernButton>
       case ModernButtonVariant.accent:
       case ModernButtonVariant.gradient:
         return _isHovered
-            ? design.designSystemShadows.large
-            : design.designSystemShadows.medium;
+            ? DesignSystem.shadowLarge
+            : DesignSystem.shadowMedium;
       case ModernButtonVariant.secondary:
       case ModernButtonVariant.outline:
         return _isHovered
-            ? design.designSystemShadows.medium
-            : design.designSystemShadows.small;
+            ? DesignSystem.shadowMedium
+            : DesignSystem.shadowSmall;
       case ModernButtonVariant.text:
         return [];
     }

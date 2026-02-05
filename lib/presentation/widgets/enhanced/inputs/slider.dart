@@ -54,9 +54,8 @@ class ModernSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final active = activeColor ?? design?.designSystemColors.primaryRed ?? theme.colorScheme.primary;
-    final inactive = inactiveColor ?? design?.designSystemColors.surfaceDark ?? theme.colorScheme.surfaceContainerHighest;
+    final active = activeColor ?? DesignSystem.primaryRed;
+    final inactive = inactiveColor ?? DesignSystem.surfaceDark;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -65,9 +64,9 @@ class ModernSlider extends StatelessWidget {
         if (label != null) ...[
           Text(
             label!,
-            style: design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall,
+            style: DesignSystem.bodySmall,
           ),
-          SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+          const SizedBox(height: DesignSystem.spacingXS),
         ],
         Row(
           children: [
@@ -75,9 +74,9 @@ class ModernSlider extends StatelessWidget {
               Icon(
                 leadingIcon,
                 size: 20,
-                color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+                color: DesignSystem.textMuted,
               ),
-              SizedBox(width: design?.designSystemSpacing.sm ?? 8),
+              const SizedBox(width: DesignSystem.spacingSM),
             ],
             Expanded(
               child: SliderTheme(
@@ -85,7 +84,7 @@ class ModernSlider extends StatelessWidget {
                   activeTrackColor: active,
                   inactiveTrackColor: inactive,
                   thumbColor: thumbColor ?? active,
-                  overlayColor: active.withValues(alpha: 0.2),
+                  overlayColor: active.withAlpha(51),
                   trackHeight: 4.0,
                 ),
                 child: Slider(
@@ -99,20 +98,20 @@ class ModernSlider extends StatelessWidget {
               ),
             ),
             if (trailingIcon != null) ...[
-              SizedBox(width: design?.designSystemSpacing.sm ?? 8),
+              const SizedBox(width: DesignSystem.spacingSM),
               Icon(
                 trailingIcon,
                 size: 20,
-                color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+                color: DesignSystem.textMuted,
               ),
             ],
             if (showValue) ...[
-              SizedBox(width: design?.designSystemSpacing.sm ?? 8),
+              const SizedBox(width: DesignSystem.spacingSM),
               SizedBox(
                 width: 40,
                 child: Text(
                   '${((value / max) * 100).toInt()}%',
-                  style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
+                  style: (DesignSystem.bodySmall).copyWith(
                     fontWeight: FontWeight.w600,
                   ),
                   textAlign: TextAlign.right,
@@ -170,9 +169,6 @@ class SeekSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -183,20 +179,20 @@ class SeekSlider extends StatelessWidget {
           onChanged: (value) => onChanged(Duration(milliseconds: value.toInt())),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: design?.designSystemSpacing.xs ?? 4),
+          padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingXS),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 _formatDuration(position),
-                style: (design?.designSystemTypography.caption ?? theme.textTheme.bodySmall)?.copyWith(
-                  color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+                style: (DesignSystem.caption).copyWith(
+                  color: DesignSystem.textMuted,
                 ),
               ),
               Text(
                 _formatDuration(duration),
-                style: (design?.designSystemTypography.caption ?? theme.textTheme.bodySmall)?.copyWith(
-                  color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+                style: (DesignSystem.caption).copyWith(
+                  color: DesignSystem.textMuted,
                 ),
               ),
             ],
@@ -245,9 +241,8 @@ class ModernRangeSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final active = activeColor ?? design?.designSystemColors.primaryRed ?? theme.colorScheme.primary;
-    final inactive = inactiveColor ?? design?.designSystemColors.surfaceDark ?? theme.colorScheme.surfaceContainerHighest;
+    final active = activeColor ?? DesignSystem.primaryRed;
+    final inactive = inactiveColor ?? DesignSystem.surfaceDark;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -256,16 +251,16 @@ class ModernRangeSlider extends StatelessWidget {
         if (label != null) ...[
           Text(
             label!,
-            style: design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall,
+            style: DesignSystem.bodySmall,
           ),
-          SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+          const SizedBox(height: DesignSystem.spacingXS),
         ],
         SliderTheme(
           data: SliderThemeData(
             activeTrackColor: active,
             inactiveTrackColor: inactive,
             thumbColor: active,
-            overlayColor: active.withValues(alpha: 0.2),
+            overlayColor: active.withAlpha(51),
             trackHeight: 4.0,
           ),
           child: RangeSlider(

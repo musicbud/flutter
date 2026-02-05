@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../base/base_card.dart';
+import '../../../../core/theme/design_system.dart';
+
 
 /// A reusable action card widget for interactive cards.
 /// Commonly used for navigation items, settings options, quick actions, etc.
@@ -72,7 +74,7 @@ class ActionCard extends BaseCard {
       decoration: BoxDecoration(
         border: showBorder
             ? Border.all(
-                color: getDesignSystemColors(context).border,
+                color: DesignSystem.border,
                 width: 1,
               )
             : null,
@@ -84,17 +86,17 @@ class ActionCard extends BaseCard {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: (iconColor ?? getDesignSystemColors(context).primary).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(getDesignSystemRadius(context).md),
+              color: (iconColor ?? DesignSystem.primary).withAlpha((255 * 0.1).round()),
+              borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             ),
             child: Icon(
               icon,
               size: iconSize,
-              color: iconColor ?? getDesignSystemColors(context).primary,
+              color: iconColor ?? DesignSystem.primary,
             ),
           ),
 
-          SizedBox(width: getDesignSystemSpacing(context).md),
+          const SizedBox(width: DesignSystem.spacingMD),
 
           // Content Section
           Expanded(
@@ -104,19 +106,19 @@ class ActionCard extends BaseCard {
                 // Title
                 Text(
                   title,
-                  style: titleStyle ?? getDesignSystemTypography(context).titleMedium.copyWith(
-                    color: getDesignSystemColors(context).onSurface,
+                  style: titleStyle ?? DesignSystem.titleMedium.copyWith(
+                    color: DesignSystem.onSurface,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
 
                 // Description
                 if (description != null) ...[
-                  SizedBox(height: getDesignSystemSpacing(context).xxs),
+                  const SizedBox(height: DesignSystem.spacingXXS),
                   Text(
                     description!,
-                    style: descriptionStyle ?? getDesignSystemTypography(context).bodySmall.copyWith(
-                      color: getDesignSystemColors(context).onSurfaceVariant,
+                    style: descriptionStyle ?? DesignSystem.bodySmall.copyWith(
+                      color: DesignSystem.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -126,14 +128,14 @@ class ActionCard extends BaseCard {
 
           // Trailing Section
           if (trailing != null) ...[
-            SizedBox(width: getDesignSystemSpacing(context).md),
+            const SizedBox(width: DesignSystem.spacingMD),
             trailing!,
           ] else if (showChevron) ...[
-            SizedBox(width: getDesignSystemSpacing(context).md),
+            const SizedBox(width: DesignSystem.spacingMD),
             Icon(
               Icons.chevron_right,
               size: 20,
-              color: chevronColor ?? getDesignSystemColors(context).onSurfaceVariant,
+              color: chevronColor ?? DesignSystem.onSurfaceVariant,
             ),
           ],
         ],

@@ -46,7 +46,6 @@ class ModernBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     return Material(
       elevation: elevation,
@@ -54,7 +53,7 @@ class ModernBottomNavBar extends StatelessWidget {
       child: SafeArea(
         child: Container(
           height: showLabels ? 72 : 56,
-          padding: EdgeInsets.symmetric(horizontal: design?.designSystemSpacing.sm ?? 8),
+          padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingSM),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: List.generate(items.length, (index) {
@@ -62,8 +61,8 @@ class ModernBottomNavBar extends StatelessWidget {
                 item: items[index],
                 isSelected: currentIndex == index,
                 onTap: () => onTap(index),
-                selectedColor: selectedColor ?? design?.designSystemColors.primary ?? theme.colorScheme.primary,
-                unselectedColor: unselectedColor ?? design?.designSystemColors.onSurfaceVariant ?? theme.colorScheme.onSurfaceVariant,
+                selectedColor: selectedColor ?? DesignSystem.primary,
+                unselectedColor: unselectedColor ?? DesignSystem.onSurfaceVariant,
                 showLabel: showLabels,
               );
             }),
@@ -93,14 +92,12 @@ class _BottomNavButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>();
-
     return Expanded(
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: design?.designSystemSpacing.xs ?? 4),
+          padding: const EdgeInsets.symmetric(vertical: DesignSystem.spacingXS),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -123,8 +120,8 @@ class _BottomNavButton extends StatelessWidget {
                       top: -4,
                       child: Container(
                         padding: const EdgeInsets.all(4),
-                        decoration: BoxDecoration(
-                          color: design?.designSystemColors.error ?? Colors.red,
+                        decoration: const BoxDecoration(
+                          color: DesignSystem.error,
                           shape: BoxShape.circle,
                         ),
                         constraints: const BoxConstraints(
@@ -145,7 +142,7 @@ class _BottomNavButton extends StatelessWidget {
                 ],
               ),
               if (showLabel) ...[
-                SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+                const SizedBox(height: DesignSystem.spacingXS),
                 AnimatedDefaultTextStyle(
                   style: TextStyle(
                     fontSize: 12,
@@ -197,20 +194,19 @@ class FloatingBottomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     return Padding(
-      padding: margin ?? EdgeInsets.all(design?.designSystemSpacing.md ?? 12),
+      padding: margin ?? const EdgeInsets.all(DesignSystem.spacingMD),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(design?.designSystemRadius.lg ?? 12),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
         child: Container(
           height: 64,
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withValues(alpha: 0.9),
-            borderRadius: BorderRadius.circular(design?.designSystemRadius.lg ?? 12),
+            color: theme.colorScheme.surface.withAlpha(230),
+            borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.1),
+                color: Colors.black.withAlpha(25),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -223,8 +219,8 @@ class FloatingBottomNavBar extends StatelessWidget {
                 item: items[index],
                 isSelected: currentIndex == index,
                 onTap: () => onTap(index),
-                selectedColor: design?.designSystemColors.primary ?? theme.colorScheme.primary,
-                unselectedColor: design?.designSystemColors.onSurfaceVariant ?? theme.colorScheme.onSurfaceVariant,
+                selectedColor: DesignSystem.primary,
+                unselectedColor: DesignSystem.onSurfaceVariant,
                 showLabel: false,
               );
             }),
@@ -254,9 +250,6 @@ class BottomNavBarWithFAB extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     final leftItems = items.take(items.length ~/ 2).toList();
     final rightItems = items.skip(items.length ~/ 2).toList();
 
@@ -273,8 +266,8 @@ class BottomNavBarWithFAB extends StatelessWidget {
                 item: leftItems[index],
                 isSelected: currentIndex == index,
                 onTap: () => onTap(index),
-                selectedColor: design?.designSystemColors.primary ?? theme.colorScheme.primary,
-                unselectedColor: design?.designSystemColors.onSurfaceVariant ?? theme.colorScheme.onSurfaceVariant,
+                selectedColor: DesignSystem.primary,
+                unselectedColor: DesignSystem.onSurfaceVariant,
                 showLabel: false,
               );
             }),
@@ -285,8 +278,8 @@ class BottomNavBarWithFAB extends StatelessWidget {
                 item: rightItems[index],
                 isSelected: currentIndex == actualIndex,
                 onTap: () => onTap(actualIndex),
-                selectedColor: design?.designSystemColors.primary ?? theme.colorScheme.primary,
-                unselectedColor: design?.designSystemColors.onSurfaceVariant ?? theme.colorScheme.onSurfaceVariant,
+                selectedColor: DesignSystem.primary,
+                unselectedColor: DesignSystem.onSurfaceVariant,
                 showLabel: false,
               );
             }),
@@ -344,7 +337,6 @@ class AnimatedIndicatorBottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     return Material(
       elevation: 8.0,
@@ -367,7 +359,7 @@ class AnimatedIndicatorBottomNav extends StatelessWidget {
                     width: 40,
                     height: 3,
                     decoration: BoxDecoration(
-                      color: design?.designSystemColors.primary ?? theme.colorScheme.primary,
+                      color: DesignSystem.primary,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -381,8 +373,8 @@ class AnimatedIndicatorBottomNav extends StatelessWidget {
                     item: items[index],
                     isSelected: currentIndex == index,
                     onTap: () => onTap(index),
-                    selectedColor: design?.designSystemColors.primary ?? theme.colorScheme.primary,
-                    unselectedColor: design?.designSystemColors.onSurfaceVariant ?? theme.colorScheme.onSurfaceVariant,
+                    selectedColor: DesignSystem.primary,
+                    unselectedColor: DesignSystem.onSurfaceVariant,
                     showLabel: true,
                   );
                 }),

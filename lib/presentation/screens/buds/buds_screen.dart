@@ -357,7 +357,7 @@ class _BudsScreenState extends State<BudsScreen>
                   _selectedCategory = selected ? category : null;
                 });
               },
-            )).toList(),
+            )),
           ],
         ),
       ],

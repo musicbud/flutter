@@ -7,7 +7,6 @@ import '../../../blocs/auth/login/login_state.dart';
 import '../../../blocs/auth/auth_bloc.dart';
 import '../../../data/providers/token_provider.dart';
 import '../../../core/theme/design_system.dart';
-import '../../../blocs/auth/auth_event.dart';
 import 'register_screen.dart';
 
 // Enhanced UI Library

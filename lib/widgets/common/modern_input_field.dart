@@ -44,7 +44,6 @@ class ModernInputField extends StatefulWidget {
 class _ModernInputFieldState extends State<ModernInputField> {
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Material(
       type: MaterialType.transparency,
       child: TextFormField(
@@ -54,32 +53,32 @@ class _ModernInputFieldState extends State<ModernInputField> {
         // onSubmitted: widget.onSubmitted,
         onTap: widget.onTap,
         maxLines: widget.maxLines,
-        style: widget.customTextStyle ?? theme.designSystem?.designSystemTypography.bodyMedium ?? const TextStyle(),
-        decoration: _getInputDecoration(theme),
+        style: widget.customTextStyle ?? DesignSystem.bodyMedium,
+        decoration: _getInputDecoration(),
       ),
     );
   }
 
-  InputDecoration _getInputDecoration(ThemeData theme) {
-    final borderRadius = BorderRadius.circular(theme.designSystem?.designSystemRadius.md ?? 8.0);
+  InputDecoration _getInputDecoration() {
+    final borderRadius = BorderRadius.circular(DesignSystem.radiusMD);
     final borderSide = BorderSide(
-      color: widget.customBorderColor ?? theme.designSystem?.designSystemColors.border ?? Colors.grey,
+      color: widget.customBorderColor ?? DesignSystem.border,
     );
-    final focusedBorderSide = BorderSide(
-      color: widget.customBorderColor ?? theme.designSystem?.designSystemColors.primary ?? Colors.blue,
+    final focusedBorderSide = const BorderSide(
+      color: DesignSystem.primary,
       width: 2,
     );
 
     var decoration = InputDecoration(
       labelText: widget.label,
       hintText: widget.hintText,
-      labelStyle: widget.customLabelStyle ?? theme.designSystem?.designSystemTypography.bodyMedium ?? const TextStyle(),
-      hintStyle: widget.customHintStyle ?? theme.designSystem?.designSystemTypography.bodyMedium.copyWith(
-        color: theme.designSystem?.designSystemColors.onSurfaceVariant ?? Colors.grey,
-      ) ?? const TextStyle(color: Colors.grey),
+      labelStyle: widget.customLabelStyle ?? DesignSystem.bodyMedium,
+      hintStyle: widget.customHintStyle ?? DesignSystem.bodyMedium.copyWith(
+        color: DesignSystem.onSurfaceVariant,
+      ),
       filled: widget.variant == ModernInputFieldVariant.filled,
       fillColor: widget.customBackgroundColor ?? (widget.variant == ModernInputFieldVariant.filled
-        ? theme.designSystem?.designSystemColors.surfaceContainer ?? Colors.grey.shade100
+        ? DesignSystem.surfaceContainer
         : Colors.transparent),
     );
 
@@ -132,13 +131,13 @@ class _ModernInputFieldState extends State<ModernInputField> {
     }
 
     // Apply size-specific padding
-    final verticalPadding = widget.size == ModernInputFieldSize.small ? (theme.designSystem?.designSystemSpacing.xs ?? 8.0)
-      : widget.size == ModernInputFieldSize.medium ? (theme.designSystem?.designSystemSpacing.sm ?? 12.0)
-      : (theme.designSystem?.designSystemSpacing.md ?? 16.0);
+    final verticalPadding = widget.size == ModernInputFieldSize.small ? DesignSystem.spacingXS
+      : widget.size == ModernInputFieldSize.medium ? DesignSystem.spacingSM
+      : DesignSystem.spacingMD;
 
     return decoration.copyWith(
       contentPadding: EdgeInsets.symmetric(
-        horizontal: theme.designSystem?.designSystemSpacing.md ?? 16.0,
+        horizontal: DesignSystem.spacingMD,
         vertical: verticalPadding,
       ),
     );

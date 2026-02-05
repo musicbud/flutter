@@ -29,7 +29,7 @@ class ProfileLoaded extends UserState {
 
 // Alias for backwards compatibility
 class UserProfileLoaded extends ProfileLoaded {
-  const UserProfileLoaded(UserProfile profile) : super(profile);
+  const UserProfileLoaded(super.profile);
 }
 
 class LikedItemsLoaded extends UserState {

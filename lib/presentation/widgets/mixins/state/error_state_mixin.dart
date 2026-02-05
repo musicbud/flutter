@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/core/theme/design_system.dart';
+import '../../../../core/theme/design_system.dart';
 
 /// A mixin that provides comprehensive error state management for widgets.
 ///
@@ -178,38 +178,35 @@ mixin ErrorStateMixin<T extends StatefulWidget> on State<T> {
 
   /// Build default error content
   Widget _buildDefaultErrorContent(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.xl),
+          padding: const EdgeInsets.all(DesignSystem.spacingXL),
           decoration: BoxDecoration(
-            color: design.designSystemColors.error.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+            color: DesignSystem.error.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
           ),
           child: Icon(
             _getErrorIcon(),
             size: 64,
-            color: design.designSystemColors.error,
+            color: DesignSystem.error,
           ),
         ),
-        SizedBox(height: design.designSystemSpacing.lg),
+        const SizedBox(height: DesignSystem.spacingLG),
         Text(
           'Something went wrong',
-          style: design.designSystemTypography.titleMedium.copyWith(
-            color: design.designSystemColors.onSurface,
+          style: DesignSystem.titleMedium.copyWith(
+            color: DesignSystem.onSurface,
             fontWeight: FontWeight.w600,
           ),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: design.designSystemSpacing.sm),
+        const SizedBox(height: DesignSystem.spacingSM),
         Text(
           _currentError?.message ?? 'An unexpected error occurred',
-          style: design.designSystemTypography.bodyMedium.copyWith(
-            color: design.designSystemColors.onSurfaceVariant,
+          style: DesignSystem.bodyMedium.copyWith(
+            color: DesignSystem.onSurfaceVariant,
           ),
           textAlign: TextAlign.center,
         ),
@@ -236,43 +233,37 @@ mixin ErrorStateMixin<T extends StatefulWidget> on State<T> {
 
   /// Build error icon widget
   Widget _buildErrorIcon(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
-      padding: EdgeInsets.all(design.designSystemSpacing.lg),
+      padding: const EdgeInsets.all(DesignSystem.spacingLG),
       decoration: BoxDecoration(
-        color: design.designSystemColors.error.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+        color: DesignSystem.error.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
       ),
       child: Icon(
         _getErrorIcon(),
         size: 48,
-        color: design.designSystemColors.error,
+        color: DesignSystem.error,
       ),
     );
   }
 
   /// Build error message widget
   Widget _buildErrorMessage(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Column(
       children: [
         Text(
           'Something went wrong',
-          style: design.designSystemTypography.titleMedium.copyWith(
-            color: design.designSystemColors.onSurface,
+          style: DesignSystem.titleMedium.copyWith(
+            color: DesignSystem.onSurface,
             fontWeight: FontWeight.w600,
           ),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: design.designSystemSpacing.sm),
+        const SizedBox(height: DesignSystem.spacingSM),
         Text(
           _currentError?.message ?? 'An unexpected error occurred',
-          style: design.designSystemTypography.bodyMedium.copyWith(
-            color: design.designSystemColors.onSurfaceVariant,
+          style: DesignSystem.bodyMedium.copyWith(
+            color: DesignSystem.onSurfaceVariant,
           ),
           textAlign: TextAlign.center,
         ),
@@ -282,22 +273,19 @@ mixin ErrorStateMixin<T extends StatefulWidget> on State<T> {
 
   /// Build retry button widget
   Widget _buildRetryButton(BuildContext context, VoidCallback onRetry) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return ElevatedButton.icon(
       onPressed: onRetry,
       icon: const Icon(Icons.refresh, size: 20),
       label: const Text('Try Again'),
       style: ElevatedButton.styleFrom(
-        backgroundColor: design.designSystemColors.primary,
-        foregroundColor: design.designSystemColors.onPrimary,
+        backgroundColor: DesignSystem.primary,
+        foregroundColor: DesignSystem.onPrimary,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+          borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         ),
-        padding: EdgeInsets.symmetric(
-          horizontal: design.designSystemSpacing.lg,
-          vertical: design.designSystemSpacing.md,
+        padding: const EdgeInsets.symmetric(
+          horizontal: DesignSystem.spacingLG,
+          vertical: DesignSystem.spacingMD,
         ),
       ),
     );
@@ -305,16 +293,12 @@ mixin ErrorStateMixin<T extends StatefulWidget> on State<T> {
 
   /// Get error padding based on context
   EdgeInsetsGeometry _getErrorPadding(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-    return EdgeInsets.all(design.designSystemSpacing.xl);
+    return const EdgeInsets.all(DesignSystem.spacingXL);
   }
 
   /// Get error spacing based on context
   double _getErrorSpacing(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-    return design.designSystemSpacing.lg;
+    return DesignSystem.spacingLG;
   }
 
   /// Callbacks for error state changes

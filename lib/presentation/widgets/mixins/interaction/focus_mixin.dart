@@ -351,9 +351,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     ValueChanged<String>? onSubmitted,
     FormFieldValidator<String>? validator,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -369,12 +366,12 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         decoration: InputDecoration(
           hintText: hintText,
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+            borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(design.designSystemRadius.md),
-            borderSide: BorderSide(
-              color: design.designSystemColors.primary,
+            borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
+            borderSide: const BorderSide(
+              color: DesignSystem.primary,
               width: 2,
             ),
           ),
@@ -405,9 +402,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     double? elevation,
     double? focusElevation,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
       margin: margin,
       child: Focus(
@@ -422,14 +416,14 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         child: ElevatedButton(
           onPressed: _focusEnabled ? onPressed : null,
           style: ElevatedButton.styleFrom(
-            backgroundColor: backgroundColor ?? design.designSystemColors.primary,
+            backgroundColor: backgroundColor ?? DesignSystem.primary,
             elevation: elevation ?? 2,
             shape: RoundedRectangleBorder(
-              borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.md),
+              borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
             ),
-            padding: padding ?? EdgeInsets.symmetric(
-              horizontal: design.designSystemSpacing.lg,
-              vertical: design.designSystemSpacing.md,
+            padding: padding ?? const EdgeInsets.symmetric(
+              horizontal: DesignSystem.spacingLG,
+              vertical: DesignSystem.spacingMD,
             ),
           ),
           child: child,
@@ -451,9 +445,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     String? semanticLabel,
     EdgeInsetsGeometry? padding,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -467,8 +458,8 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         onPressed: _focusEnabled ? onPressed : null,
         icon: Icon(icon),
         iconSize: size ?? 24,
-        color: color ?? design.designSystemColors.onSurface,
-        padding: padding ?? EdgeInsets.all(design.designSystemSpacing.sm),
+        color: color ?? DesignSystem.onSurface,
+        padding: padding ?? const EdgeInsets.all(DesignSystem.spacingSM),
         tooltip: semanticLabel,
       ),
     );
@@ -488,9 +479,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     BorderRadius? borderRadius,
     ShapeBorder? shape,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -501,14 +489,14 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Card(
-        margin: margin ?? EdgeInsets.all(design.designSystemSpacing.sm),
-        color: color ?? design.designSystemColors.surfaceContainer,
+        margin: margin ?? const EdgeInsets.all(DesignSystem.spacingSM),
+        color: color ?? DesignSystem.surfaceContainer,
         elevation: elevation ?? 2,
         shape: shape ?? RoundedRectangleBorder(
-          borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.md),
+          borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
         ),
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: child,
         ),
       ),
@@ -526,9 +514,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? focusColor,
     BorderRadius? borderRadius,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -539,10 +524,10 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-        borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.sm),
+        color: backgroundColor ?? DesignSystem.surfaceContainer,
+        borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusSM),
         child: Container(
-          padding: padding ?? EdgeInsets.all(design.designSystemSpacing.md),
+          padding: padding ?? const EdgeInsets.all(DesignSystem.spacingMD),
           child: child,
         ),
       ),
@@ -559,9 +544,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? focusColor,
     EdgeInsetsGeometry? padding,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -572,9 +554,9 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.surfaceContainer,
+        color: backgroundColor ?? DesignSystem.surfaceContainer,
         child: Container(
-          padding: padding ?? EdgeInsets.all(design.designSystemSpacing.md),
+          padding: padding ?? const EdgeInsets.all(DesignSystem.spacingMD),
           child: child,
         ),
       ),
@@ -592,9 +574,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? focusColor,
     Color? selectedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -606,10 +585,10 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
       } : null,
       child: Material(
         color: isSelected
-            ? (selectedColor ?? design.designSystemColors.primary)
-            : (backgroundColor ?? design.designSystemColors.surfaceContainer),
+            ? (selectedColor ?? DesignSystem.primary)
+            : (backgroundColor ?? DesignSystem.surfaceContainer),
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: child,
         ),
       ),
@@ -625,9 +604,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? focusColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -638,9 +614,9 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.surfaceContainer,
+        color: backgroundColor ?? DesignSystem.surfaceContainer,
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: child,
         ),
       ),
@@ -658,9 +634,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? focusColor,
     Color? selectedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -672,10 +645,10 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
       } : null,
       child: Material(
         color: isSelected
-            ? (selectedColor ?? design.designSystemColors.primary)
-            : (backgroundColor ?? design.designSystemColors.surfaceContainer),
+            ? (selectedColor ?? DesignSystem.primary)
+            : (backgroundColor ?? DesignSystem.surfaceContainer),
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: child,
         ),
       ),
@@ -692,9 +665,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? activeColor,
     Color? focusColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -707,7 +677,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
       child: Checkbox(
         value: value,
         onChanged: _focusEnabled ? (value) => onChanged(value ?? false) : null,
-        activeColor: activeColor ?? design.designSystemColors.primary,
+        activeColor: activeColor ?? DesignSystem.primary,
       ),
     );
   }
@@ -723,9 +693,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? activeColor,
     Color? focusColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -739,7 +706,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         value: value,
         groupValue: groupValue,
         onChanged: _focusEnabled ? onChanged : null,
-        activeColor: activeColor ?? design.designSystemColors.primary,
+        activeColor: activeColor ?? DesignSystem.primary,
       ),
     );
   }
@@ -754,9 +721,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? activeColor,
     Color? focusColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -769,7 +733,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
       child: Switch(
         value: value,
         onChanged: _focusEnabled ? onChanged : null,
-        activeColor: activeColor ?? design.designSystemColors.primary,
+        activeThumbColor: activeColor ?? DesignSystem.primary,
       ),
     );
   }
@@ -786,9 +750,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? activeColor,
     Color? focusColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -803,7 +764,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         onChanged: _focusEnabled ? onChanged : null,
         min: min,
         max: max,
-        activeColor: activeColor ?? design.designSystemColors.primary,
+        activeColor: activeColor ?? DesignSystem.primary,
       ),
     );
   }
@@ -819,9 +780,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? focusColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -832,13 +790,13 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.surfaceContainer,
+        color: backgroundColor ?? DesignSystem.surfaceContainer,
         child: ExpansionTile(
           title: title,
           initiallyExpanded: initiallyExpanded,
-          backgroundColor: backgroundColor ?? design.designSystemColors.surfaceContainer,
-          collapsedBackgroundColor: backgroundColor ?? design.designSystemColors.surfaceContainer,
-          childrenPadding: EdgeInsets.all(design.designSystemSpacing.md),
+          backgroundColor: backgroundColor ?? DesignSystem.surfaceContainer,
+          collapsedBackgroundColor: backgroundColor ?? DesignSystem.surfaceContainer,
+          childrenPadding: const EdgeInsets.all(DesignSystem.spacingMD),
           children: children,
         ),
       ),
@@ -855,9 +813,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? focusColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -868,10 +823,10 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        color: backgroundColor ?? DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: DataTable(
             columns: columns,
             rows: rows,
@@ -892,9 +847,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? focusColor,
     Color? selectedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -905,20 +857,20 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        color: backgroundColor ?? DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.calendar_today,
-                color: design.designSystemColors.onSurfaceVariant,
+                color: DesignSystem.onSurfaceVariant,
               ),
-              SizedBox(width: design.designSystemSpacing.sm),
+              const SizedBox(width: DesignSystem.spacingSM),
               Text(
                 '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                style: design.designSystemTypography.bodyMedium,
+                style: DesignSystem.bodyMedium,
               ),
             ],
           ),
@@ -937,9 +889,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? focusColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -950,20 +899,20 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        color: backgroundColor ?? DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.access_time,
-                color: design.designSystemColors.onSurfaceVariant,
+                color: DesignSystem.onSurfaceVariant,
               ),
-              SizedBox(width: design.designSystemSpacing.sm),
+              const SizedBox(width: DesignSystem.spacingSM),
               Text(
                 selectedTime.format(context),
-                style: design.designSystemTypography.bodyMedium,
+                style: DesignSystem.bodyMedium,
               ),
             ],
           ),
@@ -983,9 +932,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? focusColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -996,10 +942,10 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        color: backgroundColor ?? DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: Row(
             children: [
               Container(
@@ -1007,17 +953,17 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
                 height: 24,
                 decoration: BoxDecoration(
                   color: selectedColor,
-                  borderRadius: BorderRadius.circular(design.designSystemRadius.sm),
+                  borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
                   border: Border.all(
-                    color: design.designSystemColors.border,
+                    color: DesignSystem.borderColor,
                     width: 1,
                   ),
                 ),
               ),
-              SizedBox(width: design.designSystemSpacing.sm),
+              const SizedBox(width: DesignSystem.spacingSM),
               Text(
                 'Color',
-                style: design.designSystemTypography.bodyMedium,
+                style: DesignSystem.bodyMedium,
               ),
             ],
           ),
@@ -1038,9 +984,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? focusColor,
     double? size,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -1060,8 +1003,8 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
             onPressed: _focusEnabled ? () => onRatingChanged(starValue.toDouble()) : null,
             icon: Icon(isActive ? Icons.star : Icons.star_border),
             color: isActive
-                ? (activeColor ?? design.designSystemColors.warning)
-                : design.designSystemColors.onSurfaceVariant,
+                ? (activeColor ?? DesignSystem.warning)
+                : DesignSystem.onSurfaceVariant,
             iconSize: size ?? 24,
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
@@ -1082,9 +1025,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? focusColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -1095,8 +1035,8 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        color: backgroundColor ?? DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -1106,13 +1046,13 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
                   ? () => onPageChanged(currentPage - 1)
                   : null,
               icon: const Icon(Icons.chevron_left),
-              padding: EdgeInsets.all(design.designSystemSpacing.sm),
+              padding: const EdgeInsets.all(DesignSystem.spacingSM),
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: design.designSystemSpacing.md),
+              padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingMD),
               child: Text(
                 '$currentPage / $totalPages',
-                style: design.designSystemTypography.bodyMedium,
+                style: DesignSystem.bodyMedium,
               ),
             ),
             IconButton(
@@ -1121,7 +1061,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
                   ? () => onPageChanged(currentPage + 1)
                   : null,
               icon: const Icon(Icons.chevron_right),
-              padding: EdgeInsets.all(design.designSystemSpacing.sm),
+              padding: const EdgeInsets.all(DesignSystem.spacingSM),
             ),
           ],
         ),
@@ -1140,9 +1080,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? focusColor,
     Color? selectedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -1154,20 +1091,20 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
       } : null,
       child: Material(
         color: selected
-            ? (selectedColor ?? design.designSystemColors.primary)
-            : (backgroundColor ?? design.designSystemColors.surfaceContainer),
-        borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+            ? (selectedColor ?? DesignSystem.primary)
+            : (backgroundColor ?? DesignSystem.surfaceContainer),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: design.designSystemSpacing.md,
-            vertical: design.designSystemSpacing.sm,
+          padding: const EdgeInsets.symmetric(
+            horizontal: DesignSystem.spacingMD,
+            vertical: DesignSystem.spacingSM,
           ),
           child: Text(
             label,
-            style: design.designSystemTypography.bodyMedium.copyWith(
+            style: DesignSystem.bodyMedium.copyWith(
               color: selected
-                  ? design.designSystemColors.onPrimary
-                  : design.designSystemColors.onSurface,
+                  ? DesignSystem.onPrimary
+                  : DesignSystem.onSurface,
             ),
           ),
         ),
@@ -1185,9 +1122,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? focusColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -1198,24 +1132,24 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        color: backgroundColor ?? DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: design.designSystemSpacing.md,
-            vertical: design.designSystemSpacing.sm,
+          padding: const EdgeInsets.symmetric(
+            horizontal: DesignSystem.spacingMD,
+            vertical: DesignSystem.spacingSM,
           ),
           child: Row(
             children: [
               Text(
                 label,
-                style: design.designSystemTypography.bodyMedium,
+                style: DesignSystem.bodyMedium,
               ),
-              SizedBox(width: design.designSystemSpacing.sm),
+              const SizedBox(width: DesignSystem.spacingSM),
               Icon(
                 ascending ? Icons.arrow_upward : Icons.arrow_downward,
                 size: 16,
-                color: design.designSystemColors.onSurfaceVariant,
+                color: DesignSystem.onSurfaceVariant,
               ),
             ],
           ),
@@ -1235,9 +1169,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? focusColor,
     EdgeInsetsGeometry? padding,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -1248,20 +1179,20 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+        color: backgroundColor ?? DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
         child: Container(
-          padding: padding ?? EdgeInsets.symmetric(
-            horizontal: design.designSystemSpacing.md,
-            vertical: design.designSystemSpacing.sm,
+          padding: padding ?? const EdgeInsets.symmetric(
+            horizontal: DesignSystem.spacingMD,
+            vertical: DesignSystem.spacingSM,
           ),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.search,
-                color: design.designSystemColors.onSurfaceVariant,
+                color: DesignSystem.onSurfaceVariant,
               ),
-              SizedBox(width: design.designSystemSpacing.sm),
+              const SizedBox(width: DesignSystem.spacingSM),
               Expanded(
                 child: TextField(
                   controller: controller,
@@ -1291,9 +1222,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     double? elevation,
     double? focusElevation,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -1305,7 +1233,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
       } : null,
       child: FloatingActionButton(
         onPressed: _focusEnabled ? onPressed : null,
-        backgroundColor: backgroundColor ?? design.designSystemColors.primary,
+        backgroundColor: backgroundColor ?? DesignSystem.primary,
         elevation: elevation ?? 6,
         focusElevation: focusElevation ?? 8,
         child: child,
@@ -1325,9 +1253,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? focusColor,
     Color? selectedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -1338,7 +1263,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.surfaceContainer,
+        color: backgroundColor ?? DesignSystem.surfaceContainer,
         child: Row(
           children: tabs.asMap().entries.map((entry) {
             final index = entry.key;
@@ -1347,13 +1272,13 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
             return Expanded(
               child: Material(
                 color: index == currentIndex
-                    ? (selectedColor ?? design.designSystemColors.primary)
+                    ? (selectedColor ?? DesignSystem.primary)
                     : Colors.transparent,
                 child: InkWell(
                   focusNode: _focusNode,
                   onTap: _focusEnabled ? () => onTap(index) : null,
                   child: Container(
-                    padding: EdgeInsets.all(design.designSystemSpacing.md),
+                    padding: const EdgeInsets.all(DesignSystem.spacingMD),
                     child: tab,
                   ),
                 ),
@@ -1377,9 +1302,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? focusColor,
     Color? selectedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -1390,9 +1312,9 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.surface,
+        color: backgroundColor ?? DesignSystem.surface,
         child: Container(
-          padding: EdgeInsets.symmetric(vertical: design.designSystemSpacing.sm),
+          padding: const EdgeInsets.symmetric(vertical: DesignSystem.spacingSM),
           child: Row(
             children: items.asMap().entries.map((entry) {
               final index = entry.key;
@@ -1402,7 +1324,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
               return Expanded(
                 child: Material(
                   color: isSelected
-                      ? (selectedColor ?? design.designSystemColors.primary)
+                      ? (selectedColor ?? DesignSystem.primary)
                       : Colors.transparent,
                   child: InkWell(
                     focusNode: _focusNode,
@@ -1413,18 +1335,18 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
                         IconTheme(
                           data: IconThemeData(
                             color: isSelected
-                                ? design.designSystemColors.onPrimary
-                                : design.designSystemColors.onSurfaceVariant,
+                                ? DesignSystem.onPrimary
+                                : DesignSystem.onSurfaceVariant,
                           ),
                           child: isSelected ? item.activeIcon : item.icon,
                         ),
-                        SizedBox(height: design.designSystemSpacing.xs),
+                        const SizedBox(height: DesignSystem.spacingXS),
                         Text(
                           item.label!,
-                          style: design.designSystemTypography.caption.copyWith(
+                          style: DesignSystem.caption.copyWith(
                             color: isSelected
-                                ? design.designSystemColors.onPrimary
-                                : design.designSystemColors.onSurfaceVariant,
+                                ? DesignSystem.onPrimary
+                                : DesignSystem.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -1452,9 +1374,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? focusColor,
     Color? selectedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -1465,25 +1384,25 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+        color: backgroundColor ?? DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
         child: Row(
           children: segments.map((segment) {
             final isSelected = segment == selectedValue;
             return Expanded(
               child: Material(
                 color: isSelected
-                    ? (selectedColor ?? design.designSystemColors.primary)
+                    ? (selectedColor ?? DesignSystem.primary)
                     : Colors.transparent,
-                borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+                borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
                 child: InkWell(
                   focusNode: _focusNode,
                   onTap: _focusEnabled ? () => onChanged(segment) : null,
-                  borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+                  borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
                   child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: design.designSystemSpacing.md,
-                      vertical: design.designSystemSpacing.sm,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: DesignSystem.spacingMD,
+                      vertical: DesignSystem.spacingSM,
                     ),
                     child: builder(segment),
                   ),
@@ -1508,9 +1427,6 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? focusColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Focus(
       focusNode: _focusNode,
       onFocusChange: _focusEnabled ? (hasFocus) {
@@ -1521,8 +1437,8 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
         }
       } : null,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        color: backgroundColor ?? DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: Stepper(
           currentStep: currentStep,
           onStepContinue: _focusEnabled ? onStepContinue : null,
@@ -1530,7 +1446,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
           steps: steps,
           controlsBuilder: (context, details) {
             return Container(
-              margin: EdgeInsets.only(top: design.designSystemSpacing.md),
+              margin: const EdgeInsets.only(top: DesignSystem.spacingMD),
               child: Row(
                 children: [
                   if (currentStep < steps.length - 1)
@@ -1542,7 +1458,7 @@ mixin FocusMixin<T extends StatefulWidget> on State<T> {
                       ),
                     ),
                   if (currentStep > 0) ...[
-                    SizedBox(width: design.designSystemSpacing.md),
+                    const SizedBox(width: DesignSystem.spacingMD),
                     Focus(
                       focusNode: _focusNode,
                       child: ElevatedButton(

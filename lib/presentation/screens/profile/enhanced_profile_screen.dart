@@ -179,7 +179,7 @@ class _EnhancedProfileScreenState extends State<EnhancedProfileScreen>
               // Cover image placeholder
               Positioned.fill(
                 child: Container(
-                  color: Colors.black.withValues(alpha: 0.3),
+                  color: DesignSystem.overlay.withAlpha((255 * 0.3).round()),
                 ),
               ),
             ],

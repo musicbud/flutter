@@ -67,18 +67,15 @@ class ImageHandler {
       );
     }
 
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
-        borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.md),
-        color: design.designSystemColors.surfaceContainer,
+        borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
+        color: DesignSystem.surfaceContainer,
       ),
       child: ClipRRect(
-        borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.md),
+        borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -94,8 +91,8 @@ class ImageHandler {
             if (showPlayButton)
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.md),
-                  gradient: design.designSystemGradients.overlay,
+                  borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
+                  gradient: DesignSystem.gradientOverlay,
                 ),
                 child: Center(
                   child: _buildPlayButton(context, onPlayPressed),
@@ -117,18 +114,15 @@ class ImageHandler {
     BorderRadius? borderRadius,
     Color? color,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
-        borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.md),
-        color: design.designSystemColors.surfaceContainer,
+        borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
+        color: DesignSystem.surfaceContainer,
       ),
       child: ClipRRect(
-        borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.md),
+        borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
         child: Image.asset(
           assetPath,
           fit: fit,
@@ -153,20 +147,17 @@ class ImageHandler {
     required double height,
     BorderRadius? borderRadius,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
-        borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.md),
-        gradient: design.designSystemGradients.card,
+        borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
+        gradient: DesignSystem.gradientCard,
       ),
       child: Icon(
         Icons.music_note,
         size: width * 0.3,
-        color: design.designSystemColors.onSurfaceVariant,
+        color: DesignSystem.onSurfaceVariant,
       ),
     );
   }
@@ -192,17 +183,14 @@ class ImageHandler {
 
   /// Build default error widget for failed image loads
   static Widget _buildDefaultErrorWidget(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
-      decoration: BoxDecoration(
-        gradient: design.designSystemGradients.card,
+      decoration: const BoxDecoration(
+        gradient: DesignSystem.gradientCard,
       ),
-      child: Icon(
+      child: const Icon(
         Icons.broken_image,
         size: 32,
-        color: design.designSystemColors.onSurfaceVariant,
+        color: DesignSystem.onSurfaceVariant,
       ),
     );
   }
@@ -252,20 +240,17 @@ class ImageHandler {
     required double size,
     IconData? icon,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
-        gradient: design.designSystemGradients.card,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        gradient: DesignSystem.gradientCard,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       ),
       child: Icon(
         icon ?? Icons.music_note,
         size: size * 0.4,
-        color: design.designSystemColors.onSurfaceVariant,
+        color: DesignSystem.onSurfaceVariant,
       ),
     );
   }
@@ -275,20 +260,17 @@ class ImageHandler {
     required BuildContext context,
     required double size,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
-        gradient: design.designSystemGradients.card,
+        gradient: DesignSystem.gradientCard,
         borderRadius: BorderRadius.circular(size / 2),
       ),
       child: Icon(
         Icons.person,
         size: size * 0.4,
-        color: design.designSystemColors.onSurfaceVariant,
+        color: DesignSystem.onSurfaceVariant,
       ),
     );
   }

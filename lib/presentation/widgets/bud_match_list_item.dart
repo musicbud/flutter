@@ -45,15 +45,15 @@ class BudMatchListItem extends StatelessWidget {
                 style: DesignSystem.bodySmall,
               )
             else
-              const Text(
+              Text(
                 'Similar music tastes',
                 style: DesignSystem.bodySmall,
               ),
           ],
         ),
-        trailing: Icon(
+        trailing: const Icon(
           Icons.chevron_right,
-          color: DesignSystem.neutral[500],
+          color: DesignSystem.neutral500,
         ),
         onTap: () {
           // TODO: Navigate to bud profile or common items page

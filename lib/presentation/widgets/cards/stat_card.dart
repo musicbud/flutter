@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../base/base_card.dart';
+import '../../../core/theme/design_system.dart';
 
 /// A reusable stat card widget for displaying profile statistics.
 /// Commonly used for showing counts like followers, following, tracks, etc.
@@ -58,27 +59,27 @@ class StatCard extends BaseCard {
         Icon(
           icon,
           size: iconSize,
-          color: iconColor ?? getDesignSystemColors(context).onSurfaceVariant,
+          color: iconColor ?? DesignSystem.onSurfaceVariant,
         ),
 
-        SizedBox(height: getDesignSystemSpacing(context).xs),
+        const SizedBox(height: DesignSystem.spacingXS),
 
         // Value
         Text(
           _formatValue(value),
-          style: valueStyle ?? getDesignSystemTypography(context).titleLarge.copyWith(
-            color: getDesignSystemColors(context).onSurface,
+          style: valueStyle ?? DesignSystem.titleLarge.copyWith(
+            color: DesignSystem.onSurface,
             fontWeight: FontWeight.w700,
           ),
         ),
 
-        SizedBox(height: getDesignSystemSpacing(context).xxs),
+        const SizedBox(height: DesignSystem.spacingXXS),
 
         // Label
         Text(
           label,
-          style: labelStyle ?? getDesignSystemTypography(context).bodySmall.copyWith(
-            color: getDesignSystemColors(context).onSurfaceVariant,
+          style: labelStyle ?? DesignSystem.bodySmall.copyWith(
+            color: DesignSystem.onSurfaceVariant,
             fontWeight: FontWeight.w500,
           ),
           textAlign: TextAlign.center,

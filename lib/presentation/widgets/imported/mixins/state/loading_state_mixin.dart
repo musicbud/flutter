@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/core/theme/design_system.dart';
+import '../../../../../core/theme/design_system.dart';
 
 /// A mixin that provides consistent loading state management for widgets.
 ///
@@ -154,11 +154,8 @@ mixin LoadingStateMixin<T extends StatefulWidget> on State<T>
 
   /// Build the default loading widget with theme integration
   Widget _buildDefaultLoadingWidget(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
-      padding: EdgeInsets.all(design.designSystemSpacing.xl),
+      padding: const EdgeInsets.all(DesignSystem.spacingXL),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -168,11 +165,11 @@ mixin LoadingStateMixin<T extends StatefulWidget> on State<T>
             child: CircularProgressIndicator(
               strokeWidth: 3,
               valueColor: AlwaysStoppedAnimation<Color>(
-                design.designSystemColors.primary,
+                DesignSystem.primary,
               ),
             ),
           ),
-          SizedBox(height: design.designSystemSpacing.lg),
+          const SizedBox(height: DesignSystem.spacingLG),
           const Text(
             'Loading...',
           ),
@@ -183,54 +180,51 @@ mixin LoadingStateMixin<T extends StatefulWidget> on State<T>
 
   /// Build the default error widget with retry functionality
   Widget _buildDefaultErrorWidget(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
-      padding: EdgeInsets.all(design.designSystemSpacing.xl),
+      padding: const EdgeInsets.all(DesignSystem.spacingXL),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            padding: EdgeInsets.all(design.designSystemSpacing.lg),
+            padding: const EdgeInsets.all(DesignSystem.spacingLG),
             decoration: BoxDecoration(
-              color: design.designSystemColors.error.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+              color: DesignSystem.error.withAlpha((255 * 0.1).round()),
+              borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.error_outline,
               size: 48,
-              color: design.designSystemColors.error,
+              color: DesignSystem.error,
             ),
           ),
-          SizedBox(height: design.designSystemSpacing.lg),
+          const SizedBox(height: DesignSystem.spacingLG),
           Text(
             'Something went wrong',
-            style: design.designSystemTypography.titleMedium.copyWith(
-              color: design.designSystemColors.onSurface,
+            style: DesignSystem.titleMedium.copyWith(
+              color: DesignSystem.onSurface,
               fontWeight: FontWeight.w600,
             ),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: design.designSystemSpacing.sm),
+          const SizedBox(height: DesignSystem.spacingSM),
           const Text(
             'Please check your connection and try again',
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: design.designSystemSpacing.xl),
+          const SizedBox(height: DesignSystem.spacingXL),
           ElevatedButton.icon(
             onPressed: () => retryLoading?.call(),
             icon: const Icon(Icons.refresh, size: 20),
             label: const Text('Try Again'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: design.designSystemColors.primary,
-              foregroundColor: design.designSystemColors.onPrimary,
+              backgroundColor: DesignSystem.primary,
+              foregroundColor: DesignSystem.onPrimary,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+                borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
               ),
-              padding: EdgeInsets.symmetric(
-                horizontal: design.designSystemSpacing.lg,
-                vertical: design.designSystemSpacing.md,
+              padding: const EdgeInsets.symmetric(
+                horizontal: DesignSystem.spacingLG,
+                vertical: DesignSystem.spacingMD,
               ),
             ),
           ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/design_system.dart';
+import 'package:musicbud_flutter/core/theme/design_system.dart';
 
 /// Chip variant types
 enum ChipVariant {
@@ -60,7 +60,6 @@ class ModernChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     return Material(
       color: Colors.transparent,
@@ -69,43 +68,42 @@ class ModernChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Container(
           padding: padding ??
-              EdgeInsets.symmetric(
-                horizontal: design?.designSystemSpacing.md ?? 12,
-                vertical: design?.designSystemSpacing.sm ?? 8,
+              const EdgeInsets.symmetric(
+                horizontal: DesignSystem.spacingMD,
+                vertical: DesignSystem.spacingSM,
               ),
-          decoration: _getDecoration(design, theme),
+          decoration: _getDecoration(theme),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               if (avatar != null) ...[
                 avatar!,
-                SizedBox(width: design?.designSystemSpacing.xs ?? 4),
+                const SizedBox(width: DesignSystem.spacingXS),
               ],
               if (leadingIcon != null) ...[
                 Icon(
                   leadingIcon,
                   size: 16,
-                  color: _getContentColor(design, theme),
+                  color: _getContentColor(theme),
                 ),
-                SizedBox(width: design?.designSystemSpacing.xs ?? 4),
+                const SizedBox(width: DesignSystem.spacingXS),
               ],
               Text(
                 label,
-                style: (design?.designSystemTypography.bodySmall ??
-                        theme.textTheme.bodySmall)
-                    ?.copyWith(
-                  color: _getContentColor(design, theme),
+                style: (DesignSystem.bodySmall)
+                    .copyWith(
+                  color: _getContentColor(theme),
                   fontWeight: FontWeight.w500,
                 ),
               ),
               if (onDeleted != null) ...[
-                SizedBox(width: design?.designSystemSpacing.xs ?? 4),
+                const SizedBox(width: DesignSystem.spacingXS),
                 GestureDetector(
                   onTap: onDeleted,
                   child: Icon(
                     deleteIcon ?? Icons.close,
                     size: 16,
-                    color: _getContentColor(design, theme),
+                    color: _getContentColor(theme),
                   ),
                 ),
               ],
@@ -117,16 +115,13 @@ class ModernChip extends StatelessWidget {
   }
 
   BoxDecoration _getDecoration(
-    DesignSystemThemeExtension? design,
     ThemeData theme,
   ) {
     final bgColor = selected
         ? (selectedColor ??
-            design?.designSystemColors.primaryRed ??
-            theme.colorScheme.primary)
+            DesignSystem.primaryRed)
         : (backgroundColor ??
-            design?.designSystemColors.surfaceDark ??
-            theme.colorScheme.surfaceContainerHighest);
+            DesignSystem.surfaceDark);
 
     switch (variant) {
       case ChipVariant.filled:
@@ -141,9 +136,8 @@ class ModernChip extends StatelessWidget {
           border: Border.all(
             color: selected
                 ? (selectedColor ??
-                    design?.designSystemColors.primaryRed ??
-                    theme.colorScheme.primary)
-                : (design?.designSystemColors.textMuted ?? theme.dividerColor),
+                    DesignSystem.primaryRed)
+                : (DesignSystem.textMuted),
             width: 1.5,
           ),
         );
@@ -152,37 +146,22 @@ class ModernChip extends StatelessWidget {
           color: bgColor,
           borderRadius: BorderRadius.circular(16),
           boxShadow: selected
-              ? design?.designSystemShadows.medium ??
-                  [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    )
-                  ]
-              : design?.designSystemShadows.small ??
-                  [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 4,
-                      offset: const Offset(0, 1),
-                    )
-                  ],
+              ? DesignSystem.shadowMedium
+              : DesignSystem.shadowSmall,
         );
     }
   }
 
   Color _getContentColor(
-    DesignSystemThemeExtension? design,
     ThemeData theme,
   ) {
     if (textColor != null) return textColor!;
 
     if (selected) {
-      return design?.designSystemColors.white ?? Colors.white;
+      return DesignSystem.onPrimary;
     }
 
-    return design?.designSystemColors.textPrimary ?? theme.colorScheme.onSurface;
+    return DesignSystem.textPrimary;
   }
 }
 

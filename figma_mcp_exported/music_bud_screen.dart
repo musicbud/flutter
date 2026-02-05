@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MusicBudScreen extends StatelessWidget {
-  const MusicBudScreen({Key? key}) : super(key: key);
+  const MusicBudScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/design_system.dart';
+import 'package:musicbud_flutter/core/theme/design_system.dart';
 
 /// Modern tab bar with customizable styles
 ///
@@ -97,7 +97,6 @@ class _PillTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     final tabWidgets = List.generate(tabs.length, (index) {
       return _TabButton(
@@ -113,12 +112,12 @@ class _PillTabBar extends StatelessWidget {
     if (isScrollable) {
       return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: design?.designSystemSpacing.md ?? 12),
+        padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingMD),
         child: Row(
           children: [
             for (int i = 0; i < tabWidgets.length; i++) ...[
               tabWidgets[i],
-              if (i < tabWidgets.length - 1) SizedBox(width: design?.designSystemSpacing.sm ?? 8),
+              if (i < tabWidgets.length - 1) const SizedBox(width: DesignSystem.spacingSM),
             ],
           ],
         ),
@@ -126,13 +125,13 @@ class _PillTabBar extends StatelessWidget {
     }
 
     return Padding(
-      padding: EdgeInsets.all(design?.designSystemSpacing.sm ?? 8),
+      padding: const EdgeInsets.all(DesignSystem.spacingSM),
       child: Container(
         decoration: BoxDecoration(
-          color: design?.designSystemColors.surfaceContainer ?? theme.colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(design?.designSystemRadius.lg ?? 12),
+          color: DesignSystem.surfaceContainer,
+          borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
         ),
-        padding: EdgeInsets.all(design?.designSystemSpacing.xs ?? 4),
+        padding: const EdgeInsets.all(DesignSystem.spacingXS),
         child: Row(
           children: [
             for (int i = 0; i < tabWidgets.length; i++)
@@ -163,9 +162,6 @@ class _UnderlineTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     final tabWidgets = List.generate(tabs.length, (index) {
       return _TabButton(
         label: tabs[index],
@@ -180,12 +176,12 @@ class _UnderlineTabBar extends StatelessWidget {
     if (isScrollable) {
       return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: design?.designSystemSpacing.md ?? 12),
+        padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingMD),
         child: Row(
           children: [
             for (int i = 0; i < tabWidgets.length; i++) ...[
               tabWidgets[i],
-              if (i < tabWidgets.length - 1) SizedBox(width: design?.designSystemSpacing.lg ?? 16),
+              if (i < tabWidgets.length - 1) const SizedBox(width: DesignSystem.spacingLG),
             ],
           ],
         ),
@@ -220,9 +216,6 @@ class _FilledTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     final tabWidgets = List.generate(tabs.length, (index) {
       return _TabButton(
         label: tabs[index],
@@ -237,12 +230,12 @@ class _FilledTabBar extends StatelessWidget {
     if (isScrollable) {
       return SingleChildScrollView(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: design?.designSystemSpacing.md ?? 12),
+        padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingMD),
         child: Row(
           children: [
             for (int i = 0; i < tabWidgets.length; i++) ...[
               tabWidgets[i],
-              if (i < tabWidgets.length - 1) SizedBox(width: design?.designSystemSpacing.sm ?? 8),
+              if (i < tabWidgets.length - 1) const SizedBox(width: DesignSystem.spacingSM),
             ],
           ],
         ),
@@ -278,24 +271,23 @@ class _TabButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     switch (style) {
       case TabBarStyle.pills:
         return Material(
           color: isSelected
-              ? (design?.designSystemColors.primary ?? theme.colorScheme.primary)
+              ? DesignSystem.primary
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+          borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
           child: InkWell(
             onTap: onTap,
-            borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+            borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: design?.designSystemSpacing.md ?? 12,
-                vertical: design?.designSystemSpacing.sm ?? 8,
+              padding: const EdgeInsets.symmetric(
+                horizontal: DesignSystem.spacingMD,
+                vertical: DesignSystem.spacingSM,
               ),
-              child: _buildContent(theme, design),
+              child: _buildContent(theme),
             ),
           ),
         );
@@ -306,18 +298,18 @@ class _TabButton extends StatelessWidget {
             InkWell(
               onTap: onTap,
               child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: design?.designSystemSpacing.sm ?? 8,
-                  vertical: design?.designSystemSpacing.md ?? 12,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DesignSystem.spacingSM,
+                  vertical: DesignSystem.spacingMD,
                 ),
-                child: _buildContent(theme, design),
+                child: _buildContent(theme),
               ),
             ),
             AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               height: 2,
               color: isSelected
-                  ? (design?.designSystemColors.primary ?? theme.colorScheme.primary)
+                  ? DesignSystem.primary
                   : Colors.transparent,
             ),
           ],
@@ -325,26 +317,26 @@ class _TabButton extends StatelessWidget {
       case TabBarStyle.filled:
         return Material(
           color: isSelected
-              ? (design?.designSystemColors.primary ?? theme.colorScheme.primary).withValues(alpha: 0.1)
+              ? DesignSystem.primary.withAlpha(25)
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+          borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
           child: InkWell(
             onTap: onTap,
-            borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+            borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: design?.designSystemSpacing.md ?? 12,
-                vertical: design?.designSystemSpacing.sm ?? 8,
+              padding: const EdgeInsets.symmetric(
+                horizontal: DesignSystem.spacingMD,
+                vertical: DesignSystem.spacingSM,
               ),
-              child: _buildContent(theme, design),
+              child: _buildContent(theme),
             ),
           ),
         );
     }
   }
 
-  Widget _buildContent(ThemeData theme, DesignSystemThemeExtension? design) {
-    final textColor = _getTextColor(theme, design);
+  Widget _buildContent(ThemeData theme) {
+    final textColor = _getTextColor(theme);
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -356,7 +348,7 @@ class _TabButton extends StatelessWidget {
         ],
         Text(
           label,
-          style: (design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium)?.copyWith(
+          style: (DesignSystem.bodyMedium).copyWith(
             color: textColor,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
           ),
@@ -366,7 +358,7 @@ class _TabButton extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: design?.designSystemColors.error ?? theme.colorScheme.error,
+              color: DesignSystem.error,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(
@@ -383,16 +375,16 @@ class _TabButton extends StatelessWidget {
     );
   }
 
-  Color _getTextColor(ThemeData theme, DesignSystemThemeExtension? design) {
+  Color _getTextColor(ThemeData theme) {
     if (style == TabBarStyle.pills && isSelected) {
       return Colors.white;
     }
 
     if (isSelected) {
-      return design?.designSystemColors.primary ?? theme.colorScheme.primary;
+      return DesignSystem.primary;
     }
 
-    return design?.designSystemColors.onSurfaceVariant ?? theme.colorScheme.onSurfaceVariant;
+    return DesignSystem.onSurfaceVariant;
   }
 }
 
@@ -414,7 +406,6 @@ class VerticalTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -422,16 +413,16 @@ class VerticalTabBar extends StatelessWidget {
         final isSelected = currentIndex == index;
         return Material(
           color: isSelected
-              ? (design?.designSystemColors.primary ?? theme.colorScheme.primary).withValues(alpha: 0.1)
+              ? DesignSystem.primary.withAlpha(25)
               : Colors.transparent,
-          borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+          borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
           child: InkWell(
             onTap: () => onTabChanged(index),
-            borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+            borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: design?.designSystemSpacing.md ?? 12,
-                vertical: design?.designSystemSpacing.md ?? 12,
+              padding: const EdgeInsets.symmetric(
+                horizontal: DesignSystem.spacingMD,
+                vertical: DesignSystem.spacingMD,
               ),
               child: Row(
                 children: [
@@ -440,17 +431,17 @@ class VerticalTabBar extends StatelessWidget {
                       tabIcons![index],
                       size: 20,
                       color: isSelected
-                          ? (design?.designSystemColors.primary ?? theme.colorScheme.primary)
-                          : (design?.designSystemColors.onSurfaceVariant ?? theme.colorScheme.onSurfaceVariant),
+                          ? DesignSystem.primary
+                          : DesignSystem.onSurfaceVariant,
                     ),
-                    SizedBox(width: design?.designSystemSpacing.sm ?? 8),
+                    const SizedBox(width: DesignSystem.spacingSM),
                   ],
                   Text(
                     tabs[index],
-                    style: (design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium)?.copyWith(
+                    style: (DesignSystem.bodyMedium).copyWith(
                       color: isSelected
-                          ? (design?.designSystemColors.primary ?? theme.colorScheme.primary)
-                          : (design?.designSystemColors.onSurfaceVariant ?? theme.colorScheme.onSurfaceVariant),
+                          ? DesignSystem.primary
+                          : DesignSystem.onSurfaceVariant,
                       fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                     ),
                   ),

@@ -4,7 +4,6 @@ import "package:get_it/get_it.dart";
 
 // BLoCs
 import "blocs/auth/auth_bloc.dart";
-import "blocs/auth/auth_event.dart";
 import "blocs/auth/login/login_bloc.dart";
 import "blocs/auth/register/register_bloc.dart";
 import "blocs/likes/likes_bloc.dart";
@@ -139,7 +138,7 @@ class App extends StatelessWidget {
       darkTheme: MusicBudTheme.darkTheme,
       themeMode: ThemeMode.dark, // Default to dark theme to match UI designs
       navigatorKey: navigationService.navigatorKey,
-      home: const AppNavigator(),
+      home: AppNavigator(),
       routes: _buildAppRoutes(),
       onGenerateRoute: navigationService.onGenerateRoute,
     );
@@ -156,17 +155,17 @@ class App extends StatelessWidget {
       AppRoutes.topTracks: (context) => const TopTracksPage(),
       AppRoutes.library: (context) => const DynamicLibraryScreen(),
       AppRoutes.profile: (context) => const DynamicProfileScreen(),
-      AppRoutes.editProfile: (context) => const EditProfileScreen(),
+      AppRoutes.editProfile: (context) => EditProfileScreen(),
       AppRoutes.chat: (context) => const DynamicChatScreen(),
       AppRoutes.search: (context) => const DynamicSearchScreen(),
       AppRoutes.buds: (context) => const DynamicBudsScreen(),
-      AppRoutes.settings: (context) => const EnhancedSettingsScreen(),
+      AppRoutes.settings: (context) => EnhancedSettingsScreen(),
       AppRoutes.settingsOld: (context) => const DynamicSettingsScreen(),
-      AppRoutes.connectServices: (context) => const ConnectServicesScreen(),
+      AppRoutes.connectServices: (context) => ConnectServicesScreen(),
       AppRoutes.register: (context) => const RegisterScreen(),
       AppRoutes.onboarding: (context) => const OnboardingPage(),
-      AppRoutes.artistDetails: (context) => const ArtistDetailsScreen(),
-      AppRoutes.genreDetails: (context) => const GenreDetailsScreen(),
+      AppRoutes.artistDetails: (context) => ArtistDetailsScreen(),
+      AppRoutes.genreDetails: (context) => GenreDetailsScreen(),
       AppRoutes.trackDetails: (context) => const TrackDetailsScreen(),
       AppRoutes.playedTracksMap: (context) => const PlayedTracksMapScreen(),
       AppRoutes.spotifyControl: (context) => const SpotifyControlScreen(),
@@ -177,7 +176,7 @@ class App extends StatelessWidget {
 
 /// Navigator widget that reacts to authentication state
 class AppNavigator extends StatefulWidget {
-  const AppNavigator({super.key});
+  AppNavigator({super.key});
 
   @override
   State<AppNavigator> createState() => _AppNavigatorState();
@@ -198,7 +197,7 @@ class _AppNavigatorState extends State<AppNavigator> {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         if (state is AuthInitial || state is AuthLoading) {
-          return const Scaffold(
+          return Scaffold(
             backgroundColor: Colors.black,
             body: Center(
               child: Column(
@@ -224,7 +223,7 @@ class _AppNavigatorState extends State<AppNavigator> {
         
         // Show main screen regardless of auth state
         // MainScreenWithGuest handles guest vs authenticated states internally
-        return const MainScreenWithGuest();
+        return MainScreenWithGuest();
       },
     );
   }

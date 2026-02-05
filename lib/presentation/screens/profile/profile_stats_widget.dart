@@ -12,36 +12,32 @@ class ProfileStatsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final designSystemColors = Theme.of(context).designSystemColors!;
-    final designSystemSpacing = Theme.of(context).designSystemSpacing!;
-    final designSystemTypography = Theme.of(context).designSystemTypography!;
-
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _buildStatItem('Followers', userProfile.followersCount.toString(), designSystemColors, designSystemSpacing, designSystemTypography),
-        _buildStatItem('Following', userProfile.followingCount.toString(), designSystemColors, designSystemSpacing, designSystemTypography),
+        _buildStatItem('Followers', userProfile.followersCount.toString()),
+        _buildStatItem('Following', userProfile.followingCount.toString()),
         // TODO: Add tracksCount to UserProfile model
-        _buildStatItem('Tracks', '0', designSystemColors, designSystemSpacing, designSystemTypography),
+        _buildStatItem('Tracks', '0'),
       ],
     );
   }
 
-  Widget _buildStatItem(String label, String value, DesignSystemColors designSystemColors, DesignSystemSpacing designSystemSpacing, DesignSystemTypography designSystemTypography) {
+  Widget _buildStatItem(String label, String value) {
     return Column(
       children: [
         Text(
           value,
-          style: designSystemTypography.titleSmall.copyWith(
-            color: designSystemColors.error,
+          style: DesignSystem.titleSmall.copyWith(
+            color: DesignSystem.error,
             fontWeight: FontWeight.w700,
           ),
         ),
-        SizedBox(height: designSystemSpacing.xs),
+        const SizedBox(height: DesignSystem.spacingXS),
         Text(
           label,
-          style: designSystemTypography.caption.copyWith(
-            color: designSystemColors.onSurfaceVariant,
+          style: DesignSystem.caption.copyWith(
+            color: DesignSystem.onSurfaceVariant,
           ),
         ),
       ],

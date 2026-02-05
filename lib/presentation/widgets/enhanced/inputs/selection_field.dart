@@ -64,7 +64,7 @@ class SelectionField<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DropdownButtonFormField<T>(
-      value: selectedOption,
+      initialValue: selectedOption,
       decoration: decoration ??
           InputDecoration(
             labelText: label,
@@ -382,12 +382,12 @@ class OptionSelector extends StatelessWidget {
             return RadioListTile<String>(
               title: Text(option),
               value: option,
-              groupValue: selectedOption,
-              onChanged: (value) {
-                if (value != null) {
-                  onOptionSelected(value);
-                }
-              },
+              // groupValue: selectedOption, // Deprecated
+              // onChanged: (value) { // Deprecated
+              //   if (value != null) {
+              //     onOptionSelected(value);
+              //   }
+              // },
               dense: true,
               contentPadding: EdgeInsets.zero,
             );

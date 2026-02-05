@@ -39,7 +39,7 @@ class TrendingTrack {
       'genre': genre,
       'image_url': imageUrl,
       'icon': icon.codePoint.toString(),
-      'accent_color': '#${accentColor.value.toRadixString(16).padLeft(8, '0').substring(2)}',
+      'accent_color': '#${(accentColor.value & 0x00FFFFFF).toRadixString(16).padLeft(6, '0')}',
     };
   }
 

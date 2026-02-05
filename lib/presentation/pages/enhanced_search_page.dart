@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/design_system/design_system.dart';
+import '../../core/theme/design_system.dart';
 import '../components/music_card.dart';
 
 class EnhancedSearchPage extends StatefulWidget {
@@ -14,23 +14,26 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
   final TextEditingController _searchController = TextEditingController();
   late TabController _tabController;
   bool _isSearching = false;
-  
+
   // Mock data for demonstration
   final List<MusicCardData> _mockSongs = [
     const MusicCardData(
       id: '1',
       artistName: 'Taylor Swift',
       songTitle: 'Anti-Hero',
+      imageUrl: 'https://i.scdn.co/image/ab67616d0000b2738a3a3d9a7b0a1a0b3a3a3d9a',
     ),
     const MusicCardData(
       id: '2',
       artistName: 'The Weeknd',
       songTitle: 'Blinding Lights',
+      imageUrl: 'https://i.scdn.co/image/ab67616d0000b273e3b3b3a3d9a7b0a1a0b3a3a3d9a',
     ),
     const MusicCardData(
       id: '3',
       artistName: 'Olivia Rodrigo',
       songTitle: 'good 4 u',
+      imageUrl: 'https://i.scdn.co/image/ab67616d0000b273b3a3d9a7b0a1a0b3a3a3d9a7',
     ),
   ];
 
@@ -67,13 +70,13 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MusicBudColors.backgroundPrimary,
+      backgroundColor: DesignSystem.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text(
           'Search',
-          style: MusicBudTypography.heading3.copyWith(
+          style: DesignSystem.headlineMedium.copyWith(
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -83,35 +86,35 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
         children: [
           // Search bar
           Padding(
-            padding: const EdgeInsets.all(MusicBudSpacing.lg),
+            padding: const EdgeInsets.all(DesignSystem.spacingMD),
             child: _buildSearchBar(),
           ),
-          
+
           // Tab bar
           Container(
             margin: const EdgeInsets.symmetric(
-              horizontal: MusicBudSpacing.lg,
+              horizontal: DesignSystem.spacingMD,
             ),
             decoration: BoxDecoration(
-              color: MusicBudColors.backgroundTertiary,
+              color: DesignSystem.surfaceContainer,
               borderRadius: BorderRadius.circular(
-                MusicBudSpacing.radiusLg,
+                DesignSystem.radiusMD,
               ),
             ),
             child: TabBar(
               controller: _tabController,
               indicator: BoxDecoration(
-                color: MusicBudColors.primaryRed,
+                color: DesignSystem.primary,
                 borderRadius: BorderRadius.circular(
-                  MusicBudSpacing.radiusLg,
+                  DesignSystem.radiusMD,
                 ),
               ),
               indicatorSize: TabBarIndicatorSize.tab,
               dividerColor: Colors.transparent,
-              labelStyle: MusicBudTypography.bodyMedium.copyWith(
+              labelStyle: DesignSystem.labelLarge.copyWith(
                 fontWeight: FontWeight.w600,
               ),
-              unselectedLabelStyle: MusicBudTypography.bodyMedium,
+              unselectedLabelStyle: DesignSystem.labelLarge,
               tabs: const [
                 Tab(text: 'Songs'),
                 Tab(text: 'Artists'),
@@ -119,9 +122,9 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
               ],
             ),
           ),
-          
-          const SizedBox(height: MusicBudSpacing.lg),
-          
+
+          const SizedBox(height: DesignSystem.spacingLG),
+
           // Tab content
           Expanded(
             child: TabBarView(
@@ -141,28 +144,28 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
   Widget _buildSearchBar() {
     return Container(
       decoration: BoxDecoration(
-        color: MusicBudColors.backgroundTertiary,
+        color: DesignSystem.surfaceContainer,
         borderRadius: BorderRadius.circular(
-          MusicBudSpacing.radiusLg,
+          DesignSystem.radiusMD,
         ),
       ),
       child: TextField(
         controller: _searchController,
-        style: MusicBudTypography.bodyMedium,
+        style: DesignSystem.bodyMedium,
         decoration: InputDecoration(
           hintText: 'Search for songs, artists, or genres...',
-          hintStyle: MusicBudTypography.bodyMedium.copyWith(
-            color: MusicBudColors.textSecondary,
+          hintStyle: DesignSystem.bodyMedium.copyWith(
+            color: DesignSystem.onSurfaceVariant,
           ),
           prefixIcon: const Icon(
             Icons.search_rounded,
-            color: MusicBudColors.textSecondary,
+            color: DesignSystem.onSurfaceVariant,
           ),
           suffixIcon: _searchController.text.isNotEmpty
               ? IconButton(
                   icon: const Icon(
                     Icons.clear_rounded,
-                    color: MusicBudColors.textSecondary,
+                    color: DesignSystem.onSurfaceVariant,
                   ),
                   onPressed: () {
                     _searchController.clear();
@@ -172,8 +175,8 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
               : null,
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
-            horizontal: MusicBudSpacing.lg,
-            vertical: MusicBudSpacing.md,
+            horizontal: DesignSystem.spacingMD,
+            vertical: DesignSystem.spacingSM,
           ),
         ),
         onChanged: (value) {
@@ -230,7 +233,7 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(
-        horizontal: MusicBudSpacing.lg,
+        horizontal: DesignSystem.spacingMD,
       ),
       itemCount: filteredArtists.length,
       itemBuilder: (context, index) {
@@ -252,13 +255,13 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
 
     return GridView.builder(
       padding: const EdgeInsets.symmetric(
-        horizontal: MusicBudSpacing.lg,
+        horizontal: DesignSystem.spacingMD,
       ),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        childAspectRatio: 2,
-        crossAxisSpacing: MusicBudSpacing.md,
-        mainAxisSpacing: MusicBudSpacing.md,
+        childAspectRatio: 2.5,
+        crossAxisSpacing: DesignSystem.spacingSM,
+        mainAxisSpacing: DesignSystem.spacingSM,
       ),
       itemCount: filteredGenres.length,
       itemBuilder: (context, index) {
@@ -270,31 +273,31 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
 
   Widget _buildArtistTile(String artist) {
     return Container(
-      margin: const EdgeInsets.only(bottom: MusicBudSpacing.sm),
+      margin: const EdgeInsets.only(bottom: DesignSystem.spacingSM),
       decoration: BoxDecoration(
-        color: MusicBudColors.backgroundTertiary,
+        color: DesignSystem.surfaceContainer,
         borderRadius: BorderRadius.circular(
-          MusicBudSpacing.radiusLg,
+          DesignSystem.radiusMD,
         ),
       ),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: MusicBudColors.primaryRed.withValues(alpha: 0.1),
+          backgroundColor: DesignSystem.primary.withOpacity(0.1),
           child: const Icon(
             Icons.person_rounded,
-            color: MusicBudColors.primaryRed,
+            color: DesignSystem.primary,
           ),
         ),
         title: Text(
           artist,
-          style: MusicBudTypography.bodyLarge.copyWith(
+          style: DesignSystem.titleSmall.copyWith(
             fontWeight: FontWeight.w600,
           ),
         ),
         subtitle: Text(
           'Artist',
-          style: MusicBudTypography.bodySmall.copyWith(
-            color: MusicBudColors.textSecondary,
+          style: DesignSystem.bodySmall.copyWith(
+            color: DesignSystem.onSurfaceVariant,
           ),
         ),
         onTap: () {
@@ -311,12 +314,14 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            MusicBudColors.primaryRed.withValues(alpha: 0.2),
-            MusicBudColors.primaryDark.withValues(alpha: 0.3),
+            DesignSystem.primary.withAlpha((255 * 0.2).round()),
+            DesignSystem.primaryVariant.withAlpha((255 * 0.3).round()),
           ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(
-          MusicBudSpacing.radiusLg,
+          DesignSystem.radiusMD,
         ),
       ),
       child: Material(
@@ -328,14 +333,14 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
             );
           },
           borderRadius: BorderRadius.circular(
-            MusicBudSpacing.radiusLg,
+            DesignSystem.radiusMD,
           ),
           child: Center(
             child: Text(
               genre,
-              style: MusicBudTypography.bodyLarge.copyWith(
+              style: DesignSystem.titleMedium.copyWith(
                 fontWeight: FontWeight.w600,
-                color: MusicBudColors.textPrimary,
+                color: DesignSystem.onSurface,
               ),
             ),
           ),
@@ -350,16 +355,16 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(
-            horizontal: MusicBudSpacing.lg,
+            horizontal: DesignSystem.spacingMD,
           ),
           child: Text(
             title,
-            style: MusicBudTypography.heading4.copyWith(
+            style: DesignSystem.headlineSmall.copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
         ),
-        const SizedBox(height: MusicBudSpacing.md),
+        const SizedBox(height: DesignSystem.spacingSM),
         Expanded(
           child: MusicCardList(
             songs: songs,
@@ -389,13 +394,13 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
           const Icon(
             Icons.search_off_rounded,
             size: 64,
-            color: MusicBudColors.textSecondary,
+            color: DesignSystem.onSurfaceVariant,
           ),
-          const SizedBox(height: MusicBudSpacing.lg),
+          const SizedBox(height: DesignSystem.spacingLG),
           Text(
             message,
-            style: MusicBudTypography.bodyLarge.copyWith(
-              color: MusicBudColors.textSecondary,
+            style: DesignSystem.bodyLarge.copyWith(
+              color: DesignSystem.onSurfaceVariant,
             ),
           ),
         ],

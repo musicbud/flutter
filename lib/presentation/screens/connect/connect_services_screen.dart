@@ -8,13 +8,13 @@ import '../../../blocs/settings/settings_state.dart';
 import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class ConnectServicesScreen extends StatelessWidget {
-  const ConnectServicesScreen({super.key});
+  ConnectServicesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Connect Services',
           style: DesignSystem.headlineSmall,
         ),
@@ -22,15 +22,15 @@ class ConnectServicesScreen extends StatelessWidget {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(DesignSystem.spacingLG),
+        padding: EdgeInsets.all(DesignSystem.spacingLG),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'Connect your favorite music and entertainment services to enhance your experience.',
               style: DesignSystem.bodyLarge,
             ),
-            const SizedBox(height: DesignSystem.spacingXL),
+            SizedBox(height: DesignSystem.spacingXL),
 
             _buildServiceCard(
               context,
@@ -42,8 +42,8 @@ class ConnectServicesScreen extends StatelessWidget {
                 context.read<SettingsBloc>().add(const GetServiceLoginUrl('spotify'));
               },
             ),
+            SizedBox(height: DesignSystem.spacingLG),
 
-            const SizedBox(height: DesignSystem.spacingLG),
 
             _buildServiceCard(
               context,
@@ -55,8 +55,8 @@ class ConnectServicesScreen extends StatelessWidget {
                 context.read<SettingsBloc>().add(const GetServiceLoginUrl('youtube'));
               },
             ),
+            SizedBox(height: DesignSystem.spacingLG),
 
-            const SizedBox(height: DesignSystem.spacingLG),
 
             _buildServiceCard(
               context,
@@ -68,8 +68,7 @@ class ConnectServicesScreen extends StatelessWidget {
                 context.read<SettingsBloc>().add(const GetServiceLoginUrl('lastfm'));
               },
             ),
-
-            const SizedBox(height: DesignSystem.spacingLG),
+            SizedBox(height: DesignSystem.spacingLG),
 
             _buildServiceCard(
               context,
@@ -84,11 +83,11 @@ class ConnectServicesScreen extends StatelessWidget {
 
             const SizedBox(height: DesignSystem.spacingXL),
 
-            const Text(
+            Text(
               'Connected Services',
               style: DesignSystem.headlineSmall,
             ),
-            const SizedBox(height: DesignSystem.spacingMD),
+            SizedBox(height: DesignSystem.spacingMD),
 
             BlocListener<SettingsBloc, SettingsState>(
               listener: (context, state) {
@@ -145,7 +144,7 @@ class ConnectServicesScreen extends StatelessWidget {
               width: 48,
               height: 48,
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
+                color: color.withAlpha((255 * 0.1).round()),
                 borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
               ),
               child: Icon(

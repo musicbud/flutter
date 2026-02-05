@@ -66,29 +66,28 @@ class _ModernExpansionPanelState extends State<ModernExpansionPanel> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       decoration: BoxDecoration(
         color: _isExpanded
-            ? (widget.expandedBackgroundColor ?? design?.designSystemColors.surfaceContainer ?? theme.colorScheme.surfaceContainerHighest)
+            ? (widget.expandedBackgroundColor ?? DesignSystem.surfaceContainer)
             : (widget.backgroundColor ?? theme.colorScheme.surface),
-        borderRadius: widget.borderRadius ?? BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+        borderRadius: widget.borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           InkWell(
             onTap: _handleTap,
-            borderRadius: widget.borderRadius ?? BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+            borderRadius: widget.borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
             child: Padding(
-              padding: EdgeInsets.all(design?.designSystemSpacing.md ?? 12),
+              padding: const EdgeInsets.all(DesignSystem.spacingMD),
               child: Row(
                 children: [
                   if (widget.leading != null) ...[
                     widget.leading!,
-                    SizedBox(width: design?.designSystemSpacing.md ?? 12),
+                    const SizedBox(width: DesignSystem.spacingMD),
                   ],
                   Expanded(
                     child: Column(
@@ -97,16 +96,16 @@ class _ModernExpansionPanelState extends State<ModernExpansionPanel> {
                       children: [
                         Text(
                           widget.title,
-                          style: (design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium)?.copyWith(
+                          style: (DesignSystem.bodyMedium).copyWith(
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         if (widget.subtitle != null) ...[
-                          SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+                          const SizedBox(height: DesignSystem.spacingXS),
                           Text(
                             widget.subtitle!,
-                            style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
-                              color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+                            style: (DesignSystem.bodySmall).copyWith(
+                              color: DesignSystem.textMuted,
                             ),
                           ),
                         ],
@@ -116,9 +115,9 @@ class _ModernExpansionPanelState extends State<ModernExpansionPanel> {
                   AnimatedRotation(
                     turns: _isExpanded ? 0.5 : 0.0,
                     duration: const Duration(milliseconds: 200),
-                    child: Icon(
+                    child: const Icon(
                       Icons.keyboard_arrow_down,
-                      color: design?.designSystemColors.onSurfaceVariant ?? theme.colorScheme.onSurfaceVariant,
+                      color: DesignSystem.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -128,11 +127,11 @@ class _ModernExpansionPanelState extends State<ModernExpansionPanel> {
           AnimatedCrossFade(
             firstChild: const SizedBox.shrink(),
             secondChild: Padding(
-              padding: EdgeInsets.fromLTRB(
-                design?.designSystemSpacing.md ?? 12,
+              padding: const EdgeInsets.fromLTRB(
+                DesignSystem.spacingMD,
                 0,
-                design?.designSystemSpacing.md ?? 12,
-                design?.designSystemSpacing.md ?? 12,
+                DesignSystem.spacingMD,
+                DesignSystem.spacingMD,
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -192,8 +191,7 @@ class _ExpansionPanelGroupState extends State<ExpansionPanelGroup> {
 
   @override
   Widget build(BuildContext context) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>();
-    final itemSpacing = widget.spacing ?? design?.designSystemSpacing.sm ?? 8;
+    final itemSpacing = widget.spacing ?? DesignSystem.spacingSM;
 
     return Column(
       children: [
@@ -294,9 +292,6 @@ class _ExpandableCardState extends State<ExpandableCard> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return Card(
       margin: EdgeInsets.zero,
       child: Column(
@@ -305,7 +300,7 @@ class _ExpandableCardState extends State<ExpandableCard> {
           InkWell(
             onTap: _toggle,
             child: Padding(
-              padding: EdgeInsets.all(design?.designSystemSpacing.md ?? 12),
+              padding: const EdgeInsets.all(DesignSystem.spacingMD),
               child: widget.header,
             ),
           ),
@@ -314,11 +309,11 @@ class _ExpandableCardState extends State<ExpandableCard> {
             curve: Curves.easeInOut,
             child: _isExpanded
                 ? Padding(
-                    padding: EdgeInsets.fromLTRB(
-                      design?.designSystemSpacing.md ?? 12,
+                    padding: const EdgeInsets.fromLTRB(
+                      DesignSystem.spacingMD,
                       0,
-                      design?.designSystemSpacing.md ?? 12,
-                      design?.designSystemSpacing.md ?? 12,
+                      DesignSystem.spacingMD,
+                      DesignSystem.spacingMD,
                     ),
                     child: widget.expandedContent,
                   )
@@ -345,22 +340,19 @@ class FAQPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return ModernExpansionPanel(
       title: question,
       initiallyExpanded: initiallyExpanded,
-      leading: Icon(
+      leading: const Icon(
         Icons.help_outline,
-        color: design?.designSystemColors.primary ?? theme.colorScheme.primary,
+        color: DesignSystem.primary,
       ),
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(vertical: design?.designSystemSpacing.sm ?? 8),
+          padding: const EdgeInsets.symmetric(vertical: DesignSystem.spacingSM),
           child: Text(
             answer,
-            style: design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium,
+            style: DesignSystem.bodyMedium,
           ),
         ),
       ],
@@ -387,9 +379,6 @@ class PlaylistExpansionPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return ModernExpansionPanel(
       title: playlistName,
       subtitle: '$trackCount ${trackCount == 1 ? 'track' : 'tracks'}',
@@ -399,12 +388,12 @@ class PlaylistExpansionPanel extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: design?.designSystemColors.surfaceContainer ?? theme.colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(design?.designSystemRadius.sm ?? 4),
+              color: DesignSystem.surfaceContainer,
+              borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.music_note,
-              color: design?.designSystemColors.primary ?? theme.colorScheme.primary,
+              color: DesignSystem.primary,
             ),
           ),
       children: tracks,

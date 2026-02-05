@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/design_system.dart';
 import '../base/base_state_display.dart';
 
 /// A reusable empty state widget that supports theming
@@ -23,13 +24,13 @@ class EmptyState extends BaseStateDisplay {
     return Container(
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: getDesignSystemColors(context).surfaceContainer,
-        borderRadius: BorderRadius.circular(getDesignSystemRadius(context).xl),
+        color: DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
       ),
       child: Icon(
         icon,
         size: iconSize,
-        color: getDesignSystemColors(context).onSurfaceVariant,
+        color: DesignSystem.onSurfaceVariant,
       ),
     );
   }
@@ -43,8 +44,8 @@ class EmptyState extends BaseStateDisplay {
         if (title != null) ...[
           Text(
             title!,
-            style: getDesignSystemTypography(context).titleMedium.copyWith(
-              color: getDesignSystemColors(context).onSurface,
+            style: DesignSystem.titleMedium.copyWith(
+              color: DesignSystem.onSurface,
               fontWeight: FontWeight.w600,
             ),
             textAlign: TextAlign.center,
@@ -56,8 +57,8 @@ class EmptyState extends BaseStateDisplay {
           const SizedBox(height: 8.0),
           Text(
             message!,
-            style: getDesignSystemTypography(context).bodyMedium.copyWith(
-              color: getDesignSystemColors(context).onSurfaceVariant,
+            style: DesignSystem.bodyMedium.copyWith(
+              color: DesignSystem.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -72,11 +73,11 @@ class EmptyState extends BaseStateDisplay {
       return ElevatedButton(
         onPressed: actionCallback,
         style: ElevatedButton.styleFrom(
-          backgroundColor: getDesignSystemColors(context).primary,
-          foregroundColor: getDesignSystemColors(context).onPrimary,
+          backgroundColor: DesignSystem.primary,
+          foregroundColor: DesignSystem.onPrimary,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(getDesignSystemRadius(context).md),
+            borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
           ),
         ),
         child: Text(

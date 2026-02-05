@@ -2,6 +2,7 @@
 /// 
 /// This file contains all design tokens for the MusicBud app including colors,
 /// typography, spacing, shadows, and component styles based on the UI designs.
+library;
 
 import 'package:flutter/material.dart';
 

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/design_system.dart';
 import '../../../../models/track.dart';
-// MIGRATED: import '../../../widgets/common/section_header.dart';
+import '../../../widgets/common/section_header.dart'; // Changed import
 import '../components/track_card.dart';
-import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class TrendingTracksSection extends StatelessWidget {
   final List<Track> tracks;
@@ -30,7 +29,7 @@ class TrendingTracksSection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SectionHeader(
+          SectionHeader( // Changed to SimpleSectionHeader
             title: 'Trending Tracks',
             actionText: 'View All',
             onActionPressed: onViewAllPressed,

@@ -52,11 +52,9 @@ class ModernProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final progressColor = color ?? design?.designSystemColors.primaryRed ?? theme.colorScheme.primary;
+    final progressColor = color ?? DesignSystem.primaryRed;
     final bgColor = backgroundColor ??
-        design?.designSystemColors.surfaceDark.withValues(alpha: 0.3) ??
-        theme.colorScheme.surfaceContainerHighest;
+        DesignSystem.surfaceDark.withAlpha(77);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -65,9 +63,9 @@ class ModernProgressBar extends StatelessWidget {
         if (showLabel && label != null) ...[
           Text(
             label!,
-            style: design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall,
+            style: DesignSystem.bodySmall,
           ),
-          SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+          const SizedBox(height: DesignSystem.spacingXS),
         ],
         Row(
           children: [
@@ -75,10 +73,10 @@ class ModernProgressBar extends StatelessWidget {
               child: _buildProgress(progressColor, bgColor),
             ),
             if (showPercentage && value != null) ...[
-              SizedBox(width: design?.designSystemSpacing.sm ?? 8),
+              const SizedBox(width: DesignSystem.spacingSM),
               Text(
                 '${(value! * 100).toInt()}%',
-                style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
+                style: (DesignSystem.bodySmall).copyWith(
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -198,11 +196,9 @@ class SteppedProgress extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final activeColor = color ?? design?.designSystemColors.primaryRed ?? theme.colorScheme.primary;
+    final activeColor = color ?? DesignSystem.primaryRed;
     final inactive = inactiveColor ??
-        design?.designSystemColors.surfaceDark ??
-        theme.colorScheme.surfaceContainerHighest;
+        DesignSystem.surfaceDark;
 
     return Row(
       children: List.generate(
@@ -249,15 +245,14 @@ class ProgressWithStatus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     return Container(
-      padding: EdgeInsets.all(design?.designSystemSpacing.md ?? 16),
+      padding: const EdgeInsets.all(DesignSystem.spacingMD),
       decoration: BoxDecoration(
-        color: design?.designSystemColors.surfaceDark ?? theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 12),
+        color: DesignSystem.surfaceDark,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         border: Border.all(
-          color: design?.designSystemColors.textMuted.withValues(alpha: 0.2) ?? theme.dividerColor,
+          color: DesignSystem.textMuted.withAlpha(51),
         ),
       ),
       child: Column(
@@ -269,9 +264,9 @@ class ProgressWithStatus extends StatelessWidget {
                 Icon(
                   icon,
                   size: 24,
-                  color: color ?? design?.designSystemColors.primaryRed ?? theme.colorScheme.primary,
+                  color: color ?? DesignSystem.primaryRed,
                 ),
-                SizedBox(width: design?.designSystemSpacing.sm ?? 8),
+                const SizedBox(width: DesignSystem.spacingSM),
               ],
               Expanded(
                 child: Column(
@@ -279,14 +274,14 @@ class ProgressWithStatus extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: design?.designSystemTypography.titleSmall ?? theme.textTheme.titleSmall,
+                      style: DesignSystem.titleSmall,
                     ),
                     if (subtitle != null) ...[
-                      SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+                      const SizedBox(height: DesignSystem.spacingXS),
                       Text(
                         subtitle!,
-                        style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
-                          color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+                        style: (DesignSystem.bodySmall).copyWith(
+                          color: DesignSystem.textMuted,
                         ),
                       ),
                     ],
@@ -295,13 +290,13 @@ class ProgressWithStatus extends StatelessWidget {
               ),
               Text(
                 '${(value * 100).toInt()}%',
-                style: (design?.designSystemTypography.titleSmall ?? theme.textTheme.titleSmall)?.copyWith(
+                style: (DesignSystem.titleSmall).copyWith(
                   fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
-          SizedBox(height: design?.designSystemSpacing.sm ?? 8),
+          const SizedBox(height: DesignSystem.spacingSM),
           LinearProgress(
             value: value,
             color: color,

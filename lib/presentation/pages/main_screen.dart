@@ -5,8 +5,8 @@ import '../../blocs/main/main_screen_bloc.dart';
 import '../../blocs/main/main_screen_event.dart';
 import '../../blocs/main/main_screen_state.dart';
 import '../../blocs/auth/auth_bloc.dart';
-import '../../core/design_system/design_system.dart';
-// MIGRATED: import '../widgets/common/loading_widget.dart';
+import 'package:musicbud_flutter/core/theme/design_system.dart'; // Correct import
+import '../widgets/common/loading_widget.dart';
 import '../components/bottom_navigation_bar.dart';
 import '../screens/auth/login_screen.dart';
 import 'home_page.dart';
@@ -15,10 +15,9 @@ import '../screens/buds/buds_screen.dart';
 import '../screens/chat/chat_screen.dart';
 import 'enhanced_search_page.dart';
 import '../../screens/debug/api_test_screen.dart';
-import '../widgets/enhanced/enhanced_widgets.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -110,7 +109,7 @@ class _MainScreenState extends State<MainScreen> {
         },
         builder: (context, state) {
           if (state is MainScreenLoading) {
-            return const Scaffold(
+            return Scaffold(
               body: Center(
                 child: LoadingWidget(
                   message: 'Loading MusicBud...',
@@ -120,7 +119,7 @@ class _MainScreenState extends State<MainScreen> {
           }
 
           return Scaffold(
-            backgroundColor: MusicBudColors.backgroundPrimary,
+            backgroundColor: DesignSystem.backgroundPrimary,
             body: PageView(
               controller: _pageController,
               children: _pages,
@@ -176,7 +175,7 @@ class _MainScreenState extends State<MainScreen> {
           onPressed: () {
             context.read<MainScreenBloc>().add(MainScreenRefreshRequested());
           },
-          backgroundColor: MusicBudColors.primaryRed,
+          backgroundColor: DesignSystem.primaryRed,
           tooltip: 'Refresh Buds',
           child: const Icon(Icons.refresh),
         );
@@ -189,7 +188,7 @@ class _MainScreenState extends State<MainScreen> {
               const SnackBar(content: Text('Create new chat feature coming soon!')),
             );
           },
-          backgroundColor: MusicBudColors.primaryRed,
+          backgroundColor: DesignSystem.primaryRed,
           tooltip: 'New Chat',
           child: const Icon(Icons.add),
         );

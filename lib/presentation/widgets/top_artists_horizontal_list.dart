@@ -96,9 +96,6 @@ class _TopArtistsHorizontalListState extends State<TopArtistsHorizontalList>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return BlocConsumer<TopArtistsBloc, TopArtistsState>(
       listener: (context, state) {
         if (state is TopArtistsFailure) {
@@ -124,7 +121,7 @@ class _TopArtistsHorizontalListState extends State<TopArtistsHorizontalList>
                 child: ListView.builder(
                   controller: _scrollController,
                   scrollDirection: Axis.horizontal,
-                  padding: EdgeInsets.symmetric(horizontal: design.designSystemSpacing.md),
+                  padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingMD),
                   itemCount: artists.length + (state is TopArtistsLoadingMore ? 1 : 0) +
                              (widget.showLoadMoreButton && state is TopArtistsLoaded && !state.hasReachedEnd ? 1 : 0),
                   itemBuilder: (context, index) {
@@ -138,7 +135,7 @@ class _TopArtistsHorizontalListState extends State<TopArtistsHorizontalList>
                         );
                       } else if (widget.showLoadMoreButton && state is TopArtistsLoaded && !state.hasReachedEnd) {
                         return Padding(
-                          padding: EdgeInsets.all(design.designSystemSpacing.md),
+                          padding: const EdgeInsets.all(DesignSystem.spacingMD),
                           child: ModernButton(
                             text: 'Load More',
                             onPressed: _loadMore,
@@ -149,7 +146,7 @@ class _TopArtistsHorizontalListState extends State<TopArtistsHorizontalList>
                       }
                     }
                     return Padding(
-                      padding: EdgeInsets.only(right: design.designSystemSpacing.md),
+                      padding: const EdgeInsets.only(right: DesignSystem.spacingMD),
                       child: _buildArtistCard(artists[index].toCommonArtist()),
                     );
                   },
@@ -157,11 +154,11 @@ class _TopArtistsHorizontalListState extends State<TopArtistsHorizontalList>
               ),
               if (state is TopArtistsLoaded && state.hasReachedEnd)
                 Padding(
-                  padding: EdgeInsets.all(design.designSystemSpacing.md),
+                  padding: const EdgeInsets.all(DesignSystem.spacingMD),
                   child: Text(
                     'No more artists to load',
-                    style: design.designSystemTypography.bodySmall.copyWith(
-                      color: design.designSystemColors.onSurfaceVariant,
+                    style: DesignSystem.bodySmall.copyWith(
+                      color: DesignSystem.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -172,8 +169,8 @@ class _TopArtistsHorizontalListState extends State<TopArtistsHorizontalList>
         return Center(
           child: Text(
             'Failed to load top artists',
-            style: design.designSystemTypography.bodyMedium.copyWith(
-              color: design.designSystemColors.onSurface,
+            style: DesignSystem.bodyMedium.copyWith(
+              color: DesignSystem.onSurface,
             ),
           ),
         );

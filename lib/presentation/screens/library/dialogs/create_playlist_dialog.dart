@@ -49,7 +49,7 @@ class _CreatePlaylistDialogState extends State<CreatePlaylistDialog> {
           ),
           const SizedBox(height: DesignSystem.spacingMD),
           CheckboxListTile(
-            title: const Text(
+            title: Text(
               'Private Playlist',
               style: DesignSystem.bodyMedium,
             ),

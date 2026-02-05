@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:musicbud_flutter/core/theme/design_system.dart';
+import '../../../../core/theme/design_system.dart';
 
 /// Types of empty states
 enum EmptyStateType {
@@ -192,44 +192,38 @@ mixin EmptyStateMixin<T extends StatefulWidget> on State<T> {
 
   /// Build empty state icon
   Widget _buildEmptyStateIcon(BuildContext context, EmptyStateConfig config) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
-      padding: EdgeInsets.all(design.designSystemSpacing.xl),
+      padding: const EdgeInsets.all(DesignSystem.spacingXL),
       decoration: BoxDecoration(
-        color: design.designSystemColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+        color: DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
       ),
       child: Icon(
         config.icon,
         size: 64,
-        color: design.designSystemColors.onSurfaceVariant,
+        color: DesignSystem.onSurfaceVariant,
       ),
     );
   }
 
   /// Build empty state message
   Widget _buildEmptyStateMessage(BuildContext context, EmptyStateConfig config) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Column(
       children: [
         Text(
           config.message,
-          style: design.designSystemTypography.titleMedium.copyWith(
-            color: design.designSystemColors.onSurface,
+          style: DesignSystem.titleMedium.copyWith(
+            color: DesignSystem.onSurface,
             fontWeight: FontWeight.w600,
           ),
           textAlign: TextAlign.center,
         ),
         if (config.type == EmptyStateType.noResults && config.searchQuery != null) ...[
-          SizedBox(height: design.designSystemSpacing.sm),
+          const SizedBox(height: DesignSystem.spacingSM),
           Text(
             'Try adjusting your search terms or filters',
-            style: design.designSystemTypography.bodyMedium.copyWith(
-              color: design.designSystemColors.onSurfaceVariant,
+            style: DesignSystem.bodyMedium.copyWith(
+              color: DesignSystem.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
@@ -240,22 +234,19 @@ mixin EmptyStateMixin<T extends StatefulWidget> on State<T> {
 
   /// Build empty state action button
   Widget _buildEmptyStateAction(BuildContext context, EmptyStateConfig config) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return ElevatedButton.icon(
       onPressed: config.onActionPressed,
       icon: Icon(_getActionIcon(config.type)),
       label: Text(config.actionText!),
       style: ElevatedButton.styleFrom(
-        backgroundColor: design.designSystemColors.primary,
-        foregroundColor: design.designSystemColors.onPrimary,
+        backgroundColor: DesignSystem.primary,
+        foregroundColor: DesignSystem.onPrimary,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+          borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         ),
-        padding: EdgeInsets.symmetric(
-          horizontal: design.designSystemSpacing.lg,
-          vertical: design.designSystemSpacing.md,
+        padding: const EdgeInsets.symmetric(
+          horizontal: DesignSystem.spacingLG,
+          vertical: DesignSystem.spacingMD,
         ),
       ),
     );
@@ -329,16 +320,12 @@ mixin EmptyStateMixin<T extends StatefulWidget> on State<T> {
 
   /// Get empty state padding based on context
   EdgeInsetsGeometry _getEmptyStatePadding(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-    return EdgeInsets.all(design.designSystemSpacing.xl);
+    return const EdgeInsets.all(DesignSystem.spacingXL);
   }
 
   /// Get empty state spacing based on context
   double _getEmptyStateSpacing(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-    return design.designSystemSpacing.lg;
+    return DesignSystem.spacingLG;
   }
 
   /// Callback when empty state changes

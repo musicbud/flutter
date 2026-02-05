@@ -70,7 +70,7 @@ class MediaCard extends BaseCard {
         // Image Section
         _buildImageSection(context),
 
-        SizedBox(height: getDesignSystemSpacing(context).md),
+        const SizedBox(height: DesignSystem.spacingMD),
 
         // Content Section
         MediaCardContent(
@@ -80,7 +80,7 @@ class MediaCard extends BaseCard {
 
         // Actions Section
         if (actions != null && actions!.isNotEmpty) ...[
-          SizedBox(height: getDesignSystemSpacing(context).md),
+          const SizedBox(height: DesignSystem.spacingMD),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: actions!,
@@ -95,8 +95,8 @@ class MediaCard extends BaseCard {
       height: imageHeight,
       width: imageWidth ?? double.infinity,
       decoration: BoxDecoration(
-        borderRadius: imageBorderRadius ?? BorderRadius.circular(getDesignSystemRadius(context).md),
-        color: getDesignSystemColors(context).surfaceContainer,
+        borderRadius: imageBorderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
+        color: DesignSystem.surfaceContainer,
       ),
       child: Stack(
         fit: StackFit.expand,
@@ -108,7 +108,7 @@ class MediaCard extends BaseCard {
           MediaCardOverlay(
             show: showPlayButton,
             playButton: playButton,
-            borderRadius: imageBorderRadius ?? BorderRadius.circular(getDesignSystemRadius(context).md),
+            borderRadius: imageBorderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
           ),
         ],
       ),
@@ -144,6 +144,4 @@ class MediaCard extends BaseCard {
       ),
     );
   }
-
-
 }

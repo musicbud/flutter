@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/design_system.dart';
+import 'package:musicbud_flutter/core/theme/design_system.dart';
 
 /// Modern snackbar with custom styles
 ///
@@ -22,8 +22,7 @@ class ModernSnackbar {
     IconData? icon,
   }) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final backgroundColor = _getBackgroundColor(type, design, theme);
+    final backgroundColor = _getBackgroundColor(type, theme);
     final defaultIcon = _getIcon(type);
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -55,7 +54,7 @@ class ModernSnackbar {
             : null,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+          borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         ),
       ),
     );
@@ -63,18 +62,17 @@ class ModernSnackbar {
 
   static Color _getBackgroundColor(
     SnackbarType type,
-    DesignSystemThemeExtension? design,
     ThemeData theme,
   ) {
     switch (type) {
       case SnackbarType.success:
-        return design?.designSystemColors.success ?? Colors.green;
+        return DesignSystem.success;
       case SnackbarType.error:
-        return design?.designSystemColors.error ?? Colors.red;
+        return DesignSystem.error;
       case SnackbarType.warning:
-        return design?.designSystemColors.warning ?? Colors.orange;
+        return DesignSystem.warning;
       case SnackbarType.info:
-        return design?.designSystemColors.info ?? Colors.blue;
+        return DesignSystem.info;
     }
   }
 
@@ -110,14 +108,13 @@ class Toast {
   }) {
     final overlay = Overlay.of(context);
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     final overlayEntry = OverlayEntry(
       builder: (context) => _ToastWidget(
         message: message,
         type: type,
         position: position,
-        backgroundColor: _getToastColor(type, design, theme),
+        backgroundColor: _getToastColor(type, theme),
       ),
     );
 
@@ -130,16 +127,15 @@ class Toast {
 
   static Color _getToastColor(
     ToastType type,
-    DesignSystemThemeExtension? design,
     ThemeData theme,
   ) {
     switch (type) {
       case ToastType.success:
-        return design?.designSystemColors.success ?? Colors.green;
+        return DesignSystem.success;
       case ToastType.error:
-        return design?.designSystemColors.error ?? Colors.red;
+        return DesignSystem.error;
       case ToastType.warning:
-        return design?.designSystemColors.warning ?? Colors.orange;
+        return DesignSystem.warning;
       case ToastType.info:
         return Colors.black87;
     }
@@ -189,8 +185,6 @@ class _ToastWidgetState extends State<_ToastWidget> with SingleTickerProviderSta
 
   @override
   Widget build(BuildContext context) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>();
-
     return Positioned(
       left: 16,
       right: 16,
@@ -201,16 +195,16 @@ class _ToastWidgetState extends State<_ToastWidget> with SingleTickerProviderSta
         child: Material(
           color: Colors.transparent,
           child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: design?.designSystemSpacing.lg ?? 16,
-              vertical: design?.designSystemSpacing.md ?? 12,
+            padding: const EdgeInsets.symmetric(
+              horizontal: DesignSystem.spacingLG,
+              vertical: DesignSystem.spacingMD,
             ),
             decoration: BoxDecoration(
               color: widget.backgroundColor,
-              borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+              borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
+                  color: Colors.black.withAlpha(51),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -251,7 +245,6 @@ class ActionSnackbar {
     IconData? icon,
   }) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -266,13 +259,13 @@ class ActionSnackbar {
         ),
         action: SnackBarAction(
           label: actionLabel,
-          textColor: design?.designSystemColors.primary ?? theme.colorScheme.primary,
+          textColor: DesignSystem.primary,
           onPressed: onAction,
         ),
         duration: duration,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+          borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         ),
       ),
     );
@@ -285,8 +278,6 @@ class LoadingSnackbar {
     BuildContext context, {
     required String message,
   }) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>();
-
     return ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
@@ -306,7 +297,7 @@ class LoadingSnackbar {
         duration: const Duration(days: 1), // Keep showing
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+          borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         ),
       ),
     );
@@ -397,26 +388,23 @@ class _NotificationBannerWidgetState extends State<_NotificationBannerWidget>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return SlideTransition(
       position: _slideAnimation,
       child: Material(
         color: Colors.transparent,
         child: SafeArea(
           child: Padding(
-            padding: EdgeInsets.all(design?.designSystemSpacing.md ?? 12),
+            padding: const EdgeInsets.all(DesignSystem.spacingMD),
             child: GestureDetector(
               onTap: widget.onTap,
               child: Container(
-                padding: EdgeInsets.all(design?.designSystemSpacing.md ?? 12),
+                padding: const EdgeInsets.all(DesignSystem.spacingMD),
                 decoration: BoxDecoration(
                   color: widget.backgroundColor,
-                  borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+                  borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
+                      color: Colors.black.withAlpha(25),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -427,9 +415,9 @@ class _NotificationBannerWidgetState extends State<_NotificationBannerWidget>
                     if (widget.icon != null) ...[
                       Icon(
                         widget.icon,
-                        color: design?.designSystemColors.primary ?? theme.colorScheme.primary,
+                        color: DesignSystem.primary,
                       ),
-                      SizedBox(width: design?.designSystemSpacing.md ?? 12),
+                      const SizedBox(width: DesignSystem.spacingMD),
                     ],
                     Expanded(
                       child: Column(
@@ -438,14 +426,14 @@ class _NotificationBannerWidgetState extends State<_NotificationBannerWidget>
                         children: [
                           Text(
                             widget.title,
-                            style: (design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium)?.copyWith(
+                            style: (DesignSystem.bodyMedium).copyWith(
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+                          const SizedBox(height: DesignSystem.spacingXS),
                           Text(
                             widget.message,
-                            style: design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall,
+                            style: DesignSystem.bodySmall,
                           ),
                         ],
                       ),

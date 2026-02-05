@@ -56,10 +56,8 @@ class _SkeletonState extends State<Skeleton> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final baseColor = design?.designSystemColors.surfaceDark ?? theme.colorScheme.surfaceContainerHighest;
-    final highlightColor = design?.designSystemColors.surfaceDark.withValues(alpha: 0.5) ?? 
-        theme.colorScheme.surfaceContainerHigh;
+    final baseColor = DesignSystem.surfaceDark;
+    final highlightColor = DesignSystem.surfaceDark.withAlpha(128);
 
     return AnimatedBuilder(
       animation: _animation,
@@ -146,22 +144,20 @@ class CardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>();
-    
     return Container(
       width: width,
-      padding: EdgeInsets.all(design?.designSystemSpacing.md ?? 16),
+      padding: const EdgeInsets.all(DesignSystem.spacingMD),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Skeleton(
             width: width,
             height: height * 0.6,
-            borderRadius: design?.designSystemRadius.md ?? 12,
+            borderRadius: DesignSystem.radiusMD,
           ),
-          SizedBox(height: design?.designSystemSpacing.sm ?? 8),
+          const SizedBox(height: DesignSystem.spacingSM),
           const TextLineSkeleton(width: 150),
-          SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+          const SizedBox(height: DesignSystem.spacingXS),
           const TextLineSkeleton(width: 100),
         ],
       ),
@@ -182,23 +178,21 @@ class ListItemSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>();
-    
     return Padding(
-      padding: EdgeInsets.all(design?.designSystemSpacing.md ?? 16),
+      padding: const EdgeInsets.all(DesignSystem.spacingMD),
       child: Row(
         children: [
           if (showAvatar) ...[
             const CircularSkeleton(size: 48),
-            SizedBox(width: design?.designSystemSpacing.md ?? 16),
+            const SizedBox(width: DesignSystem.spacingMD),
           ],
-          Expanded(
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const TextLineSkeleton(width: 150),
-                SizedBox(height: design?.designSystemSpacing.xs ?? 4),
-                const TextLineSkeleton(width: 100),
+                TextLineSkeleton(width: 150),
+                SizedBox(height: DesignSystem.spacingXS),
+                TextLineSkeleton(width: 100),
               ],
             ),
           ),
@@ -216,24 +210,22 @@ class TrackTileSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>();
-    
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: design?.designSystemSpacing.md ?? 16,
-        vertical: design?.designSystemSpacing.sm ?? 8,
+      padding: const EdgeInsets.symmetric(
+        horizontal: DesignSystem.spacingMD,
+        vertical: DesignSystem.spacingSM,
       ),
       child: Row(
         children: [
           const Skeleton(width: 56, height: 56, borderRadius: 8),
-          SizedBox(width: design?.designSystemSpacing.md ?? 12),
-          Expanded(
+          const SizedBox(width: DesignSystem.spacingMD),
+          const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const TextLineSkeleton(width: 180),
-                SizedBox(height: design?.designSystemSpacing.xs ?? 4),
-                const TextLineSkeleton(width: 120),
+                TextLineSkeleton(width: 180),
+                SizedBox(height: DesignSystem.spacingXS),
+                TextLineSkeleton(width: 120),
               ],
             ),
           ),
@@ -257,16 +249,14 @@ class GridSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>();
-    
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
         childAspectRatio: 0.75,
-        crossAxisSpacing: design?.designSystemSpacing.md ?? 16,
-        mainAxisSpacing: design?.designSystemSpacing.md ?? 16,
+        crossAxisSpacing: DesignSystem.spacingMD,
+        mainAxisSpacing: DesignSystem.spacingMD,
       ),
       itemCount: itemCount,
       itemBuilder: (context, index) {
@@ -279,9 +269,9 @@ class GridSkeleton extends StatelessWidget {
                 borderRadius: 12,
               ),
             ),
-            SizedBox(height: design?.designSystemSpacing.sm ?? 8),
+            const SizedBox(height: DesignSystem.spacingSM),
             const TextLineSkeleton(width: 100),
-            SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+            const SizedBox(height: DesignSystem.spacingXS),
             const TextLineSkeleton(width: 70),
           ],
         );
@@ -296,33 +286,31 @@ class ProfileSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>();
-    
     return Column(
       children: [
         const CircularSkeleton(size: 96),
-        SizedBox(height: design?.designSystemSpacing.md ?? 16),
+        const SizedBox(height: DesignSystem.spacingMD),
         const TextLineSkeleton(width: 150),
-        SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+        const SizedBox(height: DesignSystem.spacingXS),
         const TextLineSkeleton(width: 200),
-        SizedBox(height: design?.designSystemSpacing.lg ?? 24),
+        const SizedBox(height: DesignSystem.spacingLG),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildStatSkeleton(design),
-            _buildStatSkeleton(design),
-            _buildStatSkeleton(design),
+            _buildStatSkeleton(),
+            _buildStatSkeleton(),
+            _buildStatSkeleton(),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildStatSkeleton(DesignSystemThemeExtension? design) {
+  Widget _buildStatSkeleton() {
     return Column(
       children: [
         const TextLineSkeleton(width: 60),
-        SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+        const SizedBox(height: DesignSystem.spacingXS),
         const TextLineSkeleton(width: 80),
       ],
     );

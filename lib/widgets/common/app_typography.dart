@@ -142,7 +142,7 @@ class AppTypography extends StatelessWidget {
                 _buildTypographyExample(
                   context,
                   'Overline',
-                  DesignSystem.overline.copyWith(
+                  DesignSystem.bodySmall.copyWith(
                     color: DesignSystem.onSurfaceVariant,
                   ),
                 ),
@@ -156,7 +156,7 @@ class AppTypography extends StatelessWidget {
                 _buildTypographyExample(
                   context,
                   'Arabic Text',
-                  DesignSystem.arabicText.copyWith(
+                  DesignSystem.bodyMedium.copyWith(
                     color: DesignSystem.onSurface,
                   ),
                 ),
@@ -177,12 +177,6 @@ class AppTypography extends StatelessWidget {
                   context,
                   'Secondary Font',
                   DesignSystem.fontFamilySecondary,
-                  DesignSystem.onSurface,
-                ),
-                _buildFontFamilyExample(
-                  context,
-                  'Arabic Font',
-                  DesignSystem.fontFamilyArabic,
                   DesignSystem.onSurface,
                 ),
               ],
@@ -266,63 +260,6 @@ class AppTypography extends StatelessWidget {
             const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
-              'Neutral Palette',
-              [
-                _buildColorExample(
-                  context,
-                  'Neutral 50',
-                  DesignSystem.neutral[50]!,
-                ),
-                _buildColorExample(
-                  context,
-                  'Neutral 100',
-                  DesignSystem.neutral[100]!,
-                ),
-                _buildColorExample(
-                  context,
-                  'Neutral 200',
-                  DesignSystem.neutral[200]!,
-                ),
-                _buildColorExample(
-                  context,
-                  'Neutral 300',
-                  DesignSystem.neutral[300]!,
-                ),
-                _buildColorExample(
-                  context,
-                  'Neutral 400',
-                  DesignSystem.neutral[400]!,
-                ),
-                _buildColorExample(
-                  context,
-                  'Neutral 500',
-                  DesignSystem.neutral[500]!,
-                ),
-                _buildColorExample(
-                  context,
-                  'Neutral 600',
-                  DesignSystem.neutral[600]!,
-                ),
-                _buildColorExample(
-                  context,
-                  'Neutral 700',
-                  DesignSystem.neutral[700]!,
-                ),
-                _buildColorExample(
-                  context,
-                  'Neutral 800',
-                  DesignSystem.neutral[800]!,
-                ),
-                _buildColorExample(
-                  context,
-                  'Neutral 900',
-                  DesignSystem.neutral[900]!,
-                ),
-              ],
-            ),
-            const SizedBox(height: DesignSystem.spacingXL),
-            _buildTypographySection(
-              context,
               'Spacing System',
               [
                 _buildSpacingExample(
@@ -355,16 +292,6 @@ class AppTypography extends StatelessWidget {
                   'Spacing XXL',
                   DesignSystem.spacingXXL,
                 ),
-                _buildSpacingExample(
-                  context,
-                  'Spacing XXXL',
-                  DesignSystem.spacingXXXL,
-                ),
-                _buildSpacingExample(
-                  context,
-                  'Spacing Huge',
-                  DesignSystem.spacingHuge,
-                ),
               ],
             ),
             const SizedBox(height: DesignSystem.spacingXL),
@@ -396,11 +323,6 @@ class AppTypography extends StatelessWidget {
                   context,
                   'Radius XL',
                   DesignSystem.radiusXL,
-                ),
-                _buildRadiusExample(
-                  context,
-                  'Radius XXL',
-                  DesignSystem.radiusXXL,
                 ),
                 _buildRadiusExample(
                   context,
@@ -458,7 +380,7 @@ class AppTypography extends StatelessWidget {
             color: DesignSystem.surfaceContainer,
             borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             border: Border.all(
-              color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.2),
+              color: DesignSystem.onSurfaceVariant.withAlpha((255 * 0.2).round()),
             ),
           ),
           child: Column(
@@ -543,7 +465,7 @@ class AppTypography extends StatelessWidget {
               color: color,
               borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
               border: Border.all(
-                color: DesignSystem.onSurfaceVariant.withValues(alpha: 0.3),
+                color: DesignSystem.onSurfaceVariant.withAlpha((255 * 0.3).round()),
               ),
             ),
           ),
@@ -559,7 +481,7 @@ class AppTypography extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '#${color.value.toRadixString(16).padLeft(8, '0').toUpperCase()}',
+                  '#${(color.value & 0x00FFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}',
                   style: DesignSystem.caption.copyWith(
                     color: DesignSystem.onSurfaceVariant,
                   ),

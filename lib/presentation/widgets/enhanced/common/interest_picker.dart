@@ -70,7 +70,6 @@ class _InterestPickerState extends State<InterestPicker> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -79,8 +78,8 @@ class _InterestPickerState extends State<InterestPicker> {
           Center(
             child: Text(
               '${widget.selectedInterests.length}/$_totalInterests selected',
-              style: (design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium)?.copyWith(
-                color: design?.designSystemColors.primary ?? theme.colorScheme.primary,
+              style: (DesignSystem.bodyMedium).copyWith(
+                color: DesignSystem.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -89,12 +88,12 @@ class _InterestPickerState extends State<InterestPicker> {
             Center(
               child: Text(
                 'Select at least ${widget.minSelection} interests',
-                style: (design?.designSystemTypography.caption ?? theme.textTheme.bodySmall)?.copyWith(
-                  color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+                style: (DesignSystem.caption).copyWith(
+                  color: DesignSystem.textMuted,
                 ),
               ),
             ),
-          SizedBox(height: design?.designSystemSpacing.lg ?? 16),
+          const SizedBox(height: DesignSystem.spacingLG),
         ],
         Expanded(
           child: ListView.builder(
@@ -127,20 +126,17 @@ class _CategorySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.symmetric(
-            vertical: design?.designSystemSpacing.md ?? 12,
-            horizontal: design?.designSystemSpacing.sm ?? 8,
+          padding: const EdgeInsets.symmetric(
+            vertical: DesignSystem.spacingMD,
+            horizontal: DesignSystem.spacingSM,
           ),
           child: Text(
             category.title,
-            style: (design?.designSystemTypography.titleMedium ?? theme.textTheme.titleMedium)?.copyWith(
+            style: (DesignSystem.titleMedium).copyWith(
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -148,7 +144,7 @@ class _CategorySection extends StatelessWidget {
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.symmetric(horizontal: design?.designSystemSpacing.sm ?? 8),
+          padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingSM),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: category.columnsCount,
             childAspectRatio: category.aspectRatio,
@@ -167,7 +163,7 @@ class _CategorySection extends StatelessWidget {
             );
           },
         ),
-        SizedBox(height: design?.designSystemSpacing.lg ?? 16),
+        const SizedBox(height: DesignSystem.spacingLG),
       ],
     );
   }
@@ -189,28 +185,27 @@ class InterestChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           color: isSelected
-              ? (design?.designSystemColors.primary ?? theme.colorScheme.primary).withValues(alpha: 0.1)
+              ? DesignSystem.primary.withAlpha(25)
               : theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+          borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
           border: Border.all(
             color: isSelected
-                ? (design?.designSystemColors.primary ?? theme.colorScheme.primary)
-                : (design?.designSystemColors.border ?? theme.colorScheme.outline),
+                ? DesignSystem.primary
+                : DesignSystem.border,
             width: isSelected ? 2 : 1,
           ),
         ),
-        padding: EdgeInsets.symmetric(
-          horizontal: design?.designSystemSpacing.sm ?? 8,
-          vertical: design?.designSystemSpacing.sm ?? 8,
+        padding: const EdgeInsets.symmetric(
+          horizontal: DesignSystem.spacingSM,
+          vertical: DesignSystem.spacingSM,
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -219,18 +214,18 @@ class InterestChip extends StatelessWidget {
               Icon(
                 interest.icon,
                 color: isSelected
-                    ? (design?.designSystemColors.primary ?? theme.colorScheme.primary)
+                    ? DesignSystem.primary
                     : theme.colorScheme.onSurfaceVariant,
                 size: 20,
               ),
-              SizedBox(width: design?.designSystemSpacing.xs ?? 4),
+              const SizedBox(width: DesignSystem.spacingXS),
             ],
             Expanded(
               child: Text(
                 interest.name,
-                style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
+                style: (DesignSystem.bodySmall).copyWith(
                   color: isSelected
-                      ? (design?.designSystemColors.primary ?? theme.colorScheme.primary)
+                      ? DesignSystem.primary
                       : theme.colorScheme.onSurface,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
@@ -297,11 +292,9 @@ class TagSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>();
-
     return Wrap(
-      spacing: design?.designSystemSpacing.sm ?? 8,
-      runSpacing: design?.designSystemSpacing.sm ?? 8,
+      spacing: DesignSystem.spacingSM,
+      runSpacing: DesignSystem.spacingSM,
       children: tags.map((tag) {
         final isSelected = selectedTags.contains(tag);
         return FilterChip(
@@ -326,7 +319,7 @@ class GenrePicker extends StatelessWidget {
   final ValueChanged<Set<String>> onGenresChanged;
 
   static final List<InterestCategory> _musicGenres = [
-    InterestCategory(
+    const InterestCategory(
       title: 'Popular Genres',
       interests: [
         Interest(id: 'pop', name: 'Pop', icon: Icons.music_note),
@@ -337,7 +330,7 @@ class GenrePicker extends StatelessWidget {
         Interest(id: 'country', name: 'Country', icon: Icons.landscape),
       ],
     ),
-    InterestCategory(
+    const InterestCategory(
       title: 'Classic Genres',
       interests: [
         Interest(id: 'jazz', name: 'Jazz', icon: Icons.piano),

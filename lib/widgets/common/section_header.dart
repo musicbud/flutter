@@ -20,15 +20,12 @@ class SectionHeader extends BaseSectionHeader {
 
   @override
   Widget buildTitle(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Expanded(
       child: Text(
         title,
         style: titleStyle ??
-            design.designSystemTypography.headlineSmall.copyWith(
-              color: design.designSystemColors.onSurface,
+            DesignSystem.headlineSmall.copyWith(
+              color: DesignSystem.onSurface,
               fontWeight: FontWeight.w700,
             ),
       ),
@@ -38,16 +35,13 @@ class SectionHeader extends BaseSectionHeader {
   @override
   Widget buildAction(BuildContext context) {
     if (actionText != null && onActionPressed != null) {
-      final theme = Theme.of(context);
-      final design = theme.extension<DesignSystemThemeExtension>()!;
-
       return TextButton(
         onPressed: onActionPressed,
         child: Text(
           actionText!,
           style: actionStyle ??
-              design.designSystemTypography.bodySmall.copyWith(
-                color: design.designSystemColors.primary,
+              DesignSystem.bodySmall.copyWith(
+                color: DesignSystem.primary,
                 fontWeight: FontWeight.w600,
               ),
         ),

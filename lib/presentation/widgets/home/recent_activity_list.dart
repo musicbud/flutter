@@ -37,12 +37,8 @@ class RecentActivityList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).designSystemColors!;
-    final typography = Theme.of(context).designSystemTypography!;
-    final spacing = Theme.of(context).designSystemSpacing!;
-
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: spacing.lg),
+      padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -52,8 +48,8 @@ class RecentActivityList extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: typography.headlineSmall.copyWith(
-                  color: colors.onSurface,
+                style: DesignSystem.headlineSmall.copyWith(
+                  color: DesignSystem.onSurface,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -62,15 +58,15 @@ class RecentActivityList extends StatelessWidget {
                   onPressed: onSeeAll,
                   child: Text(
                     'See All',
-                    style: typography.bodySmall.copyWith(
-                      color: colors.primary,
+                    style: DesignSystem.bodySmall.copyWith(
+                      color: DesignSystem.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
             ],
           ),
-          SizedBox(height: spacing.md),
+          const SizedBox(height: DesignSystem.spacingMD),
 
           // Horizontal list
           SizedBox(
@@ -83,7 +79,7 @@ class RecentActivityList extends StatelessWidget {
                 return Container(
                   width: itemWidth,
                   margin: EdgeInsets.only(
-                    right: index < items.length - 1 ? spacing.md : 0,
+                    right: index < items.length - 1 ? DesignSystem.spacingMD : 0,
                   ),
                   child: _buildActivityItem(item, context),
                 );
@@ -96,11 +92,6 @@ class RecentActivityList extends StatelessWidget {
   }
 
   Widget _buildActivityItem(RecentActivityItem item, BuildContext context) {
-    final colors = Theme.of(context).designSystemColors!;
-    final typography = Theme.of(context).designSystemTypography!;
-    final spacing = Theme.of(context).designSystemSpacing!;
-    final radius = Theme.of(context).designSystemRadius!;
-
     return GestureDetector(
       onTap: item.onTap,
       child: Column(
@@ -110,8 +101,8 @@ class RecentActivityList extends StatelessWidget {
             width: itemWidth - 20, // Account for padding
             height: itemWidth - 20,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(radius.md),
-              color: colors.surfaceContainer,
+              borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
+              color: DesignSystem.surfaceContainer,
               image: item.imageUrl != null
                   ? DecorationImage(
                       image: NetworkImage(item.imageUrl!),
@@ -122,19 +113,19 @@ class RecentActivityList extends StatelessWidget {
             child: item.imageUrl == null
                 ? Icon(
                     item.icon ?? Icons.history,
-                    color: colors.onSurfaceVariant,
+                    color: DesignSystem.onSurfaceVariant,
                     size: 30,
                   )
                 : null,
           ),
 
-          SizedBox(height: spacing.sm),
+          const SizedBox(height: DesignSystem.spacingSM),
 
           // Title
           Text(
             item.title,
-            style: typography.caption.copyWith(
-              color: colors.onSurface,
+            style: DesignSystem.caption.copyWith(
+              color: DesignSystem.onSurface,
               fontWeight: FontWeight.w600,
             ),
             maxLines: 1,
@@ -144,11 +135,11 @@ class RecentActivityList extends StatelessWidget {
 
           // Subtitle
           if (item.subtitle != null) ...[
-            SizedBox(height: spacing.xs),
+            const SizedBox(height: DesignSystem.spacingXS),
             Text(
               item.subtitle!,
-              style: typography.caption.copyWith(
-                color: colors.onSurfaceVariant,
+              style: DesignSystem.caption.copyWith(
+                color: DesignSystem.onSurfaceVariant,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

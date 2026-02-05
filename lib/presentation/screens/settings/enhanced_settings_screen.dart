@@ -7,36 +7,35 @@ import '../../../blocs/settings/settings_state.dart';
 import '../../../blocs/auth/auth_bloc.dart';
 
 class EnhancedSettingsScreen extends StatelessWidget {
-  const EnhancedSettingsScreen({super.key});
+  EnhancedSettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Settings',
           style: DesignSystem.headlineSmall,
         ),
         backgroundColor: DesignSystem.surface,
-        elevation: 0,
       ),
       body: ListView(
-        padding: const EdgeInsets.all(DesignSystem.spacingMD),
-        children: [
+        padding: EdgeInsets.all(DesignSystem.spacingMD),
+        children: <Widget>[
           _buildUserSection(context),
-          const SizedBox(height: DesignSystem.spacingLG),
+          SizedBox(height: DesignSystem.spacingLG),
           _buildAccountSection(context),
-          const SizedBox(height: DesignSystem.spacingLG),
+          SizedBox(height: DesignSystem.spacingLG),
           _buildMusicSection(context),
-          const SizedBox(height: DesignSystem.spacingLG),
+          SizedBox(height: DesignSystem.spacingLG),
           _buildPrivacySection(context),
-          const SizedBox(height: DesignSystem.spacingLG),
+          SizedBox(height: DesignSystem.spacingLG),
           _buildNotificationSection(context),
-          const SizedBox(height: DesignSystem.spacingLG),
+          SizedBox(height: DesignSystem.spacingLG),
           _buildAppearanceSection(context),
-          const SizedBox(height: DesignSystem.spacingLG),
+          SizedBox(height: DesignSystem.spacingLG),
           _buildAboutSection(context),
-          const SizedBox(height: DesignSystem.spacingLG),
+          SizedBox(height: DesignSystem.spacingLG),
           _buildDangerZone(context),
         ],
       ),
@@ -51,7 +50,7 @@ class EnhancedSettingsScreen extends StatelessWidget {
           children: [
             CircleAvatar(
               radius: 30,
-              backgroundColor: DesignSystem.primary.withValues(alpha: 0.1),
+              backgroundColor: DesignSystem.primary.withAlpha((255 * 0.1).round()),
               child: const Icon(
                 Icons.person,
                 size: 30,
@@ -129,7 +128,7 @@ class EnhancedSettingsScreen extends StatelessWidget {
             // TODO: Implement settings update when event is available
             _showComingSoon(context, 'High Quality Audio Settings');
           },
-          activeColor: DesignSystem.primary,
+          activeThumbColor: DesignSystem.primary,
         ),
         SwitchListTile(
           title: const Text('Auto-play Similar Music'),
@@ -138,7 +137,7 @@ class EnhancedSettingsScreen extends StatelessWidget {
           onChanged: (value) {
             _showComingSoon(context, 'Auto-play Settings');
           },
-          activeColor: DesignSystem.primary,
+          activeThumbColor: DesignSystem.primary,
         ),
         _buildSettingsTile(
           icon: Icons.equalizer,
@@ -176,7 +175,7 @@ class EnhancedSettingsScreen extends StatelessWidget {
                   ),
                 );
               },
-              activeColor: DesignSystem.primary,
+              activeThumbColor: DesignSystem.primary,
             );
           },
         ),
@@ -200,7 +199,7 @@ class EnhancedSettingsScreen extends StatelessWidget {
                   ),
                 );
               },
-              activeColor: DesignSystem.primary,
+              activeThumbColor: DesignSystem.primary,
             );
           },
         ),
@@ -233,7 +232,7 @@ class EnhancedSettingsScreen extends StatelessWidget {
                   ),
                 );
               },
-              activeColor: DesignSystem.primary,
+              activeThumbColor: DesignSystem.primary,
             );
           },
         ),
@@ -258,7 +257,7 @@ class EnhancedSettingsScreen extends StatelessWidget {
                   ),
                 );
               },
-              activeColor: DesignSystem.primary,
+              activeThumbColor: DesignSystem.primary,
             );
           },
         ),
@@ -419,11 +418,11 @@ class EnhancedSettingsScreen extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(DesignSystem.spacingMD),
+            Padding(
+              padding: const EdgeInsets.all(DesignSystem.spacingMD),
               child: Text(
                 'Choose Theme',
-                style: TextStyle(
+                style: DesignSystem.bodyLarge.copyWith(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                 ),

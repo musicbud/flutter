@@ -102,13 +102,11 @@ class _LoadingIndicatorState extends State<LoadingIndicator>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final color = widget.color ?? design?.designSystemColors.primaryRed ?? theme.primaryColor;
+    final color = widget.color ?? DesignSystem.primaryRed;
     final messageStyle = widget.messageStyle ??
-        design?.designSystemTypography.bodyMedium.copyWith(
-          color: design.designSystemColors.textMuted,
-        ) ??
-        theme.textTheme.bodyMedium;
+        DesignSystem.bodyMedium.copyWith(
+          color: DesignSystem.textMuted,
+        );
 
     return Align(
       alignment: widget.alignment,
@@ -147,7 +145,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator>
       case LoadingIndicatorType.linear:
         return LinearProgressIndicator(
           valueColor: AlwaysStoppedAnimation<Color>(color),
-          backgroundColor: widget.backgroundColor ?? color.withValues(alpha: 0.2),
+          backgroundColor: widget.backgroundColor ?? color.withAlpha(51),
         );
 
       case LoadingIndicatorType.dots:
@@ -177,7 +175,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator>
               height: widget.size / 6 * scale.clamp(0.3, 1.0),
               margin: const EdgeInsets.symmetric(horizontal: 2),
               decoration: BoxDecoration(
-                color: color.withValues(alpha: scale.clamp(0.3, 1.0)),
+                color: color.withAlpha((255 * scale.clamp(0.3, 1.0)).toInt()),
                 shape: BoxShape.circle,
               ),
             );
@@ -208,7 +206,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator>
                 width: widget.size / 8,
                 height: widget.size / 8,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: opacity * 0.8 + 0.2),
+                  color: color.withAlpha((255 * (opacity * 0.8 + 0.2)).toInt()),
                   shape: BoxShape.circle,
                 ),
               ),
@@ -232,7 +230,7 @@ class _LoadingIndicatorState extends State<LoadingIndicator>
             width: widget.size,
             height: widget.size,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: opacity * 0.6),
+              color: color.withAlpha((255 * (opacity * 0.6)).toInt()),
               shape: BoxShape.circle,
             ),
           ),

@@ -80,63 +80,57 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final designSystemColors = Theme.of(context).designSystemColors!;
-    final designSystemSpacing = Theme.of(context).designSystemSpacing!;
-    final designSystemRadius = Theme.of(context).designSystemRadius!;
-    final designSystemShadows = Theme.of(context).designSystemShadows!;
-    final designSystemTypography = Theme.of(context).designSystemTypography!;
-
     return Container(
-      padding: EdgeInsets.all(designSystemSpacing.lg),
+      padding: const EdgeInsets.all(DesignSystem.spacingLG),
       child: Column(
         children: [
           // Profile Avatar with enhanced styling
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(designSystemRadius.circular),
-              boxShadow: designSystemShadows.cardHover,
+              borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
+              boxShadow: DesignSystem.shadowCard,
               border: Border.all(
-                color: designSystemColors.primary.withValues(alpha: 0.3),
+                color: DesignSystem.primary.withAlpha(77),
                 width: 3,
               ),
             ),
             child: CircleAvatar(
               radius: 60,
-              backgroundColor: designSystemColors.primary,
+              backgroundColor: DesignSystem.primary,
               backgroundImage: widget.userProfile?.avatarUrl != null
                   ? NetworkImage(widget.userProfile!.avatarUrl!)
                   : null,
               child: widget.userProfile?.avatarUrl == null
-                  ? Icon(
+                  ? const Icon(
                       Icons.person,
-                      color: designSystemColors.onPrimary,
+                      color: DesignSystem.onPrimary,
                       size: 60,
                     )
                   : null,
             ),
           ),
 
-          SizedBox(height: designSystemSpacing.lg),
+          const SizedBox(height: DesignSystem.spacingLG),
 
           // Profile Info or Edit Form
           if (widget.isLoading) ...[
-            SizedBox(
+            const SizedBox(
               height: 24,
               width: 24,
               child: CircularProgressIndicator(
-                color: designSystemColors.primary,
+                color: DesignSystem.primary,
                 strokeWidth: 2,
               ),
             ),
           ] else if (widget.hasError) ...[
             Text(
               'Unable to load profile',
-              style: designSystemTypography.titleMedium.copyWith(
-                color: designSystemColors.onSurface,
+              style: DesignSystem.titleMedium.copyWith(
+                color: DesignSystem.onSurface,
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: designSystemSpacing.md),
+            const SizedBox(height: DesignSystem.spacingMD),
             PrimaryButton(
               onPressed: () {
                 context.read<UserProfileBloc>().add(FetchMyProfile());
@@ -157,20 +151,20 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
                         label: 'Display Name',
                         hintText: 'Enter your display name',
                       ),
-                      SizedBox(height: designSystemSpacing.md),
+                      const SizedBox(height: DesignSystem.spacingMD),
                       ModernInputField(
                         controller: _bioController,
                         label: 'Bio',
                         hintText: 'Tell us about yourself',
                         maxLines: 3,
                       ),
-                      SizedBox(height: designSystemSpacing.md),
+                      const SizedBox(height: DesignSystem.spacingMD),
                       ModernInputField(
                         controller: _locationController,
                         label: 'Location',
                         hintText: 'Enter your location',
                       ),
-                      SizedBox(height: designSystemSpacing.md),
+                      const SizedBox(height: DesignSystem.spacingMD),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -191,50 +185,50 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
             ] else ...[
               Text(
                 widget.userProfile!.displayName ?? widget.userProfile!.username,
-                style: designSystemTypography.headlineSmall.copyWith(
-                  color: designSystemColors.onSurface,
+                style: DesignSystem.headlineSmall.copyWith(
+                  color: DesignSystem.onSurface,
                   fontWeight: FontWeight.w700,
                 ),
                 textAlign: TextAlign.center,
               ),
 
               if (widget.userProfile!.displayName != null) ...[
-                SizedBox(height: designSystemSpacing.xs),
+                const SizedBox(height: DesignSystem.spacingXS),
                 Text(
                   '@${widget.userProfile!.username}',
-                  style: designSystemTypography.bodyMedium.copyWith(
-                    color: designSystemColors.onSurfaceVariant,
+                  style: DesignSystem.bodyMedium.copyWith(
+                    color: DesignSystem.onSurfaceVariant,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ],
 
               if (widget.userProfile!.bio != null && widget.userProfile!.bio!.isNotEmpty) ...[
-                SizedBox(height: designSystemSpacing.md),
+                const SizedBox(height: DesignSystem.spacingMD),
                 Text(
                   widget.userProfile!.bio!,
-                  style: designSystemTypography.bodyMedium.copyWith(
-                    color: designSystemColors.onSurfaceVariant,
+                  style: DesignSystem.bodyMedium.copyWith(
+                    color: DesignSystem.onSurfaceVariant,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ],
 
               if (widget.userProfile!.location != null && widget.userProfile!.location!.isNotEmpty) ...[
-                SizedBox(height: designSystemSpacing.sm),
+                const SizedBox(height: DesignSystem.spacingSM),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.location_on,
                       size: 16,
-                      color: designSystemColors.onSurfaceVariant,
+                      color: DesignSystem.onSurfaceVariant,
                     ),
-                    SizedBox(width: designSystemSpacing.xs),
+                    const SizedBox(width: DesignSystem.spacingXS),
                     Text(
                       widget.userProfile!.location!,
-                      style: designSystemTypography.bodySmall.copyWith(
-                        color: designSystemColors.onSurfaceVariant,
+                      style: DesignSystem.bodySmall.copyWith(
+                        color: DesignSystem.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -242,12 +236,12 @@ class _ProfileHeaderWidgetState extends State<ProfileHeaderWidget> {
               ],
             ],
 
-            SizedBox(height: designSystemSpacing.md),
+            const SizedBox(height: DesignSystem.spacingMD),
 
             // Profile Stats - TODO: Implement ProfileStatsWidget
             // ProfileStatsWidget(userProfile: widget.userProfile!),
 
-            SizedBox(height: designSystemSpacing.lg),
+            const SizedBox(height: DesignSystem.spacingLG),
 
             // Edit Profile Button
             PrimaryButton(

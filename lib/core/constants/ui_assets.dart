@@ -2,6 +2,7 @@
 /// 
 /// This file provides easy access to all the UI design assets imported from the
 /// /home/mahmoud/Documents/GitHub/ui directory.
+library;
 
 class UIAssets {
   UIAssets._(); // Private constructor

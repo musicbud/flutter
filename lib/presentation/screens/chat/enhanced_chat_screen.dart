@@ -264,7 +264,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen> {
                   color: DesignSystem.onSurface,
                 ),
                 decoration: InputDecoration(
-                  hintText: 'Search conversations...',
+                  hintText: 'Search conversations...', 
                   hintStyle: DesignSystem.bodyMedium.copyWith(
                     color: DesignSystem.onSurfaceVariant,
                   ),
@@ -482,7 +482,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen> {
             children: [
               ListTile(
                 leading: const Icon(Icons.mark_chat_read, color: DesignSystem.onSurface),
-                title: const Text('Mark all as read', style: DesignSystem.bodyMedium),
+                title: Text('Mark all as read', style: DesignSystem.bodyMedium),
                 onTap: () {
                   Navigator.pop(context);
                   debugPrint('Mark all as read');
@@ -490,7 +490,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.archive, color: DesignSystem.onSurface),
-                title: const Text('Archived chats', style: DesignSystem.bodyMedium),
+                title: Text('Archived chats', style: DesignSystem.bodyMedium),
                 onTap: () {
                   Navigator.pop(context);
                   _navigation.navigateTo('/chat/archived');
@@ -498,7 +498,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.settings, color: DesignSystem.onSurface),
-                title: const Text('Chat settings', style: DesignSystem.bodyMedium),
+                title: Text('Chat settings', style: DesignSystem.bodyMedium),
                 onTap: () {
                   Navigator.pop(context);
                   _navigation.navigateTo('/settings/chat');
@@ -525,7 +525,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen> {
             children: [
               ListTile(
                 leading: const Icon(Icons.mark_chat_read, color: DesignSystem.onSurface),
-                title: const Text('Mark as read', style: DesignSystem.bodyMedium),
+                title: Text('Mark as read', style: DesignSystem.bodyMedium),
                 onTap: () {
                   Navigator.pop(context);
                   debugPrint('Mark as read: ${conversation['id']}');
@@ -533,7 +533,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.push_pin, color: DesignSystem.onSurface),
-                title: const Text('Pin conversation', style: DesignSystem.bodyMedium),
+                title: Text('Pin conversation', style: DesignSystem.bodyMedium),
                 onTap: () {
                   Navigator.pop(context);
                   debugPrint('Pin conversation: ${conversation['id']}');
@@ -541,7 +541,7 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen> {
               ),
               ListTile(
                 leading: const Icon(Icons.archive, color: DesignSystem.onSurface),
-                title: const Text('Archive', style: DesignSystem.bodyMedium),
+                title: Text('Archive', style: DesignSystem.bodyMedium),
                 onTap: () {
                   Navigator.pop(context);
                   debugPrint('Archive conversation: ${conversation['id']}');
@@ -582,14 +582,14 @@ class _EnhancedChatScreenState extends State<EnhancedChatScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel', style: TextStyle(color: DesignSystem.onSurface)),
+              child: Text('Cancel', style: DesignSystem.bodyMedium.copyWith(color: DesignSystem.onSurface)),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 context.read<ChatBloc>().add(DeleteConversation(conversation['id']));
               },
-              child: const Text('Delete', style: TextStyle(color: DesignSystem.errorRed)),
+              child: Text('Delete', style: DesignSystem.bodyMedium.copyWith(color: DesignSystem.errorRed)),
             ),
           ],
         );

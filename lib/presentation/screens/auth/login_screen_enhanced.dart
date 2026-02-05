@@ -51,8 +51,8 @@ class _LoginScreenEnhancedState extends State<LoginScreenEnhanced> {
       // Store tokens securely
       final tokenProvider = GetIt.instance<TokenProvider>();
       await tokenProvider.updateTokens(
-        state.data.accessToken,
-        state.data.refreshToken,
+        state.data.accessToken ?? '',
+        state.data.refreshToken ?? '',
       );
 
       // Trigger AuthBloc to update its state
@@ -131,7 +131,7 @@ class _LoginScreenEnhancedState extends State<LoginScreenEnhanced> {
                         controller: _usernameController,
                         prefixIcon: const Icon(Icons.person),
                         validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
+                          if (value?.isEmpty ?? true) {
                             return 'Please enter your username';
                           }
                           return null;
@@ -145,10 +145,10 @@ class _LoginScreenEnhancedState extends State<LoginScreenEnhanced> {
                         prefixIcon: const Icon(Icons.lock),
                         obscureText: true,
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
+                          if (value?.isEmpty ?? true) {
                             return 'Please enter your password';
                           }
-                          if (value.length < 6) {
+                          if (value!.length < 6) {
                             return 'Password must be at least 6 characters';
                           }
                           return null;

@@ -6,7 +6,7 @@ import '../../../blocs/profile/profile_event.dart';
 import '../../../blocs/profile/profile_state.dart';
 
 class EditProfileScreen extends StatefulWidget {
-  const EditProfileScreen({super.key});
+  EditProfileScreen({super.key});
 
   @override
   State<EditProfileScreen> createState() => _EditProfileScreenState();
@@ -39,7 +39,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Edit Profile',
           style: DesignSystem.headlineSmall,
         ),
@@ -51,12 +51,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               return TextButton(
                 onPressed: state is ProfileLoading ? null : _saveProfile,
                 child: state is ProfileLoading 
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 16,
                       height: 16,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Text(
+                  : Text(
                       'Save',
                       style: TextStyle(
                         color: DesignSystem.primary,
@@ -106,11 +106,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 const SizedBox(height: DesignSystem.spacingXL),
                 
                 // Basic Information
-                const Text(
+                Text(
                   'Basic Information',
                   style: DesignSystem.headlineSmall,
                 ),
-                const SizedBox(height: DesignSystem.spacingMD),
+                SizedBox(height: DesignSystem.spacingMD),
                 
                 _buildTextField(
                   controller: _displayNameController,
@@ -182,7 +182,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             children: [
               CircleAvatar(
                 radius: 60,
-                backgroundColor: DesignSystem.primary.withValues(alpha: 0.1),
+                backgroundColor: DesignSystem.primary.withAlpha((255 * 0.1).round()),
                 child: const Icon(
                   Icons.person,
                   size: 60,
@@ -261,11 +261,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Privacy Settings',
           style: DesignSystem.headlineSmall,
         ),
-        const SizedBox(height: DesignSystem.spacingMD),
+        SizedBox(height: DesignSystem.spacingMD),
         
         SwitchListTile(
           title: const Text('Profile Visibility'),
@@ -274,7 +274,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           onChanged: (bool value) {
             // Handle privacy setting change
           },
-          activeColor: DesignSystem.primary,
+          activeThumbColor: DesignSystem.primary,
         ),
         
         SwitchListTile(
@@ -284,7 +284,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           onChanged: (bool value) {
             // Handle listening activity setting
           },
-          activeColor: DesignSystem.primary,
+          activeThumbColor: DesignSystem.primary,
         ),
       ],
     );
@@ -294,7 +294,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Music Preferences',
           style: DesignSystem.headlineSmall,
         ),
@@ -308,13 +308,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.music_note, color: DesignSystem.primary),
-                    const SizedBox(width: DesignSystem.spacingMD),
+                    Icon(Icons.music_note, color: DesignSystem.primary),
+                    SizedBox(width: DesignSystem.spacingMD),
                     Text(
                       'Favorite Genres',
-                      style: DesignSystem.bodyLarge.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: DesignSystem.bodyLarge,
                     ),
                   ],
                 ),
@@ -335,7 +333,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     // Navigate to genre selection
                   },
                   icon: const Icon(Icons.add),
-                  label: const Text('Add More Genres'),
+                  label: Text('Add More Genres'),
                 ),
               ],
             ),
@@ -352,7 +350,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       onDeleted: () {
         // Remove genre
       },
-      backgroundColor: DesignSystem.primary.withValues(alpha: 0.1),
+              color: MaterialStateProperty.all(DesignSystem.primary.withAlpha((255 * 0.1).round())),
       deleteIconColor: DesignSystem.primary,
     );
   }

@@ -464,10 +464,10 @@ class _DynamicBudsScreenState extends State<DynamicBudsScreen>
         vertical: DesignSystem.spacingXXS,
       ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: color.withAlpha(25),
         borderRadius: BorderRadius.circular(DesignSystem.radiusFull),
         border: Border.all(
-          color: color.withValues(alpha: 0.3),
+          color: color.withAlpha(77),
           width: 1.5,
         ),
       ),
@@ -523,7 +523,7 @@ class _DynamicBudsScreenState extends State<DynamicBudsScreen>
         '${type.replaceAll(RegExp(r'([A-Z])'), ' \$1').trim()}: $count',
         style: TextStyle(fontSize: _theme.getDynamicFontSize(12)),
       ),
-      backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+      backgroundColor: Theme.of(context).primaryColor.withAlpha(25),
       labelStyle: TextStyle(
         color: Theme.of(context).primaryColor,
         fontSize: _theme.getDynamicFontSize(11),
@@ -627,7 +627,7 @@ class _DynamicBudsScreenState extends State<DynamicBudsScreen>
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(_theme.getDynamicSpacing(12)),
-      color: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
+      color: Theme.of(context).colorScheme.secondary.withAlpha(25),
       child: Row(
         children: [
           Icon(
@@ -678,7 +678,7 @@ class _DynamicBudsScreenState extends State<DynamicBudsScreen>
                     _loadBudsBasedOnSelection();
                   }
                 },
-                selectedColor: Theme.of(context).primaryColor.withValues(alpha: 0.2),
+                selectedColor: Theme.of(context).primaryColor.withAlpha(51),
                 checkmarkColor: Theme.of(context).primaryColor,
               ),
             );
@@ -888,32 +888,32 @@ class _DynamicBudsScreenState extends State<DynamicBudsScreen>
             }
           },
           itemBuilder: (context) => [
-            const PopupMenuItem(
+            PopupMenuItem(
               value: 'refresh',
               child: Row(
                 children: [
-                  Icon(Icons.refresh, size: 20, color: DesignSystem.onSurface),
-                  SizedBox(width: 12),
+                  const Icon(Icons.refresh, size: 20, color: DesignSystem.onSurface),
+                  const SizedBox(width: 12),
                   Text('Refresh', style: DesignSystem.bodyMedium),
                 ],
               ),
             ),
-            const PopupMenuItem(
+            PopupMenuItem(
               value: 'settings',
               child: Row(
                 children: [
-                  Icon(Icons.settings, size: 20, color: DesignSystem.onSurface),
-                  SizedBox(width: 12),
+                  const Icon(Icons.settings, size: 20, color: DesignSystem.onSurface),
+                  const SizedBox(width: 12),
                   Text('Settings', style: DesignSystem.bodyMedium),
                 ],
               ),
             ),
-            const PopupMenuItem(
+            PopupMenuItem(
               value: 'help',
               child: Row(
                 children: [
-                  Icon(Icons.help_outline, size: 20, color: DesignSystem.onSurface),
-                  SizedBox(width: 12),
+                  const Icon(Icons.help_outline, size: 20, color: DesignSystem.onSurface),
+                  const SizedBox(width: 12),
                   Text('Help', style: DesignSystem.bodyMedium),
                 ],
               ),
@@ -928,7 +928,7 @@ class _DynamicBudsScreenState extends State<DynamicBudsScreen>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('How Bud Matching Works', style: DesignSystem.titleMedium),
+        title: Text('How Bud Matching Works', style: DesignSystem.titleMedium),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

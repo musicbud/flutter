@@ -38,12 +38,6 @@ class QuickActionsGrid extends StatelessWidget {
       print('QuickActionsGrid build: action[$i] onPressed is null? ${actions[i].onPressed == null}');
         }
   
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    if (design == null) {
-      throw FlutterError('DesignSystemThemeExtension not found in theme. Make sure the theme is properly configured.');
-    }
-
     // Filter out null actions
     final validActions = actions.where((a) => a != null).toList() ?? [];
     if (validActions.isEmpty) {
@@ -53,7 +47,7 @@ class QuickActionsGrid extends StatelessWidget {
     if (crossAxisCount == 1) {
       // Single row layout
       return Padding(
-        padding: EdgeInsets.symmetric(horizontal: design.designSystemSpacing.lg),
+        padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
         child: Row(
           children: validActions.asMap().entries.map((entry) {
             final index = entry.key;
@@ -61,7 +55,7 @@ class QuickActionsGrid extends StatelessWidget {
             return Expanded(
               child: Container(
                 margin: EdgeInsets.only(
-                  right: index < validActions.length - 1 ? design.designSystemSpacing.md : 0,
+                  right: index < validActions.length - 1 ? DesignSystem.spacingMD : 0,
                 ),
                 child: _buildActionButton(action),
               ),
@@ -72,7 +66,7 @@ class QuickActionsGrid extends StatelessWidget {
     } else {
       // Grid layout
       return Padding(
-        padding: EdgeInsets.symmetric(horizontal: design.designSystemSpacing.lg),
+        padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
         child: GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),

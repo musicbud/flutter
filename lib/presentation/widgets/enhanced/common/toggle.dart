@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/design_system.dart';
+import 'package:musicbud_flutter/core/theme/design_system.dart';
 
 /// Modern toggle switch with customizable styles
 ///
@@ -36,10 +36,9 @@ class ModernToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     if (label == null && description == null) {
-      return _buildSwitch(theme, design);
+      return _buildSwitch(theme);
     }
 
     return Row(
@@ -52,27 +51,27 @@ class ModernToggle extends StatelessWidget {
               if (label != null)
                 Text(
                   label!,
-                  style: design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium,
+                  style: DesignSystem.bodyMedium,
                 ),
               if (description != null) ...[
-                SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+                const SizedBox(height: DesignSystem.spacingXS),
                 Text(
                   description!,
-                  style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
-                    color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+                  style: (DesignSystem.bodySmall).copyWith(
+                    color: DesignSystem.textMuted,
                   ),
                 ),
               ],
             ],
           ),
         ),
-        SizedBox(width: design?.designSystemSpacing.md ?? 12),
-        _buildSwitch(theme, design),
+        const SizedBox(width: DesignSystem.spacingMD),
+        _buildSwitch(theme),
       ],
     );
   }
 
-  Widget _buildSwitch(ThemeData theme, DesignSystemThemeExtension? design) {
+  Widget _buildSwitch(ThemeData theme) {
     switch (style) {
       case ToggleStyle.material:
         return Switch(
@@ -80,7 +79,7 @@ class ModernToggle extends StatelessWidget {
           onChanged: onChanged,
           thumbColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return design?.designSystemColors.primary ?? theme.colorScheme.primary;
+              return DesignSystem.primary;
             }
             return null;
           }),
@@ -91,7 +90,7 @@ class ModernToggle extends StatelessWidget {
           onChanged: onChanged,
           thumbColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return design?.designSystemColors.primary ?? theme.colorScheme.primary;
+              return DesignSystem.primary;
             }
             return null;
           }),
@@ -133,9 +132,8 @@ class CustomToggle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final active = activeColor ?? design?.designSystemColors.primary ?? theme.colorScheme.primary;
-    final inactive = inactiveColor ?? design?.designSystemColors.surfaceContainer ?? theme.colorScheme.surfaceContainerHighest;
+    final active = activeColor ?? DesignSystem.primary;
+    final inactive = inactiveColor ?? DesignSystem.surfaceContainer;
 
     return GestureDetector(
       onTap: onChanged != null ? () => onChanged!(!value) : null,
@@ -147,7 +145,7 @@ class CustomToggle extends StatelessWidget {
           color: value ? active : inactive,
           borderRadius: BorderRadius.circular(height / 2),
           border: Border.all(
-            color: value ? active : (design?.designSystemColors.border ?? theme.colorScheme.outline),
+            color: value ? active : (DesignSystem.border),
             width: 2,
           ),
         ),
@@ -163,7 +161,7 @@ class CustomToggle extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
+                  color: Colors.black.withAlpha(51),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -189,8 +187,7 @@ class ToggleGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>();
-    final itemSpacing = spacing ?? design?.designSystemSpacing.md ?? 12;
+    final itemSpacing = spacing ?? DesignSystem.spacingMD;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,23 +220,20 @@ class ToggleItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return InkWell(
       onTap: () => onChanged(!value),
-      borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: Padding(
-        padding: EdgeInsets.all(design?.designSystemSpacing.sm ?? 8),
+        padding: const EdgeInsets.all(DesignSystem.spacingSM),
         child: Row(
           children: [
             if (icon != null) ...[
               Icon(
                 icon,
                 size: 24,
-                color: design?.designSystemColors.onSurfaceVariant ?? theme.colorScheme.onSurfaceVariant,
+                color: DesignSystem.onSurfaceVariant,
               ),
-              SizedBox(width: design?.designSystemSpacing.md ?? 12),
+              const SizedBox(width: DesignSystem.spacingMD),
             ],
             Expanded(
               child: Column(
@@ -248,27 +242,27 @@ class ToggleItem extends StatelessWidget {
                 children: [
                   Text(
                     label,
-                    style: design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium,
+                    style: DesignSystem.bodyMedium,
                   ),
                   if (description != null) ...[
-                    SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+                    const SizedBox(height: DesignSystem.spacingXS),
                     Text(
                       description!,
-                      style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
-                        color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+                      style: (DesignSystem.bodySmall).copyWith(
+                        color: DesignSystem.textMuted,
                       ),
                     ),
                   ],
                 ],
               ),
             ),
-            SizedBox(width: design?.designSystemSpacing.md ?? 12),
+            const SizedBox(width: DesignSystem.spacingMD),
             Switch.adaptive(
               value: value,
               onChanged: onChanged,
               thumbColor: WidgetStateProperty.resolveWith((states) {
                 if (states.contains(WidgetState.selected)) {
-                  return design?.designSystemColors.primary ?? theme.colorScheme.primary;
+                  return DesignSystem.primary;
                 }
                 return null;
               }),
@@ -301,21 +295,19 @@ class ToggleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final active = activeColor ?? design?.designSystemColors.primary ?? theme.colorScheme.primary;
-    final inactive = inactiveColor ?? design?.designSystemColors.surfaceContainer ?? theme.colorScheme.surfaceContainerHighest;
+    final active = activeColor ?? DesignSystem.primary;
+    final inactive = inactiveColor ?? DesignSystem.surfaceContainer;
 
     return Material(
       color: value ? active : inactive,
-      borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: InkWell(
         onTap: () => onChanged(!value),
-        borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: design?.designSystemSpacing.md ?? 12,
-            vertical: design?.designSystemSpacing.sm ?? 8,
+          padding: const EdgeInsets.symmetric(
+            horizontal: DesignSystem.spacingMD,
+            vertical: DesignSystem.spacingSM,
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -324,15 +316,15 @@ class ToggleButton extends StatelessWidget {
                 Icon(
                   icon,
                   size: 20,
-                  color: value ? Colors.white : (design?.designSystemColors.onSurfaceVariant ?? theme.colorScheme.onSurfaceVariant),
+                  color: value ? Colors.white : (DesignSystem.onSurfaceVariant),
                 ),
-                if (label != null) SizedBox(width: design?.designSystemSpacing.xs ?? 4),
+                if (label != null) const SizedBox(width: DesignSystem.spacingXS),
               ],
               if (label != null)
                 Text(
                   label!,
-                  style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
-                    color: value ? Colors.white : (design?.designSystemColors.onSurfaceVariant ?? theme.colorScheme.onSurfaceVariant),
+                  style: (DesignSystem.bodySmall).copyWith(
+                    color: value ? Colors.white : (DesignSystem.onSurfaceVariant),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -365,12 +357,9 @@ class IconToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return Material(
       color: value
-          ? (design?.designSystemColors.primary ?? theme.colorScheme.primary).withValues(alpha: 0.1)
+          ? DesignSystem.primary.withAlpha(25)
           : Colors.transparent,
       shape: const CircleBorder(),
       child: InkWell(
@@ -384,8 +373,8 @@ class IconToggle extends StatelessWidget {
             value && activeIcon != null ? activeIcon : icon,
             size: iconSize,
             color: value
-                ? (design?.designSystemColors.primary ?? theme.colorScheme.primary)
-                : (design?.designSystemColors.onSurfaceVariant ?? theme.colorScheme.onSurfaceVariant),
+                ? DesignSystem.primary
+                : DesignSystem.onSurfaceVariant,
           ),
         ),
       ),

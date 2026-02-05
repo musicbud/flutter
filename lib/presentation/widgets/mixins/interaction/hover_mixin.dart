@@ -271,22 +271,19 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     BorderRadius? borderRadius,
     ShapeBorder? shape,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Card(
-      margin: margin ?? EdgeInsets.all(design.designSystemSpacing.sm),
-      color: color ?? design.designSystemColors.surfaceContainer,
+      margin: margin ?? const EdgeInsets.all(DesignSystem.spacingSM),
+      color: color ?? DesignSystem.surfaceContainer,
       elevation: elevation ?? 2,
       shape: shape ?? RoundedRectangleBorder(
-        borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.md),
+        borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
       ),
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: child,
         ),
       ),
@@ -305,18 +302,15 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     String? semanticLabel,
     EdgeInsetsGeometry? padding,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return buildHoverableContainer(
       context: context,
       onHover: onHover,
       onExit: onExit,
-      padding: padding ?? EdgeInsets.all(design.designSystemSpacing.sm),
+      padding: padding ?? const EdgeInsets.all(DesignSystem.spacingSM),
       child: Icon(
         icon,
         size: size ?? 24,
-        color: color ?? design.designSystemColors.onSurface,
+        color: color ?? DesignSystem.onSurface,
         semanticLabel: semanticLabel,
       ),
     );
@@ -332,20 +326,17 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? hoverColor,
     EdgeInsetsGeometry? padding,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return buildHoverableContainer(
       context: context,
       onHover: onHover,
       onExit: onExit,
-      padding: padding ?? EdgeInsets.symmetric(
-        horizontal: design.designSystemSpacing.sm,
-        vertical: design.designSystemSpacing.xs,
+      padding: padding ?? const EdgeInsets.symmetric(
+        horizontal: DesignSystem.spacingSM,
+        vertical: DesignSystem.spacingXS,
       ),
       decoration: BoxDecoration(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.sm),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
       ),
       child: Text(
         text,
@@ -368,23 +359,20 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     double? elevation,
     double? hoverElevation,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
       margin: margin,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.primary,
+        color: backgroundColor ?? DesignSystem.primary,
         elevation: elevation ?? 2,
-        borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.md),
+        borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
         child: buildHoverableWidget(
           context: context,
           onHover: onHover,
           onExit: onExit,
           child: Container(
-            padding: padding ?? EdgeInsets.symmetric(
-              horizontal: design.designSystemSpacing.lg,
-              vertical: design.designSystemSpacing.md,
+            padding: padding ?? const EdgeInsets.symmetric(
+              horizontal: DesignSystem.spacingLG,
+              vertical: DesignSystem.spacingMD,
             ),
             child: child,
           ),
@@ -404,18 +392,15 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? hoverColor,
     BorderRadius? borderRadius,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.sm),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusSM),
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
         child: Container(
-          padding: padding ?? EdgeInsets.all(design.designSystemSpacing.md),
+          padding: padding ?? const EdgeInsets.all(DesignSystem.spacingMD),
           child: child,
         ),
       ),
@@ -432,11 +417,8 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? hoverColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
       shape: const CircleBorder(),
       child: buildHoverableWidget(
         context: context,
@@ -463,20 +445,17 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? hoverColor,
     BorderRadius? borderRadius,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.xl),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusXL),
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
         child: Container(
-          padding: padding ?? EdgeInsets.symmetric(
-            horizontal: design.designSystemSpacing.md,
-            vertical: design.designSystemSpacing.sm,
+          padding: padding ?? const EdgeInsets.symmetric(
+            horizontal: DesignSystem.spacingMD,
+            vertical: DesignSystem.spacingSM,
           ),
           child: child,
         ),
@@ -494,17 +473,14 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? hoverColor,
     EdgeInsetsGeometry? padding,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
         child: Container(
-          padding: padding ?? EdgeInsets.all(design.designSystemSpacing.md),
+          padding: padding ?? const EdgeInsets.all(DesignSystem.spacingMD),
           child: child,
         ),
       ),
@@ -522,19 +498,16 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? hoverColor,
     Color? selectedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
       color: isSelected
-          ? (selectedColor ?? design.designSystemColors.primary)
-          : (backgroundColor ?? design.designSystemColors.surfaceContainer),
+          ? (selectedColor ?? DesignSystem.primary)
+          : (backgroundColor ?? DesignSystem.surfaceContainer),
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: child,
         ),
       ),
@@ -577,17 +550,14 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? hoverColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: child,
         ),
       ),
@@ -605,19 +575,16 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? hoverColor,
     Color? selectedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
       color: isSelected
-          ? (selectedColor ?? design.designSystemColors.primary)
-          : (backgroundColor ?? design.designSystemColors.surfaceContainer),
+          ? (selectedColor ?? DesignSystem.primary)
+          : (backgroundColor ?? DesignSystem.surfaceContainer),
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: child,
         ),
       ),
@@ -635,11 +602,8 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? hoverColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
       child: ExpansionTile(
         title: buildHoverableWidget(
           context: context,
@@ -648,9 +612,9 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
           child: title,
         ),
         initiallyExpanded: initiallyExpanded,
-        backgroundColor: backgroundColor ?? design.designSystemColors.surfaceContainer,
-        collapsedBackgroundColor: backgroundColor ?? design.designSystemColors.surfaceContainer,
-        childrenPadding: EdgeInsets.all(design.designSystemSpacing.md),
+        backgroundColor: backgroundColor ?? DesignSystem.surfaceContainer,
+        collapsedBackgroundColor: backgroundColor ?? DesignSystem.surfaceContainer,
+        childrenPadding: const EdgeInsets.all(DesignSystem.spacingMD),
         children: children,
       ),
     );
@@ -665,11 +629,8 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? hoverColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
       child: InkWell(
         onHover: _hoverEnabled ? (hovered) {
           if (hovered) {
@@ -679,7 +640,7 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
           }
         } : null,
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.sm),
+          padding: const EdgeInsets.all(DesignSystem.spacingSM),
           child: Row(
             children: cells.map((cell) {
               return Expanded(
@@ -709,20 +670,17 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? hoverColor,
     Color? selectedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
       color: isSelected
-          ? (selectedColor ?? design.designSystemColors.primary)
-          : (backgroundColor ?? design.designSystemColors.surfaceContainer),
+          ? (selectedColor ?? DesignSystem.primary)
+          : (backgroundColor ?? DesignSystem.surfaceContainer),
       shape: const CircleBorder(),
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.sm),
+          padding: const EdgeInsets.all(DesignSystem.spacingSM),
           child: child,
         ),
       ),
@@ -738,12 +696,9 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     double? size,
     BorderRadius? borderRadius,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
       color: color,
-      borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.sm),
+      borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusSM),
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
@@ -752,9 +707,9 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
           width: size ?? 40,
           height: size ?? 40,
           decoration: BoxDecoration(
-            borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.sm),
+            borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusSM),
             border: Border.all(
-              color: design.designSystemColors.border,
+              color: DesignSystem.borderColor,
               width: 1,
             ),
           ),
@@ -772,18 +727,15 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? hoverColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.primary,
+      color: backgroundColor ?? DesignSystem.primary,
       shape: const CircleBorder(),
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.sm),
+          padding: const EdgeInsets.all(DesignSystem.spacingSM),
           child: child,
         ),
       ),
@@ -801,14 +753,11 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? inactiveColor,
     Color? hoverColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
       color: value
-          ? (activeColor ?? design.designSystemColors.primary)
-          : (inactiveColor ?? design.designSystemColors.surfaceContainer),
-      borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+          ? (activeColor ?? DesignSystem.primary)
+          : (inactiveColor ?? DesignSystem.surfaceContainer),
+      borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
@@ -816,8 +765,8 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
         child: Switch(
           value: value,
           onChanged: _hoverEnabled ? onChanged : null,
-          activeColor: activeColor ?? design.designSystemColors.primary,
-          inactiveThumbColor: inactiveColor ?? design.designSystemColors.surfaceContainer,
+          activeThumbColor: activeColor ?? DesignSystem.primary,
+          inactiveThumbColor: inactiveColor ?? DesignSystem.surfaceContainer,
         ),
       ),
     );
@@ -833,9 +782,6 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? activeColor,
     Color? hoverColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
       color: Colors.transparent,
       child: buildHoverableWidget(
@@ -845,7 +791,7 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
         child: Checkbox(
           value: value,
           onChanged: _hoverEnabled ? (value) => onChanged(value ?? false) : null,
-          activeColor: activeColor ?? design.designSystemColors.primary,
+          activeColor: activeColor ?? DesignSystem.primary,
         ),
       ),
     );
@@ -862,9 +808,6 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? activeColor,
     Color? hoverColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
       color: Colors.transparent,
       child: buildHoverableWidget(
@@ -875,7 +818,7 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
           value: value,
           groupValue: groupValue,
           onChanged: _hoverEnabled ? (value) => onChanged(value as U) : null,
-          activeColor: activeColor ?? design.designSystemColors.primary,
+          activeColor: activeColor ?? DesignSystem.primary,
         ),
       ),
     );
@@ -891,23 +834,20 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? progressColor,
     Color? hoverColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.sm),
+          padding: const EdgeInsets.all(DesignSystem.spacingSM),
           child: LinearProgressIndicator(
             value: value,
-            backgroundColor: design.designSystemColors.surfaceContainerHigh,
+            backgroundColor: DesignSystem.surfaceContainerHigh,
             valueColor: AlwaysStoppedAnimation<Color>(
-              progressColor ?? design.designSystemColors.primary,
+              progressColor ?? DesignSystem.primary,
             ),
           ),
         ),
@@ -928,9 +868,6 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? hoverColor,
     double? size,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Row(
       children: List.generate(maxRating, (index) {
         final starValue = index + 1;
@@ -945,8 +882,8 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
             icon: Icon(
               isActive ? Icons.star : Icons.star_border,
               color: isActive
-                  ? (activeColor ?? design.designSystemColors.warning)
-                  : (inactiveColor ?? design.designSystemColors.onSurfaceVariant),
+                  ? (activeColor ?? DesignSystem.warning)
+                  : (inactiveColor ?? DesignSystem.onSurfaceVariant),
             ),
             iconSize: size ?? 24,
             padding: EdgeInsets.zero,
@@ -968,12 +905,9 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? hoverColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -986,14 +920,14 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
                   ? () => onPageChanged(currentPage - 1)
                   : null,
               icon: const Icon(Icons.chevron_left),
-              padding: EdgeInsets.all(design.designSystemSpacing.sm),
+              padding: const EdgeInsets.all(DesignSystem.spacingSM),
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: design.designSystemSpacing.md),
+            padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingMD),
             child: Text(
               '$currentPage / $totalPages',
-              style: design.designSystemTypography.bodyMedium,
+              style: DesignSystem.bodyMedium,
             ),
           ),
           buildHoverableWidget(
@@ -1005,7 +939,7 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
                   ? () => onPageChanged(currentPage + 1)
                   : null,
               icon: const Icon(Icons.chevron_right),
-              padding: EdgeInsets.all(design.designSystemSpacing.sm),
+              padding: const EdgeInsets.all(DesignSystem.spacingSM),
             ),
           ),
         ],
@@ -1024,29 +958,26 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? hoverColor,
     Color? selectedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
       color: selected
-          ? (selectedColor ?? design.designSystemColors.primary)
-          : (backgroundColor ?? design.designSystemColors.surfaceContainer),
-      borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+          ? (selectedColor ?? DesignSystem.primary)
+          : (backgroundColor ?? DesignSystem.surfaceContainer),
+      borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: design.designSystemSpacing.md,
-            vertical: design.designSystemSpacing.sm,
+          padding: const EdgeInsets.symmetric(
+            horizontal: DesignSystem.spacingMD,
+            vertical: DesignSystem.spacingSM,
           ),
           child: Text(
             label,
-            style: design.designSystemTypography.bodyMedium.copyWith(
+            style: DesignSystem.bodyMedium.copyWith(
               color: selected
-                  ? design.designSystemColors.onPrimary
-                  : design.designSystemColors.onSurface,
+                  ? DesignSystem.onPrimary
+                  : DesignSystem.onSurface,
             ),
           ),
         ),
@@ -1064,32 +995,29 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? hoverColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: design.designSystemSpacing.md,
-            vertical: design.designSystemSpacing.sm,
+          padding: const EdgeInsets.symmetric(
+            horizontal: DesignSystem.spacingMD,
+            vertical: DesignSystem.spacingSM,
           ),
           child: Row(
             children: [
               Text(
                 label,
-                style: design.designSystemTypography.bodyMedium,
+                style: DesignSystem.bodyMedium,
               ),
-              SizedBox(width: design.designSystemSpacing.sm),
+              const SizedBox(width: DesignSystem.spacingSM),
               Icon(
                 ascending ? Icons.arrow_upward : Icons.arrow_downward,
                 size: 16,
-                color: design.designSystemColors.onSurfaceVariant,
+                color: DesignSystem.onSurfaceVariant,
               ),
             ],
           ),
@@ -1108,9 +1036,6 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? hoverColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Stack(
       children: [
         buildHoverableWidget(
@@ -1124,18 +1049,18 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
             top: 0,
             right: 0,
             child: Material(
-              color: design.designSystemColors.error,
+              color: DesignSystem.error,
               borderRadius: BorderRadius.circular(10),
               child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: design.designSystemSpacing.xs,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DesignSystem.spacingXS,
                   vertical: 2,
                 ),
                 constraints: const BoxConstraints(minWidth: 20),
                 child: Text(
                   count > 99 ? '99+' : count.toString(),
-                  style: design.designSystemTypography.caption.copyWith(
-                    color: design.designSystemColors.onError,
+                  style: DesignSystem.caption.copyWith(
+                    color: DesignSystem.onError,
                     fontSize: 10,
                   ),
                   textAlign: TextAlign.center,
@@ -1158,33 +1083,30 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? hoverColor,
     EdgeInsetsGeometry? padding,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
         child: Container(
-          padding: padding ?? EdgeInsets.symmetric(
-            horizontal: design.designSystemSpacing.md,
-            vertical: design.designSystemSpacing.sm,
+          padding: padding ?? const EdgeInsets.symmetric(
+            horizontal: DesignSystem.spacingMD,
+            vertical: DesignSystem.spacingSM,
           ),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.search,
-                color: design.designSystemColors.onSurfaceVariant,
+                color: DesignSystem.onSurfaceVariant,
               ),
-              SizedBox(width: design.designSystemSpacing.sm),
+              const SizedBox(width: DesignSystem.spacingSM),
               Expanded(
                 child: Text(
                   hintText ?? 'Search...',
-                  style: design.designSystemTypography.bodyMedium.copyWith(
-                    color: design.designSystemColors.onSurfaceVariant,
+                  style: DesignSystem.bodyMedium.copyWith(
+                    color: DesignSystem.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -1206,19 +1128,16 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     double? elevation,
     double? hoverElevation,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.primary,
+      color: backgroundColor ?? DesignSystem.primary,
       elevation: elevation ?? 6,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+      borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.lg),
+          padding: const EdgeInsets.all(DesignSystem.spacingLG),
           child: child,
         ),
       ),
@@ -1237,11 +1156,8 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? hoverColor,
     Color? selectedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
       child: Row(
         children: tabs.asMap().entries.map((entry) {
           final index = entry.key;
@@ -1254,12 +1170,12 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
               onHover: onHover,
               onExit: onExit,
               child: Container(
-                padding: EdgeInsets.all(design.designSystemSpacing.md),
+                padding: const EdgeInsets.all(DesignSystem.spacingMD),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? (selectedColor ?? design.designSystemColors.primary)
+                      ? (selectedColor ?? DesignSystem.primary)
                       : Colors.transparent,
-                  borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+                  borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
                 ),
                 child: tab,
               ),
@@ -1282,13 +1198,10 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? hoverColor,
     Color? selectedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surface,
+      color: backgroundColor ?? DesignSystem.surface,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: design.designSystemSpacing.sm),
+        padding: const EdgeInsets.symmetric(vertical: DesignSystem.spacingSM),
         child: Row(
           children: items.asMap().entries.map((entry) {
             final index = entry.key;
@@ -1306,18 +1219,18 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
                     IconTheme(
                       data: IconThemeData(
                         color: isSelected
-                            ? (selectedColor ?? design.designSystemColors.primary)
-                            : design.designSystemColors.onSurfaceVariant,
+                            ? (selectedColor ?? DesignSystem.primary)
+                            : DesignSystem.onSurfaceVariant,
                       ),
                       child: isSelected ? item.activeIcon : item.icon,
                     ),
-                    SizedBox(height: design.designSystemSpacing.xs),
+                    const SizedBox(height: DesignSystem.spacingXS),
                     Text(
                       item.label!,
-                      style: design.designSystemTypography.caption.copyWith(
+                      style: DesignSystem.caption.copyWith(
                         color: isSelected
-                            ? (selectedColor ?? design.designSystemColors.primary)
-                            : design.designSystemColors.onSurfaceVariant,
+                            ? (selectedColor ?? DesignSystem.primary)
+                            : DesignSystem.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -1343,12 +1256,9 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? hoverColor,
     Color? selectedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
       child: Row(
         children: segments.map((segment) {
           final isSelected = segment == selectedValue;
@@ -1358,15 +1268,15 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
               onHover: onHover,
               onExit: onExit,
               child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: design.designSystemSpacing.md,
-                  vertical: design.designSystemSpacing.sm,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DesignSystem.spacingMD,
+                  vertical: DesignSystem.spacingSM,
                 ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? (selectedColor ?? design.designSystemColors.primary)
+                      ? (selectedColor ?? DesignSystem.primary)
                       : Colors.transparent,
-                  borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+                  borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
                 ),
                 child: builder(segment),
               ),
@@ -1389,12 +1299,9 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? hoverColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: Stepper(
         currentStep: currentStep,
         onStepContinue: _hoverEnabled ? onStepContinue : null,
@@ -1402,22 +1309,18 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
         steps: steps,
         controlsBuilder: (context, details) {
           return Container(
-            margin: EdgeInsets.only(top: design.designSystemSpacing.md),
+            margin: const EdgeInsets.only(top: DesignSystem.spacingMD),
             child: Row(
               children: [
                 if (currentStep < steps.length - 1)
-                  buildHoverableButton(
-                    context: context,
-                    onHover: onHover,
-                    onExit: onExit,
+                  ElevatedButton(
+                    onPressed: details.onStepContinue,
                     child: const Text('Continue'),
                   ),
                 if (currentStep > 0) ...[
-                  SizedBox(width: design.designSystemSpacing.md),
-                  buildHoverableButton(
-                    context: context,
-                    onHover: onHover,
-                    onExit: onExit,
+                  const SizedBox(width: DesignSystem.spacingMD),
+                  ElevatedButton(
+                    onPressed: details.onStepCancel,
                     child: const Text('Back'),
                   ),
                 ],
@@ -1439,14 +1342,11 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? hoverColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: Container(
-        padding: EdgeInsets.all(design.designSystemSpacing.md),
+        padding: const EdgeInsets.all(DesignSystem.spacingMD),
         child: DataTable(
           columns: columns,
           rows: rows.map((row) {
@@ -1479,28 +1379,25 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? hoverColor,
     Color? selectedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.calendar_today,
-                color: design.designSystemColors.onSurfaceVariant,
+                color: DesignSystem.onSurfaceVariant,
               ),
-              SizedBox(width: design.designSystemSpacing.sm),
+              const SizedBox(width: DesignSystem.spacingSM),
               Text(
                 '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                style: design.designSystemTypography.bodyMedium,
+                style: DesignSystem.bodyMedium,
               ),
             ],
           ),
@@ -1519,28 +1416,25 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? hoverColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.access_time,
-                color: design.designSystemColors.onSurfaceVariant,
+                color: DesignSystem.onSurfaceVariant,
               ),
-              SizedBox(width: design.designSystemSpacing.sm),
+              const SizedBox(width: DesignSystem.spacingSM),
               Text(
                 selectedTime.format(context),
-                style: design.designSystemTypography.bodyMedium,
+                style: DesignSystem.bodyMedium,
               ),
             ],
           ),
@@ -1560,18 +1454,15 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? hoverColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: buildHoverableWidget(
         context: context,
         onHover: onHover,
         onExit: onExit,
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: Row(
             children: [
               Container(
@@ -1579,17 +1470,17 @@ mixin HoverMixin<T extends StatefulWidget> on State<T> {
                 height: 24,
                 decoration: BoxDecoration(
                   color: selectedColor,
-                  borderRadius: BorderRadius.circular(design.designSystemRadius.sm),
+                  borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
                   border: Border.all(
-                    color: design.designSystemColors.border,
+                    color: DesignSystem.borderColor,
                     width: 1,
                   ),
                 ),
               ),
-              SizedBox(width: design.designSystemSpacing.sm),
+              const SizedBox(width: DesignSystem.spacingSM),
               Text(
                 'Color',
-                style: design.designSystemTypography.bodyMedium,
+                style: DesignSystem.bodyMedium,
               ),
             ],
           ),

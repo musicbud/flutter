@@ -56,6 +56,5 @@ flutter:
 
   assets:
     - assets/icons/
-    - assets/images/
     - assets/ui/
     - assets/endpoints_map.json

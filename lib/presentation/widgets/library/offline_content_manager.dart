@@ -305,7 +305,7 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
               );
             },
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            activeColor: DesignSystem.primary,
+            activeThumbColor: DesignSystem.primary,
           ),
         ],
       ),
@@ -966,7 +966,7 @@ class _OfflineContentManagerState extends State<OfflineContentManager>
         ),
         value: value,
         onChanged: onChanged,
-        activeColor: DesignSystem.primary,
+        activeThumbColor: DesignSystem.primary,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),

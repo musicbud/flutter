@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "../../../../core/theme/design_system.dart";
 
 class ModernInputField extends StatefulWidget {
   final TextEditingController? controller;
@@ -19,6 +20,7 @@ class ModernInputField extends StatefulWidget {
   final bool obscureText;
   final Widget? suffixIcon;
   final String? Function(String?)? validator;
+  final Widget? prefixIcon;
 
   const ModernInputField({
     super.key,
@@ -40,6 +42,7 @@ class ModernInputField extends StatefulWidget {
     this.obscureText = false,
     this.suffixIcon,
     this.validator,
+    this.prefixIcon,
   });
 
   @override
@@ -59,7 +62,7 @@ class _ModernInputFieldState extends State<ModernInputField> {
         onTap: widget.onTap,
         maxLines: widget.obscureText ? 1 : widget.maxLines,
         obscureText: widget.obscureText,
-        style: widget.customTextStyle ?? Theme.of(context).textTheme.bodyMedium,
+        style: widget.customTextStyle ?? DesignSystem.bodyMedium,
         decoration: _getInputDecoration(context),
         validator: widget.validator,
       ),
@@ -67,27 +70,28 @@ class _ModernInputFieldState extends State<ModernInputField> {
   }
 
   InputDecoration _getInputDecoration(BuildContext context) {
-    final borderRadius = BorderRadius.circular(8);
+    final borderRadius = BorderRadius.circular(DesignSystem.radiusMD);
     final borderSide = BorderSide(
-      color: widget.customBorderColor ?? Theme.of(context).dividerColor,
+      color: widget.customBorderColor ?? DesignSystem.borderColor,
     );
-    final focusedBorderSide = BorderSide(
-      color: widget.customBorderColor ?? Theme.of(context).primaryColor,
+    final focusedBorderSide = const BorderSide(
+      color: DesignSystem.primary,
       width: 2,
     );
 
     var decoration = InputDecoration(
       labelText: widget.label,
       hintText: widget.hintText,
-      labelStyle: widget.customLabelStyle ?? Theme.of(context).textTheme.bodyMedium,
-      hintStyle: widget.customHintStyle ?? Theme.of(context).textTheme.bodyMedium?.copyWith(
-        color: Theme.of(context).hintColor,
+      labelStyle: widget.customLabelStyle ?? DesignSystem.bodyMedium,
+      hintStyle: widget.customHintStyle ?? DesignSystem.bodyMedium.copyWith(
+        color: DesignSystem.onSurfaceVariant,
       ),
       filled: widget.variant == ModernInputFieldVariant.filled,
       fillColor: widget.customBackgroundColor ?? (widget.variant == ModernInputFieldVariant.filled
-        ? Theme.of(context).inputDecorationTheme.fillColor
+        ? DesignSystem.surfaceContainer
         : Colors.transparent),
       suffixIcon: widget.suffixIcon,
+      prefixIcon: widget.prefixIcon,
     );
 
     switch (widget.variant) {
@@ -116,6 +120,7 @@ class _ModernInputFieldState extends State<ModernInputField> {
             borderSide: borderSide,
           ),
           focusedBorder: UnderlineInputBorder(
+            borderRadius: borderRadius,
             borderSide: focusedBorderSide,
           ),
         );

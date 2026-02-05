@@ -136,17 +136,14 @@ class ConfirmationDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return AlertDialog(
       title: Text(
         title,
-        style: design?.designSystemTypography.headlineSmall ?? theme.textTheme.headlineSmall,
+        style: DesignSystem.headlineSmall,
       ),
       content: Text(
         message,
-        style: design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium,
+        style: DesignSystem.bodyMedium,
       ),
       actions: [
         TextButton(
@@ -157,7 +154,7 @@ class ConfirmationDialog extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(true),
           style: isDestructive
               ? TextButton.styleFrom(
-                  foregroundColor: design?.designSystemColors.error ?? Colors.red,
+                  foregroundColor: DesignSystem.error,
                 )
               : null,
           child: Text(confirmText),
@@ -184,18 +181,15 @@ class AlertDialogWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return AlertDialog(
       icon: icon != null ? Icon(icon, size: 48) : null,
       title: Text(
         title,
-        style: design?.designSystemTypography.headlineSmall ?? theme.textTheme.headlineSmall,
+        style: DesignSystem.headlineSmall,
       ),
       content: Text(
         message,
-        style: design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium,
+        style: DesignSystem.bodyMedium,
       ),
       actions: [
         TextButton(
@@ -263,13 +257,10 @@ class _InputDialogState extends State<InputDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return AlertDialog(
       title: Text(
         widget.title,
-        style: design?.designSystemTypography.headlineSmall ?? theme.textTheme.headlineSmall,
+        style: DesignSystem.headlineSmall,
       ),
       content: TextField(
         controller: _controller,
@@ -312,9 +303,6 @@ class LoadingDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return PopScope(
       canPop: false,
       child: AlertDialog(
@@ -323,10 +311,10 @@ class LoadingDialog extends StatelessWidget {
           children: [
             const CircularProgressIndicator(),
             if (message != null) ...[
-              SizedBox(height: design?.designSystemSpacing.md ?? 16),
+              const SizedBox(height: DesignSystem.spacingMD),
               Text(
                 message!,
-                style: design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium,
+                style: DesignSystem.bodyMedium,
                 textAlign: TextAlign.center,
               ),
             ],

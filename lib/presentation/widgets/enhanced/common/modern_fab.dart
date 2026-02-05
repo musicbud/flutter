@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/design_system.dart';
+import 'package:musicbud_flutter/core/theme/design_system.dart';
 
 /// Modern Floating Action Button with animations and variants
 ///
@@ -71,8 +71,7 @@ class _ModernFABState extends State<ModernFAB> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final bgColor = widget.backgroundColor ?? design?.designSystemColors.primary ?? theme.colorScheme.primary;
+    final bgColor = widget.backgroundColor ?? DesignSystem.primary;
     final fgColor = widget.foregroundColor ?? Colors.white;
 
     return ScaleTransition(
@@ -154,13 +153,10 @@ class _RotatingFABState extends State<RotatingFAB> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return FloatingActionButton(
       onPressed: _handlePress,
       mini: widget.mini,
-      backgroundColor: design?.designSystemColors.primary ?? theme.colorScheme.primary,
+      backgroundColor: DesignSystem.primary,
       child: AnimatedBuilder(
         animation: _controller,
         builder: (context, child) {
@@ -231,8 +227,7 @@ class _SpeedDialFABState extends State<SpeedDialFAB> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final bgColor = widget.backgroundColor ?? design?.designSystemColors.primary ?? theme.colorScheme.primary;
+    final bgColor = widget.backgroundColor ?? DesignSystem.primary;
     final fgColor = widget.foregroundColor ?? Colors.white;
 
     return Column(
@@ -244,7 +239,6 @@ class _SpeedDialFABState extends State<SpeedDialFAB> with SingleTickerProviderSt
           return _buildSpeedDialItem(
             widget.actions[reversedIndex],
             reversedIndex,
-            design,
             theme,
           );
         }).reversed,
@@ -268,7 +262,6 @@ class _SpeedDialFABState extends State<SpeedDialFAB> with SingleTickerProviderSt
   Widget _buildSpeedDialItem(
     SpeedDialAction action,
     int index,
-    DesignSystemThemeExtension? design,
     ThemeData theme,
   ) {
     final animation = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -302,15 +295,15 @@ class _SpeedDialFABState extends State<SpeedDialFAB> with SingleTickerProviderSt
                     Material(
                       color: theme.colorScheme.surface,
                       elevation: 4,
-                      borderRadius: BorderRadius.circular(design?.designSystemRadius.sm ?? 4),
+                      borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
                       child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: design?.designSystemSpacing.md ?? 12,
-                          vertical: design?.designSystemSpacing.xs ?? 4,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: DesignSystem.spacingMD,
+                          vertical: DesignSystem.spacingXS,
                         ),
                         child: Text(
                           action.label!,
-                          style: design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall,
+                          style: DesignSystem.bodySmall,
                         ),
                       ),
                     ),
@@ -409,9 +402,6 @@ class _MorphingFABState extends State<MorphingFAB> with SingleTickerProviderStat
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, child) {
@@ -419,7 +409,7 @@ class _MorphingFABState extends State<MorphingFAB> with SingleTickerProviderStat
         
         return FloatingActionButton.extended(
           onPressed: widget.onPressed,
-          backgroundColor: design?.designSystemColors.primary ?? theme.colorScheme.primary,
+          backgroundColor: DesignSystem.primary,
           icon: Icon(
             isExpanded && widget.expandedIcon != null ? widget.expandedIcon : widget.icon,
             color: Colors.white,
@@ -477,8 +467,7 @@ class _PulsingFABState extends State<PulsingFAB> with SingleTickerProviderStateM
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-    final pulseColor = widget.pulseColor ?? design?.designSystemColors.primary ?? theme.colorScheme.primary;
+    final pulseColor = widget.pulseColor ?? DesignSystem.primary;
 
     return AnimatedBuilder(
       animation: _controller,
@@ -492,7 +481,7 @@ class _PulsingFABState extends State<PulsingFAB> with SingleTickerProviderStateM
               height: (widget.mini ? 40 : 56) * (1 + _controller.value * 0.5),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: pulseColor.withValues(alpha: 0.3 * (1 - _controller.value)),
+                color: pulseColor.withAlpha((255 * 0.3 * (1 - _controller.value)).toInt()),
               ),
             ),
             // FAB

@@ -211,29 +211,26 @@ class WidgetFactory {
   }
 
   Widget _createMusicTile(BuildContext context, Map<String, dynamic>? data, Key? key) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     // This would integrate with existing MusicTile widget
     return Container(
       key: key,
-      padding: EdgeInsets.all(design.designSystemSpacing.md),
+      padding: const EdgeInsets.all(DesignSystem.spacingMD),
       decoration: BoxDecoration(
-        color: design.designSystemColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        color: DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             data?['title'] ?? 'Music Title',
-            style: design.designSystemTypography.titleMedium,
+            style: DesignSystem.titleMedium,
           ),
-          SizedBox(height: design.designSystemSpacing.xs),
+          const SizedBox(height: DesignSystem.spacingXS),
           Text(
             data?['artist'] ?? 'Artist',
-            style: design.designSystemTypography.bodySmall.copyWith(
-              color: design.designSystemColors.onSurfaceVariant,
+            style: DesignSystem.bodySmall.copyWith(
+              color: DesignSystem.onSurfaceVariant,
             ),
           ),
         ],
@@ -242,16 +239,13 @@ class WidgetFactory {
   }
 
   Widget _createPlaylistCard(BuildContext context, Map<String, dynamic>? data, Key? key) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     // This would integrate with existing PlaylistCard widget
     return Container(
       key: key,
-      padding: EdgeInsets.all(design.designSystemSpacing.md),
+      padding: const EdgeInsets.all(DesignSystem.spacingMD),
       decoration: BoxDecoration(
-        color: design.designSystemColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.lg),
+        color: DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -259,18 +253,18 @@ class WidgetFactory {
           Container(
             height: 120,
             decoration: BoxDecoration(
-              color: (data?['accentColor'] as Color?) ?? design.designSystemColors.primary,
-              borderRadius: BorderRadius.circular(design.designSystemRadius.lg),
+              color: (data?['accentColor'] as Color?) ?? DesignSystem.primary,
+              borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
             ),
           ),
-          SizedBox(height: design.designSystemSpacing.md),
+          const SizedBox(height: DesignSystem.spacingMD),
           Text(
             data?['title'] ?? 'Playlist Title',
-            style: design.designSystemTypography.titleSmall,
+            style: DesignSystem.titleSmall,
           ),
           Text(
             data?['trackCount'] ?? '0 tracks',
-            style: design.designSystemTypography.caption,
+            style: DesignSystem.caption,
           ),
         ],
       ),
@@ -292,36 +286,33 @@ class WidgetFactory {
   }
 
   Widget _createErrorWidget(BuildContext context, String type, Object error) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
-      padding: EdgeInsets.all(design.designSystemSpacing.md),
+      padding: const EdgeInsets.all(DesignSystem.spacingMD),
       decoration: BoxDecoration(
-        color: design.designSystemColors.error.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
-        border: Border.all(color: design.designSystemColors.error),
+        color: DesignSystem.error.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
+        border: Border.all(color: DesignSystem.error),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
+          const Icon(
             Icons.error_outline,
-            color: design.designSystemColors.error,
+            color: DesignSystem.error,
             size: 32,
           ),
-          SizedBox(height: design.designSystemSpacing.sm),
+          const SizedBox(height: DesignSystem.spacingSM),
           Text(
             'Widget Error',
-            style: design.designSystemTypography.titleSmall.copyWith(
-              color: design.designSystemColors.error,
+            style: DesignSystem.titleSmall.copyWith(
+              color: DesignSystem.error,
             ),
           ),
-          SizedBox(height: design.designSystemSpacing.xs),
+          const SizedBox(height: DesignSystem.spacingXS),
           Text(
             'Type: $type\nError: $error',
-            style: design.designSystemTypography.caption.copyWith(
-              color: design.designSystemColors.error,
+            style: DesignSystem.caption.copyWith(
+              color: DesignSystem.error,
             ),
             textAlign: TextAlign.center,
           ),
@@ -339,8 +330,6 @@ class WidgetFactory {
           return CardVariant.primary;
         case 'secondary':
           return CardVariant.secondary;
-        case 'accent':
-          return CardVariant.accent;
         case 'outlined':
           return CardVariant.outlined;
         default:
@@ -351,20 +340,17 @@ class WidgetFactory {
   }
 
   EdgeInsetsGeometry _parseEdgeInsets(BuildContext context, dynamic value) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     if (value is EdgeInsetsGeometry) return value;
     if (value is double) return EdgeInsets.all(value);
     if (value is Map) {
       return EdgeInsets.only(
-        left: value['left'] ?? 0,
-        top: value['top'] ?? 0,
-        right: value['right'] ?? 0,
-        bottom: value['bottom'] ?? 0,
+        left: (value['left'] as double?) ?? 0,
+        top: (value['top'] as double?) ?? 0,
+        right: (value['right'] as double?) ?? 0,
+        bottom: (value['bottom'] as double?) ?? 0,
       );
     }
-    return EdgeInsets.all(design.designSystemSpacing.md);
+    return const EdgeInsets.all(DesignSystem.spacingMD);
   }
 
   ListLoadingState _parseLoadingState(dynamic value) {

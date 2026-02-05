@@ -43,9 +43,6 @@ class StateFactory {
     Widget? customIndicator,
     EdgeInsetsGeometry? padding,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return StateBuilder()
         .withState(StateType.loading)
         .withLoadingMessage(message ?? 'Loading...')
@@ -56,12 +53,12 @@ class StateFactory {
                   height: progressSize ?? 48,
                   child: CircularProgressIndicator(
                     strokeWidth: 3,
-                    valueColor: AlwaysStoppedAnimation<Color>(design.designSystemColors.primary),
+                    valueColor: AlwaysStoppedAnimation<Color>(DesignSystem.primary),
                   ),
                 ))
               : const SizedBox.shrink(),
         )
-        .withPadding(padding ?? EdgeInsets.all(design.designSystemSpacing.xl))
+        .withPadding(padding ?? const EdgeInsets.all(DesignSystem.spacingXL))
         .build();
   }
 
@@ -75,14 +72,11 @@ class StateFactory {
     IconData? customIcon,
     EdgeInsetsGeometry? padding,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return StateBuilder()
         .withState(StateType.empty)
         .withEmptyMessage(message ?? _getDefaultEmptyMessage(type))
         .withEmptyIcon(customIcon ?? _getDefaultEmptyIcon(type))
-        .withPadding(padding ?? EdgeInsets.all(design.designSystemSpacing.xl))
+        .withPadding(padding ?? const EdgeInsets.all(DesignSystem.spacingXL))
         .build();
   }
 
@@ -96,15 +90,12 @@ class StateFactory {
     IconData? customIcon,
     EdgeInsetsGeometry? padding,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return StateBuilder()
         .withState(StateType.error)
         .withErrorMessage(message ?? _getDefaultErrorMessage(type))
         .withErrorIcon(customIcon ?? _getDefaultErrorIcon(type))
         .withOnRetry(onRetry ?? () {})
-        .withPadding(padding ?? EdgeInsets.all(design.designSystemSpacing.xl))
+        .withPadding(padding ?? const EdgeInsets.all(DesignSystem.spacingXL))
         .build();
   }
 
@@ -117,14 +108,11 @@ class StateFactory {
     IconData? customIcon,
     EdgeInsetsGeometry? padding,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return StateBuilder()
         .withState(StateType.success)
         .withSuccessMessage(message ?? 'Success!')
         .withSuccessIcon(customIcon ?? Icons.check_circle_outline)
-        .withPadding(padding ?? EdgeInsets.all(design.designSystemSpacing.xl))
+        .withPadding(padding ?? const EdgeInsets.all(DesignSystem.spacingXL))
         .build();
   }
 
@@ -152,17 +140,14 @@ class StateFactory {
     bool dismissible = false,
     VoidCallback? onDismiss,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
-      color: design.designSystemColors.overlay,
+      color: DesignSystem.overlay,
       child: Center(
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.lg),
+          padding: const EdgeInsets.all(DesignSystem.spacingLG),
           decoration: BoxDecoration(
-            color: design.designSystemColors.surface,
-            borderRadius: BorderRadius.circular(design.designSystemRadius.lg),
+            color: DesignSystem.surface,
+            borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -172,14 +157,14 @@ class StateFactory {
                 height: 48,
                 child: CircularProgressIndicator(
                   strokeWidth: 3,
-                  valueColor: AlwaysStoppedAnimation<Color>(design.designSystemColors.primary),
+                  valueColor: AlwaysStoppedAnimation<Color>(DesignSystem.primary),
                 ),
               ),
-              SizedBox(height: design.designSystemSpacing.lg),
+              const SizedBox(height: DesignSystem.spacingLG),
               Text(
                 message ?? 'Loading...',
-                style: design.designSystemTypography.bodyMedium.copyWith(
-                  color: design.designSystemColors.onSurface,
+                style: DesignSystem.bodyMedium.copyWith(
+                  color: DesignSystem.onSurface,
                 ),
               ),
             ],
@@ -196,9 +181,6 @@ class StateFactory {
     int lines = 1,
     EdgeInsetsGeometry? margin,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
       height: height,
       margin: margin,
@@ -209,23 +191,23 @@ class StateFactory {
           (index) => Container(
             height: height / lines,
             margin: EdgeInsets.only(
-              bottom: index < lines - 1 ? design.designSystemSpacing.xs : 0,
+              bottom: index < lines - 1 ? DesignSystem.spacingXS : 0,
             ),
             decoration: BoxDecoration(
-              color: design.designSystemColors.surfaceContainerHigh,
-              borderRadius: BorderRadius.circular(design.designSystemRadius.sm),
+              color: DesignSystem.surfaceContainerHigh,
+              borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
             ),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 1500),
               curve: Curves.easeInOut,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    design.designSystemColors.surfaceContainerHigh,
-                    design.designSystemColors.surfaceContainer,
-                    design.designSystemColors.surfaceContainerHigh,
+                    DesignSystem.surfaceContainerHigh,
+                    DesignSystem.surfaceContainer,
+                    DesignSystem.surfaceContainerHigh,
                   ],
                 ),
               ),
@@ -242,18 +224,15 @@ class StateFactory {
     double height = 200,
     EdgeInsetsGeometry? margin,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
       height: height,
       margin: margin,
       decoration: BoxDecoration(
-        color: design.designSystemColors.surfaceContainer,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        color: DesignSystem.surfaceContainer,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 1500),
           curve: Curves.easeInOut,
@@ -262,9 +241,9 @@ class StateFactory {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                design.designSystemColors.surfaceContainer,
-                design.designSystemColors.surfaceContainerHigh.withValues(alpha: 0.5),
-                design.designSystemColors.surfaceContainer,
+                DesignSystem.surfaceContainer,
+                DesignSystem.surfaceContainerHigh.withOpacity(0.5),
+                DesignSystem.surfaceContainer,
               ],
             ),
           ),

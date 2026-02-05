@@ -99,9 +99,6 @@ class TopGenresHorizontalListState extends State<TopGenresHorizontalList>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     if (_isLoading && _genres.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -111,7 +108,7 @@ class TopGenresHorizontalListState extends State<TopGenresHorizontalList>
       child: ListView.builder(
         controller: _scrollController,
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: design.designSystemSpacing.md),
+        padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingMD),
         itemCount: _genres.length + (widget.showLoadMoreButton && !_hasReachedEnd ? 1 : 0),
         itemBuilder: (context, index) {
           if (index == _genres.length) {
@@ -124,16 +121,13 @@ class TopGenresHorizontalListState extends State<TopGenresHorizontalList>
   }
 
   Widget _buildGenreChip(String genre) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Padding(
-      padding: EdgeInsets.all(design.designSystemSpacing.xs),
+      padding: const EdgeInsets.all(DesignSystem.spacingXS),
       child: FilterChip(
         label: Text(
           genre,
-          style: design.designSystemTypography.bodySmall.copyWith(
-            color: design.designSystemColors.onSurface,
+          style: DesignSystem.bodySmall.copyWith(
+            color: DesignSystem.onSurface,
           ),
         ),
         selected: false,
@@ -146,22 +140,19 @@ class TopGenresHorizontalListState extends State<TopGenresHorizontalList>
             ),
           );
         },
-        backgroundColor: design.designSystemColors.surfaceContainer,
-        selectedColor: design.designSystemColors.primary,
-        checkmarkColor: design.designSystemColors.onPrimary,
+        backgroundColor: DesignSystem.surfaceContainer,
+        selectedColor: DesignSystem.primary,
+        checkmarkColor: DesignSystem.onPrimary,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+          borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
         ),
       ),
     );
   }
 
   Widget _buildLoadMoreButton() {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: design.designSystemSpacing.sm),
+      padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingSM),
       child: Center(
         child: ModernButton(
           text: 'Load More',

@@ -44,12 +44,11 @@ class ProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     return Card(
       margin: EdgeInsets.zero,
       child: Padding(
-        padding: EdgeInsets.all(design?.designSystemSpacing.lg ?? 16),
+        padding: const EdgeInsets.all(DesignSystem.spacingLG),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -65,7 +64,7 @@ class ProfileCard extends StatelessWidget {
                           ? NetworkImage(profile.imageUrl!)
                           : null,
                       child: profile.imageUrl == null
-                          ? Icon(Icons.person, size: 40)
+                          ? const Icon(Icons.person, size: 40)
                           : null,
                     ),
                     if (profile.isOnline)
@@ -76,7 +75,7 @@ class ProfileCard extends StatelessWidget {
                           width: 20,
                           height: 20,
                           decoration: BoxDecoration(
-                            color: design?.designSystemColors.success ?? Colors.green,
+                            color: DesignSystem.success,
                             shape: BoxShape.circle,
                             border: Border.all(
                               color: theme.colorScheme.surface,
@@ -87,7 +86,7 @@ class ProfileCard extends StatelessWidget {
                       ),
                   ],
                 ),
-                SizedBox(width: design?.designSystemSpacing.lg ?? 16),
+                const SizedBox(width: DesignSystem.spacingLG),
                 // Profile Info
                 Expanded(
                   child: Column(
@@ -97,34 +96,34 @@ class ProfileCard extends StatelessWidget {
                         children: [
                           Text(
                             profile.name,
-                            style: (design?.designSystemTypography.titleMedium ?? theme.textTheme.titleMedium)?.copyWith(
+                            style: (DesignSystem.titleMedium).copyWith(
                               fontWeight: FontWeight.w600,
                             ),
                           ),
                           if (profile.age != null) ...[
-                            SizedBox(width: design?.designSystemSpacing.sm ?? 8),
+                            const SizedBox(width: DesignSystem.spacingSM),
                             Text(
                               '${profile.age}',
-                              style: design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium,
+                              style: DesignSystem.bodyMedium,
                             ),
                           ],
                         ],
                       ),
                       if (profile.location != null) ...[
-                        SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+                        const SizedBox(height: DesignSystem.spacingXS),
                         Text(
                           profile.location!,
-                          style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
-                            color: design?.designSystemColors.textMuted ?? theme.colorScheme.onSurfaceVariant,
+                          style: (DesignSystem.bodySmall).copyWith(
+                            color: DesignSystem.textMuted,
                           ),
                         ),
                       ],
                       if (profile.distance != null) ...[
-                        SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+                        const SizedBox(height: DesignSystem.spacingXS),
                         Text(
                           '${profile.distance} away',
-                          style: (design?.designSystemTypography.caption ?? theme.textTheme.bodySmall)?.copyWith(
-                            color: design?.designSystemColors.primary ?? theme.colorScheme.primary,
+                          style: (DesignSystem.caption).copyWith(
+                            color: DesignSystem.primary,
                             fontSize: 12,
                           ),
                         ),
@@ -135,22 +134,22 @@ class ProfileCard extends StatelessWidget {
                 // Match Percentage Badge
                 if (profile.matchPercentage != null)
                   Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: design?.designSystemSpacing.sm ?? 8,
-                      vertical: design?.designSystemSpacing.xs ?? 4,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: DesignSystem.spacingSM,
+                      vertical: DesignSystem.spacingXS,
                     ),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
+                      gradient: const LinearGradient(
                         colors: [
-                          design?.designSystemColors.primary ?? theme.colorScheme.primary,
-                          design?.designSystemColors.secondary ?? theme.colorScheme.secondary,
+                          DesignSystem.primary,
+                          DesignSystem.secondary,
                         ],
                       ),
-                      borderRadius: BorderRadius.circular(design?.designSystemRadius.md ?? 8),
+                      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
                     ),
                     child: Text(
                       '${profile.matchPercentage}%',
-                      style: (design?.designSystemTypography.bodySmall ?? theme.textTheme.bodySmall)?.copyWith(
+                      style: (DesignSystem.bodySmall).copyWith(
                         color: Colors.white,
                         fontWeight: FontWeight.w600,
                       ),
@@ -160,27 +159,27 @@ class ProfileCard extends StatelessWidget {
             ),
             
             if (profile.bio != null) ...[
-              SizedBox(height: design?.designSystemSpacing.lg ?? 16),
+              const SizedBox(height: DesignSystem.spacingLG),
               Text(
                 profile.bio!,
-                style: (design?.designSystemTypography.bodyMedium ?? theme.textTheme.bodyMedium)?.copyWith(
+                style: (DesignSystem.bodyMedium).copyWith(
                   height: 1.4,
                 ),
               ),
             ],
 
             if (profile.interests.isNotEmpty) ...[
-              SizedBox(height: design?.designSystemSpacing.md ?? 12),
+              const SizedBox(height: DesignSystem.spacingMD),
               Wrap(
-                spacing: design?.designSystemSpacing.sm ?? 8,
-                runSpacing: design?.designSystemSpacing.xs ?? 4,
+                spacing: DesignSystem.spacingSM,
+                runSpacing: DesignSystem.spacingXS,
                 children: profile.interests.map((interest) {
                   return Chip(
                     label: Text(
                       interest,
-                      style: TextStyle(fontSize: 12),
+                      style: const TextStyle(fontSize: 12),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: design?.designSystemSpacing.xs ?? 4),
+                    padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingXS),
                     visualDensity: VisualDensity.compact,
                   );
                 }).toList(),
@@ -188,32 +187,32 @@ class ProfileCard extends StatelessWidget {
             ],
 
             if (showActions) ...[
-              SizedBox(height: design?.designSystemSpacing.lg ?? 16),
+              const SizedBox(height: DesignSystem.spacingLG),
               Row(
                 children: [
                   if (onPass != null)
                     Expanded(
                       child: OutlinedButton(
                         onPressed: onPass,
-                        child: Text('Pass'),
+                        child: const Text('Pass'),
                       ),
                     ),
                   if (onPass != null && onLike != null)
-                    SizedBox(width: design?.designSystemSpacing.sm ?? 8),
+                    const SizedBox(width: DesignSystem.spacingSM),
                   if (onLike != null)
                     Expanded(
                       child: ElevatedButton(
                         onPressed: onLike,
-                        child: Text('Like'),
+                        child: const Text('Like'),
                       ),
                     ),
                   if (onMessage != null) ...[
-                    SizedBox(width: design?.designSystemSpacing.sm ?? 8),
+                    const SizedBox(width: DesignSystem.spacingSM),
                     Expanded(
                       child: OutlinedButton.icon(
                         onPressed: onMessage,
-                        icon: Icon(Icons.message, size: 18),
-                        label: Text('Message'),
+                        icon: const Icon(Icons.message, size: 18),
+                        label: const Text('Message'),
                       ),
                     ),
                   ],
@@ -241,7 +240,6 @@ class CompactProfileCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
 
     return ListTile(
       leading: Stack(
@@ -249,7 +247,7 @@ class CompactProfileCard extends StatelessWidget {
           CircleAvatar(
             radius: 28,
             backgroundImage: profile.imageUrl != null ? NetworkImage(profile.imageUrl!) : null,
-            child: profile.imageUrl == null ? Icon(Icons.person) : null,
+            child: profile.imageUrl == null ? const Icon(Icons.person) : null,
           ),
           if (profile.isOnline)
             Positioned(
@@ -259,7 +257,7 @@ class CompactProfileCard extends StatelessWidget {
                 width: 14,
                 height: 14,
                 decoration: BoxDecoration(
-                  color: design?.designSystemColors.success ?? Colors.green,
+                  color: DesignSystem.success,
                   shape: BoxShape.circle,
                   border: Border.all(color: theme.colorScheme.surface, width: 2),
                 ),
@@ -271,23 +269,23 @@ class CompactProfileCard extends StatelessWidget {
         children: [
           Text(profile.name),
           if (profile.age != null) ...[
-            Text(', '),
+            const Text(', '),
             Text(
               '${profile.age}',
-              style: TextStyle(fontWeight: FontWeight.normal),
+              style: const TextStyle(fontWeight: FontWeight.normal),
             ),
           ],
-          Spacer(),
+          const Spacer(),
           if (profile.matchPercentage != null)
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
-                color: design?.designSystemColors.primary ?? theme.colorScheme.primary,
+                color: DesignSystem.primary,
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
                 '${profile.matchPercentage}%',
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
@@ -399,15 +397,13 @@ class OnlineStatusIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>();
-
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
         color: isOnline
-            ? (design?.designSystemColors.success ?? Colors.green)
-            : (design?.designSystemColors.textMuted ?? Colors.grey),
+            ? (DesignSystem.success)
+            : (DesignSystem.textMuted),
         shape: BoxShape.circle,
       ),
     );

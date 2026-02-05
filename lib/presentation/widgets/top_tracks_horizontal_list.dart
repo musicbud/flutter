@@ -113,9 +113,6 @@ class TopTracksHorizontalListState extends State<TopTracksHorizontalList>
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return ListView.builder(
       scrollDirection: Axis.horizontal,
       itemCount: _tracks.length + (widget.showLoadMoreButton ? 1 : 0),
@@ -124,11 +121,11 @@ class TopTracksHorizontalListState extends State<TopTracksHorizontalList>
           if (_isLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (!_hasReachedEnd) {
-            return Padding(
-              padding: EdgeInsets.all(design.designSystemSpacing.md),
+            return const Padding(
+              padding: EdgeInsets.all(DesignSystem.spacingMD),
               child: ModernButton(
                 text: 'Load More',
-                onPressed: _loadMoreTracks,
+                onPressed: null, // Will be set dynamically
                 variant: ModernButtonVariant.outline,
                 size: ModernButtonSize.medium,
               ),
@@ -139,7 +136,7 @@ class TopTracksHorizontalListState extends State<TopTracksHorizontalList>
         }
         final track = _tracks[index];
         return Padding(
-          padding: EdgeInsets.only(right: design.designSystemSpacing.md),
+          padding: const EdgeInsets.only(right: DesignSystem.spacingMD),
           child: _buildTrackCard(track),
         );
       },

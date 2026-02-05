@@ -20,7 +20,7 @@ import '../widgets/imported/loading_indicator.dart';
 /// Enhanced Main Screen using new MusicBud Components
 /// Replaces old MainScreen with enhanced versions of all screens
 class EnhancedMainScreen extends StatefulWidget {
-  const EnhancedMainScreen({Key? key}) : super(key: key);
+  const EnhancedMainScreen({super.key});
 
   @override
   State<EnhancedMainScreen> createState() => _EnhancedMainScreenState();
@@ -30,12 +30,12 @@ class _EnhancedMainScreenState extends State<EnhancedMainScreen> {
   int _currentIndex = 0;
   late PageController _pageController;
 
-  final List<Widget> _pages = const [
-    EnhancedHomeScreen(),      // Index 0: Home
-    EnhancedSearchPage(),      // Index 1: Search
+  final List<Widget> _pages = [
+    const EnhancedHomeScreen(),      // Index 0: Home
+    const EnhancedSearchPage(),      // Index 1: Search
     DynamicBudsScreen(),       // Index 2: Buds
-    EnhancedChatScreen(),      // Index 3: Chat
-    EnhancedProfileScreen(),   // Index 4: Profile
+    const EnhancedChatScreen(),      // Index 3: Chat
+    const EnhancedProfileScreen(),   // Index 4: Profile
   ];
 
   final List<NavigationItem> _navigationItems = const [

@@ -6,508 +6,393 @@ class AppTypography extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>()!;
-
     return Scaffold(
-      backgroundColor: design.designSystemColors.surface,
+      backgroundColor: DesignSystem.surface,
       appBar: AppBar(
         title: Text(
           'Typography System',
-          style: design.designSystemTypography.headlineMedium.copyWith(
-            color: design.designSystemColors.white,
+          style: DesignSystem.headlineMedium.copyWith(
+            color: Colors.white,
           ),
         ),
-        backgroundColor: design.designSystemColors.surface,
-        foregroundColor: design.designSystemColors.white,
+        backgroundColor: DesignSystem.surface,
+        foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(design.designSystemSpacing.lg),
+        padding: const EdgeInsets.all(DesignSystem.spacingLG),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildTypographySection(
               context,
-              design,
               'Display Typography',
               [
                 _buildTypographyExample(
                   context,
-                  design,
                   'Display Large',
-                  design.designSystemTypography.displayLarge.copyWith(
-                    color: design.designSystemColors.primaryRed,
+                  DesignSystem.displayLarge.copyWith(
+                    color: DesignSystem.primaryRed,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
-                  design,
                   'Display Medium',
-                  design.designSystemTypography.displayMedium.copyWith(
-                    color: design.designSystemColors.primaryRed,
+                  DesignSystem.displayMedium.copyWith(
+                    color: DesignSystem.primaryRed,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
-                  design,
                   'Display Small',
-                  design.designSystemTypography.displaySmall.copyWith(
-                    color: design.designSystemColors.primaryRed,
+                  DesignSystem.displaySmall.copyWith(
+                    color: DesignSystem.primaryRed,
                   ),
                 ),
               ],
             ),
-            SizedBox(height: design.designSystemSpacing.xl),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
-              design,
               'Headline Typography',
               [
                 _buildTypographyExample(
                   context,
-                  design,
                   'Headline Medium',
-                  design.designSystemTypography.headlineMedium.copyWith(
-                    color: design.designSystemColors.white,
+                  DesignSystem.headlineMedium.copyWith(
+                    color: Colors.white,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
-                  design,
                   'Headline Small',
-                  design.designSystemTypography.headlineSmall.copyWith(
-                    color: design.designSystemColors.white,
+                  DesignSystem.headlineSmall.copyWith(
+                    color: Colors.white,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
-                  design,
                   'Title Large',
-                  design.designSystemTypography.titleLarge.copyWith(
-                    color: design.designSystemColors.white,
+                  DesignSystem.titleLarge.copyWith(
+                    color: Colors.white,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
-                  design,
                   'Title Medium',
-                  design.designSystemTypography.titleMedium.copyWith(
-                    color: design.designSystemColors.white,
+                  DesignSystem.titleMedium.copyWith(
+                    color: Colors.white,
                   ),
                 ),
               ],
             ),
-            SizedBox(height: design.designSystemSpacing.xl),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
-              design,
               'Body Typography',
               [
                 _buildTypographyExample(
                   context,
-                  design,
                   'Body H8',
-                  design.designSystemTypography.bodyLarge.copyWith(
-                    color: design.designSystemColors.white,
+                  DesignSystem.bodyLarge.copyWith(
+                    color: Colors.white,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
-                  design,
                   'Body H9',
-                  design.designSystemTypography.bodyMedium.copyWith(
-                    color: design.designSystemColors.white,
+                  DesignSystem.bodyMedium.copyWith(
+                    color: Colors.white,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
-                  design,
                   'Body H10',
-                  design.designSystemTypography.bodySmall.copyWith(
-                    color: design.designSystemColors.white,
+                  DesignSystem.bodySmall.copyWith(
+                    color: Colors.white,
                   ),
                 ),
               ],
             ),
-            SizedBox(height: design.designSystemSpacing.xl),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
-              design,
               'Title Typography',
               [
                 _buildTypographyExample(
                   context,
-                  design,
                   'Title Large',
-                  design.designSystemTypography.titleLarge.copyWith(
-                    color: design.designSystemColors.white,
+                  DesignSystem.titleLarge.copyWith(
+                    color: Colors.white,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
-                  design,
                   'Title Medium',
-                  design.designSystemTypography.titleMedium.copyWith(
-                    color: design.designSystemColors.white,
+                  DesignSystem.titleMedium.copyWith(
+                    color: Colors.white,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
-                  design,
                   'Title Small',
-                  design.designSystemTypography.titleSmall.copyWith(
-                    color: design.designSystemColors.white,
+                  DesignSystem.titleSmall.copyWith(
+                    color: Colors.white,
                   ),
                 ),
                 _buildTypographyExample(
                   context,
-                  design,
                   'Caption',
-                  design.designSystemTypography.caption.copyWith(
-                    color: design.designSystemColors.onSurfaceVariant,
-                  ),
-                ),
-                _buildTypographyExample(
-                  context,
-                  design,
-                  'Overline',
-                  design.designSystemTypography.overline.copyWith(
-                    color: design.designSystemColors.onSurfaceVariant,
+                  DesignSystem.caption.copyWith(
+                    color: DesignSystem.onSurfaceVariant,
                   ),
                 ),
               ],
             ),
-            SizedBox(height: design.designSystemSpacing.xl),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
-              design,
-              'Arabic Typography',
-              [
-                _buildTypographyExample(
-                  context,
-                  design,
-                  'Arabic Text',
-                  design.designSystemTypography.arabicText.copyWith(
-                    color: design.designSystemColors.white,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: design.designSystemSpacing.xl),
-            _buildTypographySection(
-              context,
-              design,
               'Font Families',
               [
                 _buildFontFamilyExample(
                   context,
-                  design,
                   'Primary Font',
                   DesignSystem.fontFamilyPrimary,
-                  design.designSystemColors.white,
+                  Colors.white,
                 ),
                 _buildFontFamilyExample(
                   context,
-                  design,
                   'Secondary Font',
                   DesignSystem.fontFamilySecondary,
-                  design.designSystemColors.white,
-                ),
-                _buildFontFamilyExample(
-                  context,
-                  design,
-                  'Arabic Font',
-                  DesignSystem.fontFamilyArabic,
-                  design.designSystemColors.white,
+                  Colors.white,
                 ),
               ],
             ),
-            SizedBox(height: design.designSystemSpacing.xl),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
-              design,
               'Color Palette',
               [
                 _buildColorExample(
                   context,
-                  design,
                   'Primary Red',
-                  design.designSystemColors.primaryRed,
+                  DesignSystem.primaryRed,
                 ),
                 _buildColorExample(
                   context,
-                  design,
                   'Secondary',
-                  design.designSystemColors.secondary,
+                  DesignSystem.secondary,
                 ),
                 _buildColorExample(
                   context,
-                  design,
                   'Accent Blue',
-                  design.designSystemColors.accentBlue,
+                  DesignSystem.accentBlue,
                 ),
               ],
             ),
-            SizedBox(height: design.designSystemSpacing.xl),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
-              design,
               'Neutral Colors',
               [
                 _buildColorExample(
                   context,
-                  design,
                   'Dark Tone',
-                  design.designSystemColors.surface,
+                  DesignSystem.surface,
                 ),
                 _buildColorExample(
                   context,
-                  design,
                   'Light Gray',
-                  design.designSystemColors.onSurfaceVariant,
+                  DesignSystem.onSurfaceVariant,
                 ),
                 _buildColorExample(
                   context,
-                  design,
                   'White',
-                  design.designSystemColors.white,
+                  Colors.white,
                 ),
                 _buildColorExample(
                   context,
-                  design,
                   'Black',
-                  design.designSystemColors.onSurface,
+                  DesignSystem.onSurface,
                 ),
               ],
             ),
-            SizedBox(height: design.designSystemSpacing.xl),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
-              design,
               'Semantic Colors',
               [
                 _buildColorExample(
                   context,
-                  design,
                   'Success',
-                  design.designSystemColors.success,
+                  DesignSystem.success,
                 ),
                 _buildColorExample(
                   context,
-                  design,
                   'Warning',
-                  design.designSystemColors.warning,
+                  DesignSystem.warning,
                 ),
                 _buildColorExample(
                   context,
-                  design,
                   'Error',
-                  design.designSystemColors.error,
+                  DesignSystem.error,
                 ),
                 _buildColorExample(
                   context,
-                  design,
                   'Info',
-                  design.designSystemColors.info,
+                  DesignSystem.info,
                 ),
               ],
             ),
-            SizedBox(height: design.designSystemSpacing.xl),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
-              design,
               'Neutral Palette',
               [
                 _buildColorExample(
                   context,
-                  design,
                   'Neutral 50',
-                  DesignSystem.neutral[50]!,
+                  DesignSystem.neutral50,
                 ),
                 _buildColorExample(
                   context,
-                  design,
                   'Neutral 100',
-                  DesignSystem.neutral[100]!,
+                  DesignSystem.neutral100,
                 ),
                 _buildColorExample(
                   context,
-                  design,
                   'Neutral 200',
-                  DesignSystem.neutral[200]!,
+                  DesignSystem.neutral200,
                 ),
                 _buildColorExample(
                   context,
-                  design,
                   'Neutral 300',
-                  DesignSystem.neutral[300]!,
+                  DesignSystem.neutral300,
                 ),
                 _buildColorExample(
                   context,
-                  design,
                   'Neutral 400',
-                  DesignSystem.neutral[400]!,
+                  DesignSystem.neutral400,
                 ),
                 _buildColorExample(
                   context,
-                  design,
                   'Neutral 500',
-                  DesignSystem.neutral[500]!,
+                  DesignSystem.neutral500,
                 ),
                 _buildColorExample(
                   context,
-                  design,
                   'Neutral 600',
-                  DesignSystem.neutral[600]!,
+                  DesignSystem.neutral600,
                 ),
                 _buildColorExample(
                   context,
-                  design,
                   'Neutral 700',
-                  DesignSystem.neutral[700]!,
+                  DesignSystem.neutral700,
                 ),
                 _buildColorExample(
                   context,
-                  design,
                   'Neutral 800',
-                  DesignSystem.neutral[800]!,
+                  DesignSystem.neutral800,
                 ),
                 _buildColorExample(
                   context,
-                  design,
                   'Neutral 900',
-                  DesignSystem.neutral[900]!,
+                  DesignSystem.neutral900,
                 ),
               ],
             ),
-            SizedBox(height: design.designSystemSpacing.xl),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
-              design,
               'Spacing System',
               [
                 _buildSpacingExample(
                   context,
-                  design,
                   'Spacing XS',
-                  design.designSystemSpacing.xs,
+                  DesignSystem.spacingXS,
                 ),
                 _buildSpacingExample(
                   context,
-                  design,
                   'Spacing S',
-                  design.designSystemSpacing.sm,
+                  DesignSystem.spacingSM,
                 ),
                 _buildSpacingExample(
                   context,
-                  design,
                   'Spacing M',
-                  design.designSystemSpacing.md,
+                  DesignSystem.spacingMD,
                 ),
                 _buildSpacingExample(
                   context,
-                  design,
                   'Spacing L',
-                  design.designSystemSpacing.lg,
+                  DesignSystem.spacingLG,
                 ),
                 _buildSpacingExample(
                   context,
-                  design,
                   'Spacing XL',
-                  design.designSystemSpacing.xl,
+                  DesignSystem.spacingXL,
                 ),
                 _buildSpacingExample(
                   context,
-                  design,
                   'Spacing XXL',
-                  design.designSystemSpacing.xxl,
-                ),
-                _buildSpacingExample(
-                  context,
-                  design,
-                  'Spacing XXXL',
-                  design.designSystemSpacing.xxxl,
-                ),
-                _buildSpacingExample(
-                  context,
-                  design,
-                  'Spacing Huge',
-                  design.designSystemSpacing.huge,
+                  DesignSystem.spacingXXL,
                 ),
               ],
             ),
-            SizedBox(height: design.designSystemSpacing.xl),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
-              design,
               'Border Radius',
               [
                 _buildRadiusExample(
                   context,
-                  design,
                   'Radius XS',
-                  design.designSystemRadius.xs,
+                  DesignSystem.radiusXS,
                 ),
                 _buildRadiusExample(
                   context,
-                  design,
                   'Radius S',
-                  design.designSystemRadius.sm,
+                  DesignSystem.radiusSM,
                 ),
                 _buildRadiusExample(
                   context,
-                  design,
                   'Radius M',
-                  design.designSystemRadius.md,
+                  DesignSystem.radiusMD,
                 ),
                 _buildRadiusExample(
                   context,
-                  design,
                   'Radius L',
-                  design.designSystemRadius.lg,
+                  DesignSystem.radiusLG,
                 ),
                 _buildRadiusExample(
                   context,
-                  design,
                   'Radius XL',
-                  design.designSystemRadius.xl,
+                  DesignSystem.radiusXL,
                 ),
                 _buildRadiusExample(
                   context,
-                  design,
-                  'Radius XXL',
-                  design.designSystemRadius.xxl,
-                ),
-                _buildRadiusExample(
-                  context,
-                  design,
                   'Radius Circular',
-                  design.designSystemRadius.circular,
+                  DesignSystem.radiusFull,
                 ),
               ],
             ),
-            SizedBox(height: design.designSystemSpacing.xl),
+            const SizedBox(height: DesignSystem.spacingXL),
             _buildTypographySection(
               context,
-              design,
               'Shadows',
               [
                 _buildShadowExample(
                   context,
-                  design,
                   'Shadow Small',
-                  design.designSystemShadows.small,
+                  DesignSystem.shadowSmall,
                 ),
                 _buildShadowExample(
                   context,
-                  design,
                   'Shadow Medium',
-                  design.designSystemShadows.medium,
+                  DesignSystem.shadowMedium,
                 ),
                 _buildShadowExample(
                   context,
-                  design,
                   'Shadow Large',
-                  design.designSystemShadows.large,
+                  DesignSystem.shadowLarge,
                 ),
               ],
             ),
@@ -519,7 +404,6 @@ class AppTypography extends StatelessWidget {
 
   Widget _buildTypographySection(
     BuildContext context,
-    DesignSystemThemeExtension design,
     String title,
     List<Widget> children,
   ) {
@@ -528,18 +412,18 @@ class AppTypography extends StatelessWidget {
       children: [
         Text(
           title,
-          style: design.designSystemTypography.titleLarge.copyWith(
-            color: design.designSystemColors.primaryRed,
+          style: DesignSystem.titleLarge.copyWith(
+            color: DesignSystem.primaryRed,
           ),
         ),
-        SizedBox(height: design.designSystemSpacing.md),
+        const SizedBox(height: DesignSystem.spacingMD),
         Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           decoration: BoxDecoration(
-            color: design.designSystemColors.surface,
-            borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+            color: DesignSystem.surface,
+            borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             border: Border.all(
-              color: design.designSystemColors.onSurfaceVariant.withValues(alpha: 0.2),
+              color: DesignSystem.onSurfaceVariant.withAlpha((255 * 0.2).round()),
             ),
           ),
           child: Column(
@@ -553,22 +437,21 @@ class AppTypography extends StatelessWidget {
 
   Widget _buildTypographyExample(
     BuildContext context,
-    DesignSystemThemeExtension design,
     String label,
     TextStyle style,
   ) {
     return Padding(
-      padding: EdgeInsets.only(bottom: design.designSystemSpacing.md),
+      padding: const EdgeInsets.only(bottom: DesignSystem.spacingMD),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: design.designSystemTypography.caption.copyWith(
-              color: design.designSystemColors.onSurfaceVariant,
+            style: DesignSystem.caption.copyWith(
+              color: DesignSystem.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: design.designSystemSpacing.sm),
+          const SizedBox(height: DesignSystem.spacingSM),
           Text(
             'The quick brown fox jumps over the lazy dog',
             style: style,
@@ -580,23 +463,22 @@ class AppTypography extends StatelessWidget {
 
   Widget _buildFontFamilyExample(
     BuildContext context,
-    DesignSystemThemeExtension design,
     String label,
     String fontFamily,
     Color color,
   ) {
     return Padding(
-      padding: EdgeInsets.only(bottom: design.designSystemSpacing.md),
+      padding: const EdgeInsets.only(bottom: DesignSystem.spacingMD),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: design.designSystemTypography.caption.copyWith(
-              color: design.designSystemColors.onSurfaceVariant,
+            style: DesignSystem.caption.copyWith(
+              color: DesignSystem.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: design.designSystemSpacing.sm),
+          const SizedBox(height: DesignSystem.spacingSM),
           Text(
             'Sample text with $fontFamily',
             style: TextStyle(
@@ -612,12 +494,11 @@ class AppTypography extends StatelessWidget {
 
   Widget _buildColorExample(
     BuildContext context,
-    DesignSystemThemeExtension design,
     String label,
     Color color,
   ) {
     return Padding(
-      padding: EdgeInsets.only(bottom: design.designSystemSpacing.md),
+      padding: const EdgeInsets.only(bottom: DesignSystem.spacingMD),
       child: Row(
         children: [
           Container(
@@ -625,27 +506,27 @@ class AppTypography extends StatelessWidget {
             height: 40,
             decoration: BoxDecoration(
               color: color,
-              borderRadius: BorderRadius.circular(design.designSystemRadius.sm),
+              borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
               border: Border.all(
-                color: design.designSystemColors.onSurfaceVariant.withValues(alpha: 0.3),
+                color: DesignSystem.onSurfaceVariant.withAlpha((255 * 0.3).round()),
               ),
             ),
           ),
-          SizedBox(width: design.designSystemSpacing.md),
+          const SizedBox(width: DesignSystem.spacingMD),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   label,
-                  style: design.designSystemTypography.bodyMedium.copyWith(
-                    color: design.designSystemColors.white,
+                  style: DesignSystem.bodyMedium.copyWith(
+                    color: Colors.white,
                   ),
                 ),
                 Text(
-                  '#${color.value.toRadixString(16).padLeft(8, '0').toUpperCase()}',
-                  style: design.designSystemTypography.caption.copyWith(
-                    color: design.designSystemColors.onSurfaceVariant,
+                  '#${(color.value & 0x00FFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}',
+                  style: DesignSystem.caption.copyWith(
+                    color: DesignSystem.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -658,27 +539,26 @@ class AppTypography extends StatelessWidget {
 
   Widget _buildSpacingExample(
     BuildContext context,
-    DesignSystemThemeExtension design,
     String label,
     double spacing,
   ) {
     return Padding(
-      padding: EdgeInsets.only(bottom: design.designSystemSpacing.md),
+      padding: const EdgeInsets.only(bottom: DesignSystem.spacingMD),
       child: Row(
         children: [
           Container(
             width: spacing,
             height: 20,
             decoration: BoxDecoration(
-              color: design.designSystemColors.primaryRed,
-              borderRadius: BorderRadius.circular(design.designSystemRadius.sm),
+              color: DesignSystem.primaryRed,
+              borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
             ),
           ),
-          SizedBox(width: design.designSystemSpacing.md),
+          const SizedBox(width: DesignSystem.spacingMD),
           Text(
             '$label: ${spacing.toStringAsFixed(0)}px',
-            style: design.designSystemTypography.caption.copyWith(
-              color: design.designSystemColors.onSurfaceVariant,
+            style: DesignSystem.caption.copyWith(
+              color: DesignSystem.onSurfaceVariant,
             ),
           ),
         ],
@@ -688,27 +568,26 @@ class AppTypography extends StatelessWidget {
 
   Widget _buildRadiusExample(
     BuildContext context,
-    DesignSystemThemeExtension design,
     String label,
     double radius,
   ) {
     return Padding(
-      padding: EdgeInsets.only(bottom: design.designSystemSpacing.md),
+      padding: const EdgeInsets.only(bottom: DesignSystem.spacingMD),
       child: Row(
         children: [
           Container(
             width: 60,
             height: 40,
             decoration: BoxDecoration(
-              color: design.designSystemColors.primaryRed,
+              color: DesignSystem.primaryRed,
               borderRadius: BorderRadius.circular(radius),
             ),
           ),
-          SizedBox(width: design.designSystemSpacing.md),
+          const SizedBox(width: DesignSystem.spacingMD),
           Text(
             '$label: ${radius.toStringAsFixed(0)}px',
-            style: design.designSystemTypography.caption.copyWith(
-              color: design.designSystemColors.onSurfaceVariant,
+            style: DesignSystem.caption.copyWith(
+              color: DesignSystem.onSurfaceVariant,
             ),
           ),
         ],
@@ -718,28 +597,27 @@ class AppTypography extends StatelessWidget {
 
   Widget _buildShadowExample(
     BuildContext context,
-    DesignSystemThemeExtension design,
     String label,
     List<BoxShadow> shadows,
   ) {
     return Padding(
-      padding: EdgeInsets.only(bottom: design.designSystemSpacing.md),
+      padding: const EdgeInsets.only(bottom: DesignSystem.spacingMD),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             label,
-            style: design.designSystemTypography.caption.copyWith(
-              color: design.designSystemColors.onSurfaceVariant,
+            style: DesignSystem.caption.copyWith(
+              color: DesignSystem.onSurfaceVariant,
             ),
           ),
-          SizedBox(height: design.designSystemSpacing.sm),
+          const SizedBox(height: DesignSystem.spacingSM),
           Container(
             width: 80,
             height: 40,
             decoration: BoxDecoration(
-              color: design.designSystemColors.white,
-              borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
               boxShadow: shadows,
             ),
           ),

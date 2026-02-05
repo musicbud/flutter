@@ -119,9 +119,6 @@ class CarouselIndicators extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
-
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: List.generate(count, (index) {
@@ -132,8 +129,8 @@ class CarouselIndicators extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 4),
           decoration: BoxDecoration(
             color: index == currentIndex
-                ? (activeColor ?? design?.designSystemColors.primary ?? theme.colorScheme.primary)
-                : (inactiveColor ?? design?.designSystemColors.border ?? theme.colorScheme.outline),
+                ? (activeColor ?? DesignSystem.primary)
+                : (inactiveColor ?? DesignSystem.border),
             borderRadius: BorderRadius.circular(size / 2),
           ),
         );
@@ -190,15 +187,13 @@ class StoryCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final design = Theme.of(context).extension<DesignSystemThemeExtension>();
-
     return SizedBox(
       height: size + 50,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: design?.designSystemSpacing.md ?? 12),
+        padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingMD),
         itemCount: stories.length,
-        separatorBuilder: (_, __) => SizedBox(width: design?.designSystemSpacing.sm ?? 8),
+        separatorBuilder: (_, __) => const SizedBox(width: DesignSystem.spacingSM),
         itemBuilder: (context, index) {
           final story = stories[index];
           return GestureDetector(
@@ -212,16 +207,16 @@ class StoryCarousel extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: story.hasUnread
-                        ? LinearGradient(
+                        ? const LinearGradient(
                             colors: [
-                              design?.designSystemColors.primary ?? Colors.blue,
-                              design?.designSystemColors.secondary ?? Colors.purple,
+                              DesignSystem.primary,
+                              DesignSystem.secondary,
                             ],
                           )
                         : null,
                     border: !story.hasUnread
                         ? Border.all(
-                            color: design?.designSystemColors.border ?? Colors.grey,
+                            color: DesignSystem.border,
                             width: 2,
                           )
                         : null,
@@ -232,7 +227,7 @@ class StoryCarousel extends StatelessWidget {
                     child: story.imageUrl == null ? Icon(story.icon ?? Icons.person) : null,
                   ),
                 ),
-                SizedBox(height: design?.designSystemSpacing.xs ?? 4),
+                const SizedBox(height: DesignSystem.spacingXS),
                 SizedBox(
                   width: size,
                   child: Text(
@@ -240,7 +235,7 @@ class StoryCarousel extends StatelessWidget {
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: design?.designSystemTypography.caption,
+                    style: DesignSystem.caption,
                   ),
                 ),
               ],

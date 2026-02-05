@@ -13,9 +13,9 @@ import '../presentation/screens/discover/top_tracks_page.dart';
 class NavigationConfig extends Equatable {
   /// Routes map for the application
   static final Map<String, WidgetBuilder> routes = {
-    '/connect-services': (context) => const ConnectServicesScreen(),
-    '/artist-details': (context) => const ArtistDetailsScreen(),
-    '/genre-details': (context) => const GenreDetailsScreen(),
+    '/connect-services': (context) => ConnectServicesScreen(),
+    '/artist-details': (context) => ArtistDetailsScreen(),
+    '/genre-details': (context) => GenreDetailsScreen(),
     '/track-details': (context) => const TrackDetailsScreen(),
     '/played-tracks-map': (context) => const PlayedTracksMapScreen(),
     '/spotify-control': (context) => const SpotifyControlScreen(),

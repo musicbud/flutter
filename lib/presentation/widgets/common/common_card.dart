@@ -30,31 +30,29 @@ class CommonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     Widget card = Container(
-      margin: margin ?? const EdgeInsets.all(DesignSystem.spacingS),
+      margin: margin ?? const EdgeInsets.all(DesignSystem.spacingSM),
       decoration: BoxDecoration(
-        color: backgroundColor ?? theme.colorScheme.surface,
-        borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusM),
+        color: backgroundColor ?? DesignSystem.surface,
+        borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
         boxShadow: [
           shadow ??
               BoxShadow(
-                color: theme.colorScheme.shadow.withValues(alpha: 0.1),
+                color: Colors.black.withOpacity(0.1),
                 blurRadius: elevation ?? 4,
                 offset: const Offset(0, 2),
               ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusM),
+        borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
         child: Material(
           color: Colors.transparent,
           child: InkWell(
             onTap: onTap,
-            borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusM),
+            borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
             child: Padding(
-              padding: padding ?? const EdgeInsets.all(DesignSystem.spacingM),
+              padding: padding ?? const EdgeInsets.all(DesignSystem.spacingMD),
               child: child,
             ),
           ),
@@ -105,8 +103,6 @@ class MusicItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return CommonCard(
       onTap: onTap,
       margin: margin,
@@ -117,27 +113,27 @@ class MusicItemCard extends StatelessWidget {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(DesignSystem.radiusS),
-              color: theme.colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
+              color: DesignSystem.surfaceContainerHighest,
             ),
             child: imageUrl != null
                 ? ClipRRect(
-                    borderRadius: BorderRadius.circular(DesignSystem.radiusS),
+                    borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
                     child: Image.network(
                       imageUrl!,
                       fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Icon(
+                      errorBuilder: (context, error, stackTrace) => const Icon(
                         Icons.music_note,
-                        color: theme.colorScheme.onSurfaceVariant,
+                        color: DesignSystem.onSurfaceVariant,
                       ),
                     ),
                   )
-                : Icon(
+                : const Icon(
                     Icons.music_note,
-                    color: theme.colorScheme.onSurfaceVariant,
+                    color: DesignSystem.onSurfaceVariant,
                   ),
           ),
-          const SizedBox(width: DesignSystem.spacingM),
+          const SizedBox(width: DesignSystem.spacingMD),
 
           // Title and subtitle
           Expanded(
@@ -146,11 +142,11 @@ class MusicItemCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: theme.textTheme.titleMedium?.copyWith(
+                  style: DesignSystem.titleMedium.copyWith(
                     fontWeight: FontWeight.w600,
                     color: isPlaying
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.onSurface,
+                        ? DesignSystem.primary
+                        : DesignSystem.onSurface,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -159,9 +155,7 @@ class MusicItemCard extends StatelessWidget {
                   const SizedBox(height: DesignSystem.spacingXS),
                   Text(
                     subtitle!,
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                    ),
+                    style: TextStyle(color: DesignSystem.onSurface.withAlpha((255 * 0.7).round())),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -172,7 +166,7 @@ class MusicItemCard extends StatelessWidget {
 
           // Action buttons
           if (onPlay != null || onLike != null || trailing != null) ...[
-            const SizedBox(width: DesignSystem.spacingS),
+            const SizedBox(width: DesignSystem.spacingSM),
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -181,7 +175,7 @@ class MusicItemCard extends StatelessWidget {
                     onPressed: onPlay,
                     icon: Icon(
                       isPlaying ? Icons.pause : Icons.play_arrow,
-                      color: theme.colorScheme.primary,
+                      color: DesignSystem.primary,
                     ),
                   ),
                 if (onLike != null)
@@ -190,8 +184,8 @@ class MusicItemCard extends StatelessWidget {
                     icon: Icon(
                       isLiked ? Icons.favorite : Icons.favorite_border,
                       color: isLiked
-                          ? theme.colorScheme.error
-                          : theme.colorScheme.onSurfaceVariant,
+                          ? DesignSystem.error
+                          : DesignSystem.onSurfaceVariant,
                     ),
                   ),
                 if (trailing != null) trailing!,
@@ -225,8 +219,6 @@ class GridCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return CommonCard(
       onTap: onTap,
       margin: margin,
@@ -240,33 +232,33 @@ class GridCard extends StatelessWidget {
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(DesignSystem.radiusS),
-                color: theme.colorScheme.surfaceContainerHighest,
+                borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
+                color: DesignSystem.surfaceContainerHighest,
               ),
               child: Stack(
                 children: [
                   if (imageUrl != null)
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(DesignSystem.radiusS),
+                      borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
                       child: Image.network(
                         imageUrl!,
                         fit: BoxFit.cover,
                         width: double.infinity,
-                        errorBuilder: (context, error, stackTrace) => Center(
+                        errorBuilder: (context, error, stackTrace) => const Center(
                           child: Icon(
                             Icons.music_note,
                             size: 48,
-                            color: theme.colorScheme.onSurfaceVariant,
+                            color: DesignSystem.onSurfaceVariant,
                           ),
                         ),
                       ),
                     )
                   else
-                    Center(
+                    const Center(
                       child: Icon(
                         Icons.music_note,
                         size: 48,
-                        color: theme.colorScheme.onSurfaceVariant,
+                        color: DesignSystem.onSurfaceVariant,
                       ),
                     ),
                   if (overlay != null)
@@ -280,14 +272,14 @@ class GridCard extends StatelessWidget {
           Expanded(
             flex: 1,
             child: Padding(
-              padding: const EdgeInsets.all(DesignSystem.spacingS),
+              padding: const EdgeInsets.all(DesignSystem.spacingSM),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     title,
-                    style: theme.textTheme.titleSmall?.copyWith(
+                    style: DesignSystem.titleSmall.copyWith(
                       fontWeight: FontWeight.w600,
                     ),
                     maxLines: 1,
@@ -297,9 +289,7 @@ class GridCard extends StatelessWidget {
                     const SizedBox(height: DesignSystem.spacingXS),
                     Text(
                       subtitle!,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                      ),
+                      style: TextStyle(color: DesignSystem.onSurface.withAlpha((255 * 0.7).round())),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -335,11 +325,9 @@ class SectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return CommonCard(
       margin: margin,
-      padding: padding ?? const EdgeInsets.all(DesignSystem.spacingM),
+      padding: padding ?? const EdgeInsets.all(DesignSystem.spacingMD),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -352,7 +340,7 @@ class SectionCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: theme.textTheme.headlineSmall?.copyWith(
+                      style: DesignSystem.headlineSmall.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -360,8 +348,8 @@ class SectionCard extends StatelessWidget {
                       const SizedBox(height: DesignSystem.spacingXS),
                       Text(
                         subtitle!,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        style: DesignSystem.bodyMedium.copyWith(
+                          color: DesignSystem.onSurface.withAlpha((255 * 0.7).round()),
                         ),
                       ),
                     ],
@@ -372,7 +360,7 @@ class SectionCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: DesignSystem.spacingM),
+          const SizedBox(height: DesignSystem.spacingMD),
 
           // Content
           child,

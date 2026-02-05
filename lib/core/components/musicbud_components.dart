@@ -18,14 +18,14 @@ class MusicBudAvatar extends StatelessWidget {
   final VoidCallback? onTap;
 
   const MusicBudAvatar({
-    Key? key,
+    super.key,
     this.imageUrl,
     this.size = 60,
     this.hasBorder = false,
     this.borderColor = DesignSystem.pinkAccent,
     this.child,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +82,7 @@ class ContentCard extends StatelessWidget {
   final Widget? tag;
 
   const ContentCard({
-    Key? key,
+    super.key,
     this.imageUrl,
     required this.title,
     required this.subtitle,
@@ -90,7 +90,7 @@ class ContentCard extends StatelessWidget {
     this.height = 180,
     this.onTap,
     this.tag,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -170,13 +170,13 @@ class HeroCard extends StatelessWidget {
   final VoidCallback? onSaveTap;
 
   const HeroCard({
-    Key? key,
+    super.key,
     this.imageUrl,
     required this.title,
     required this.subtitle,
     this.onPlayTap,
     this.onSaveTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -290,7 +290,7 @@ class MusicBudButton extends StatelessWidget {
   final double? width;
 
   const MusicBudButton({
-    Key? key,
+    super.key,
     required this.text,
     this.onPressed,
     this.isOutlined = false,
@@ -298,7 +298,7 @@ class MusicBudButton extends StatelessWidget {
     this.textColor,
     this.icon,
     this.width,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -361,11 +361,11 @@ class CategoryTab extends StatelessWidget {
   final VoidCallback? onTap;
 
   const CategoryTab({
-    Key? key,
+    super.key,
     required this.label,
     required this.isSelected,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -412,10 +412,10 @@ class MusicBudBottomNav extends StatelessWidget {
   final Function(int) onTap;
 
   const MusicBudBottomNav({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -502,7 +502,7 @@ class MessageListItem extends StatelessWidget {
   final bool isOnline;
 
   const MessageListItem({
-    Key? key,
+    super.key,
     required this.name,
     required this.message,
     this.imageUrl,
@@ -513,7 +513,7 @@ class MessageListItem extends StatelessWidget {
     this.timestamp,
     this.unreadCount,
     this.isOnline = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -644,10 +644,10 @@ class SectionHeader extends StatelessWidget {
   final VoidCallback? onSeeAllTap;
 
   const SectionHeader({
-    Key? key,
+    super.key,
     required this.title,
     this.onSeeAllTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

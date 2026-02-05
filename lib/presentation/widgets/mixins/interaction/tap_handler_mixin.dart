@@ -424,15 +424,12 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     BorderRadius? borderRadius,
     ShapeBorder? shape,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Card(
-      margin: margin ?? EdgeInsets.all(design.designSystemSpacing.sm),
-      color: color ?? design.designSystemColors.surfaceContainer,
+      margin: margin ?? const EdgeInsets.all(DesignSystem.spacingSM),
+      color: color ?? DesignSystem.surfaceContainer,
       elevation: elevation ?? 2,
       shape: shape ?? RoundedRectangleBorder(
-        borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.md),
+        borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
       ),
       child: buildTappableWidget(
         context: context,
@@ -440,7 +437,7 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
         onLongPress: onLongPress,
         onDoubleTap: onDoubleTap,
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: child,
         ),
       ),
@@ -460,19 +457,16 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     String? semanticLabel,
     EdgeInsetsGeometry? padding,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return buildTappableContainer(
       context: context,
       onTap: onTap,
       onLongPress: onLongPress,
       onDoubleTap: onDoubleTap,
-      padding: padding ?? EdgeInsets.all(design.designSystemSpacing.sm),
+      padding: padding ?? const EdgeInsets.all(DesignSystem.spacingSM),
       child: Icon(
         icon,
         size: size ?? 24,
-        color: color ?? design.designSystemColors.onSurface,
+        color: color ?? DesignSystem.onSurface,
         semanticLabel: semanticLabel,
       ),
     );
@@ -489,21 +483,18 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? highlightColor,
     EdgeInsetsGeometry? padding,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return buildTappableContainer(
       context: context,
       onTap: onTap,
       onLongPress: onLongPress,
       onDoubleTap: onDoubleTap,
-      padding: padding ?? EdgeInsets.symmetric(
-        horizontal: design.designSystemSpacing.sm,
-        vertical: design.designSystemSpacing.xs,
+      padding: padding ?? const EdgeInsets.symmetric(
+        horizontal: DesignSystem.spacingSM,
+        vertical: DesignSystem.spacingXS,
       ),
       decoration: BoxDecoration(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.sm),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
       ),
       child: Text(
         text,
@@ -523,9 +514,6 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? highlightColor,
     BorderRadius? borderRadius,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -533,11 +521,11 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
         onLongPress: (_tapHandlingEnabled && _tapConfig?.enableLongPress == true)
             ? onLongPress ?? _handleLongPress
             : null,
-        splashColor: splashColor ?? design.designSystemColors.primary.withValues(alpha: 0.1),
-        highlightColor: highlightColor ?? design.designSystemColors.primary.withValues(alpha: 0.05),
-        borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.sm),
+        splashColor: splashColor ?? DesignSystem.primary.withOpacity(0.1),
+        highlightColor: highlightColor ?? DesignSystem.primary.withOpacity(0.05),
+        borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusSM),
         child: Container(
-          padding: padding ?? EdgeInsets.all(design.designSystemSpacing.md),
+          padding: padding ?? const EdgeInsets.all(DesignSystem.spacingMD),
           child: child,
         ),
       ),
@@ -560,15 +548,12 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     double? pressedElevation,
     bool enableScaleAnimation = true,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Container(
       margin: margin,
       child: Material(
-        color: backgroundColor ?? design.designSystemColors.primary,
+        color: backgroundColor ?? DesignSystem.primary,
         elevation: elevation ?? 2,
-        borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.md),
+        borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
         child: InkWell(
           onTap: _tapHandlingEnabled ? onTap ?? _handleTap : null,
           onLongPress: (_tapHandlingEnabled && _tapConfig?.enableLongPress == true)
@@ -577,11 +562,11 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
           onDoubleTap: (_tapHandlingEnabled && _tapConfig?.enableDoubleTap == true)
               ? onDoubleTap ?? _handleDoubleTap
               : null,
-          borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.md),
+          borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD),
           child: Container(
-            padding: padding ?? EdgeInsets.symmetric(
-              horizontal: design.designSystemSpacing.lg,
-              vertical: design.designSystemSpacing.md,
+            padding: padding ?? const EdgeInsets.symmetric(
+              horizontal: DesignSystem.spacingLG,
+              vertical: DesignSystem.spacingMD,
             ),
             child: enableScaleAnimation && _visualFeedbackEnabled
                 ? _buildAnimatedChild(child)
@@ -602,11 +587,8 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? pressedBackgroundColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
       shape: const CircleBorder(),
       child: InkWell(
         onTap: _tapHandlingEnabled ? onTap ?? _handleTap : null,
@@ -637,22 +619,19 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? pressedBackgroundColor,
     BorderRadius? borderRadius,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.xl),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusXL),
       child: InkWell(
         onTap: _tapHandlingEnabled ? onTap ?? _handleTap : null,
         onLongPress: (_tapHandlingEnabled && _tapConfig?.enableLongPress == true)
             ? onLongPress ?? _handleLongPress
             : null,
-        borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.xl),
+        borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusXL),
         child: Container(
-          padding: padding ?? EdgeInsets.symmetric(
-            horizontal: design.designSystemSpacing.md,
-            vertical: design.designSystemSpacing.sm,
+          padding: padding ?? const EdgeInsets.symmetric(
+            horizontal: DesignSystem.spacingMD,
+            vertical: DesignSystem.spacingSM,
           ),
           child: _visualFeedbackEnabled
               ? _buildAnimatedChild(child)
@@ -671,24 +650,21 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? inactiveColor,
     Color? pressedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
       color: value
-          ? (activeColor ?? design.designSystemColors.primary)
-          : (inactiveColor ?? design.designSystemColors.surfaceContainer),
-      borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+          ? (activeColor ?? DesignSystem.primary)
+          : (inactiveColor ?? DesignSystem.surfaceContainer),
+      borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
       child: InkWell(
         onTap: _tapHandlingEnabled ? () => onChanged(!value) : null,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.sm),
+          padding: const EdgeInsets.all(DesignSystem.spacingSM),
           child: Icon(
             value ? Icons.toggle_on : Icons.toggle_off,
             color: value
-                ? design.designSystemColors.onPrimary
-                : design.designSystemColors.onSurfaceVariant,
+                ? DesignSystem.onPrimary
+                : DesignSystem.onSurfaceVariant,
             size: 32,
           ),
         ),
@@ -705,21 +681,18 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? checkColor,
     Color? pressedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: _tapHandlingEnabled ? () => onChanged(!value) : null,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.sm),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.xs),
+          padding: const EdgeInsets.all(DesignSystem.spacingXS),
           child: Icon(
             value ? Icons.check_box : Icons.check_box_outline_blank,
             color: value
-                ? (activeColor ?? design.designSystemColors.primary)
-                : design.designSystemColors.onSurfaceVariant,
+                ? (activeColor ?? DesignSystem.primary)
+                : DesignSystem.onSurfaceVariant,
             size: 24,
           ),
         ),
@@ -736,23 +709,20 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? activeColor,
     Color? pressedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     final isSelected = value == groupValue;
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: _tapHandlingEnabled ? () => onChanged(value) : null,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.sm),
+          padding: const EdgeInsets.all(DesignSystem.spacingSM),
           child: Icon(
             isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
             color: isSelected
-                ? (activeColor ?? design.designSystemColors.primary)
-                : design.designSystemColors.onSurfaceVariant,
+                ? (activeColor ?? DesignSystem.primary)
+                : DesignSystem.onSurfaceVariant,
             size: 24,
           ),
         ),
@@ -771,9 +741,6 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? inactiveColor,
     Color? thumbColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -787,9 +754,9 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
           onChanged: _tapHandlingEnabled ? onChanged : null,
           min: min,
           max: max,
-          activeColor: activeColor ?? design.designSystemColors.primary,
-          inactiveColor: inactiveColor ?? design.designSystemColors.surfaceContainer,
-          thumbColor: thumbColor ?? design.designSystemColors.primary,
+          activeColor: activeColor ?? DesignSystem.primary,
+          inactiveColor: inactiveColor ?? DesignSystem.surfaceContainer,
+          thumbColor: thumbColor ?? DesignSystem.primary,
         ),
       ),
     );
@@ -805,34 +772,31 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? pressedColor,
     EdgeInsetsGeometry? padding,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: InkWell(
         onTap: _tapHandlingEnabled ? () {
           // Show dropdown menu
           _showDropdownMenu(context, items, onChanged);
         } : null,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: Container(
-          padding: padding ?? EdgeInsets.symmetric(
-            horizontal: design.designSystemSpacing.md,
-            vertical: design.designSystemSpacing.sm,
+          padding: padding ?? const EdgeInsets.symmetric(
+            horizontal: DesignSystem.spacingMD,
+            vertical: DesignSystem.spacingSM,
           ),
           child: Row(
             children: [
               Expanded(
                 child: Text(
                   items.firstWhere((item) => item.value == value).child.toString(),
-                  style: design.designSystemTypography.bodyMedium,
+                  style: DesignSystem.bodyMedium,
                 ),
               ),
-              Icon(
+              const Icon(
                 Icons.arrow_drop_down,
-                color: design.designSystemColors.onSurfaceVariant,
+                color: DesignSystem.onSurfaceVariant,
               ),
             ],
           ),
@@ -885,29 +849,26 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? selectedColor,
     Color? pressedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
       child: Row(
         children: segments.map((segment) {
           final isSelected = segment == selectedValue;
           return Expanded(
             child: InkWell(
               onTap: _tapHandlingEnabled ? () => onChanged(segment) : null,
-              borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+              borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
               child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: design.designSystemSpacing.md,
-                  vertical: design.designSystemSpacing.sm,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DesignSystem.spacingMD,
+                  vertical: DesignSystem.spacingSM,
                 ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? (selectedColor ?? design.designSystemColors.primary)
+                      ? (selectedColor ?? DesignSystem.primary)
                       : Colors.transparent,
-                  borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+                  borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
                 ),
                 child: builder(segment),
               ),
@@ -928,12 +889,9 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? activeColor,
     Color? pressedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+      color: DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: Stepper(
         currentStep: currentStep,
         onStepContinue: _tapHandlingEnabled ? onStepContinue : null,
@@ -941,7 +899,7 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
         steps: steps,
         controlsBuilder: (context, details) {
           return Container(
-            margin: EdgeInsets.only(top: design.designSystemSpacing.md),
+            margin: const EdgeInsets.only(top: DesignSystem.spacingMD),
             child: Row(
               children: [
                 if (currentStep < steps.length - 1)
@@ -951,7 +909,7 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
                     child: const Text('Continue'),
                   ),
                 if (currentStep > 0) ...[
-                  SizedBox(width: design.designSystemSpacing.md),
+                  const SizedBox(width: DesignSystem.spacingMD),
                   buildTappableButton(
                     context: context,
                     onTap: details.onStepCancel,
@@ -976,11 +934,8 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? selectedColor,
     Color? pressedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
       child: Row(
         children: tabs.asMap().entries.map((entry) {
           final index = entry.key;
@@ -991,15 +946,15 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
             child: InkWell(
               onTap: _tapHandlingEnabled ? () => onTap(index) : null,
               child: Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: design.designSystemSpacing.md,
-                  vertical: design.designSystemSpacing.sm,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: DesignSystem.spacingMD,
+                  vertical: DesignSystem.spacingSM,
                 ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? (selectedColor ?? design.designSystemColors.primary)
+                      ? (selectedColor ?? DesignSystem.primary)
                       : Colors.transparent,
-                  borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+                  borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
                 ),
                 child: tab,
               ),
@@ -1020,13 +975,10 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? selectedColor,
     Color? pressedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surface,
+      color: backgroundColor ?? DesignSystem.surface,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: design.designSystemSpacing.sm),
+        padding: const EdgeInsets.symmetric(vertical: DesignSystem.spacingSM),
         child: Row(
           children: items.asMap().entries.map((entry) {
             final index = entry.key;
@@ -1044,16 +996,16 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
                           ? (item.activeIcon ?? item.icon) as IconData
                           : item.icon as IconData,
                       color: isSelected
-                          ? (selectedColor ?? design.designSystemColors.primary)
-                          : design.designSystemColors.onSurfaceVariant,
+                          ? (selectedColor ?? DesignSystem.primary)
+                          : DesignSystem.onSurfaceVariant,
                     ),
-                    SizedBox(height: design.designSystemSpacing.xs),
+                    const SizedBox(height: DesignSystem.spacingXS),
                     Text(
                       item.label!,
-                      style: design.designSystemTypography.caption.copyWith(
+                      style: DesignSystem.caption.copyWith(
                         color: isSelected
-                            ? (selectedColor ?? design.designSystemColors.primary)
-                            : design.designSystemColors.onSurfaceVariant,
+                            ? (selectedColor ?? DesignSystem.primary)
+                            : DesignSystem.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -1076,18 +1028,15 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     double? elevation,
     double? pressedElevation,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.primary,
+      color: backgroundColor ?? DesignSystem.primary,
       elevation: elevation ?? 6,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+      borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
       child: InkWell(
         onTap: _tapHandlingEnabled ? onTap ?? _handleTap : null,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.lg),
+          padding: const EdgeInsets.all(DesignSystem.spacingLG),
           child: _visualFeedbackEnabled
               ? _buildAnimatedChild(child)
               : child,
@@ -1106,32 +1055,29 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? pressedColor,
     EdgeInsetsGeometry? padding,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
       child: InkWell(
         onTap: _tapHandlingEnabled ? onTap ?? _handleTap : null,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
         child: Container(
-          padding: padding ?? EdgeInsets.symmetric(
-            horizontal: design.designSystemSpacing.md,
-            vertical: design.designSystemSpacing.sm,
+          padding: padding ?? const EdgeInsets.symmetric(
+            horizontal: DesignSystem.spacingMD,
+            vertical: DesignSystem.spacingSM,
           ),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.search,
-                color: design.designSystemColors.onSurfaceVariant,
+                color: DesignSystem.onSurfaceVariant,
               ),
-              SizedBox(width: design.designSystemSpacing.sm),
+              const SizedBox(width: DesignSystem.spacingSM),
               Expanded(
                 child: Text(
                   hintText ?? 'Search...',
-                  style: design.designSystemTypography.bodyMedium.copyWith(
-                    color: design.designSystemColors.onSurfaceVariant,
+                  style: DesignSystem.bodyMedium.copyWith(
+                    color: DesignSystem.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -1151,9 +1097,6 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? pressedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Stack(
       children: [
         buildTappableWidget(
@@ -1166,21 +1109,21 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
             top: 0,
             right: 0,
             child: Material(
-              color: design.designSystemColors.error,
+              color: DesignSystem.error,
               borderRadius: BorderRadius.circular(10),
               child: InkWell(
                 onTap: _tapHandlingEnabled ? onTap ?? _handleTap : null,
                 borderRadius: BorderRadius.circular(10),
                 child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: design.designSystemSpacing.xs,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: DesignSystem.spacingXS,
                     vertical: 2,
                   ),
                   constraints: const BoxConstraints(minWidth: 20),
                   child: Text(
                     count > 99 ? '99+' : count.toString(),
-                    style: design.designSystemTypography.caption.copyWith(
-                      color: design.designSystemColors.onError,
+                    style: DesignSystem.caption.copyWith(
+                      color: DesignSystem.onError,
                       fontSize: 10,
                     ),
                     textAlign: TextAlign.center,
@@ -1202,22 +1145,19 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? pressedColor,
     Color? progressColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
       child: InkWell(
         onTap: _tapHandlingEnabled ? onTap ?? _handleTap : null,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.sm),
+          padding: const EdgeInsets.all(DesignSystem.spacingSM),
           child: LinearProgressIndicator(
             value: value,
-            backgroundColor: design.designSystemColors.surfaceContainerHigh,
+            backgroundColor: DesignSystem.surfaceContainerHigh,
             valueColor: AlwaysStoppedAnimation<Color>(
-              progressColor ?? design.designSystemColors.primary,
+              progressColor ?? DesignSystem.primary,
             ),
           ),
         ),
@@ -1235,9 +1175,6 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? inactiveColor,
     double? size,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Row(
       children: List.generate(maxRating, (index) {
         final starValue = index + 1;
@@ -1248,8 +1185,8 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
           child: Icon(
             isActive ? Icons.star : Icons.star_border,
             color: isActive
-                ? (activeColor ?? design.designSystemColors.warning)
-                : (inactiveColor ?? design.designSystemColors.onSurfaceVariant),
+                ? (activeColor ?? DesignSystem.warning)
+                : DesignSystem.onSurfaceVariant,
             size: size ?? 24,
           ),
         );
@@ -1266,12 +1203,9 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? pressedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -1279,36 +1213,36 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
             onTap: _tapHandlingEnabled && currentPage > 1
                 ? () => onPageChanged(currentPage - 1)
                 : null,
-            borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+            borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             child: Container(
-              padding: EdgeInsets.all(design.designSystemSpacing.sm),
+              padding: const EdgeInsets.all(DesignSystem.spacingSM),
               child: Icon(
                 Icons.chevron_left,
                 color: currentPage > 1
-                    ? design.designSystemColors.onSurface
-                    : design.designSystemColors.onSurfaceVariant,
+                    ? DesignSystem.onSurface
+                    : DesignSystem.onSurfaceVariant,
               ),
             ),
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: design.designSystemSpacing.md),
+            padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingMD),
             child: Text(
               '$currentPage / $totalPages',
-              style: design.designSystemTypography.bodyMedium,
+              style: DesignSystem.bodyMedium,
             ),
           ),
           InkWell(
             onTap: _tapHandlingEnabled && currentPage < totalPages
                 ? () => onPageChanged(currentPage + 1)
                 : null,
-            borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+            borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
             child: Container(
-              padding: EdgeInsets.all(design.designSystemSpacing.sm),
+              padding: const EdgeInsets.all(DesignSystem.spacingSM),
               child: Icon(
                 Icons.chevron_right,
                 color: currentPage < totalPages
-                    ? design.designSystemColors.onSurface
-                    : design.designSystemColors.onSurfaceVariant,
+                    ? DesignSystem.onSurface
+                    : DesignSystem.onSurfaceVariant,
               ),
             ),
           ),
@@ -1327,28 +1261,25 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? selectedColor,
     Color? pressedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
       color: selected
-          ? (selectedColor ?? design.designSystemColors.primary)
-          : (backgroundColor ?? design.designSystemColors.surfaceContainer),
-      borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+          ? (selectedColor ?? DesignSystem.primary)
+          : (backgroundColor ?? DesignSystem.surfaceContainer),
+      borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
       child: InkWell(
         onTap: _tapHandlingEnabled ? onTap ?? _handleTap : null,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.xl),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusXL),
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: design.designSystemSpacing.md,
-            vertical: design.designSystemSpacing.sm,
+          padding: const EdgeInsets.symmetric(
+            horizontal: DesignSystem.spacingMD,
+            vertical: DesignSystem.spacingSM,
           ),
           child: Text(
             label,
-            style: design.designSystemTypography.bodyMedium.copyWith(
+            style: DesignSystem.bodyMedium.copyWith(
               color: selected
-                  ? design.designSystemColors.onPrimary
-                  : design.designSystemColors.onSurface,
+                  ? DesignSystem.onPrimary
+                  : DesignSystem.onSurface,
             ),
           ),
         ),
@@ -1365,31 +1296,28 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? pressedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: InkWell(
         onTap: _tapHandlingEnabled ? onTap ?? _handleTap : null,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: design.designSystemSpacing.md,
-            vertical: design.designSystemSpacing.sm,
+          padding: const EdgeInsets.symmetric(
+            horizontal: DesignSystem.spacingMD,
+            vertical: DesignSystem.spacingSM,
           ),
           child: Row(
             children: [
               Text(
                 label,
-                style: design.designSystemTypography.bodyMedium,
+                style: DesignSystem.bodyMedium,
               ),
-              SizedBox(width: design.designSystemSpacing.sm),
+              const SizedBox(width: DesignSystem.spacingSM),
               Icon(
                 ascending ? Icons.arrow_upward : Icons.arrow_downward,
                 size: 16,
-                color: design.designSystemColors.onSurfaceVariant,
+                color: DesignSystem.onSurfaceVariant,
               ),
             ],
           ),
@@ -1407,15 +1335,12 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? pressedColor,
     EdgeInsetsGeometry? padding,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
       child: InkWell(
         onTap: _tapHandlingEnabled ? onTap ?? _handleTap : null,
         child: Container(
-          padding: padding ?? EdgeInsets.all(design.designSystemSpacing.md),
+          padding: padding ?? const EdgeInsets.all(DesignSystem.spacingMD),
           child: child,
         ),
       ),
@@ -1432,12 +1357,9 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? pressedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: ExpansionTile(
         title: title,
         initiallyExpanded: initiallyExpanded,
@@ -1446,9 +1368,9 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
             onTap();
           }
         } : null,
-        backgroundColor: backgroundColor ?? design.designSystemColors.surfaceContainer,
-        collapsedBackgroundColor: backgroundColor ?? design.designSystemColors.surfaceContainer,
-        childrenPadding: EdgeInsets.all(design.designSystemSpacing.md),
+        backgroundColor: backgroundColor ?? DesignSystem.surfaceContainer,
+        collapsedBackgroundColor: backgroundColor ?? DesignSystem.surfaceContainer,
+        childrenPadding: const EdgeInsets.all(DesignSystem.spacingMD),
         children: children,
       ),
     );
@@ -1463,17 +1385,14 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? pressedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: InkWell(
         onTap: _tapHandlingEnabled ? onTap ?? _handleTap : null,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: DataTable(
             columns: columns,
             rows: rows,
@@ -1492,29 +1411,26 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? selectedColor,
     Color? pressedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: InkWell(
         onTap: _tapHandlingEnabled ? () {
           _showDatePicker(context, selectedDate, onDateSelected);
         } : null,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.calendar_today,
-                color: design.designSystemColors.onSurfaceVariant,
+                color: DesignSystem.onSurfaceVariant,
               ),
-              SizedBox(width: design.designSystemSpacing.sm),
+              const SizedBox(width: DesignSystem.spacingSM),
               Text(
                 '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                style: design.designSystemTypography.bodyMedium,
+                style: DesignSystem.bodyMedium,
               ),
             ],
           ),
@@ -1549,29 +1465,26 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? pressedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: InkWell(
         onTap: _tapHandlingEnabled ? () {
           _showTimePicker(context, selectedTime, onTimeSelected);
         } : null,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.access_time,
-                color: design.designSystemColors.onSurfaceVariant,
+                color: DesignSystem.onSurfaceVariant,
               ),
-              SizedBox(width: design.designSystemSpacing.sm),
+              const SizedBox(width: DesignSystem.spacingSM),
               Text(
                 selectedTime.format(context),
-                style: design.designSystemTypography.bodyMedium,
+                style: DesignSystem.bodyMedium,
               ),
             ],
           ),
@@ -1605,28 +1518,25 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
     Color? backgroundColor,
     Color? pressedColor,
   }) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     final colors = availableColors ?? [
-      design.designSystemColors.primary,
-      design.designSystemColors.secondary,
-      design.designSystemColors.error,
-      design.designSystemColors.success,
-      design.designSystemColors.warning,
-      design.designSystemColors.info,
+      DesignSystem.primary,
+      DesignSystem.secondary,
+      DesignSystem.error,
+      DesignSystem.success,
+      DesignSystem.warning,
+      DesignSystem.info,
     ];
 
     return Material(
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
-      borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
+      borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
       child: InkWell(
         onTap: _tapHandlingEnabled ? () {
           _showColorPicker(context, colors, selectedColor, onColorSelected);
         } : null,
-        borderRadius: BorderRadius.circular(design.designSystemRadius.md),
+        borderRadius: BorderRadius.circular(DesignSystem.radiusMD),
         child: Container(
-          padding: EdgeInsets.all(design.designSystemSpacing.md),
+          padding: const EdgeInsets.all(DesignSystem.spacingMD),
           child: Row(
             children: [
               Container(
@@ -1634,17 +1544,17 @@ mixin TapHandlerMixin<T extends StatefulWidget> on State<T> {
                 height: 24,
                 decoration: BoxDecoration(
                   color: selectedColor,
-                  borderRadius: BorderRadius.circular(design.designSystemRadius.sm),
+                  borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
                   border: Border.all(
-                    color: design.designSystemColors.border,
+                    color: DesignSystem.borderColor,
                     width: 1,
                   ),
                 ),
               ),
-              SizedBox(width: design.designSystemSpacing.sm),
+              const SizedBox(width: DesignSystem.spacingSM),
               Text(
                 'Color',
-                style: design.designSystemTypography.bodyMedium,
+                style: DesignSystem.bodyMedium,
               ),
             ],
           ),

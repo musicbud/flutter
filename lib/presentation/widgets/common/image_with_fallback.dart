@@ -99,9 +99,6 @@ class ImageWithFallback extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     // If no image URL and no fallback asset, show placeholder
     if ((imageUrl == null || imageUrl!.isEmpty) && (fallbackAsset == null || fallbackAsset!.isEmpty)) {
       return _buildPlaceholderContainer();
@@ -111,12 +108,12 @@ class ImageWithFallback extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: backgroundColor ?? design.designSystemColors.surfaceContainer,
+        color: backgroundColor ?? DesignSystem.surfaceContainer,
         borderRadius: shape == BoxShape.circle ? null : borderRadius,
         shape: shape,
         border: showBorder
             ? Border.all(
-                color: borderColor ?? design.designSystemColors.border,
+                color: borderColor ?? DesignSystem.border,
                 width: 1,
               )
             : null,

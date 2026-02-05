@@ -32,7 +32,7 @@ import '../../../../core/theme/design_system.dart';
 ///   Widget _buildTitle(BuildContext context) {
 ///     return Text(
 ///       title,
-///       style: getDesignSystemTypography(context).headlineSmall,
+///       style: DesignSystem.headlineSmall,
 ///     );
 ///   }
 ///
@@ -100,7 +100,7 @@ abstract class BaseSectionHeader extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: padding ?? const EdgeInsets.symmetric(horizontal: 24.0), // Placeholder
+          padding: padding ?? const EdgeInsets.symmetric(horizontal: DesignSystem.spacingMD),
           child: Row(
             mainAxisAlignment: mainAxisAlignment,
             crossAxisAlignment: crossAxisAlignment,
@@ -117,7 +117,7 @@ abstract class BaseSectionHeader extends StatelessWidget {
 
         // Divider
         if (showDivider) ...[
-          const SizedBox(height: 16.0), // Placeholder
+          const SizedBox(height: DesignSystem.spacingMD),
           _buildDivider(context),
         ],
       ],
@@ -140,82 +140,7 @@ abstract class BaseSectionHeader extends StatelessWidget {
     return Divider(
       height: 1,
       thickness: 1,
-      color: dividerColor ?? const Color(0xFF000000), // Placeholder
+      color: dividerColor ?? DesignSystem.borderColor,
     );
-  }
-
-
-  /// Helper method to get design system colors
-  @protected
-  DesignSystemColors getDesignSystemColors(BuildContext context) {
-    return Theme.of(context).designSystemColors ?? const DesignSystemColors(
-      primary: Color(0xFF000000), // Placeholder
-      secondary: Color(0xFF000000),
-      surface: Color(0xFF000000),
-      background: Color(0xFF000000),
-      onSurface: Color(0xFF000000),
-      onSurfaceVariant: Color(0xFF000000),
-      error: Color(0xFF000000),
-      success: Color(0xFF000000),
-      warning: Color(0xFF000000),
-      info: Color(0xFF000000),
-      accentBlue: Color(0xFF000000),
-      accentPurple: Color(0xFF000000),
-      accentGreen: Color(0xFF000000),
-      accentOrange: Color(0xFF000000),
-      border: Color(0xFF000000),
-      overlay: Color(0xFF000000),
-      surfaceContainer: Color(0xFF000000),
-      surfaceContainerHigh: Color(0xFF000000),
-      surfaceContainerHighest: Color(0xFF000000),
-      onPrimary: Color(0xFF000000),
-      onError: Color(0xFF000000),
-      onErrorContainer: Color(0xFF000000),
-      textMuted: Color(0xFF000000),
-      primaryRed: Color(0xFF000000),
-      white: Color(0xFF000000),
-      surfaceDark: Color(0xFF000000),
-      surfaceLight: Color(0xFF000000),
-      cardBackground: Color(0xFF000000),
-      borderColor: Color(0xFF000000),
-      textPrimary: Color(0xFF000000),
-    );
-  }
-
-  /// Helper method to get design system typography
-  @protected
-  DesignSystemTypography getDesignSystemTypography(BuildContext context) {
-    return Theme.of(context).designSystemTypography ?? DesignSystemTypography(
-      displayLarge: const TextStyle(),
-      displayMedium: const TextStyle(),
-      displaySmall: const TextStyle(),
-      headlineLarge: const TextStyle(),
-      headlineMedium: const TextStyle(),
-      headlineSmall: const TextStyle(),
-      titleLarge: const TextStyle(),
-      titleMedium: const TextStyle(),
-      titleSmall: const TextStyle(),
-      bodyLarge: const TextStyle(),
-      bodyMedium: const TextStyle(),
-      bodySmall: const TextStyle(),
-      labelLarge: const TextStyle(),
-      labelMedium: const TextStyle(),
-      labelSmall: const TextStyle(),
-      caption: const TextStyle(),
-      overline: const TextStyle(),
-      arabicText: const TextStyle(),
-    );
-  }
-
-  /// Helper method to get design system spacing
-  @protected
-  DesignSystemSpacing getDesignSystemSpacing(BuildContext context) {
-    return Theme.of(context).designSystemSpacing ?? const DesignSystemSpacing();
-  }
-
-  /// Helper method to get design system radius
-  @protected
-  DesignSystemRadius getDesignSystemRadius(BuildContext context) {
-    return Theme.of(context).designSystemRadius ?? const DesignSystemRadius();
   }
 }

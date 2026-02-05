@@ -110,7 +110,7 @@ class _DynamicChatScreenState extends State<DynamicChatScreen>
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withValues(alpha: 0.2),
+                    color: Colors.orange.withAlpha((255 * 0.2).round()),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.orange, width: 1),
                   ),
@@ -297,7 +297,7 @@ class _DynamicChatScreenState extends State<DynamicChatScreen>
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
+                        color: Colors.black.withOpacity(0.1),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -340,7 +340,7 @@ class _DynamicChatScreenState extends State<DynamicChatScreen>
           children: [
             CircleAvatar(
               radius: _theme.getDynamicFontSize(25),
-              backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
+              backgroundColor: Theme.of(context).primaryColor.withAlpha((255 * 0.1).round()),
               backgroundImage: user.avatarUrl != null ? NetworkImage(user.avatarUrl!) : null,
               child: user.avatarUrl == null
                   ? Text(
@@ -383,7 +383,7 @@ class _DynamicChatScreenState extends State<DynamicChatScreen>
           user.bio ?? 'No recent messages',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
             fontSize: _theme.getDynamicFontSize(12),
-            color: Theme.of(context).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
+            color: Theme.of(context).textTheme.bodySmall?.color?.withAlpha((255 * 0.7).round()),
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -460,7 +460,7 @@ class _DynamicChatScreenState extends State<DynamicChatScreen>
                     borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.1),
+                        color: Colors.black.withOpacity(0.1),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -1033,9 +1033,9 @@ class _DynamicChatScreenState extends State<DynamicChatScreen>
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.1),
+                color: Colors.orange.withAlpha((255 * 0.1).round()),
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+                border: Border.all(color: Colors.orange.withAlpha((255 * 0.3).round())),
               ),
               child: Row(
                 children: [

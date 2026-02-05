@@ -148,9 +148,6 @@ class _PlayButtonState extends State<PlayButton> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
@@ -162,7 +159,7 @@ class _PlayButtonState extends State<PlayButton> with TickerProviderStateMixin {
               onTap: _handleTap,
               borderRadius: widget.isCircular
                   ? null
-                  : (widget.borderRadius ?? BorderRadius.circular(design.designSystemRadius.md)),
+                  : (widget.borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD)),
               child: Container(
                 width: widget.size,
                 height: widget.size,
@@ -170,12 +167,12 @@ class _PlayButtonState extends State<PlayButton> with TickerProviderStateMixin {
                   color: _getBackgroundColor(),
                   borderRadius: widget.isCircular
                       ? null
-                      : (widget.borderRadius ?? BorderRadius.circular(design.designSystemRadius.md)),
+                      : (widget.borderRadius ?? BorderRadius.circular(DesignSystem.radiusMD)),
                   shape: widget.isCircular ? BoxShape.circle : BoxShape.rectangle,
                   boxShadow: widget.showShadow
                       ? [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.2),
+                          color: Colors.black.withAlpha(51),
                           blurRadius: widget.elevation,
                           offset: const Offset(0, 2),
                         ),
@@ -186,7 +183,7 @@ class _PlayButtonState extends State<PlayButton> with TickerProviderStateMixin {
                   onPressed: _handleTap,
                   icon: _buildIcon(),
                   iconSize: widget.size * 0.5,
-                  color: widget.iconColor ?? design.designSystemColors.onPrimary,
+                  color: widget.iconColor ?? DesignSystem.onPrimary,
                   padding: EdgeInsets.zero,
                   splashRadius: widget.size * 0.5,
                 ),
@@ -199,37 +196,31 @@ class _PlayButtonState extends State<PlayButton> with TickerProviderStateMixin {
   }
 
   Color _getBackgroundColor() {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     if (widget.backgroundColor != null) {
       return widget.backgroundColor!;
     }
 
     switch (widget.playState) {
       case PlayState.playing:
-        return widget.playingBackgroundColor ?? design.designSystemColors.primary;
+        return widget.playingBackgroundColor ?? DesignSystem.primary;
       case PlayState.paused:
-        return widget.pausedBackgroundColor ?? design.designSystemColors.primary;
+        return widget.pausedBackgroundColor ?? DesignSystem.primary;
       case PlayState.loading:
-        return widget.loadingBackgroundColor ?? design.designSystemColors.primary.withValues(alpha: 0.8);
+        return widget.loadingBackgroundColor ?? DesignSystem.primary.withAlpha(204);
     }
   }
 
   Widget _buildIcon() {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     switch (widget.playState) {
       case PlayState.playing:
         return Icon(
           widget.pauseIcon ?? Icons.pause,
-          color: widget.iconColor ?? design.designSystemColors.onPrimary,
+          color: widget.iconColor ?? DesignSystem.onPrimary,
         );
       case PlayState.paused:
         return Icon(
           widget.playIcon ?? Icons.play_arrow,
-          color: widget.iconColor ?? design.designSystemColors.onPrimary,
+          color: widget.iconColor ?? DesignSystem.onPrimary,
         );
       case PlayState.loading:
         return widget.loadingIndicator ?? SizedBox(
@@ -238,7 +229,7 @@ class _PlayButtonState extends State<PlayButton> with TickerProviderStateMixin {
           child: CircularProgressIndicator(
             strokeWidth: 2,
             valueColor: AlwaysStoppedAnimation<Color>(
-              widget.iconColor ?? design.designSystemColors.onPrimary,
+              widget.iconColor ?? DesignSystem.onPrimary,
             ),
           ),
         );

@@ -148,19 +148,19 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
                 vertical: 2,
               ),
               decoration: BoxDecoration(
-                color: Colors.orange.withValues(alpha: 0.2),
+                color: DesignSystem.warning.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(DesignSystem.radiusSM),
-                border: Border.all(color: Colors.orange, width: 1),
+                border: Border.all(color: DesignSystem.warning, width: 1),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.cloud_off, size: 12, color: Colors.orange),
+                  const Icon(Icons.cloud_off, size: 12, color: DesignSystem.warning),
                   const SizedBox(width: 4),
                   Text(
                     'Offline',
                     style: DesignSystem.labelSmall.copyWith(
-                      color: Colors.orange,
+                      color: DesignSystem.warning,
                     ),
                   ),
                 ],

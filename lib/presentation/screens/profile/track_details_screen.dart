@@ -69,7 +69,7 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(service != null ? 'Playing on $service' : 'Playing track'),
-            backgroundColor: Theme.of(context).designSystemColors!.success,
+            backgroundColor: DesignSystem.success,
           ),
         );
       }
@@ -85,7 +85,7 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(_errorMessage!),
-            backgroundColor: Theme.of(context).designSystemColors!.error,
+            backgroundColor: DesignSystem.error,
           ),
         );
       }
@@ -111,14 +111,11 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final designSystemColors = Theme.of(context).designSystemColors!;
-    final designSystemTypography = Theme.of(context).designSystemTypography!;
-
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
         title: const Text('Track Details'),
-        backgroundColor: designSystemColors.surface,
+        backgroundColor: DesignSystem.surface,
         leading: IconButton(
           icon: const Icon(Icons.menu),
           onPressed: () {
@@ -130,8 +127,8 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
         navigationController: _navigationController,
       ),
       body: Container(
-        decoration: BoxDecoration(
-          gradient: Theme.of(context).designSystemGradients!.background,
+        decoration: const BoxDecoration(
+          gradient: DesignSystem.gradientBackground,
         ),
         child: SingleChildScrollView(
           child: Column(
@@ -144,18 +141,18 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
                   children: [
                     Text(
                       _track.name,
-                      style: designSystemTypography.headlineSmall,
+                      style: DesignSystem.headlineSmall,
                     ),
                     const SizedBox(height: 8),
                     Text(
                       _track.artistName ?? 'Unknown Artist',
-                      style: designSystemTypography.titleMedium,
+                      style: DesignSystem.titleMedium,
                     ),
                     if (_track.albumName != null) ...[
                       const SizedBox(height: 8),
                       Text(
                         'Album: ${_track.albumName}',
-                        style: designSystemTypography.bodyMedium,
+                        style: DesignSystem.bodyMedium,
                       ),
                     ],
                   ],
@@ -169,24 +166,24 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
                     ElevatedButton(
                       onPressed: _isLoading ? null : () => _playTrack(service: 'spotify'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: designSystemColors.primary,
-                        foregroundColor: designSystemColors.onPrimary,
+                        backgroundColor: DesignSystem.primary,
+                        foregroundColor: DesignSystem.onPrimary,
                       ),
                       child: const Text('Play on Spotify'),
                     ),
                     ElevatedButton(
                       onPressed: _isLoading ? null : () => _playTrack(service: 'ytmusic'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: designSystemColors.primary,
-                        foregroundColor: designSystemColors.onPrimary,
+                        backgroundColor: DesignSystem.primary,
+                        foregroundColor: DesignSystem.onPrimary,
                       ),
                       child: const Text('Play on YouTube Music'),
                     ),
                     ElevatedButton(
                       onPressed: _isLoading ? null : () => _playTrack(service: 'lastfm'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: designSystemColors.primary,
-                        foregroundColor: designSystemColors.onPrimary,
+                        backgroundColor: DesignSystem.primary,
+                        foregroundColor: DesignSystem.onPrimary,
                       ),
                       child: const Text('Play on Last.fm'),
                     ),
@@ -199,8 +196,8 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
                 child: ElevatedButton(
                   onPressed: _isLoading ? null : _getBudsByTrack,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: designSystemColors.primary,
-                    foregroundColor: designSystemColors.onPrimary,
+                    backgroundColor: DesignSystem.primary,
+                    foregroundColor: DesignSystem.onPrimary,
                   ),
                   child: _isLoading
                       ? const CircularProgressIndicator()
@@ -212,7 +209,7 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
                   padding: const EdgeInsets.all(16.0),
                   child: Text(
                     _errorMessage!,
-                    style: TextStyle(color: designSystemColors.error),
+                    style: const TextStyle(color: DesignSystem.error),
                   ),
                 ),
               if (_buds.isNotEmpty)
@@ -223,7 +220,7 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
                     children: [
                       Text(
                         'Buds who like this track:',
-                        style: designSystemTypography.titleLarge,
+                        style: DesignSystem.titleLarge,
                       ),
                       const SizedBox(height: 8),
                       ListView.builder(
@@ -233,15 +230,15 @@ class _TrackDetailsScreenState extends State<TrackDetailsScreen> {
                         itemBuilder: (context, index) {
                           final bud = _buds[index];
                           return Card(
-                            color: designSystemColors.surface,
+                            color: DesignSystem.surface,
                             child: ListTile(
                               title: Text(
                                 bud.username,
-                                style: TextStyle(color: designSystemColors.onSurface),
+                                style: const TextStyle(color: DesignSystem.onSurface),
                               ),
                               subtitle: Text(
                                 bud.email ?? '',
-                                style: TextStyle(color: designSystemColors.onSurfaceVariant),
+                                style: const TextStyle(color: DesignSystem.onSurfaceVariant),
                               ),
                             ),
                           );

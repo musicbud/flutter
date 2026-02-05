@@ -42,12 +42,8 @@ class RecommendationsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).designSystemColors!;
-    final typography = Theme.of(context).designSystemTypography!;
-    final spacing = Theme.of(context).designSystemSpacing!;
-
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: spacing.lg),
+      padding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingLG),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -57,8 +53,8 @@ class RecommendationsList extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: typography.headlineSmall.copyWith(
-                  color: colors.onSurface,
+                style: DesignSystem.headlineSmall.copyWith(
+                  color: DesignSystem.onSurface,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -67,15 +63,15 @@ class RecommendationsList extends StatelessWidget {
                   onPressed: onSeeAll,
                   child: Text(
                     'See All',
-                    style: typography.bodySmall.copyWith(
-                      color: colors.primary,
+                    style: DesignSystem.bodySmall.copyWith(
+                      color: DesignSystem.primary,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
             ],
           ),
-          SizedBox(height: spacing.md),
+          const SizedBox(height: DesignSystem.spacingMD),
 
           // Horizontal list
           SizedBox(
@@ -88,7 +84,7 @@ class RecommendationsList extends StatelessWidget {
                 return Container(
                   width: itemWidth,
                   margin: EdgeInsets.only(
-                    right: index < items.length - 1 ? spacing.md : 0,
+                    right: index < items.length - 1 ? DesignSystem.spacingMD : 0,
                   ),
                   child: _buildRecommendationCard(item, context),
                 );
@@ -101,11 +97,6 @@ class RecommendationsList extends StatelessWidget {
   }
 
   Widget _buildRecommendationCard(RecommendationItem item, BuildContext context) {
-    final colors = Theme.of(context).designSystemColors!;
-    final typography = Theme.of(context).designSystemTypography!;
-    final spacing = Theme.of(context).designSystemSpacing!;
-    final radius = Theme.of(context).designSystemRadius!;
-
     return ModernCard(
       variant: ModernCardVariant.primary,
       onTap: item.onTap,
@@ -117,12 +108,12 @@ class RecommendationsList extends StatelessWidget {
             height: 100,
             width: double.infinity,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(radius.lg),
-              color: colors.surfaceContainer,
+              borderRadius: BorderRadius.circular(DesignSystem.radiusLg),
+              color: DesignSystem.surfaceContainer,
             ),
             child: item.imageUrl != null
                 ? ClipRRect(
-                    borderRadius: BorderRadius.circular(radius.lg),
+                    borderRadius: BorderRadius.circular(DesignSystem.radiusLg),
                     child: Image.network(
                       item.imageUrl!,
                       fit: BoxFit.cover,
@@ -134,13 +125,13 @@ class RecommendationsList extends StatelessWidget {
                 : _buildIconFallback(context, item.icon),
           ),
 
-          SizedBox(height: spacing.md),
+          const SizedBox(height: DesignSystem.spacingMD),
 
           // Title
           Text(
             item.title,
-            style: typography.titleMedium.copyWith(
-              color: colors.onSurface,
+            style: DesignSystem.titleMedium.copyWith(
+              color: DesignSystem.onSurface,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -148,18 +139,18 @@ class RecommendationsList extends StatelessWidget {
 
           // Subtitle
           if (item.subtitle != null) ...[
-            SizedBox(height: spacing.xs),
+            const SizedBox(height: DesignSystem.spacingXS),
             Text(
               item.subtitle!,
-              style: typography.bodySmall.copyWith(
-                color: colors.onSurfaceVariant,
+              style: DesignSystem.bodySmall.copyWith(
+                color: DesignSystem.onSurfaceVariant,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
           ],
 
-          SizedBox(height: spacing.md),
+          const SizedBox(height: DesignSystem.spacingMD),
 
           // Action row
           Row(
@@ -167,14 +158,14 @@ class RecommendationsList extends StatelessWidget {
             children: [
               // Play button
               Container(
-                padding: EdgeInsets.all(spacing.sm),
+                padding: const EdgeInsets.all(DesignSystem.spacingSM),
                 decoration: BoxDecoration(
-                  color: colors.primary,
-                  borderRadius: BorderRadius.circular(radius.circular),
+                  color: DesignSystem.primary,
+                  borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
                 ),
                 child: Icon(
                   item.isPlaying ? Icons.pause : Icons.play_arrow,
-                  color: colors.onPrimary,
+                  color: DesignSystem.onPrimary,
                   size: 16,
                 ),
               ),
@@ -182,7 +173,7 @@ class RecommendationsList extends StatelessWidget {
               // Like button
               Icon(
                 item.isLiked ? Icons.favorite : Icons.favorite_border,
-                color: item.isLiked ? colors.primary : colors.onSurfaceVariant,
+                color: item.isLiked ? DesignSystem.primary : DesignSystem.onSurfaceVariant,
                 size: 20,
               ),
             ],
@@ -193,18 +184,14 @@ class RecommendationsList extends StatelessWidget {
   }
 
   Widget _buildIconFallback(BuildContext context, IconData? icon) {
-    final colors = Theme.of(context).designSystemColors!;
-    final gradients = Theme.of(context).designSystemGradients!;
-    final radius = Theme.of(context).designSystemRadius!;
-
     return Container(
       decoration: BoxDecoration(
-        gradient: gradients.card,
-        borderRadius: BorderRadius.circular(radius.lg),
+        gradient: DesignSystem.gradientCard,
+        borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
       ),
       child: Icon(
         icon ?? Icons.music_note,
-        color: colors.primary,
+        color: DesignSystem.primary,
         size: 40,
       ),
     );

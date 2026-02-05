@@ -66,13 +66,10 @@ abstract class BaseCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Card(
       elevation: showElevation ? elevation : 0,
       shape: shape ?? _getDefaultShape(context),
-      color: backgroundColor ?? design.designSystemColors.surfaceContainer,
+      color: backgroundColor ?? DesignSystem.surfaceContainer,
       child: InkWell(
         onTap: onTap,
         borderRadius: _getBorderRadius(context),
@@ -93,11 +90,8 @@ abstract class BaseCard extends StatelessWidget {
   /// Can be overridden by subclasses for custom shapes
   @protected
   ShapeBorder _getDefaultShape(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return RoundedRectangleBorder(
-      borderRadius: borderRadius ?? BorderRadius.circular(design.designSystemRadius.lg),
+      borderRadius: borderRadius ?? BorderRadius.circular(DesignSystem.radiusLg),
     );
   }
 
@@ -105,10 +99,7 @@ abstract class BaseCard extends StatelessWidget {
   /// Can be overridden by subclasses for custom padding
   @protected
   EdgeInsetsGeometry _getDefaultPadding(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
-    return EdgeInsets.all(design.designSystemSpacing.md);
+    return const EdgeInsets.all(DesignSystem.spacingMD);
   }
 
   /// Get the border radius for the InkWell
@@ -121,32 +112,6 @@ abstract class BaseCard extends StatelessWidget {
       return shape.borderRadius as BorderRadius?;
     }
 
-    return borderRadius ?? BorderRadius.circular(
-      Theme.of(context).extension<DesignSystemThemeExtension>()!.designSystemRadius.lg,
-    );
-  }
-
-  /// Helper method to get design system colors
-  @protected
-  DesignSystemColors getDesignSystemColors(BuildContext context) {
-    return Theme.of(context).extension<DesignSystemThemeExtension>()!.designSystemColors;
-  }
-
-  /// Helper method to get design system typography
-  @protected
-  DesignSystemTypography getDesignSystemTypography(BuildContext context) {
-    return Theme.of(context).extension<DesignSystemThemeExtension>()!.designSystemTypography;
-  }
-
-  /// Helper method to get design system spacing
-  @protected
-  DesignSystemSpacing getDesignSystemSpacing(BuildContext context) {
-    return Theme.of(context).extension<DesignSystemThemeExtension>()!.designSystemSpacing;
-  }
-
-  /// Helper method to get design system radius
-  @protected
-  DesignSystemRadius getDesignSystemRadius(BuildContext context) {
-    return Theme.of(context).extension<DesignSystemThemeExtension>()!.designSystemRadius;
+    return borderRadius ?? BorderRadius.circular(DesignSystem.radiusLg);
   }
 }

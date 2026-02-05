@@ -18,16 +18,14 @@ class MediaCardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final designSystem = Theme.of(context).designSystem!;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Title
         Text(
           title,
-          style: designSystem.designSystemTypography.titleMedium.copyWith(
-            color: designSystem.designSystemColors.onSurface,
+          style: DesignSystem.titleMedium.copyWith(
+            color: DesignSystem.onSurface,
             fontWeight: FontWeight.w600,
           ),
           maxLines: 2,
@@ -36,11 +34,11 @@ class MediaCardContent extends StatelessWidget {
 
         // Subtitle
         if (subtitle != null) ...[
-          SizedBox(height: designSystem.designSystemSpacing.xs),
+          const SizedBox(height: DesignSystem.spacingXS),
           Text(
             subtitle!,
-            style: designSystem.designSystemTypography.bodySmall.copyWith(
-              color: designSystem.designSystemColors.onSurfaceVariant,
+            style: DesignSystem.bodySmall.copyWith(
+              color: DesignSystem.onSurfaceVariant,
             ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,

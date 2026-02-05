@@ -7,83 +7,92 @@ class DynamicApiConfig {
   static const String localBaseUrl = 'http://127.0.0.1:8000';
 
   // API Version prefix
-  static const String apiVersion = '/v1';
+  static const String apiVersion = '';
 
   // Current base URL (can be switched dynamically)
   // Use local for development, remote for production
-  static String get currentBaseUrl => localBaseUrl;
+  static String get currentBaseUrl => baseUrl;
 
   // Bud/Matching Endpoints
   static const Map<String, String> budEndpoints = {
-    'profile': '/v1/bud/profile',
-    'topArtists': '/v1/bud/top/artists',
-    'topTracks': '/v1/bud/top/tracks',
-    'topGenres': '/v1/bud/top/genres',
-    'topAnime': '/v1/bud/top/anime',
-    'topManga': '/v1/bud/top/manga',
-    'likedArtists': '/v1/bud/liked/artists',
-    'likedTracks': '/v1/bud/liked/tracks',
-    'likedGenres': '/v1/bud/liked/genres',
-    'likedAlbums': '/v1/bud/liked/albums',
-    'likedAio': '/v1/bud/liked/aio',
-    'playedTracks': '/v1/bud/played/tracks',
-    'byTrack': '/v1/bud/artist',
-    'byArtist': '/v1/bud/artist',
-    'byGenre': '/v1/bud/genre',
+    'profile': '/bud/profile',
+    'topArtists': '/bud/top/artists',
+    'topTracks': '/bud/top/tracks',
+    'topGenres': '/bud/top/genres',
+    'topAnime': '/bud/top/anime',
+    'topManga': '/bud/top/manga',
+    'likedArtists': '/bud/liked/artists',
+    'likedTracks': '/bud/liked/tracks',
+    'likedGenres': '/bud/liked/genres',
+    'likedAlbums': '/bud/liked/albums',
+    'likedAio': '/bud/liked/aio',
+    'playedTracks': '/bud/played/tracks',
+    'byTrack': '/bud/track',
+    'byArtist': '/bud/artist',
+    'byGenre': '/bud/genre',
+    'byAlbum': '/bud/album/',
   };
 
   // Common Bud Endpoints
   static const Map<String, String> commonBudEndpoints = {
-    'commonTopArtists': '/v1/bud/common/top/artists',
-    'commonTopTracks': '/v1/bud/common/top/tracks',
-    'commonTopGenres': '/v1/bud/common/top/genres',
-    'commonTopAnime': '/v1/bud/common/top/anime',
-    'commonTopManga': '/v1/bud/common/top/manga',
-    'commonLikedArtists': '/v1/bud/common/liked/artists',
-    'commonLikedTracks': '/v1/bud/common/liked/tracks',
-    'commonLikedGenres': '/v1/bud/common/liked/genres',
-    'commonLikedAlbums': '/v1/bud/common/liked/albums',
-    'commonPlayedTracks': '/v1/bud/common/played/tracks',
+    'commonTopArtists': '/bud/common/top/artists',
+    'commonTopTracks': '/bud/common/top/tracks',
+    'commonTopGenres': '/bud/common/top/genres',
+    'commonTopAnime': '/bud/common/top/anime',
+    'commonTopManga': '/bud/common/top/manga',
+    'commonLikedArtists': '/bud/common/liked/artists',
+    'commonLikedTracks': '/bud/common/liked/tracks',
+    'commonLikedGenres': '/bud/common/liked/genres',
+    'commonLikedAlbums': '/bud/common/liked/albums',
+    'commonPlayedTracks': '/bud/common/played/tracks',
   };
 
   // Auth Endpoints
   static const Map<String, String> authEndpoints = {
-    'login': '/v1/login/',
-    'register': '/v1/register/',
-    'serviceLogin': '/v1/service/login',
-    'spotifyConnect': '/v1/spotify/connect',
-    'ytmusicConnect': '/v1/ytmusic/connect',
-    'lastfmConnect': '/v1/lastfm/connect',
-    'malConnect': '/v1/mal/connect',
-    'spotifyRefreshToken': '/v1/spotify/token/refresh',
+    'login': '/login/',
+    'register': '/register/',
+    'logout': '/logout/',
+    'tokenRefresh': '/token/refresh',
+    'serviceLogin': '/service/login',
+    'spotifyConnect': '/spotify/connect',
+    'ytmusicConnect': '/ytmusic/connect',
+    'lastfmConnect': '/lastfm/connect',
+    'malConnect': '/mal/connect',
+    'spotifyRefreshToken': '/spotify/token/refresh',
+    'ytmusicRefreshToken': '/ytmusic/token/refresh',
   };
 
   // User Profile Endpoints
   static const Map<String, String> userEndpoints = {
-    'myProfile': '/v1/me/profile',
-    'getProfile': '/v1/me/profile',
+    'myProfile': '/me/profile',
+    'setMyProfile': '/me/profile/set',
+    'updateMyLikes': '/me/likes/update',
   };
 
   // Service Endpoints
   static const Map<String, String> serviceEndpoints = {
-    'spotify': '/v1/service/login?service=spotify',
-    'lastfm': '/v1/service/login?service=lastfm',
-    'ytmusic': '/v1/service/login?service=ytmusic',
-    'mal': '/v1/service/login?service=mal',
+    'spotify': '/service/login?service=spotify',
+    'lastfm': '/service/login?service=lastfm',
+    'ytmusic': '/service/login?service=ytmusic',
+    'mal': '/service/login?service=mal',
+    'spotifyCallback': '/spotify/callback',
+    'ytmusicCallback': '/ytmusic/callback',
+    'lastfmCallback': '/lastfm/callback',
+    'malCallback': '/mal/callback',
   };
 
   // Common Content Endpoints
   static const Map<String, String> contentEndpoints = {
-    'topArtists': '/v1/bud/common/top/artists',
-    'topTracks': '/v1/bud/common/top/tracks',
-    'topGenres': '/v1/bud/common/top/genres',
-    'topAnime': '/v1/bud/common/top/anime',
-    'topManga': '/v1/bud/common/top/manga',
-    'likedArtists': '/v1/bud/common/liked/artists',
-    'likedTracks': '/v1/bud/common/liked/tracks',
-    'likedGenres': '/v1/bud/common/liked/genres',
-    'likedAlbums': '/v1/bud/common/liked/albums',
-    'playedTracks': '/v1/bud/common/played/tracks',
+    'likedArtists': '/me/liked/artists',
+    'likedTracks': '/me/liked/tracks',
+    'likedGenres': '/me/liked/genres',
+    'likedAlbums': '/me/liked/albums',
+    'playedTracks': '/me/played/tracks',
+    'topArtists': '/me/top/artists',
+    'topTracks': '/me/top/tracks',
+    'topGenres': '/me/top/genres',
+    'topAnime': '/me/top/anime',
+    'topManga': '/me/top/manga',
   };
 
   /// Get full URL for an endpoint

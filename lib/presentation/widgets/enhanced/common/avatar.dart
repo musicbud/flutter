@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/design_system.dart';
+import 'package:musicbud_flutter/core/theme/design_system.dart';
 
 /// Avatar sizes
 enum AvatarSize {
@@ -70,14 +70,11 @@ class Avatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>();
     final avatarSize = _getSize();
     final bgColor = backgroundColor ??
-        design?.designSystemColors.surfaceDark ??
-        theme.colorScheme.surfaceContainerHighest;
+        DesignSystem.surfaceDark;
     final fgColor = foregroundColor ??
-        design?.designSystemColors.textPrimary ??
-        theme.colorScheme.onSurface;
+        DesignSystem.textPrimary;
 
     final avatar = Container(
       width: avatarSize,
@@ -88,8 +85,7 @@ class Avatar extends StatelessWidget {
         border: borderWidth > 0
             ? Border.all(
                 color: borderColor ??
-                    design?.designSystemColors.textMuted ??
-                    theme.dividerColor,
+                    DesignSystem.textMuted,
                 width: borderWidth,
               )
             : null,
@@ -104,7 +100,7 @@ class Avatar extends StatelessWidget {
             clipBehavior: Clip.none,
             children: [
               avatar,
-              _buildStatusIndicator(design, theme),
+              _buildStatusIndicator(theme),
             ],
           )
         : avatar;
@@ -160,14 +156,12 @@ class Avatar extends StatelessWidget {
   }
 
   Widget _buildStatusIndicator(
-    DesignSystemThemeExtension? design,
     ThemeData theme,
   ) {
     final statusSize = _getStatusSize();
     final offset = _getStatusOffset();
     final color = statusColor ??
-        design?.designSystemColors.success ??
-        Colors.green;
+        DesignSystem.success;
 
     return Positioned(
       top: statusPosition == StatusPosition.topRight ||

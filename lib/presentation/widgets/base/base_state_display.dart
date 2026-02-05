@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/theme/design_system.dart';
 
 /// Abstract base class for state display widgets like loading, error, and empty states.
 /// Provides consistent layout and styling for different state representations.
@@ -42,7 +41,7 @@ import '../../../../core/theme/design_system.dart';
 ///   Widget buildContent(BuildContext context) {
 ///     return Column(
 ///       children: [
-///         Text(title, style: getDesignSystemTypography(context).titleMedium),
+///         Text(title, style: DesignSystem.titleMedium),
 ///         if (message != null) Text(message!),
 ///       ],
 ///     );
@@ -157,79 +156,4 @@ abstract class BaseStateDisplay extends StatelessWidget {
   /// Should return action button or SizedBox.shrink() if no action
   @protected
   Widget buildAction(BuildContext context);
-
-
-  /// Helper method to get design system colors
-  @protected
-  DesignSystemColors getDesignSystemColors(BuildContext context) {
-    return Theme.of(context).designSystemColors ?? const DesignSystemColors(
-      primary: Color(0xFF000000), // Placeholder
-      secondary: Color(0xFF000000),
-      surface: Color(0xFF000000),
-      background: Color(0xFF000000),
-      onSurface: Color(0xFF000000),
-      onSurfaceVariant: Color(0xFF000000),
-      error: Color(0xFF000000),
-      success: Color(0xFF000000),
-      warning: Color(0xFF000000),
-      info: Color(0xFF000000),
-      accentBlue: Color(0xFF000000),
-      accentPurple: Color(0xFF000000),
-      accentGreen: Color(0xFF000000),
-      accentOrange: Color(0xFF000000),
-      border: Color(0xFF000000),
-      overlay: Color(0xFF000000),
-      surfaceContainer: Color(0xFF000000),
-      surfaceContainerHigh: Color(0xFF000000),
-      surfaceContainerHighest: Color(0xFF000000),
-      onPrimary: Color(0xFF000000),
-      onError: Color(0xFF000000),
-      onErrorContainer: Color(0xFF000000),
-      textMuted: Color(0xFF000000),
-      primaryRed: Color(0xFF000000),
-      white: Color(0xFF000000),
-      surfaceDark: Color(0xFF000000),
-      surfaceLight: Color(0xFF000000),
-      cardBackground: Color(0xFF000000),
-      borderColor: Color(0xFF000000),
-      textPrimary: Color(0xFF000000),
-    );
-  }
-
-  /// Helper method to get design system typography
-  @protected
-  DesignSystemTypography getDesignSystemTypography(BuildContext context) {
-    return Theme.of(context).designSystemTypography ?? DesignSystemTypography(
-      displayLarge: const TextStyle(),
-      displayMedium: const TextStyle(),
-      displaySmall: const TextStyle(),
-      headlineLarge: const TextStyle(),
-      headlineMedium: const TextStyle(),
-      headlineSmall: const TextStyle(),
-      titleLarge: const TextStyle(),
-      titleMedium: const TextStyle(),
-      titleSmall: const TextStyle(),
-      bodyLarge: const TextStyle(),
-      bodyMedium: const TextStyle(),
-      bodySmall: const TextStyle(),
-      labelLarge: const TextStyle(),
-      labelMedium: const TextStyle(),
-      labelSmall: const TextStyle(),
-      caption: const TextStyle(),
-      overline: const TextStyle(),
-      arabicText: const TextStyle(),
-    );
-  }
-
-  /// Helper method to get design system spacing
-  @protected
-  DesignSystemSpacing getDesignSystemSpacing(BuildContext context) {
-    return Theme.of(context).designSystemSpacing ?? const DesignSystemSpacing();
-  }
-
-  /// Helper method to get design system radius
-  @protected
-  DesignSystemRadius getDesignSystemRadius(BuildContext context) {
-    return Theme.of(context).designSystemRadius ?? const DesignSystemRadius();
-  }
 }

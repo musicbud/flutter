@@ -123,32 +123,29 @@ class _TabManagerState extends State<TabManager> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final design = theme.extension<DesignSystemThemeExtension>()!;
-
     return Column(
       children: [
         // Tab Bar
         Container(
           height: widget.tabBarHeight,
-          color: widget.tabBarBackgroundColor ?? design.designSystemColors.surface,
+          color: widget.tabBarBackgroundColor ?? DesignSystem.surface,
           child: TabBar(
             controller: _tabController,
             tabs: widget.tabs.map((tab) => _buildTab(tab)).toList(),
             isScrollable: widget.isScrollable,
-            indicatorColor: widget.indicatorColor ?? design.designSystemColors.primary,
+            indicatorColor: widget.indicatorColor ?? DesignSystem.primary,
             indicatorWeight: 3,
-            labelStyle: widget.selectedLabelStyle ?? design.designSystemTypography.labelLarge.copyWith(
-              color: design.designSystemColors.primary,
+            labelStyle: widget.selectedLabelStyle ?? DesignSystem.labelLarge.copyWith(
+              color: DesignSystem.primary,
               fontWeight: FontWeight.w600,
             ),
-            unselectedLabelStyle: widget.labelStyle ?? design.designSystemTypography.labelLarge.copyWith(
-              color: design.designSystemColors.onSurfaceVariant,
+            unselectedLabelStyle: widget.labelStyle ?? DesignSystem.labelLarge.copyWith(
+              color: DesignSystem.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
-            labelPadding: EdgeInsets.symmetric(horizontal: design.designSystemSpacing.md),
+            labelPadding: const EdgeInsets.symmetric(horizontal: DesignSystem.spacingMD),
             indicatorSize: TabBarIndicatorSize.label,
-            dividerColor: design.designSystemColors.border,
+            dividerColor: DesignSystem.border,
           ),
         ),
 
