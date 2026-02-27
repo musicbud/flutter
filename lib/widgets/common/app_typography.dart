@@ -481,7 +481,9 @@ class AppTypography extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '#${(color.value & 0x00FFFFFF).toRadixString(16).padLeft(6, '0').toUpperCase()}',
+                  '#${(color.r * 255.0).round().clamp(0, 255).toRadixString(16).padLeft(2, '0')}'
+                  '${(color.g * 255.0).round().clamp(0, 255).toRadixString(16).padLeft(2, '0')}'
+                  '${(color.b * 255.0).round().clamp(0, 255).toRadixString(16).padLeft(2, '0')}',
                   style: DesignSystem.caption.copyWith(
                     color: DesignSystem.onSurfaceVariant,
                   ),

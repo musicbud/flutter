@@ -7,7 +7,7 @@ import '../../../blocs/settings/settings_state.dart';
 import '../../../blocs/auth/auth_bloc.dart';
 
 class EnhancedSettingsScreen extends StatelessWidget {
-  EnhancedSettingsScreen({super.key});
+  const EnhancedSettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

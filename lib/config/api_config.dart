@@ -65,10 +65,10 @@ class ApiConfig {
   // API Endpoints - Updated to match FastAPI v1 structure
 
   // Auth Endpoints
-  static String get login => '$apiUrl/auth/login/json';
-  static String get register => '$apiUrl/auth/register';
-  static String get refreshToken => '$apiUrl/auth/refresh';
-  static String get logout => '$apiUrl/auth/logout';
+  static String get login => '$apiUrl/login/';
+  static String get register => '$apiUrl/register/';
+  static String get refreshToken => '$apiUrl/token/refresh';
+  static String get logout => '$apiUrl/logout';
   static String get serviceLogin => '$apiUrl/service/login/';
   static String get spotifyConnect => '$apiUrl/spotify/connect/';
   static String get spotifyCallback => '$apiUrl/spotify/callback/';
@@ -190,18 +190,17 @@ class ApiConfig {
 
   // Public Discovery Endpoints - Updated to FastAPI v1
   static String get discoverGenres => '$apiUrl/public/discover/genres';
-  static String get discoverArtists => '$apiUrl/public/discover/artists';
-  static String get discoverTracks => '$apiUrl/public/discover/tracks';
-  static String get discoverMovies => '$apiUrl/public/discover/movies';
-  static String get discoverAnime => '$apiUrl/public/discover/anime';
-  static String get discoverManga => '$apiUrl/public/discover/manga';
-  static String get publicHealth => '$apiUrl/public/health';
+  static String get discoverArtists => '$apiUrl/content/public/artists/';
+  static String get discoverTracks => '$apiUrl/content/public/tracks/';
+  static String get discoverMovies => '$apiUrl/content/public/movies/';
+  static String get discoverAnime => '$apiUrl/content/public/anime/';
+  static String get discoverManga => '$apiUrl/content/public/manga/';
+  static String get publicHealth => '$baseUrl/health/';
 
   // Legacy discovery endpoints (for compatibility)
   static String get featuredArtists =>
       '$apiUrl/public/discover/artists'; // Will be deprecated
-  static String get trendingTracks =>
-      '$apiUrl/public/discover/tracks'; // Will be deprecated
+  static String get trendingTracks => '$apiUrl/discover/public/trending/';
   static String get newReleases =>
       '$apiUrl/public/discover/tracks'; // Will be deprecated
   static String get discoverActions =>
@@ -210,48 +209,48 @@ class ApiConfig {
       '$apiUrl/public/discover/genres'; // Will be deprecated
 
   // User Endpoints - Updated to FastAPI v1 structure
-  static String get myProfile => '$apiUrl/users/profile';
-  static String get updateProfile => '$apiUrl/users/profile';
-  static String get myPreferences => '$apiUrl/users/preferences';
-  static String get updatePreferences => '$apiUrl/users/preferences';
+  static String get myProfile => '$apiUrl/me/profile/'; // Updated
+  static String get updateProfile => '$apiUrl/me/profile/'; // Updated
+  static String get myPreferences => '$apiUrl/me/preferences/'; // Updated
+  static String get updatePreferences => '$apiUrl/me/preferences/'; // Updated
   static String get myMatchingPreferences =>
-      '$apiUrl/users/matching/preferences';
+      '$apiUrl/me/matching/preferences/'; // Updated
   static String get updateMatchingPreferences =>
-      '$apiUrl/users/matching/preferences';
+      '$apiUrl/me/matching/preferences/'; // Updated
 
   // Settings Endpoints
-  static String get privacySettings => '$apiUrl/users/settings/privacy';
+  static String get privacySettings => '$apiUrl/me/settings/privacy/'; // Updated
   static String get notificationSettings =>
-      '$apiUrl/users/settings/notifications';
-  static String get appSettings => '$apiUrl/users/settings/app';
+      '$apiUrl/me/settings/notifications/'; // Updated
+  static String get appSettings => '$apiUrl/me/settings/app/'; // Updated
 
   // User Stats and Activity
-  static String get userStats => '$apiUrl/users/stats';
-  static String get recentActivity => '$apiUrl/users/activity/recent';
+  static String get userStats => '$apiUrl/me/stats/'; // Updated
+  static String get recentActivity => '$apiUrl/me/activity/recent/'; // Updated
 
   // Legacy compatibility (for gradual migration)
   static String get updateLikes =>
-      '$apiUrl/users/preferences'; // Will be deprecated
+      '$apiUrl/me/likes/update/'; // Updated
   static String get myLikedArtists =>
-      '$apiUrl/users/preferences'; // Will be deprecated
+      '$apiUrl/me/liked/artists/'; // Updated
   static String get myLikedTracks =>
-      '$apiUrl/users/preferences'; // Will be deprecated
+      '$apiUrl/me/liked/tracks/'; // Updated
   static String get myLikedGenres =>
-      '$apiUrl/users/preferences'; // Will be deprecated
+      '$apiUrl/me/liked/genres/'; // Updated
   static String get myLikedAlbums =>
-      '$apiUrl/users/preferences'; // Will be deprecated
+      '$apiUrl/me/liked/albums/'; // Updated
   static String get myTopArtists =>
-      '$apiUrl/users/preferences'; // Will be deprecated
+      '$apiUrl/me/top/artists/'; // Updated
   static String get myTopTracks =>
-      '$apiUrl/users/preferences'; // Will be deprecated
+      '$apiUrl/me/top/tracks/'; // Updated
   static String get myTopGenres =>
-      '$apiUrl/users/preferences'; // Will be deprecated
+      '$apiUrl/me/top/genres/'; // Updated
   static String get myTopAnime =>
-      '$apiUrl/users/preferences'; // Will be deprecated
+      '$apiUrl/me/top/anime/'; // Updated
   static String get myTopManga =>
-      '$apiUrl/users/preferences'; // Will be deprecated
+      '$apiUrl/me/top/manga/'; // Updated
   static String get myPlayedTracks =>
-      '$apiUrl/users/preferences'; // Will be deprecated
+      '$apiUrl/me/played/tracks/'; // Updated
   static String userById(String id) => '$apiUrl/users/profile/$id';
 
   // Search Endpoints

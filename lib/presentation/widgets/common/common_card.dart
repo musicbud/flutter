@@ -38,7 +38,7 @@ class CommonCard extends StatelessWidget {
         boxShadow: [
           shadow ??
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: elevation ?? 4,
                 offset: const Offset(0, 2),
               ),
@@ -155,7 +155,7 @@ class MusicItemCard extends StatelessWidget {
                   const SizedBox(height: DesignSystem.spacingXS),
                   Text(
                     subtitle!,
-                    style: TextStyle(color: DesignSystem.onSurface.withAlpha((255 * 0.7).round())),
+                    style: TextStyle(color: DesignSystem.onSurface.withValues(alpha: 0.7)),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -247,7 +247,6 @@ class GridCard extends StatelessWidget {
                         errorBuilder: (context, error, stackTrace) => const Center(
                           child: Icon(
                             Icons.music_note,
-                            size: 48,
                             color: DesignSystem.onSurfaceVariant,
                           ),
                         ),
@@ -257,7 +256,6 @@ class GridCard extends StatelessWidget {
                     const Center(
                       child: Icon(
                         Icons.music_note,
-                        size: 48,
                         color: DesignSystem.onSurfaceVariant,
                       ),
                     ),
@@ -289,7 +287,7 @@ class GridCard extends StatelessWidget {
                     const SizedBox(height: DesignSystem.spacingXS),
                     Text(
                       subtitle!,
-                      style: TextStyle(color: DesignSystem.onSurface.withAlpha((255 * 0.7).round())),
+                      style: TextStyle(color: DesignSystem.onSurface.withValues(alpha: 0.7)),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -349,7 +347,7 @@ class SectionCard extends StatelessWidget {
                       Text(
                         subtitle!,
                         style: DesignSystem.bodyMedium.copyWith(
-                          color: DesignSystem.onSurface.withAlpha((255 * 0.7).round()),
+                          color: DesignSystem.onSurface.withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -365,7 +363,6 @@ class SectionCard extends StatelessWidget {
           // Content
           child,
         ],
-      ),
-    );
+      );
   }
 }

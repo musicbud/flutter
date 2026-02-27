@@ -5,6 +5,7 @@ import '../../../blocs/profile/profile_bloc.dart';
 import '../../../blocs/profile/profile_event.dart';
 import '../../../blocs/profile/profile_state.dart';
 
+// ignore: prefer_const_constructors_in_immutables
 class EditProfileScreen extends StatefulWidget {
   EditProfileScreen({super.key});
 

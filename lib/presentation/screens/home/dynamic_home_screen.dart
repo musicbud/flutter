@@ -160,7 +160,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               decoration: BoxDecoration(
-                color: Colors.orange.withAlpha((255 * 0.2).round()),
+                color: Colors.orange.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: Colors.orange, width: 1),
               ),
@@ -250,7 +250,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
           Text(
             'Discover new music and connect with friends',
             style: DesignSystem.bodyMedium.copyWith(
-              color: DesignSystem.onPrimary.withAlpha((255 * 0.9).round()),
+              color: DesignSystem.onPrimary.withValues(alpha: 0.9),
             ),
           ),
         ],
@@ -297,9 +297,9 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
       decoration: BoxDecoration(
         color: DesignSystem.surfaceContainer,
         borderRadius: BorderRadius.circular(DesignSystem.radiusLG),
-        boxShadow: DesignSystem.shadowSmall,
+        boxShadow: DesignSystem.shadowMedium,
         border: Border.all(
-          color: DesignSystem.border.withOpacity(0.1),
+          color: DesignSystem.border.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -316,7 +316,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
                 Container(
                   padding: const EdgeInsets.all(DesignSystem.spacingSM),
                   decoration: BoxDecoration(
-                    color: DesignSystem.primary.withOpacity(0.1),
+                    color: DesignSystem.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(DesignSystem.radiusCircular),
                   ),
                   child: Icon(
@@ -436,7 +436,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
                             Expanded(
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: DesignSystem.primary.withAlpha((255 * 0.1).round()),
+                                  color: DesignSystem.primary.withValues(alpha: 0.1),
                                   borderRadius: const BorderRadius.vertical(
                                     top: Radius.circular(12),
                                   ),
@@ -593,7 +593,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
                 }
                 
                 return ListTile(
-                  tileColor: Theme.of(context).primaryColor.withAlpha((255 * 0.1).round()),
+                  tileColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                   leading: Icon(
                     iconData,
                     color: Theme.of(context).primaryColor,
@@ -633,7 +633,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
                     },
                   ),
                   onTap: () {
-                    // Navigate to track details or start playback
+                    // Navigate to track details
                   },
                 );
               },
@@ -746,7 +746,7 @@ class _DynamicHomeScreenState extends State<DynamicHomeScreen> {
                   margin: EdgeInsets.only(bottom: _theme.getDynamicSpacing(8)),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: Theme.of(context).primaryColor.withAlpha((255 * 0.1).round()),
+                      backgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                       backgroundImage: recommendation['imageUrl'] != null 
                           ? NetworkImage(recommendation['imageUrl']) 
                           : null,

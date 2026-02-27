@@ -6,6 +6,7 @@ import '../../../injection_container.dart';
 import '../../../presentation/navigation/main_navigation.dart';
 import '../../../presentation/navigation/navigation_drawer.dart';
 
+// ignore: prefer_const_constructors_in_immutables
 class ArtistDetailsScreen extends StatefulWidget {
   final String? artistId;
   final String? artistName;

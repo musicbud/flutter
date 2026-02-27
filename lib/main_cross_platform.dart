@@ -80,9 +80,8 @@ class _SimpleHomeScreenState extends State<SimpleHomeScreen> {
             onPressed: () async {
               final tokenProvider = Provider.of<CrossPlatformTokenProvider>(context, listen: false);
               await tokenProvider.clearTokens();
-              if (mounted) {
-                Navigator.pushReplacementNamed(context, '/login');
-              }
+              if (!mounted) return;
+              Navigator.pushReplacementNamed(context, '/login');
             },
           ),
         ],
@@ -496,17 +495,15 @@ class _SimpleLoginScreenState extends State<SimpleLoginScreen> {
         Navigator.pushReplacementNamed(context, '/home');
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login failed: $e')),
-        );
-      }
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Login failed: $e')),
+      );
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 

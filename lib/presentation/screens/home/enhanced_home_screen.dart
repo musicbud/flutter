@@ -794,6 +794,7 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
     return Padding(
       padding: const EdgeInsets.all(DesignSystem.spacingMD),
       child: Column(
+        mainAxisSize: MainAxisSize.min, // Added to resolve overflow
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SectionHeader(
@@ -801,19 +802,21 @@ class _EnhancedHomeScreenState extends State<EnhancedHomeScreen> {
             onSeeAllTap: null,
           ),
           const SizedBox(height: DesignSystem.spacingSM),
-          GridView.count(
-            crossAxisCount: 2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            mainAxisSpacing: DesignSystem.spacingSM,
-            crossAxisSpacing: DesignSystem.spacingSM,
-            childAspectRatio: 1.2,
-            children: [
-              _buildQuickActionCard('Find Buds', Icons.people_rounded, DesignSystem.successGreen, '/buds'),
-              _buildQuickActionCard('Chat', Icons.chat_bubble_rounded, DesignSystem.pinkAccent, '/chat'),
-              _buildQuickActionCard('Discover', Icons.explore_rounded, DesignSystem.accentPurple, '/discover'),
-              _buildQuickActionCard('Profile', Icons.person_rounded, DesignSystem.warningOrange, '/profile'),
-            ],
+          Flexible(
+            child: GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              mainAxisSpacing: DesignSystem.spacingSM,
+              crossAxisSpacing: DesignSystem.spacingSM,
+              childAspectRatio: 1.5,
+              children: [
+                _buildQuickActionCard('Find Buds', Icons.people_rounded, DesignSystem.successGreen, '/buds'),
+                _buildQuickActionCard('Chat', Icons.chat_bubble_rounded, DesignSystem.pinkAccent, '/chat'),
+                _buildQuickActionCard('Discover', Icons.explore_rounded, DesignSystem.accentPurple, '/discover'),
+                _buildQuickActionCard('Profile', Icons.person_rounded, DesignSystem.warningOrange, '/profile'),
+              ],
+            ),
           ),
         ],
       ),

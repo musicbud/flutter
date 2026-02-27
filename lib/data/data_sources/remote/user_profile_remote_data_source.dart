@@ -134,20 +134,23 @@ class UserProfileRemoteDataSourceImpl implements UserProfileRemoteDataSource {
   @override
   Future<Map<String, dynamic>> getMyLikedContent(String contentType) async {
     try {
-      // FastAPI v1 uses GET for preferences retrieval with content type filtering
-      final response = await _dioClient.get(ApiConfig.myPreferences);
+      final response = await _dioClient.post(
+        '${ApiConfig.apiUrl}/me/liked/$contentType/',
+      );
 
-      // Extract specific content type from preferences response
       final responseData = response.data as Map<String, dynamic>;
 
-      // FastAPI v1 returns preferences in structured format
-      if (responseData.containsKey(contentType)) {
+      if (responseData.containsKey('results')) {
         return {
-          'content': responseData[contentType] ?? [],
-          'pagination': null // Preferences don't use pagination in v1
+          'content': responseData['results'] ?? [],
+          'pagination': {
+            'count': responseData['count'],
+            'next': responseData['next'],
+            'previous': responseData['previous'],
+          }
         };
       } else {
-        return {'content': []};
+        return {'content': responseData['data'] ?? []};
       }
     } catch (e) {
       throw Exception('Failed to get my liked $contentType: $e');

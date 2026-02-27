@@ -4,6 +4,7 @@ import '../services/mock_data_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:developer' as developer;
+import 'package:musicbud_flutter/config/api_config.dart'; // Added this import
 
 // Simple Events
 abstract class SimpleContentEvent extends Equatable {
@@ -98,7 +99,7 @@ class SimpleContentBloc extends Bloc<SimpleContentEvent, SimpleContentState> {
       emit(SimpleContentLoading());
       
       // Try to load from real API first
-      final tracks = await _loadTracksFromAPI();
+      final tracks = await SimpleContentBloc._loadTracksFromAPI(); // Now static
       
       if (state is SimpleContentLoaded) {
         emit((state as SimpleContentLoaded).copyWith(topTracks: tracks));
@@ -128,7 +129,7 @@ class SimpleContentBloc extends Bloc<SimpleContentEvent, SimpleContentState> {
       }
       
       // Try to load from real API first
-      final artists = await _loadArtistsFromAPI();
+      final artists = await SimpleContentBloc._loadArtistsFromAPI(); // Now static
       
       if (state is SimpleContentLoaded) {
         emit((state as SimpleContentLoaded).copyWith(topArtists: artists));
@@ -243,13 +244,11 @@ class SimpleContentBloc extends Bloc<SimpleContentEvent, SimpleContentState> {
   // ==================== API HELPER METHODS ====================
   
   /// Load tracks from the real backend API
-  Future<List<Map<String, dynamic>>> _loadTracksFromAPI() async {
-    const baseUrl = 'http://localhost:8000';
-    
+  static Future<List<Map<String, dynamic>>> _loadTracksFromAPI() async {
     try {
       // First try to get user's top tracks (requires auth)
       final response = await http.get(
-        Uri.parse('$baseUrl/me/top/tracks'),
+        Uri.parse('${ApiConfig.baseUrl}/me/top/tracks'),
         headers: {'Accept': 'application/json'},
       );
       
@@ -265,7 +264,7 @@ class SimpleContentBloc extends Bloc<SimpleContentEvent, SimpleContentState> {
         
         // Fallback to general content tracks
         final contentResponse = await http.get(
-          Uri.parse('$baseUrl/content/tracks'),
+          Uri.parse('${ApiConfig.baseUrl}/content/tracks'),
           headers: {'Accept': 'application/json'},
         );
         
@@ -286,12 +285,10 @@ class SimpleContentBloc extends Bloc<SimpleContentEvent, SimpleContentState> {
   }
   
   /// Load artists from the real backend API
-  Future<List<Map<String, dynamic>>> _loadArtistsFromAPI() async {
-    const baseUrl = 'http://localhost:8000';
-    
+  static Future<List<Map<String, dynamic>>> _loadArtistsFromAPI() async {
     try {
       final response = await http.get(
-        Uri.parse('$baseUrl/content/artists'),
+        Uri.parse('${ApiConfig.baseUrl}/content/artists'),
         headers: {'Accept': 'application/json'},
       );
       
@@ -311,10 +308,10 @@ class SimpleContentBloc extends Bloc<SimpleContentEvent, SimpleContentState> {
   }
   
   /// Check if backend is available
-  Future<bool> _isBackendAvailable() async {
+  static Future<bool> _isBackendAvailable() async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:8000/'),
+        Uri.parse('${ApiConfig.baseUrl}/'),
       ).timeout(const Duration(seconds: 3));
       
       final isAvailable = response.statusCode == 200;

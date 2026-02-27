@@ -173,7 +173,7 @@ class ApiService {
     try {
       await fetchCsrfToken(); // Fetch the latest CSRF token
       _log('Fetching user profile...');
-      final response = await _dioClient.post('/me/profile',
+      final response = await _dioClient.post('/me/profile/',
         data: {},
       );
       _log('User profile response status: ${response.statusCode}');
@@ -490,7 +490,7 @@ class ApiService {
 
   Future<bool> isAuthenticated() async {
     try {
-      final response = await _dioClient.post('/auth/check');
+      final response = await _dioClient.post('/auth/check', data: {});
       return response.statusCode == 200;
     } catch (e) {
       _log('Error checking authentication: $e');
@@ -672,7 +672,7 @@ class ApiService {
   Future<void> createChannel(String channelName) async {
     try {
       _log('Creating channel: $channelName');
-      final response = await _dioClient.post('/create_channel/', data: {'name': channelName});
+      final response = await _dioClient.post('/chat/create_channel/', data: {'name': channelName});
       _log('Create channel response status: ${response.statusCode}');
       _log('Create channel response data: ${response.data}');
       if (response.statusCode != 201 && response.statusCode != 200) {
@@ -816,7 +816,7 @@ class ApiService {
       final response = await _dioClient.post(
         '/me/play-track-with-location',
         data: {
-          'track_id': trackUid,  // Sending UID as track_id
+          'track_id': trackUid, // Sending UID as track_id
           'track_name': trackName,
           'latitude': latitude,
           'longitude': longitude,
@@ -965,7 +965,7 @@ class ApiService {
     }
 
     try {
-      final response = await _dioClient.dio.post('/chat/refresh-token/', data: {'refresh': refreshToken});
+      final response = await _dioClient.dio.post('${_dioClient.dio.options.baseUrl}/v1/token/refresh/', data: {'refresh': refreshToken});
       if (response.statusCode == 200) {
         final newAccessToken = response.data['access'];
         await _secureStorage.write(key: 'access_token', value: newAccessToken);
@@ -1121,7 +1121,7 @@ class ApiService {
 
   Future<Map<String, dynamic>> updateLikes(String serviceName) async {
     try {
-      final response = await _dioClient.post('/me/likes/update', data: {'service': serviceName});
+      final response = await _dioClient.put('/me/likes/update', data: {'service': serviceName});
       if (response.statusCode == 200) {
         return {
           'success': true,

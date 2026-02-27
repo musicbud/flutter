@@ -175,8 +175,9 @@ class App extends StatelessWidget {
 }
 
 /// Navigator widget that reacts to authentication state
+// ignore: prefer_const_constructors_in_immutables
 class AppNavigator extends StatefulWidget {
-  AppNavigator({super.key});
+  const AppNavigator({super.key});
 
   @override
   State<AppNavigator> createState() => _AppNavigatorState();

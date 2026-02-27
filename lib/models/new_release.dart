@@ -39,7 +39,9 @@ class NewRelease {
       'type': type,
       'image_url': imageUrl,
       'icon': icon.codePoint.toString(),
-      'accent_color': '#${(accentColor.value & 0x00FFFFFF).toRadixString(16).padLeft(6, '0')}',
+      'accent_color': '#${(accentColor.r * 255.0).round().clamp(0, 255).toRadixString(16).padLeft(2, '0')}'
+          '${(accentColor.g * 255.0).round().clamp(0, 255).toRadixString(16).padLeft(2, '0')}'
+          '${(accentColor.b * 255.0).round().clamp(0, 255).toRadixString(16).padLeft(2, '0')}',
     };
   }
 

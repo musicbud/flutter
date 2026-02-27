@@ -124,7 +124,17 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
 
   @override
   Future<UserProfile> getMyProfile() async {
-    return getUserProfile();
+    debugPrint('Getting profile with token: ${_tokenProvider.token}');
+    final url = _endpointConfigService.getEndpointUrl('me - get profile', ApiConfig.baseUrl) ?? ApiConfig.myProfile;
+    final response = await _dioClient.post(url, data: {}); // Fixed to POST
+    if (response.statusCode == 200) {
+      return UserProfile.fromJson(response.data);
+    } else {
+      debugPrint('Failed to get profile. Status: ${response.statusCode}');
+      debugPrint('Response body: ${response.data}');
+      debugPrint('Headers sent: $_headers');
+      throw ServerException(message: 'Failed to get user profile');
+    }
   }
 
   @override
@@ -170,7 +180,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
-      final List<dynamic> artistsJson = json.decode(response.data);
+      final List<dynamic> artistsJson = json.decode(json.encode(response.data)); // Added json.encode to ensure string
       return artistsJson.map((json) => Artist.fromJson(json)).toList();
     } else {
       throw ServerException(message: 'Failed to get liked artists');
@@ -183,7 +193,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
-      final List<dynamic> albumsJson = json.decode(response.data);
+      final List<dynamic> albumsJson = json.decode(json.encode(response.data)); // Added json.encode to ensure string
       return albumsJson.map((json) => Album.fromJson(json)).toList();
     } else {
       throw ServerException(message: 'Failed to get liked albums');
@@ -196,7 +206,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
-      final List<dynamic> genresJson = json.decode(response.data);
+      final List<dynamic> genresJson = json.decode(json.encode(response.data)); // Added json.encode to ensure string
       return genresJson.map((json) => Genre.fromJson(json)).toList();
     } else {
       throw ServerException(message: 'Failed to get liked genres');
@@ -209,7 +219,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
-      final List<dynamic> artistsJson = json.decode(response.data);
+      final List<dynamic> artistsJson = json.decode(json.encode(response.data)); // Added json.encode to ensure string
       return artistsJson.map((json) => Artist.fromJson(json)).toList();
     } else {
       throw ServerException(message: 'Failed to get top artists');
@@ -244,7 +254,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
-      final List<dynamic> genresJson = json.decode(response.data);
+      final List<dynamic> genresJson = json.decode(json.encode(response.data)); // Added json.encode to ensure string
       return genresJson.map((json) => Genre.fromJson(json)).toList();
     } else {
       throw ServerException(message: 'Failed to get top genres');
@@ -257,7 +267,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
-      final List<dynamic> animeJson = json.decode(response.data);
+      final List<dynamic> animeJson = json.decode(json.encode(response.data)); // Added json.encode to ensure string
       return animeJson.map((json) => CommonAnime.fromJson(json)).toList();
     } else {
       throw ServerException(message: 'Failed to get top anime');
@@ -270,7 +280,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     final response = await _dioClient.post(url);
 
     if (response.statusCode == 200) {
-      final List<dynamic> mangaJson = json.decode(response.data);
+      final List<dynamic> mangaJson = json.decode(json.encode(response.data)); // Added json.encode to ensure string
       return mangaJson.map((json) => CommonManga.fromJson(json)).toList();
     } else {
       throw ServerException(message: 'Failed to get top manga');
@@ -283,7 +293,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     final response = await _dioClient.get(url);
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.data);
+      final Map<String, dynamic> data = json.decode(json.encode(response.data)); // Added json.encode to ensure string
       return data['url'] as String;
     } else {
       throw ServerException(message: 'Failed to get Spotify auth URL');
@@ -315,7 +325,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     final response = await _dioClient.get(url);
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.data);
+      final Map<String, dynamic> data = json.decode(json.encode(response.data)); // Added json.encode to ensure string
       return data['url'] as String;
     } else {
       throw ServerException(message: 'Failed to get YouTube Music auth URL');
@@ -347,7 +357,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     final response = await _dioClient.get(url);
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.data);
+      final Map<String, dynamic> data = json.decode(json.encode(response.data)); // Added json.encode to ensure string
       return data['url'] as String;
     } else {
       throw ServerException(message: 'Failed to get MyAnimeList auth URL');
@@ -379,7 +389,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     final response = await _dioClient.get(url);
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.data);
+      final Map<String, dynamic> data = json.decode(json.encode(response.data)); // Added json.encode to ensure string
       return data['url'] as String;
     } else {
       throw ServerException(message: 'Failed to get Last.fm auth URL');
@@ -484,7 +494,7 @@ class UserRemoteDataSourceImpl implements UserRemoteDataSource {
     final response = await _dioClient.get('${ApiConfig.usersWeb}/banned');
 
     if (response.statusCode == 200) {
-      final List<dynamic> usersJson = json.decode(response.data);
+      final List<dynamic> usersJson = json.decode(json.encode(response.data)); // Added json.encode to ensure string
       return usersJson.map((json) => UserProfile.fromJson(json)).toList();
     } else {
       throw ServerException(message: 'Failed to get banned users');

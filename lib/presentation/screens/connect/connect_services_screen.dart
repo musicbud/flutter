@@ -8,7 +8,7 @@ import '../../../blocs/settings/settings_state.dart';
 import '../../widgets/enhanced/enhanced_widgets.dart';
 
 class ConnectServicesScreen extends StatelessWidget {
-  ConnectServicesScreen({super.key});
+  const ConnectServicesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

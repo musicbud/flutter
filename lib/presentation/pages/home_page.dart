@@ -234,7 +234,7 @@ class _HomePageState extends State<HomePage>
         Colors.green,
         () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ChatScreen()),
+          MaterialPageRoute(builder: (context) => ChatScreen()),
         ),
       ),
       _QuickAction(
@@ -243,7 +243,7 @@ class _HomePageState extends State<HomePage>
         Colors.orange,
         () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ConnectServicesScreen()),
+          MaterialPageRoute(builder: (context) => ConnectServicesScreen()), // Removed const
         ),
       ),
       _QuickAction(
@@ -252,7 +252,7 @@ class _HomePageState extends State<HomePage>
         Colors.purple,
         () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const ProfileScreen()),
+          MaterialPageRoute(builder: (context) => ProfileScreen()), // Removed const
         ),
       ),
     ];
@@ -317,7 +317,7 @@ class _HomePageState extends State<HomePage>
             'Control your Spotify playback',
             () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const SpotifyControlScreen()),
+              MaterialPageRoute(builder: (context) => SpotifyControlScreen()), // Removed const
             ),
           ),
           _buildServiceCard(

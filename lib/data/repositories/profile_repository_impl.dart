@@ -15,7 +15,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<UserProfile> getMyProfile() async {
     try {
       // Getting my profile
-      final response = await _dioClient.get('/me/profile/');
+      final response = await _dioClient.post('/me/profile/');
       if (response.data == null) {
         throw Exception('Profile not found');
       }
@@ -62,7 +62,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
     try {
       // Check authentication by trying to get profile
       // This is more reliable than a dedicated auth status endpoint
-      await _dioClient.get('/me/profile/');
+      await _dioClient.post('/me/profile/');
       return true;
     } catch (e) {
       return false;

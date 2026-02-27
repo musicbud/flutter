@@ -91,35 +91,37 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
           ),
 
           // Tab bar
-          Container(
-            margin: const EdgeInsets.symmetric(
+          Padding(
+            padding: const EdgeInsets.symmetric(
               horizontal: DesignSystem.spacingMD,
             ),
-            decoration: BoxDecoration(
-              color: DesignSystem.surfaceContainer,
-              borderRadius: BorderRadius.circular(
-                DesignSystem.radiusMD,
-              ),
-            ),
-            child: TabBar(
-              controller: _tabController,
-              indicator: BoxDecoration(
-                color: DesignSystem.primary,
+            child: Container(
+              decoration: BoxDecoration(
+                color: DesignSystem.surfaceContainer,
                 borderRadius: BorderRadius.circular(
                   DesignSystem.radiusMD,
                 ),
               ),
-              indicatorSize: TabBarIndicatorSize.tab,
-              dividerColor: Colors.transparent,
-              labelStyle: DesignSystem.labelLarge.copyWith(
-                fontWeight: FontWeight.w600,
+              child: TabBar(
+                controller: _tabController,
+                indicator: BoxDecoration(
+                  color: DesignSystem.primary,
+                  borderRadius: BorderRadius.circular(
+                    DesignSystem.radiusMD,
+                  ),
+                ),
+                indicatorSize: TabBarIndicatorSize.tab,
+                dividerColor: Colors.transparent,
+                labelStyle: DesignSystem.labelLarge.copyWith(
+                  fontWeight: FontWeight.w600,
+                ),
+                unselectedLabelStyle: DesignSystem.labelLarge,
+                tabs: const [
+                  Tab(text: 'Songs'),
+                  Tab(text: 'Artists'),
+                  Tab(text: 'Genres'),
+                ],
               ),
-              unselectedLabelStyle: DesignSystem.labelLarge,
-              tabs: const [
-                Tab(text: 'Songs'),
-                Tab(text: 'Artists'),
-                Tab(text: 'Genres'),
-              ],
             ),
           ),
 
@@ -282,7 +284,7 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
       ),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: DesignSystem.primary.withOpacity(0.1),
+          backgroundColor: DesignSystem.primary.withValues(alpha: 0.1),
           child: const Icon(
             Icons.person_rounded,
             color: DesignSystem.primary,
@@ -314,8 +316,8 @@ class _EnhancedSearchPageState extends State<EnhancedSearchPage>
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            DesignSystem.primary.withAlpha((255 * 0.2).round()),
-            DesignSystem.primaryVariant.withAlpha((255 * 0.3).round()),
+            DesignSystem.primary.withValues(alpha: 0.2),
+            DesignSystem.primaryVariant.withValues(alpha: 0.3),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
